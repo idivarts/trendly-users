@@ -4,17 +4,31 @@ import EditScreenInfo from '@/components/EditScreenInfo';
 import { Text, View } from '@/components/Themed';
 import { useContext } from 'react';
 import CounterContext from '@/contexts/CounterContext';
+import LogNoter from '@/components/LogNoter';
+import LogContext, { LogProvider } from '@/contexts/LogContext';
 
 export default function TabOneScreen() {
-  const { counter, setCounter } = useContext(CounterContext)
+  const { counter } = useContext(CounterContext)
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Tab One</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="app/(tabs)/index.tsx" />
-      <Button title='Increase Count' onPress={() => { setCounter(counter + 1) }}></Button>
-    </View>
+    <LogProvider>
+      <View style={styles.container}>
+        <Text style={styles.title}>Tab One: {counter}</Text>
+        <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
+        <EditScreenInfo path="app/(tabs)/index.tsx" />
+        <MButton />
+        <LogNoter />
+      </View>
+    </LogProvider>
   );
+}
+const MButton = () => {
+  const { counter, setCounter } = useContext(CounterContext)
+  const { pushData } = useContext(LogContext)
+
+  return <Button title='Increase Count' onPress={() => {
+    setCounter(counter + 1)
+    pushData("Increasing the count to " + (counter))
+  }}></Button>
 }
 
 const styles = StyleSheet.create({
