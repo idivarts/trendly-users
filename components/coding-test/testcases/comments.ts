@@ -1,6 +1,6 @@
 export const Comments: {
     postId: string,
-    ownerId: string,
+    userId: string,
     comment: string,
     timeStamp: number
 }[] = []

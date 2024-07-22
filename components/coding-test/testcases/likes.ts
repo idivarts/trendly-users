@@ -1,5 +1,5 @@
 export const Likes: {
     postId: string,
-    ownerId: string,
+    userId: string,
     timeStamp: number
 }[] = []
