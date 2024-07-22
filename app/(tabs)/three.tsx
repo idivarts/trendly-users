@@ -14,9 +14,10 @@ export default function TabThreeScreen() {
   const { pushData } = useContext(LogContext)
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tab Three</Text>
-      <CodingQ1 />
-      {/* <CodingQ2 /> */}
+      <Text style={styles.title}>Coding Rounds</Text>
+      <Text style={styles.secondary}>Enable comments in the code to start seeing the rounds</Text>
+      {/* <CodingQ1 />
+      <CodingQ2 /> */}
     </View>
   );
 }
@@ -35,7 +36,7 @@ const styles = StyleSheet.create({
   secondary: {
     fontSize: 18,
     fontWeight: 'regular',
-    marginTop: 10,
+    marginBottom: 10,
   },
   separator: {
     marginVertical: 30,
