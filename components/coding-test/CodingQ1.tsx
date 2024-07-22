@@ -1,7 +1,12 @@
 import React from 'react'
 import { Text, View } from '../Themed'
+import { Users } from './testcases/users'
+import { Posts } from './testcases/posts'
+import { Comments } from './testcases/comments'
+import { Likes } from './testcases/likes'
 
 const CodingQ1 = () => {
+    // Posts, Comments, Users, Likes
     return (
         <View>
             <Text>Coding Round 1 - Post Output creation - Merge Comments and Likes in a Post Object</Text>
