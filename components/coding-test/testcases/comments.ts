@@ -3,4 +3,25 @@ export const Comments: {
     userId: string,
     comment: string,
     timeStamp: number
-}[] = []
+}[] = [
+        { postId: "1", userId: "2", comment: "Sounds interesting!", timeStamp: 1625473000 },
+        { postId: "2", userId: "4", comment: "I agree!", timeStamp: 1625559400 },
+        { postId: "11", userId: "4", comment: "Indeed.", timeStamp: 1626337000 },
+        { postId: "2", userId: "5", comment: "Great update!", timeStamp: 1625560400 },
+        { postId: "7", userId: "10", comment: "Looks cool!", timeStamp: 1625991400 },
+        { postId: "1", userId: "3", comment: "Nice read!", timeStamp: 1625474000 },
+        { postId: "18", userId: "1", comment: "Try this book.", timeStamp: 1626940800 },
+        { postId: "3", userId: "6", comment: "Hello!", timeStamp: 1625645800 },
+        { postId: "14", userId: "7", comment: "Great job!", timeStamp: 1626595200 },
+        { postId: "6", userId: "9", comment: "Enjoy!", timeStamp: 1625905000 },
+        { postId: "9", userId: "2", comment: "Happy Monday!", timeStamp: 1626164200 },
+        { postId: "5", userId: "8", comment: "That's awesome!", timeStamp: 1625818600 },
+        { postId: "10", userId: "3", comment: "Good luck!", timeStamp: 1626250600 },
+        { postId: "12", userId: "5", comment: "Count me in!", timeStamp: 1626423400 },
+        { postId: "4", userId: "7", comment: "Good luck!", timeStamp: 1625732200 },
+        { postId: "15", userId: "8", comment: "Amazing!", timeStamp: 1626681600 },
+        { postId: "13", userId: "6", comment: "Yummy!", timeStamp: 1626513800 },
+        { postId: "16", userId: "9", comment: "Keep it up!", timeStamp: 1626768000 },
+        { postId: "8", userId: "1", comment: "Try Inception.", timeStamp: 1626077800 },
+        { postId: "17", userId: "10", comment: "Totally!", timeStamp: 1626854400 },
+    ]
