@@ -1,15 +1,9 @@
 import { Text, View } from "@/components/theme/Themed";
-import { useAuthContext } from "@/contexts";
+import { useRouter } from "expo-router";
 import { Button } from "react-native";
 
-const Login = () => {
-  const {
-    signIn,
-  } = useAuthContext();
-
-  const handleSignIn = () => {
-    signIn();
-  };
+const Onboard = () => {
+  const router = useRouter();
 
   return (
     <View
@@ -20,10 +14,10 @@ const Login = () => {
         gap: 20,
       }}
     >
-      <Text>Login</Text>
-      <Button title="Login" onPress={handleSignIn} />
+      <Text>Onboard</Text>
+      <Button title="Next" onPress={() => router.push("/one")} />
     </View>
   );
 };
 
-export default Login;
+export default Onboard;

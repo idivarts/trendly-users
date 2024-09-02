@@ -5,17 +5,13 @@ import {
   ThemeProvider,
 } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
+import { Stack, useRouter, useSegments } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/components/theme/useColorScheme';
-import {
-  AuthScreens,
-  MainScreens,
-  PublicScreens,
-} from '@/layouts/screens';
+import { AuthContextProvider, useAuthContext } from '@/contexts';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -51,12 +47,33 @@ const RootLayout = () => {
     return null;
   }
 
-  return <RootLayoutStack />;
+  return (
+    <AuthContextProvider>
+      <RootLayoutStack />
+    </AuthContextProvider>
+  );
 }
 
 const RootLayoutStack = () => {
   const colorScheme = useColorScheme();
-  const session = true;
+  const router = useRouter();
+  const segments = useSegments();
+  const {
+    session,
+  } = useAuthContext();
+
+  useEffect(() => {
+    const inAuthGroup = segments[0] === '(auth)';
+    const inMainGroup = segments[0] === '(main)';
+
+    if (!session && !inAuthGroup) { // App should start at pre-signin
+      router.replace('/pre-signin');
+    } else if (!session && inMainGroup) { // User can't access main group if not signed in
+      router.replace('/login');
+    } else if (session && inAuthGroup) { // User can't access auth group if signed in
+      router.replace('/one');
+    }
+  }, [session]);
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : ExpoDefaultTheme}>
@@ -66,8 +83,16 @@ const RootLayoutStack = () => {
           headerShown: false,
         }}
       >
-        <PublicScreens />
-        {session ? <MainScreens /> : <AuthScreens />}
+        <Stack.Screen name="(public)" options={{ headerShown: false }} />
+        {
+          !session ? (
+            <Stack.Screen name="(main)" options={{ headerShown: false }} />
+          ) : (
+            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+          )
+        }
+        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="+not-found" />
       </Stack>
       {/* <Toast /> */}
     </ThemeProvider>

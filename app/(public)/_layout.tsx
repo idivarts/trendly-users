@@ -2,7 +2,7 @@ import { View } from "@/components/theme/Themed";
 import AppLayout from "@/layouts/app-layout";
 import { Stack } from "expo-router";
 
-const PreSignin = () => {
+const PublicLayout = () => {
   return (
     <AppLayout>
       <View
@@ -22,10 +22,16 @@ const PreSignin = () => {
               headerShown: false,
             }}
           />
+          <Stack.Screen
+            name="onboard"
+            options={{
+              headerShown: false,
+            }}
+          />
         </Stack>
       </View>
     </AppLayout>
   );
 };
 
-export default PreSignin;
+export default PublicLayout;
