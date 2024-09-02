@@ -1,22 +1,10 @@
 import { View } from "@/components/theme/Themed";
 import AppLayout from "@/layouts/app-layout";
-// import { useAuthContext } from "@/contexts";
-// import Header from "@/layouts/header";
-import { Stack, useRouter } from "expo-router";
-import { useEffect } from "react";
+import { Stack } from "expo-router";
 
 const AuthLayout = () => {
-  // const { isLoading, session } = useAuthContext()
-  // const router = useRouter()
-  // useEffect(() => {
-  //   if (!isLoading && session) {
-  //     router.replace("/(main)")
-  //   }
-  // }, [isLoading, session])
-
   return (
     <AppLayout>
-      {/* <Header /> */}
       <View
         style={{
           flex: 1,
