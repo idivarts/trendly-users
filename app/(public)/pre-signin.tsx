@@ -15,7 +15,7 @@ const PreSignin = () => {
       }}
     >
       <Text>PreSignin</Text>
-      <Button title="Next" onPress={() => router.push("/signup")} />
+      <Button title="Next" onPress={() => router.replace("/signup")} />
     </View>
   );
 };
