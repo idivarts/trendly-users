@@ -22,12 +22,6 @@ const PublicLayout = () => {
               headerShown: false,
             }}
           />
-          <Stack.Screen
-            name="onboard"
-            options={{
-              headerShown: false,
-            }}
-          />
         </Stack>
       </View>
     </AppLayout>

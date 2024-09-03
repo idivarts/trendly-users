@@ -2,7 +2,7 @@ import { View } from "@/components/theme/Themed";
 import AppLayout from "@/layouts/app-layout";
 import { Stack } from "expo-router";
 
-const MainLayout = () => {
+const ScreensLayout = () => {
   return (
     <AppLayout>
       <View
@@ -17,13 +17,7 @@ const MainLayout = () => {
           }}
         >
           <Stack.Screen
-            name="(drawer)"
-            options={{
-              headerShown: false,
-            }}
-          />
-          <Stack.Screen
-            name="(screens)"
+            name="onboard"
             options={{
               headerShown: false,
             }}
@@ -31,7 +25,7 @@ const MainLayout = () => {
         </Stack>
       </View>
     </AppLayout>
-  )
+  );
 };
 
-export default MainLayout;
+export default ScreensLayout;

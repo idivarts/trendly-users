@@ -5,7 +5,7 @@ import {
   ThemeProvider,
 } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
-import { Stack, useRouter, useSegments } from 'expo-router';
+import { Stack, usePathname, useRouter, useSegments } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
@@ -20,7 +20,7 @@ export {
 
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: '(tabs)',
+  initialRouteName: '(public)',
 };
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -57,8 +57,10 @@ const RootLayout = () => {
 const RootLayoutStack = () => {
   const colorScheme = useColorScheme();
   const router = useRouter();
+  const pathname = usePathname();
   const segments = useSegments();
   const {
+    isLoading,
     session,
   } = useAuthContext();
 
@@ -66,12 +68,16 @@ const RootLayoutStack = () => {
     const inAuthGroup = segments[0] === '(auth)';
     const inMainGroup = segments[0] === '(main)';
 
-    if (!session && !inAuthGroup) { // App should start at pre-signin
+    if (isLoading) return;
+
+    if (session && inMainGroup) { // Redirect to main group path if signed in
+      router.replace(pathname);
+    } else if (session) { // Redirect to main group if signed in
+      router.replace('/one');
+    } else if (!session && !inAuthGroup) { // App should start at pre-signin
       router.replace('/pre-signin');
     } else if (!session && inMainGroup) { // User can't access main group if not signed in
       router.replace('/login');
-    } else if (session && inAuthGroup) { // User can't access auth group if signed in
-      router.replace('/one');
     }
   }, [session]);
 

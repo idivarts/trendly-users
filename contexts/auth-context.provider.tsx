@@ -12,6 +12,7 @@ interface AuthContextProps {
   session?: string | null;
   signIn: () => void;
   signOut: () => void;
+  signUp: () => void;
 }
 
 const AuthContext = createContext<AuthContextProps>({
@@ -19,6 +20,7 @@ const AuthContext = createContext<AuthContextProps>({
   session: null,
   signIn: () => null,
   signOut: () => null,
+  signUp: () => null,
 });
 
 export const useAuthContext = () => useContext(AuthContext);
@@ -31,12 +33,16 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
 
   const signIn = async () => {
     setSession('123');
+    // For existing users, redirect to the main screen.
+    router.replace("/one");
+    Toaster.success("Signed In Successfully!");
+  };
+
+  const signUp = async () => {
+    setSession('123');
     // For non-existing users, redirect to the onboarding screen.
     router.replace("/onboard");
-
-    // For existing users, redirect to the main screen.
-    // router.replace("/one");
-    Toaster.success("Signed In Successfully!");
+    Toaster.success("Signed Up Successfully!");
   };
 
   const signOut = () => {
@@ -52,6 +58,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
         session,
         signIn,
         signOut,
+        signUp,
       }}
     >
       {children}
