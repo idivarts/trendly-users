@@ -79,7 +79,7 @@ const RootLayoutStack = () => {
     } else if (!session && inMainGroup) { // User can't access main group if not signed in
       router.replace('/login');
     }
-  }, [session]);
+  }, [session, isLoading]);
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : ExpoDefaultTheme}>
