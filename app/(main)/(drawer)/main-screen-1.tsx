@@ -1,4 +1,4 @@
-import { Text, View } from "@/components/theme/Themed";
+import { Text, View } from "react-native";
 
 const MainScreen1 = () => {
   return (

@@ -1,4 +1,4 @@
-import { Text, View } from "@/components/theme/Themed";
+import { Text, View } from "react-native";
 import { useAuthContext } from "@/contexts";
 import { Button } from "react-native";
 

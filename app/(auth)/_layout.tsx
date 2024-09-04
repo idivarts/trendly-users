@@ -1,4 +1,4 @@
-import { View } from "@/components/theme/Themed";
+import { View } from "react-native";
 import AppLayout from "@/layouts/app-layout";
 import { Stack } from "expo-router";
 
