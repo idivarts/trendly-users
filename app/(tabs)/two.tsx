@@ -1,15 +1,40 @@
-import { Button, StyleSheet } from 'react-native';
+import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
 
-import EditScreenInfo from '@/components/EditScreenInfo';
-import { Text, View } from '@/components/Themed';
-import { useContext } from 'react';
+import { useState } from 'react';
+
+import { AuthApp } from '@/utils/firebase';
+import { router } from 'expo-router';
 
 export default function TabTwoScreen() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleLogin = async () => {
+    const response = await AuthApp.createUserWithEmailAndPassword(email, password);
+    if (response.user) {
+      router.push('/one');
+    }
+  }
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tab Two</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="app/(tabs)/two.tsx" />
+      <Text style={styles.title}>Login</Text>
+      <TextInput
+        style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
+        onChangeText={setEmail}
+        value={email}
+        placeholder="Email"
+      />
+      <TextInput
+        style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
+        onChangeText={setPassword}
+        value={password}
+        placeholder="Password"
+      />
+      <Button
+        title="Login"
+        onPress={handleLogin}
+      />
     </View>
   );
 }
