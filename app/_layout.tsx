@@ -97,6 +97,7 @@ const RootLayoutStack = () => {
             <Stack.Screen name="(auth)" options={{ headerShown: false }} />
           )
         }
+        <Stack.Screen name="index" />
         <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
         <Stack.Screen name="+not-found" />
       </Stack>
