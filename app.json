@@ -14,7 +14,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.idiv.trendlyusers",
+      "bundleIdentifier": "pro.trendly.creators",
       "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
@@ -23,7 +23,7 @@
         "backgroundColor": "#ffffff"
       },
       "googleServicesFile": "./google-services.json",
-      "package": "com.idiv.trendlyusers"
+      "package": "pro.trendly.creators"
     },
     "web": {
       "bundler": "metro",
@@ -45,6 +45,14 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "62cd2ba5-50d8-4fba-bbdb-2f8534713871"
+      }
     }
   }
 }

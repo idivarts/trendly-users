@@ -6,8 +6,10 @@ import {
 } from "react";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { useRouter } from "expo-router";
-import { AuthApp } from "@/utils/auth";
+import { AuthApp as WebAuthApp } from "@/utils/auth";
+import { AuthApp as NativeAuthApp } from "@/utils/firebase-native";
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import { Platform } from "react-native";
 
 interface AuthContextProps {
   isLoading: boolean;
@@ -51,7 +53,12 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
     password: string
   ) => {
     try {
-      const response = await createUserWithEmailAndPassword(AuthApp, email, password);
+      let response: any;
+      if (Platform.OS === "web") {
+        response = await createUserWithEmailAndPassword(WebAuthApp, email, password);
+      } else {
+        response = await NativeAuthApp.createUserWithEmailAndPassword(email, password);
+      }
       if (response.user) {
         // For non-existing users, redirect to the onboarding screen.
         setSession('123');

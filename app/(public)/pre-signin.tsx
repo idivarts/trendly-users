@@ -6,9 +6,9 @@ import { Title, Paragraph } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
 import createStyles from "@/styles/tab1.styles"; // Import the function, not the styles directly
 import { useTheme } from "@react-navigation/native";
-import AppLayout from "@/App-Layout";
 import { Link } from "expo-router";
 import { slides } from "@/constants/Slides";
+import AppLayout from "@/layouts/app-layout";
 
 import { requestUserPermission, setupForegroundMessageListener } from "@/utils/messaging";
 
@@ -34,9 +34,18 @@ const PreSignIn = () => {
     </TouchableOpacity>
   );
 
+  // TODO: Remove after testing
+  const setupPermissionsAndListeners = async () => {
+    try {
+      await requestUserPermission();
+      setupForegroundMessageListener();
+    } catch (error) {
+      console.error("Failed to setup permissions or message listeners:", error);
+    }
+  };
+
   useEffect(() => {
-    requestUserPermission();
-    setupForegroundMessageListener();
+    setupPermissionsAndListeners();
   }, []);
 
   return (
