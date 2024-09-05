@@ -1,9 +1,16 @@
 import { Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { Button } from "react-native";
+import { useEffect } from "react";
+import { requestUserPermission, setupForegroundMessageListener } from "@/utils/messaging";
 
 const PreSignin = () => {
   const router = useRouter();
+
+  useEffect(() => {
+    requestUserPermission();
+    setupForegroundMessageListener();
+  }, []);
 
   return (
     <View

@@ -50,13 +50,16 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
     email: string,
     password: string
   ) => {
-    const response = await createUserWithEmailAndPassword(AuthApp, email, password);
-
-    if (response.user) {
-      setSession('123');
-      // For non-existing users, redirect to the onboarding screen.
-      router.replace("/onboard");
-      Toaster.success("Signed Up Successfully!");
+    try {
+      const response = await createUserWithEmailAndPassword(AuthApp, email, password);
+      if (response.user) {
+        // For non-existing users, redirect to the onboarding screen.
+        setSession('123');
+        router.replace("/onboard");
+        Toaster.success("Signed Up Successfully!");
+      }
+    } catch (error) {
+      Toaster.error("Failed to sign up.");
     }
   };
 
