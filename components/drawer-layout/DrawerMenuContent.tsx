@@ -5,37 +5,37 @@ import { APP_NAME } from "@/constants/App";
 import { useColorScheme } from "../theme/useColorScheme";
 import Colors from "@/constants/Colors";
 
-interface DrawerMenuContentProps { }
+interface DrawerMenuContentProps {}
 
 const DRAWER_MENU_CONTENT_ITEMS = [
   {
-    href: '/one',
-    label: 'TabOne',
+    href: "/one",
+    label: "TabOne",
   },
   {
-    href: '/two',
-    label: 'TabTwo',
+    href: "/two",
+    label: "TabTwo",
   },
   {
-    href: '/three',
-    label: 'TabThree',
+    href: "/three",
+    label: "TabThree",
   },
   {
-    href: '/four',
-    label: 'TabFour',
+    href: "/four",
+    label: "TabFour",
   },
   {
-    href: '/five',
-    label: 'TabFive',
+    href: "/five",
+    label: "TabFive",
   },
   {
-    href: '/main-screen-1',
-    label: 'MainScreen1',
+    href: "/main-screen-1",
+    label: "MainScreen1",
   },
   {
-    href: '/modal',
-    label: 'Modal',
-  }
+    href: "/modal",
+    label: "Modal",
+  },
 ];
 
 const DrawerMenuContent: React.FC<DrawerMenuContentProps> = () => {
@@ -63,41 +63,40 @@ const DrawerMenuContent: React.FC<DrawerMenuContentProps> = () => {
                 paddingTop: 8,
                 paddingBottom: 16,
                 fontSize: 24,
-                fontWeight: 'bold',
+                fontWeight: "bold",
               }}
             >
               {APP_NAME}
             </Text>
           </View>
           <View>
-            {
-              DRAWER_MENU_CONTENT_ITEMS.map((tab, index) => (
-                <Pressable
-                  key={index}
-                  onPress={() => router.push(tab.href)}
+            {DRAWER_MENU_CONTENT_ITEMS.map((tab, index) => (
+              <Pressable key={index} onPress={() => router.push(tab.href)}>
+                <View
+                  style={{
+                    backgroundColor: tab.href.includes(pathname)
+                      ? Colors.regular.primary
+                      : Colors[colorScheme].background,
+                    borderBottomWidth: StyleSheet.hairlineWidth,
+                    borderBottomColor: Colors.regular.aliceBlue,
+                    paddingHorizontal: 24,
+                    paddingVertical: 14,
+                  }}
                 >
-                  <View
+                  <Text
                     style={{
-                      backgroundColor: tab.href.includes(pathname) ? Colors.regular.primary : Colors[colorScheme].background,
-                      borderBottomWidth: StyleSheet.hairlineWidth,
-                      borderBottomColor: Colors.regular.secondary,
-                      paddingHorizontal: 24,
-                      paddingVertical: 14,
+                      color: tab.href.includes(pathname)
+                        ? Colors.regular.white
+                        : Colors[colorScheme].text,
+                      textAlign: "center",
+                      fontSize: 16,
                     }}
                   >
-                    <Text
-                      style={{
-                        color: tab.href.includes(pathname) ? Colors.regular.white : Colors[colorScheme].text,
-                        textAlign: 'center',
-                        fontSize: 16,
-                      }}
-                    >
-                      {tab.label}
-                    </Text>
-                  </View>
-                </Pressable>
-              ))
-            }
+                    {tab.label}
+                  </Text>
+                </View>
+              </Pressable>
+            ))}
           </View>
         </View>
       </DrawerContentScrollView>

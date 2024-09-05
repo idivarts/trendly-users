@@ -6,60 +6,7 @@ import CollaborationFilter from "@/components/FilterModal";
 import AppLayout from "@/App-Layout";
 import { useTheme } from "@react-navigation/native";
 import { createStyles } from "@/styles/Collections.styles";
-
-const JobCollection = [
-  {
-    collaborationName: "UI/UX Design Collaboration",
-    brandName: "Google",
-    shortDescription:
-      "Google is looking for a UI/UX designer to help design their new mobile app.",
-    postedDate: "2 days ago",
-    cost: "Paid",
-    paymentVerified: true,
-    promotionType: "Sponsored",
-    collaborationType: "Design",
-    influencersNeeded: 5,
-    appliedCount: 10,
-    aiSuccessRate: "80%",
-    brandHireRate: "70%",
-    location: "Remote",
-    logo: "https://images.pexels.com/photos/268941/pexels-photo-268941.jpeg",
-  },
-  {
-    collaborationName: "Web Development Collaboration",
-    brandName: "Facebook",
-    shortDescription:
-      "Facebook is looking for a web developer to help build their new website.",
-    postedDate: "1 week ago",
-    cost: "Paid",
-    paymentVerified: true,
-    promotionType: "Sponsored",
-    collaborationType: "Development",
-    influencersNeeded: 3,
-    appliedCount: 5,
-    aiSuccessRate: "90%",
-    brandHireRate: "80%",
-    location: "Remote",
-    logo: "https://images.pexels.com/photos/268941/pexels-photo-268941.jpeg",
-  },
-  {
-    collaborationName: "Mobile App Development Collaboration",
-    brandName: "Amazon",
-    shortDescription:
-      "Amazon is looking for a mobile app developer to help build their new app.",
-    postedDate: "1 month ago",
-    cost: "Paid",
-    paymentVerified: true,
-    promotionType: "Sponsored",
-    collaborationType: "Development",
-    influencersNeeded: 2,
-    appliedCount: 3,
-    aiSuccessRate: "95%",
-    location: "Remote",
-    brandHireRate: "90%",
-    logo: "https://images.pexels.com/photos/268941/pexels-photo-268941.jpeg",
-  },
-];
+import { Collabs } from "@/constants/Collabs";
 
 const getUniqueValues = (array: string[], key: number) => {
   return ["All", ...new Set(array.map((item) => item[key]))];
@@ -79,7 +26,7 @@ const Collaboration = () => {
     setFilterVisible(!filterVisible);
   };
 
-  const filteredList = JobCollection.filter((job) => {
+  const filteredList = Collabs.filter((job) => {
     return (
       (job.brandName.toLowerCase().includes(searchQuery.toLowerCase()) ||
         job.collaborationName
@@ -96,14 +43,14 @@ const Collaboration = () => {
   });
 
   const getUniqueValues = (
-    array: typeof JobCollection,
-    key: keyof (typeof JobCollection)[0]
+    array: typeof Collabs,
+    key: keyof (typeof Collabs)[0]
   ) => {
     return ["All", ...new Set(array.map((item) => item[key]))];
   };
 
-  const categories = getUniqueValues(JobCollection, "promotionType");
-  const jobTypes = getUniqueValues(JobCollection, "collaborationType");
+  const categories = getUniqueValues(Collabs, "promotionType");
+  const jobTypes = getUniqueValues(Collabs, "collaborationType");
 
   return (
     <AppLayout>
