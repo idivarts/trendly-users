@@ -6,13 +6,18 @@ import {
 } from "react";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { useRouter } from "expo-router";
+import { AuthApp } from "@/utils/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
 interface AuthContextProps {
   isLoading: boolean;
   session?: string | null;
   signIn: () => void;
   signOut: () => void;
-  signUp: () => void;
+  signUp: (
+    email: string,
+    password: string
+  ) => void;
 }
 
 const AuthContext = createContext<AuthContextProps>({
@@ -20,7 +25,10 @@ const AuthContext = createContext<AuthContextProps>({
   session: null,
   signIn: () => null,
   signOut: () => null,
-  signUp: () => null,
+  signUp: (
+    email: string,
+    password: string
+  ) => null,
 });
 
 export const useAuthContext = () => useContext(AuthContext);
@@ -38,11 +46,18 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
     Toaster.success("Signed In Successfully!");
   };
 
-  const signUp = async () => {
-    setSession('123');
-    // For non-existing users, redirect to the onboarding screen.
-    router.replace("/onboard");
-    Toaster.success("Signed Up Successfully!");
+  const signUp = async (
+    email: string,
+    password: string
+  ) => {
+    const response = await createUserWithEmailAndPassword(AuthApp, email, password);
+
+    if (response.user) {
+      setSession('123');
+      // For non-existing users, redirect to the onboarding screen.
+      router.replace("/onboard");
+      Toaster.success("Signed Up Successfully!");
+    }
   };
 
   const signOut = () => {
