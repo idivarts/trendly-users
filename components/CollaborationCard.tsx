@@ -128,7 +128,15 @@ const JobCard = (props: CollaborationAdCardProps) => {
               backgroundColor: colors.primary,
             }}
           >
-            Apply Now
+            <Text
+              style={{
+                color: colors.text,
+                fontWeight: "bold",
+                textAlign: "center",
+              }}
+            >
+              Apply Now
+            </Text>
           </Link>
           <Button onPress={() => router.push("/report")} mode="text">
             Report
