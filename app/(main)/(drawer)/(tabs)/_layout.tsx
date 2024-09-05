@@ -1,19 +1,19 @@
-import React from 'react';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { Link, Tabs } from 'expo-router';
-import { Pressable } from 'react-native';
+import React from "react";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { Link, Stack, Tabs, useRouter } from "expo-router";
+import { Pressable, SafeAreaView } from "react-native";
 
-import Colors from '@/constants/Colors';
-import { useColorScheme } from '@/components/theme/useColorScheme';
-import { useClientOnlyValue } from '@/components/useClientOnlyValue';
-import { useBreakpoints } from '@/hooks';
+import Colors from "@/constants/Colors";
+import { useColorScheme } from "@/components/theme/useColorScheme";
+import { useClientOnlyValue } from "@/components/useClientOnlyValue";
+import { useBreakpoints } from "@/hooks";
 
 const TabBarIcon = (props: {
-  name: React.ComponentProps<typeof FontAwesome>['name'];
+  name: React.ComponentProps<typeof FontAwesome>["name"];
   color: string;
 }) => {
   return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
-}
+};
 
 const TabLayout = () => {
   const colorScheme = useColorScheme();
@@ -29,14 +29,19 @@ const TabLayout = () => {
         tabBarShowLabel: xl,
         tabBarHideOnKeyboard: true,
         tabBarStyle: {
-          display: xl ? 'none' : 'flex', // Hide the tab bar on desktop screens
+          display: xl ? "none" : "flex", // Hide the tab bar on desktop screens
         },
       }}
     >
       <Tabs.Screen
         name="one"
         options={{
-          title: 'Tab One',
+          title: "Collections",
+          headerTitleAlign: "left",
+          headerTitleStyle: {
+            fontSize: 30,
+            fontWeight: "bold",
+          },
           tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
           headerRight: () => (
             <Link href="/modal" asChild>
@@ -45,7 +50,7 @@ const TabLayout = () => {
                   <FontAwesome
                     name="info-circle"
                     size={25}
-                    color={Colors[colorScheme ?? 'light'].text}
+                    color={Colors[colorScheme ?? "light"].text}
                     style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
                   />
                 )}
@@ -55,30 +60,23 @@ const TabLayout = () => {
         }}
       />
       <Tabs.Screen
-        name="two"
-        options={{
-          title: 'Tab Two',
-          tabBarIcon: ({ color }) => <TabBarIcon name="search" color={color} />,
-        }}
-      />
-      <Tabs.Screen
         name="three"
         options={{
-          title: 'Tab Three',
+          title: "Tab Three",
           tabBarIcon: ({ color }) => <TabBarIcon name="group" color={color} />,
         }}
       />
       <Tabs.Screen
         name="four"
         options={{
-          title: 'Tab Four',
+          title: "Tab Four",
           tabBarIcon: ({ color }) => <TabBarIcon name="bell" color={color} />,
         }}
       />
       <Tabs.Screen
         name="five"
         options={{
-          title: 'Tab Five',
+          title: "Tab Five",
           tabBarIcon: ({ color }) => <TabBarIcon name="cog" color={color} />,
         }}
       />

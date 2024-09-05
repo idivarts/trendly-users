@@ -1,8 +1,10 @@
 import { View } from "react-native";
 import AppLayout from "@/layouts/app-layout";
-import { Stack } from "expo-router";
+import { Stack, useNavigation } from "expo-router";
+import { IconButton } from "react-native-paper";
 
 const ScreensLayout = () => {
+  const navigation = useNavigation();
   return (
     <AppLayout>
       <View
@@ -17,11 +19,13 @@ const ScreensLayout = () => {
           }}
         >
           <Stack.Screen
-            name="onboard"
+            name="collaboration"
             options={{
               headerShown: false,
             }}
           />
+          <Stack.Screen name="collaboration-details" options={{}} />
+          <Stack.Screen name="apply-now" options={{}} />
         </Stack>
       </View>
     </AppLayout>
