@@ -21,7 +21,7 @@ const MainLayout = () => {
         }}
       />
     </Stack>
-  )
+  );
 };
 
 export default MainLayout;
