@@ -80,7 +80,7 @@ const RootLayoutStack = () => {
       // User can't access main group if not signed in
       router.replace("/login");
     }
-  }, [session]);
+  }, [session, isLoading]);
 
   return (
     <ThemeProvider
