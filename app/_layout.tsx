@@ -72,7 +72,7 @@ const RootLayoutStack = () => {
       router.replace(pathname);
     } else if (session) {
       // Redirect to main group if signed in
-      router.replace("/one");
+      router.replace("/proposals");
     } else if (!session && !inAuthGroup) {
       // App should start at pre-signin
       router.replace("/pre-signin");

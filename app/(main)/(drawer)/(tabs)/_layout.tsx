@@ -1,7 +1,7 @@
 import React from "react";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Link, Stack, Tabs, useRouter } from "expo-router";
-import { Pressable, SafeAreaView } from "react-native";
+import { Link, Tabs } from "expo-router";
+import { Pressable } from "react-native";
 
 import Colors from "@/constants/Colors";
 import { useColorScheme } from "@/components/theme/useColorScheme";
@@ -31,25 +31,25 @@ const TabLayout = () => {
         tabBarStyle: {
           display: xl ? "none" : "flex", // Hide the tab bar on desktop screens
         },
+        headerTitleAlign: "left",
+        headerTitleStyle: {
+          fontSize: 24,
+          fontWeight: "bold",
+        },
       }}
     >
       <Tabs.Screen
-        name="one"
+        name="proposals"
         options={{
-          title: "Collections",
-          headerTitleAlign: "left",
-          headerTitleStyle: {
-            fontSize: 30,
-            fontWeight: "bold",
-          },
-          tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
+          title: "Proposals",
+          tabBarIcon: ({ color }) => <TabBarIcon name="handshake-o" color={color} />,
           headerRight: () => (
-            <Link href="/modal" asChild>
+            <Link href="/notifications" asChild>
               <Pressable>
                 {({ pressed }) => (
                   <FontAwesome
-                    name="info-circle"
-                    size={25}
+                    name="bell"
+                    size={22}
                     color={Colors[colorScheme ?? "light"].text}
                     style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
                   />
@@ -60,24 +60,45 @@ const TabLayout = () => {
         }}
       />
       <Tabs.Screen
-        name="three"
+        name="messages"
         options={{
-          title: "Tab Three",
+          title: "Messages",
+          tabBarIcon: ({ color }) => <TabBarIcon name="comments" color={color} />,
+          headerRight: () => (
+            <Link href="/notifications" asChild>
+              <Pressable>
+                {({ pressed }) => (
+                  <FontAwesome
+                    name="bell"
+                    size={22}
+                    color={Colors[colorScheme ?? "light"].text}
+                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+                  />
+                )}
+              </Pressable>
+            </Link>
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="collaborations"
+        options={{
+          title: "Collaborations",
           tabBarIcon: ({ color }) => <TabBarIcon name="group" color={color} />,
         }}
       />
       <Tabs.Screen
-        name="four"
+        name="contracts"
         options={{
-          title: "Tab Four",
-          tabBarIcon: ({ color }) => <TabBarIcon name="bell" color={color} />,
+          title: "Contracts",
+          tabBarIcon: ({ color }) => <TabBarIcon name="file-text-o" color={color} />,
         }}
       />
       <Tabs.Screen
-        name="five"
+        name="profile"
         options={{
-          title: "Tab Five",
-          tabBarIcon: ({ color }) => <TabBarIcon name="cog" color={color} />,
+          title: "Profile",
+          tabBarIcon: ({ color }) => <TabBarIcon name="user-circle-o" color={color} />,
         }}
       />
     </Tabs>

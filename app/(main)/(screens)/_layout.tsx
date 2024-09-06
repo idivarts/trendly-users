@@ -1,33 +1,34 @@
-import { View } from "react-native";
 import AppLayout from "@/layouts/app-layout";
-import { Stack, useNavigation } from "expo-router";
-import { IconButton } from "react-native-paper";
+import { Stack } from "expo-router";
 
 const ScreensLayout = () => {
-  const navigation = useNavigation();
   return (
     <AppLayout>
-      <View
-        style={{
-          flex: 1,
+      <Stack
+        screenOptions={{
+          animation: "ios",
+          headerShown: false,
         }}
       >
-        <Stack
-          screenOptions={{
-            animation: "ios",
-            headerShown: false,
+        <Stack.Screen
+          name="collaboration"
+        />
+        <Stack.Screen
+          name="collaboration-details"
+        />
+        <Stack.Screen
+          name="apply-now"
+        />
+        <Stack.Screen
+          name="notifications"
+          options={{
+            presentation: "modal",
           }}
-        >
-          <Stack.Screen
-            name="collaboration"
-            options={{
-              headerShown: false,
-            }}
-          />
-          <Stack.Screen name="collaboration-details" options={{}} />
-          <Stack.Screen name="apply-now" options={{}} />
-        </Stack>
-      </View>
+        />
+        <Stack.Screen
+          name="chat"
+        />
+      </Stack>
     </AppLayout>
   );
 };
