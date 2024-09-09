@@ -63,7 +63,9 @@ const Collaboration = () => {
         </View>
         <FlatList
           data={filteredList}
-          renderItem={({ item }) => <JobCard {...item} />}
+          renderItem={({ item }) => (
+            <JobCard {...item} cardType={"collaboration"} />
+          )}
           keyExtractor={(item) => item.collaborationName}
           contentContainerStyle={styles.jobList}
         />

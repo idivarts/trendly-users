@@ -42,7 +42,9 @@ const TabLayout = () => {
         name="proposals"
         options={{
           title: "Proposals",
-          tabBarIcon: ({ color }) => <TabBarIcon name="handshake-o" color={color} />,
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="handshake-o" color={color} />
+          ),
           headerRight: () => (
             <Link href="/notifications" asChild>
               <Pressable>
@@ -63,7 +65,9 @@ const TabLayout = () => {
         name="messages"
         options={{
           title: "Messages",
-          tabBarIcon: ({ color }) => <TabBarIcon name="comments" color={color} />,
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="comments" color={color} />
+          ),
           headerRight: () => (
             <Link href="/notifications" asChild>
               <Pressable>
@@ -84,21 +88,58 @@ const TabLayout = () => {
         name="collaborations"
         options={{
           title: "Collaborations",
+          headerRight: () => (
+            <Link href="/notifications" asChild>
+              <Pressable>
+                {({ pressed }) => (
+                  <FontAwesome
+                    name="bell"
+                    size={25}
+                    color={Colors[colorScheme ?? "light"].text}
+                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+                  />
+                )}
+              </Pressable>
+            </Link>
+          ),
           tabBarIcon: ({ color }) => <TabBarIcon name="group" color={color} />,
         }}
       />
       <Tabs.Screen
         name="contracts"
         options={{
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="file-text-o" color={color} />
+          ),
           title: "Contracts",
-          tabBarIcon: ({ color }) => <TabBarIcon name="file-text-o" color={color} />,
+          headerTitleAlign: "left",
+          headerTitleStyle: {
+            fontSize: 30,
+            fontWeight: "bold",
+          },
+          headerRight: () => (
+            <Link href="/notifications" asChild>
+              <Pressable>
+                {({ pressed }) => (
+                  <FontAwesome
+                    name="bell"
+                    size={25}
+                    color={Colors[colorScheme ?? "light"].text}
+                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+                  />
+                )}
+              </Pressable>
+            </Link>
+          ),
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
           title: "Profile",
-          tabBarIcon: ({ color }) => <TabBarIcon name="user-circle-o" color={color} />,
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="user-circle-o" color={color} />
+          ),
         }}
       />
     </Tabs>

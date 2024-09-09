@@ -10,30 +10,18 @@ const ScreensLayout = () => {
           headerShown: false,
         }}
       >
-        <Stack.Screen
-          name="collaboration"
-        />
-        <Stack.Screen
-          name="collaboration-details"
-        />
-        <Stack.Screen
-          name="apply-now"
-        />
+        <Stack.Screen name="collaboration" />
+        <Stack.Screen name="collaboration-details" />
+        <Stack.Screen name="apply-now" />
         <Stack.Screen
           name="notifications"
           options={{
             presentation: "modal",
           }}
         />
-        <Stack.Screen
-          name="chat"
-        />
-        <Stack.Screen
-          name="basic-profile"
-        />
-        <Stack.Screen
-          name="connected-socials"
-        />
+        <Stack.Screen name="chat" />
+        <Stack.Screen name="basic-profile" />
+        <Stack.Screen name="connected-socials" />
       </Stack>
     </AppLayout>
   );

@@ -4,7 +4,7 @@ import { TextInput } from "react-native-paper";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 interface SearchComponentProps {
-  ToggleModal: (show: boolean) => void;
+  ToggleModal?: (show: boolean) => void;
   setSearchQuery: (query: string) => void;
 }
 
@@ -52,7 +52,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
       ) : null}
       <TouchableOpacity
         onPress={() => {
-          ToggleModal(true);
+          if (ToggleModal) ToggleModal(true);
         }}
       >
         <Ionicons
