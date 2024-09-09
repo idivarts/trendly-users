@@ -41,6 +41,9 @@ const MessageCard: React.FC<MessageCardProps> = ({
         >
           <Avatar.Image
             source={{ uri: conversation.image }}
+            style={{
+              backgroundColor: Colors.regular.platinum,
+            }}
             size={54}
           />
           <View

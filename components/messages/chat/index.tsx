@@ -3,10 +3,11 @@ import Colors from "@/constants/Colors";
 import { useBreakpoints } from "@/hooks";
 import { Conversation } from "@/types/Conversation";
 import { useEffect, useState } from "react";
-import { FlatList, Image, KeyboardAvoidingView, Platform, View } from "react-native";
+import { FlatList, Image, KeyboardAvoidingView, Platform } from "react-native";
 import { ActivityIndicator, Appbar, Avatar, IconButton, TextInput } from "react-native-paper";
 import * as ImagePicker from 'expo-image-picker';
 import ChatMessage from "./ChatMessage";
+import { View } from "@/components/theme/Themed";
 
 interface ChatProps {
   conversation: Conversation;
@@ -83,7 +84,7 @@ const Chat: React.FC<ChatProps> = ({
       message,
       image: capturedImage,
       sender: "user" as const,
-      time: new Date().toISOString(),
+      time: new Date().toLocaleTimeString(),
     };
 
     setMessages((prevMessages) => [newMessage, ...prevMessages]);
@@ -109,6 +110,7 @@ const Chat: React.FC<ChatProps> = ({
         <View
           style={{
             marginLeft: xl ? 10 : 0,
+            backgroundColor: "transparent",
           }}
         >
           <BackButton color={Colors.regular.platinum} />
