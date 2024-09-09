@@ -3,7 +3,7 @@ import { Text, View } from "@/components/theme/Themed";
 import JobCard from "@/components/CollaborationCard";
 import SearchComponent from "@/components/SearchComponent";
 import { useState } from "react";
-import AppLayout from "@/App-Layout";
+import AppLayout from "@/layouts/app-layout";
 import { Link } from "expo-router";
 import ContractCard from "@/components/ContractCard";
 import { createStyles } from "@/styles/Contracts.styles";

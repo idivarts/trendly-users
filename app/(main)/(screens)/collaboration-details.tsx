@@ -8,7 +8,7 @@ import {
   Paragraph,
   IconButton,
 } from "react-native-paper";
-import AppLayout from "@/App-Layout";
+import AppLayout from "@/layouts/app-layout";
 import { useLocalSearchParams } from "expo-router";
 import { useTheme } from "@react-navigation/native";
 import { createStyles } from "@/styles/CollaborationDetails.styles";

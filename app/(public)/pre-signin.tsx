@@ -5,7 +5,7 @@ import { Title, Paragraph } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
 import createStyles from "@/styles/tab1.styles"; // Import the function, not the styles directly
 import { useTheme } from "@react-navigation/native";
-import AppLayout from "@/App-Layout";
+import AppLayout from "@/layouts/app-layout";
 import { Link } from "expo-router";
 import { useAuthContext } from "@/contexts";
 import { slides } from "@/constants/Slides";

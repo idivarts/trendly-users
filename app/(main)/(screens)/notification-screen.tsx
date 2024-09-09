@@ -1,4 +1,4 @@
-import AppLayout from "@/App-Layout";
+import AppLayout from "@/layouts/app-layout";
 import { NotificationCard } from "@/components/NotificationCard";
 import { useNavigation } from "expo-router";
 import React from "react";
