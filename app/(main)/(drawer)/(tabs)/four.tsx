@@ -1,25 +1,57 @@
-import { StyleSheet } from 'react-native';
+import { FlatList, StyleSheet, TouchableOpacity } from "react-native";
+import { Text, View } from "@/components/theme/Themed";
+import JobCard from "@/components/CollaborationCard";
+import SearchComponent from "@/components/SearchComponent";
+import { useState } from "react";
+import AppLayout from "@/App-Layout";
+import { Link } from "expo-router";
+import ContractCard from "@/components/ContractCard";
+import { createStyles } from "@/styles/Contracts.styles";
+import { useTheme } from "@react-navigation/native";
+import { DummyProposalData } from "@/constants/Contracts";
 
-import { Text, View } from '@/components/theme/Themed';
+const ContractScreen = () => {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
 
-const TabFourScreen = () => {
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Tab Four</Text>
-    </View>
+    <AppLayout>
+      <View style={styles.container}>
+        <FlatList
+          data={DummyProposalData}
+          renderItem={({ item }) => <ContractCard {...item} />}
+          keyExtractor={(item, index) => index.toString()}
+          style={{ height: "100%", width: "100%" }}
+          ListFooterComponent={
+            <View
+              style={{
+                alignItems: "center",
+                justifyContent: "center",
+                padding: 20,
+              }}
+            >
+              <Text
+                style={[
+                  styles.title,
+                  {
+                    marginBottom: 10,
+                    color: colors.text,
+                  },
+                ]}
+              >
+                Looking for past contracts
+              </Text>
+              <View style={styles.card}>
+                <Link href={"/collaboration-details"} style={{}}>
+                  <Text>View Past Contracts</Text>
+                </Link>
+              </View>
+            </View>
+          }
+        />
+      </View>
+    </AppLayout>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-});
-
-export default TabFourScreen;
+export default ContractScreen;

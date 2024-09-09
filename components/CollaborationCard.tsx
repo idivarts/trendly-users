@@ -8,20 +8,22 @@ import { useTheme } from "@react-navigation/native";
 import { createStyles } from "@/styles/CollaborationCard.styles";
 
 interface CollaborationAdCardProps {
-  location: string;
+  location?: string;
   collaborationName: string;
   brandName: string;
-  shortDescription: string;
+  shortDescription?: string;
   postedDate: string;
   cost: string;
-  paymentVerified: boolean;
+  paymentVerified?: boolean;
   promotionType: string;
   collaborationType: string;
-  influencersNeeded: number;
-  appliedCount: number;
-  aiSuccessRate: string;
-  brandHireRate: string;
-  logo: string;
+  influencersNeeded?: number;
+  appliedCount?: number;
+  aiSuccessRate?: string;
+  brandHireRate?: string;
+  logo?: string;
+  coverLetter?: string;
+  cardType: "collaboration" | "proposal" | "invitation";
 }
 
 const JobCard = (props: CollaborationAdCardProps) => {
@@ -60,39 +62,49 @@ const JobCard = (props: CollaborationAdCardProps) => {
 
         {/* Payment Verified, Promotion and Collaboration Type */}
         <View style={styles.chipRow}>
-          <Chip
-            style={[
-              styles.chip,
-              {
-                backgroundColor: props.paymentVerified ? "#d4edda" : "#f8d7da",
-                borderColor: props.paymentVerified ? "#c3e6cb" : "#f5c6cb",
-              },
-            ]}
-            icon={props.paymentVerified ? "check-circle" : "alert-circle"}
-            mode={props.paymentVerified ? "outlined" : "flat"}
-            selectedColor={props.paymentVerified ? "#28a745" : "#dc3545"}
-          >
-            {props.paymentVerified ? "Payment Verified" : "Payment Unverified"}
-          </Chip>
+          {props.cardType === "collaboration" && (
+            <Chip
+              style={[
+                styles.chip,
+                {
+                  backgroundColor: props.paymentVerified
+                    ? "#d4edda"
+                    : "#f8d7da",
+                  borderColor: props.paymentVerified ? "#c3e6cb" : "#f5c6cb",
+                },
+              ]}
+              icon={props.paymentVerified ? "check-circle" : "alert-circle"}
+              mode={props.paymentVerified ? "outlined" : "flat"}
+              selectedColor={props.paymentVerified ? "#28a745" : "#dc3545"}
+            >
+              {props.paymentVerified
+                ? "Payment Verified"
+                : "Payment Unverified"}
+            </Chip>
+          )}
           <Chip style={styles.chip}>{props.promotionType}</Chip>
           <Chip style={styles.chip}>{props.collaborationType}</Chip>
         </View>
 
         {/* Influencers Needed, Applied Count, AI Success Rate, Brand Hire Rate */}
-        <View style={styles.infoRow}>
-          <Text style={styles.infoText}>
-            Influencers Needed: {props.influencersNeeded}
-          </Text>
-          <Text style={styles.infoText}>Applied: {props.appliedCount}</Text>
-        </View>
-        <View style={styles.infoRow}>
-          <Text style={styles.infoText}>
-            AI Success Rate: {props.aiSuccessRate}
-          </Text>
-          <Text style={styles.infoText}>
-            Brand Hire Rate: {props.brandHireRate}
-          </Text>
-        </View>
+        {props.cardType === "collaboration" && (
+          <View>
+            <View style={styles.infoRow}>
+              <Text style={styles.infoText}>
+                Influencers Needed: {props.influencersNeeded}
+              </Text>
+              <Text style={styles.infoText}>Applied: {props.appliedCount}</Text>
+            </View>
+            <View style={styles.infoRow}>
+              <Text style={styles.infoText}>
+                AI Success Rate: {props.aiSuccessRate}
+              </Text>
+              <Text style={styles.infoText}>
+                Brand Hire Rate: {props.brandHireRate}
+              </Text>
+            </View>
+          </View>
+        )}
 
         {/* Actions */}
         <Divider style={styles.divider} />
@@ -106,7 +118,10 @@ const JobCard = (props: CollaborationAdCardProps) => {
                 shortDescription: props.shortDescription,
                 postedDate: props.postedDate,
                 cost: props.cost,
-                paymentVerified: props.paymentVerified.toString(),
+                paymentVerified:
+                  props.paymentVerified == null
+                    ? "false"
+                    : props.paymentVerified.toString(),
                 promotionType: props.promotionType,
                 collaborationType: props.collaborationType,
                 influencersNeeded: props.influencersNeeded,
@@ -135,12 +150,45 @@ const JobCard = (props: CollaborationAdCardProps) => {
                 textAlign: "center",
               }}
             >
-              Apply Now
+              {/* Apply Now */}
+              {
+                {
+                  collaboration: "Apply Now",
+                  proposal: "Apply Now",
+                  invitation: "Withdraw",
+                }[props.cardType]
+              }
             </Text>
           </Link>
-          <Button onPress={() => router.push("/report")} mode="text">
-            Report
-          </Button>
+          {props.cardType === "collaboration" && (
+            <Button onPress={() => router.push("/report")} mode="text">
+              Report
+            </Button>
+          )}
+          {props.cardType === "proposal" && (
+            <Button onPress={() => router.push("/edit-proposal")} mode="text">
+              Reject
+            </Button>
+          )}
+          {props.cardType === "invitation" && (
+            <TouchableOpacity
+              onPress={() => router.push("/withdraw")}
+              style={{
+                padding: 10,
+                borderRadius: 4,
+              }}
+            >
+              <Text
+                style={{
+                  color: colors.primary,
+
+                  textAlign: "center",
+                }}
+              >
+                Change Terms
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
       </Card.Content>
     </Card>

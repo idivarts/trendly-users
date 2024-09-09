@@ -26,6 +26,7 @@ const ScreensLayout = () => {
           />
           <Stack.Screen name="collaboration-details" options={{}} />
           <Stack.Screen name="apply-now" options={{}} />
+          <Stack.Screen name="notification-screen" />
         </Stack>
       </View>
     </AppLayout>

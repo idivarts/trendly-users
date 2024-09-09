@@ -57,7 +57,8 @@ export const createStyles = (colors: any) =>
     },
     actionRow: {
       flexDirection: "row",
-      justifyContent: "space-between",
       marginTop: 8,
+      justifyContent: "space-around",
+      alignItems: "center",
     },
   });

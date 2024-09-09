@@ -44,11 +44,11 @@ const TabLayout = () => {
           },
           tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
           headerRight: () => (
-            <Link href="/modal" asChild>
+            <Link href="/notification-screen" asChild>
               <Pressable>
                 {({ pressed }) => (
                   <FontAwesome
-                    name="info-circle"
+                    name="bell"
                     size={25}
                     color={Colors[colorScheme ?? "light"].text}
                     style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
@@ -62,14 +62,52 @@ const TabLayout = () => {
       <Tabs.Screen
         name="three"
         options={{
-          title: "Tab Three",
+          title: "Proposals",
+          headerTitleAlign: "left",
+          headerTitleStyle: {
+            fontSize: 30,
+            fontWeight: "bold",
+          },
+          headerRight: () => (
+            <Link href="/notification-screen" asChild>
+              <Pressable>
+                {({ pressed }) => (
+                  <FontAwesome
+                    name="bell"
+                    size={25}
+                    color={Colors[colorScheme ?? "light"].text}
+                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+                  />
+                )}
+              </Pressable>
+            </Link>
+          ),
           tabBarIcon: ({ color }) => <TabBarIcon name="group" color={color} />,
         }}
       />
       <Tabs.Screen
         name="four"
         options={{
-          title: "Tab Four",
+          title: "Contracts",
+          headerTitleAlign: "left",
+          headerTitleStyle: {
+            fontSize: 30,
+            fontWeight: "bold",
+          },
+          headerRight: () => (
+            <Link href="/notification-screen" asChild>
+              <Pressable>
+                {({ pressed }) => (
+                  <FontAwesome
+                    name="bell"
+                    size={25}
+                    color={Colors[colorScheme ?? "light"].text}
+                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
+                  />
+                )}
+              </Pressable>
+            </Link>
+          ),
           tabBarIcon: ({ color }) => <TabBarIcon name="bell" color={color} />,
         }}
       />

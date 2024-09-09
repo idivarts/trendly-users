@@ -44,9 +44,14 @@ const CollaborationPage = (props: CollaborationAdCardProps) => {
 
   return (
     <AppLayout>
-      <Appbar.Header statusBarHeight={0}>
+      <Appbar.Header
+        statusBarHeight={0}
+        style={{
+          backgroundColor: colors.background,
+        }}
+      >
         <BackButton />
-        <Appbar.Content title="Collaboration Details" />
+        <Appbar.Content title="Collaboration Details" color={colors.text} />
         <IconButton icon="dots-vertical" onPress={() => {}} />
       </Appbar.Header>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
