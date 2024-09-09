@@ -1,11 +1,12 @@
-import { Button, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 
-import { Text, View } from '@/components/theme/Themed';
-import { useRouter } from 'expo-router';
+import { View } from '@/components/theme/Themed';
 import { useAuthContext } from '@/contexts';
+import Profile from '@/components/profile';
+import { PROFILE_BOTTOM_ITEMS, PROFILE_ITEMS } from '@/constants/Profile';
+import ProfileItemCard from '@/components/profile/ProfileItemCard';
 
 const ProfileScreen = () => {
-  const router = useRouter();
   const {
     signOut,
   } = useAuthContext();
@@ -16,15 +17,27 @@ const ProfileScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Profile</Text>
-      <Button
-        title="Go to Main Screen 1"
-        onPress={() => router.push('/main-screen-1')}
+      <Profile
+        items={PROFILE_ITEMS}
       />
-      <Button
-        title="Signout"
-        onPress={handleSignout}
-      />
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "flex-end",
+        }}
+      >
+        <Profile
+          items={PROFILE_BOTTOM_ITEMS}
+        />
+        <ProfileItemCard
+          onPress={handleSignout}
+          item={{
+            id: "7",
+            title: "Logout",
+            icon: "logout",
+          }}
+        />
+      </View>
     </View>
   );
 }
@@ -32,13 +45,6 @@ const ProfileScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 20,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
   },
 });
 

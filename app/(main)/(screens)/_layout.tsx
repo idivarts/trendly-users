@@ -28,6 +28,12 @@ const ScreensLayout = () => {
         <Stack.Screen
           name="chat"
         />
+        <Stack.Screen
+          name="basic-profile"
+        />
+        <Stack.Screen
+          name="connected-socials"
+        />
       </Stack>
     </AppLayout>
   );
