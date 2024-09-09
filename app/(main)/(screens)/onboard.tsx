@@ -15,7 +15,7 @@ const Onboard = () => {
       }}
     >
       <Text>Onboard</Text>
-      <Button title="Next" onPress={() => router.replace("/one")} />
+      <Button title="Next" onPress={() => router.replace("/proposals")} />
     </View>
   );
 };

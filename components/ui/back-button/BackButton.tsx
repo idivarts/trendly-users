@@ -4,7 +4,13 @@ import { Ionicons } from "@expo/vector-icons";
 import { useColorScheme } from "@/components/theme/useColorScheme";
 import Colors from "@/constants/Colors";
 
-const BackButton = () => {
+interface BackButtonProps {
+  color?: string;
+}
+
+const BackButton: React.FC<BackButtonProps> = ({
+  color,
+}) => {
   const navigation = useNavigation();
   const colorScheme = useColorScheme();
 
@@ -25,10 +31,12 @@ const BackButton = () => {
         >
           {({ pressed }) => (
             <Ionicons
-              name="arrow-back"
+              name="chevron-back"
               size={26}
-              color={Colors[colorScheme ?? "light"].text}
-              style={{ marginLeft: 14, opacity: pressed ? 0.5 : 1 }}
+              color={color ?? Colors[colorScheme ?? "light"].text}
+              style={{
+                opacity: pressed ? 0.8 : 1,
+              }}
             />
           )}
         </Pressable>

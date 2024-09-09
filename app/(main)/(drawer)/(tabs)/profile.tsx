@@ -4,7 +4,7 @@ import { Text, View } from '@/components/theme/Themed';
 import { useRouter } from 'expo-router';
 import { useAuthContext } from '@/contexts';
 
-const TabFiveScreen = () => {
+const ProfileScreen = () => {
   const router = useRouter();
   const {
     signOut,
@@ -16,7 +16,7 @@ const TabFiveScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tab Five</Text>
+      <Text style={styles.title}>Profile</Text>
       <Button
         title="Go to Main Screen 1"
         onPress={() => router.push('/main-screen-1')}
@@ -42,4 +42,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TabFiveScreen;
+export default ProfileScreen;

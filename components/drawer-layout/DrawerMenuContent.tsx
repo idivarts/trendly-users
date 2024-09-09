@@ -5,36 +5,28 @@ import { APP_NAME } from "@/constants/App";
 import { useColorScheme } from "../theme/useColorScheme";
 import Colors from "@/constants/Colors";
 
-interface DrawerMenuContentProps {}
+interface DrawerMenuContentProps { }
 
 const DRAWER_MENU_CONTENT_ITEMS = [
   {
-    href: "/one",
-    label: "TabOne",
+    href: "/proposals",
+    label: "Proposals",
   },
   {
-    href: "/two",
-    label: "TabTwo",
+    href: "/messages",
+    label: "Messages",
   },
   {
-    href: "/three",
-    label: "TabThree",
+    href: "/collaborations",
+    label: "Collaborations",
   },
   {
-    href: "/four",
-    label: "TabFour",
+    href: "/contracts",
+    label: "Contracts",
   },
   {
-    href: "/five",
-    label: "TabFive",
-  },
-  {
-    href: "/main-screen-1",
-    label: "MainScreen1",
-  },
-  {
-    href: "/modal",
-    label: "Modal",
+    href: "/profile",
+    label: "Profile",
   },
 ];
 

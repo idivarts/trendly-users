@@ -2,10 +2,10 @@ import { StyleSheet } from 'react-native';
 
 import { Text, View } from '@/components/theme/Themed';
 
-const TabThreeScreen = () => {
+const ProposalsScreen = () => {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tab Three</Text>
+      <Text style={styles.title}>Proposals</Text>
     </View>
   );
 }
@@ -22,4 +22,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TabThreeScreen;
+export default ProposalsScreen;
