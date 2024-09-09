@@ -1,6 +1,9 @@
 import { Conversation } from "@/types/Conversation";
 import MessageCard from "./MessageCard";
 import { ScrollView } from "react-native";
+import { Searchbar } from "react-native-paper";
+import { useEffect, useState } from "react";
+import Colors from "@/constants/Colors";
 
 interface MessagesProps {
   changeConversation: (conversationId: string) => void;
@@ -11,9 +14,20 @@ const Messages: React.FC<MessagesProps> = ({
   changeConversation,
   conversations,
 }) => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredConversations, setFilteredConversations] = useState<Conversation[]>([]);
+
   const onPress = (conversationId: string) => {
     changeConversation(conversationId);
   }
+
+  useEffect(() => {
+    setFilteredConversations(
+      conversations.filter((conversation) =>
+        conversation.title.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    );
+  }, [conversations, searchQuery]);
 
   return (
     <ScrollView
@@ -22,7 +36,16 @@ const Messages: React.FC<MessagesProps> = ({
         paddingVertical: 10,
       }}
     >
-      {conversations.map((conversation) => (
+      <Searchbar
+        onChangeText={setSearchQuery}
+        placeholder="Search"
+        value={searchQuery}
+        style={{
+          backgroundColor: Colors.regular.platinum,
+          marginHorizontal: 10,
+        }}
+      />
+      {filteredConversations.map((conversation) => (
         <MessageCard
           conversation={conversation}
           key={conversation.id}
