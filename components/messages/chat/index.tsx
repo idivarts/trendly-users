@@ -102,9 +102,9 @@ const Chat: React.FC<ChatProps> = ({ conversation }) => {
       </Appbar.Header>
 
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior="padding"
         style={styles.flex}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 0}
       >
         <FlatList
           data={messages}
