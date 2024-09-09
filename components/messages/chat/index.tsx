@@ -8,6 +8,7 @@ import { ActivityIndicator, Appbar, Avatar, IconButton, TextInput } from "react-
 import * as ImagePicker from 'expo-image-picker';
 import ChatMessage from "./ChatMessage";
 import { View } from "@/components/theme/Themed";
+import styles from "@/styles/messages/Chat.styles";
 
 interface ChatProps {
   conversation: Conversation;
@@ -15,9 +16,7 @@ interface ChatProps {
 
 const PAGE_SIZE = 15;
 
-const Chat: React.FC<ChatProps> = ({
-  conversation,
-}) => {
+const Chat: React.FC<ChatProps> = ({ conversation }) => {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState(conversation.messages.slice(0, PAGE_SIZE));
@@ -44,8 +43,6 @@ const Chat: React.FC<ChatProps> = ({
 
     if (newMessages.length === 0) {
       setHasMore(false);
-      // } else if (nextPage === 1) {
-      //   setMessages(newMessages);
     } else {
       setMessages((prevMessages) => [...prevMessages, ...newMessages]);
       setPage(nextPage);
@@ -54,9 +51,7 @@ const Chat: React.FC<ChatProps> = ({
     setLoading(false);
   };
 
-  const handleMessageChange = (text: string) => {
-    setMessage(text);
-  };
+  const handleMessageChange = (text: string) => setMessage(text);
 
   const openCamera = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
@@ -77,7 +72,7 @@ const Chat: React.FC<ChatProps> = ({
   };
 
   const handleSend = () => {
-    if (message.trim() === "" && !capturedImage) return;
+    if (!message.trim() && !capturedImage) return;
 
     const newMessage = {
       id: Math.random().toString(),
@@ -87,160 +82,67 @@ const Chat: React.FC<ChatProps> = ({
       time: new Date().toLocaleTimeString(),
     };
 
-    setMessages((prevMessages) => [newMessage, ...prevMessages]);
-
+    setMessages([newMessage, ...messages]);
     setMessage("");
     setCapturedImage(null);
   };
 
   return (
-    <View
-      style={{
-        flex: 1,
-      }}
-    >
-      <Appbar.Header
-        statusBarHeight={0}
-        style={{
-          paddingVertical: 10,
-          gap: 10,
-          backgroundColor: Colors.regular.primary,
-        }}
-      >
-        <View
-          style={{
-            marginLeft: xl ? 10 : 0,
-            backgroundColor: "transparent",
-          }}
-        >
+    <View style={styles.container}>
+      <Appbar.Header statusBarHeight={0} style={styles.appbar}>
+        <View style={[styles.backButtonContainer, { marginLeft: xl ? 10 : 0 }]}>
           <BackButton color={Colors.regular.platinum} />
         </View>
-        <Avatar.Image
-          source={{ uri: conversation.image }}
-          size={48}
-        />
+        <Avatar.Image source={{ uri: conversation.image }} size={48} />
         <Appbar.Content
           title={conversation.title}
-          style={{
-            alignItems: "flex-start",
-          }}
-          titleStyle={{
-            fontSize: 16,
-            textAlign: "left",
-            fontWeight: "bold",
-            color: "white",
-          }}
+          style={styles.appbarContent}
+          titleStyle={styles.appbarTitle}
         />
       </Appbar.Header>
+
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={{
-          flex: 1,
-        }}
+        style={styles.flex}
         keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
-      // style={{
-      // gap: 16,
-      // marginBottom: Platform.OS === 'android' ? 20 : 40,
-      // }}
       >
         <FlatList
           data={messages}
-          style={{
-            flex: 1,
-          }}
-          contentContainerStyle={{
-            gap: 10,
-            padding: 10,
-          }}
+          style={styles.flex}
+          contentContainerStyle={styles.messageListContainer}
           keyExtractor={(item) => item.id.toString()}
-          renderItem={({
-            item,
-            index,
-          }) => (
-            <ChatMessage
-              key={index}
-              message={item}
-            />
-          )}
-          onEndReached={() => {
-            if (hasMore && !loading) {
-              loadMessages(page + 1);
-            }
-          }}
+          renderItem={({ item }) => <ChatMessage key={item.id} message={item} />}
+          onEndReached={() => hasMore && !loading && loadMessages(page + 1)}
           onEndReachedThreshold={0.5}
-          ListFooterComponent={loading ? (
-            <View
-              style={{
-                paddingTop: 10,
-                paddingBottom: 22,
-              }}
-            >
-              <ActivityIndicator />
-            </View>
-          ) : null}
+          ListFooterComponent={loading ? <ActivityIndicator style={styles.loadingIndicator} /> : null}
           inverted
         />
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            backgroundColor: Colors.regular.platinum,
-            padding: capturedImage ? 10 : 0,
-            paddingBottom: 0,
-          }}
-        >
-          {capturedImage && (
-            <Image
-              source={{ uri: capturedImage }}
-              style={{
-                width: 200,
-                height: 200,
-                borderRadius: 10,
-              }}
-            />
-          )}
-        </View>
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            backgroundColor: Colors.regular.platinum
-          }}
-        >
-          <IconButton
-            icon="plus"
-          />
+
+        {capturedImage && (
+          <View style={styles.capturedImageContainer}>
+            <Image source={{ uri: capturedImage }} style={styles.capturedImage} />
+          </View>
+        )}
+
+        <View style={styles.inputContainer}>
+          <IconButton icon="plus" />
           <TextInput
             inputMode="text"
-            style={{
-              flex: 1,
-              backgroundColor: Colors.regular.platinum,
-              paddingHorizontal: 0,
-            }}
+            style={styles.textInput}
             onChangeText={handleMessageChange}
             value={message}
             placeholder="Type a message"
             activeUnderlineColor={Colors.regular.primary}
             selectionColor={Colors.regular.primary}
           />
-          {
-            message.length > 0 || capturedImage ? (
-              <IconButton
-                icon="send"
-                onPress={handleSend}
-              />
-            ) : (
-              <>
-                <IconButton
-                  icon="camera"
-                  onPress={openCamera}
-                />
-                <IconButton
-                  icon="microphone"
-                />
-              </>
-            )
-          }
+          {(message.length > 0 || capturedImage) ? (
+            <IconButton icon="send" onPress={handleSend} />
+          ) : (
+            <>
+              <IconButton icon="camera" onPress={openCamera} />
+              <IconButton icon="microphone" />
+            </>
+          )}
         </View>
       </KeyboardAvoidingView>
     </View>
