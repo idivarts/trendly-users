@@ -16,7 +16,6 @@ const ScreensLayout = () => {
             headerShown: false,
           }}
         />
-        <Stack.Screen name="collaboration" />
         <Stack.Screen name="collaboration-details" />
         <Stack.Screen name="apply-now" />
         <Stack.Screen
