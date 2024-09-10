@@ -1,6 +1,5 @@
-import { Text, View } from "react-native";
+import { Button, Text, View } from "react-native";
 import { useAuthContext } from "@/contexts";
-import { Button } from "react-native";
 
 const Signup = () => {
   const {

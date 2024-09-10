@@ -1,46 +1,23 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import { RadioButton } from "react-native-paper";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useAuthContext } from "@/contexts";
-import { createstyles } from "@/styles/Questions.styles";
+import { createStyles } from "@/styles/Questions.styles";
 import { useTheme } from "@react-navigation/native";
-
-const surveyData = [
-  {
-    id: 1,
-    question: "What is your life stage?",
-    options: ["Single", "Parent", "Other"],
-  },
-  {
-    id: 2,
-    question: "What is your employment status?",
-    options: [
-      "Full-time employee",
-      "Self-employed",
-      "Business owner",
-      "Retired",
-      "Other",
-    ],
-  },
-  {
-    id: 3,
-    question: "Do you own any of these?",
-    options: ["House", "Car", "Boat", "Other"],
-  },
-];
+import { SURVEY_DATA } from "@/constants/SurveyData";
 
 const Questions = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null); // Explicitly type the state
   const { signIn } = useAuthContext();
   const { colors } = useTheme();
-  const styles = createstyles(colors);
+  const styles = createStyles(colors);
 
-  const currentQuestion = surveyData[currentQuestionIndex];
+  const currentQuestion = SURVEY_DATA[currentQuestionIndex];
 
   const handleNext = () => {
-    if (currentQuestionIndex < surveyData.length - 1) {
+    if (currentQuestionIndex < SURVEY_DATA.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
       setSelectedOption(null);
     } else {
@@ -53,6 +30,10 @@ const Questions = () => {
       setCurrentQuestionIndex(currentQuestionIndex - 1);
       setSelectedOption(null);
     }
+  };
+
+  const handleSkip = () => {
+    console.log("Skip pressed");
   };
 
   return (
@@ -86,7 +67,7 @@ const Questions = () => {
       </RadioButton.Group>
 
       <View style={styles.bottomNavigation}>
-        {currentQuestionIndex === surveyData.length - 1 ? (
+        {currentQuestionIndex === SURVEY_DATA.length - 1 ? (
           <TouchableOpacity onPress={signIn} style={styles.nextButton}>
             <Ionicons name="arrow-forward-circle" size={60} color="#FFBF00" />
           </TouchableOpacity>
@@ -97,7 +78,7 @@ const Questions = () => {
         )}
 
         <TouchableOpacity
-          onPress={() => console.log("Skip pressed")}
+          onPress={handleSkip}
           style={styles.skipButton}
         >
           <Text style={styles.skipText}>Skip</Text>

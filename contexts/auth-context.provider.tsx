@@ -41,7 +41,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
   const signUp = async () => {
     setSession('123');
     // For non-existing users, redirect to the onboarding screen.
-    router.replace("/onboard");
+    router.replace("/questions");
     Toaster.success("Signed Up Successfully!");
   };
 

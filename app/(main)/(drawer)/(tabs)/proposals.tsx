@@ -1,9 +1,8 @@
-import { FlatList, StyleSheet, TouchableOpacity } from "react-native";
+import { FlatList, TouchableOpacity } from "react-native";
 import { Text, View } from "@/components/theme/Themed";
-import JobCard from "@/components/CollaborationCard";
-import SearchComponent from "@/components/SearchComponent";
+import JobCard from "@/components/collaboration/CollaborationCard";
 import { useState } from "react";
-import AppLayout from "@/App-Layout";
+import AppLayout from "@/layouts/app-layout";
 import { Link } from "expo-router";
 import { useTheme } from "@react-navigation/native";
 import { createStyles } from "@/styles/Proposal.styles";

@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
+import { View, TouchableOpacity } from "react-native";
 import { Text, Card, Button, Divider, Chip } from "react-native-paper";
 import { Link, useRouter } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import Colors from "@/constants/Colors";
 import { useTheme } from "@react-navigation/native";
 import { createStyles } from "@/styles/CollaborationCard.styles";
 

@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, FlatList, Modal } from "react-native";
+import { View, FlatList, Modal } from "react-native";
 import SearchComponent from "@/components/SearchComponent";
-import JobCard from "@/components/CollaborationCard";
+import JobCard from "./CollaborationCard";
 import CollaborationFilter from "@/components/FilterModal";
-import AppLayout from "@/App-Layout";
+import AppLayout from "@/layouts/app-layout";
 import { useTheme } from "@react-navigation/native";
 import { createStyles } from "@/styles/Collections.styles";
 import { Collabs } from "@/constants/Collabs";

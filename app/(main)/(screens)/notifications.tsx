@@ -1,4 +1,4 @@
-import AppLayout from "@/App-Layout";
+import AppLayout from "@/layouts/app-layout";
 import { NotificationCard } from "@/components/NotificationCard";
 import { useNavigation } from "expo-router";
 import React from "react";
@@ -31,7 +31,7 @@ export default function NotificationsScreen() {
 
         <Appbar.Content title="Notifications" color={colors.text} />
 
-        <Appbar.Action icon="check" onPress={() => {}} color={colors.text} />
+        <Appbar.Action icon="check" onPress={() => { }} color={colors.text} />
       </Appbar.Header>
       <ScrollView style={styles.container}>
         {notifications.length === 0 && (

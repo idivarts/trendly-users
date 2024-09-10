@@ -23,14 +23,6 @@ const Profile: React.FC<ProfileProps> = ({
           />
         )}
         keyExtractor={(item) => item.id}
-        ItemSeparatorComponent={() => (
-          <View
-            style={{
-              height: 1,
-            }}
-          />
-        )
-        }
       />
     </View>
   );
