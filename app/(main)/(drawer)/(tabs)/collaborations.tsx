@@ -1,4 +1,4 @@
-import Collaboration from "@/components/collaboration/collaboration";
+import Collaboration from "@/components/collaboration";
 
 const CollaborationsScreen = () => {
   return (
