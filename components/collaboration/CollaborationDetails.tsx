@@ -37,7 +37,7 @@ interface CollaborationAdCardProps {
   logo: string;
 }
 
-const CollaborationPage = (props: CollaborationAdCardProps) => {
+const CollaborationPage = () => {
   const params: Partial<CollaborationAdCardProps> = useLocalSearchParams();
   const { colors } = useTheme();
   const styles = createStyles(colors);

@@ -6,7 +6,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useTheme } from "@react-navigation/native";
 import { createStyles } from "@/styles/CollaborationCard.styles";
 
-interface CollaborationAdCardProps {
+export interface CollaborationAdCardProps {
   location?: string;
   collaborationName: string;
   brandName: string;
