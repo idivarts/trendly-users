@@ -9,6 +9,7 @@ import { populateBrands } from "./brands";
 import { populateGroups } from "./groups";
 import { populateManagers } from "./managers";
 import { populateUsers } from "./users";
+import { populateCollaborations } from "./collaboration";
 
 const firebaseConfig = {
   apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY!,
@@ -31,6 +32,7 @@ const populateFirestore = async () => {
   // await populateUsers(db, dummyUsers);
   // await populateBrands(db, dummyBrands, "zJOdLfzEj5wtmHGZ6tO8");
   // await populateGroups(db, dummyGroups);
+  // await populateCollaborations(db);
 };
 
 populateFirestore()
