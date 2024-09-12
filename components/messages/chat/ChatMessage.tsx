@@ -1,7 +1,7 @@
 import { Image } from "react-native";
 import { Text, View } from "@/components/theme/Themed";
 import Colors from "@/constants/Colors";
-import { Message } from "@/types/Conversation";
+import { Message } from "@/types/Groups";
 import styles from "@/styles/messages/ChatMessage.styles";
 
 interface ChatMessageProps {

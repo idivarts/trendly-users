@@ -1,33 +1,33 @@
-import { Conversation } from "@/types/Conversation";
+import { Groups } from "@/types/Groups";
 import MessageCard from "./MessageCard";
 import { ScrollView } from "react-native";
 import { Searchbar } from "react-native-paper";
 import { useEffect, useState } from "react";
 import Colors from "@/constants/Colors";
 
-interface MessagesProps {
-  changeConversation: (conversationId: string) => void;
-  conversations: Conversation[];
+interface GroupProps {
+  changeGroup: (groupId: string) => void;
+  groups: Groups[];
 }
 
-const Messages: React.FC<MessagesProps> = ({
-  changeConversation,
-  conversations,
+const Group: React.FC<GroupProps> = ({
+  changeGroup,
+  groups,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [filteredConversations, setFilteredConversations] = useState<Conversation[]>([]);
+  const [filteredGroups, setFilteredGroups] = useState<Groups[]>([]);
 
-  const onPress = (conversationId: string) => {
-    changeConversation(conversationId);
+  const onPress = (groupId: string) => {
+    changeGroup(groupId);
   }
 
   useEffect(() => {
-    setFilteredConversations(
-      conversations.filter((conversation) =>
-        conversation.title.toLowerCase().includes(searchQuery.toLowerCase())
+    setFilteredGroups(
+      groups.filter((group) =>
+        group.name.toLowerCase().includes(searchQuery.toLowerCase())
       )
     );
-  }, [conversations, searchQuery]);
+  }, [groups, searchQuery]);
 
   return (
     <ScrollView
@@ -45,15 +45,15 @@ const Messages: React.FC<MessagesProps> = ({
           marginHorizontal: 10,
         }}
       />
-      {filteredConversations.map((conversation) => (
+      {filteredGroups.map((group) => (
         <MessageCard
-          conversation={conversation}
-          key={conversation.id}
-          onPress={() => onPress(conversation.id)}
+          group={group}
+          key={group.id}
+          onPress={() => onPress(group.id)}
         />
       ))}
     </ScrollView>
   );
 };
 
-export default Messages;
+export default Group;

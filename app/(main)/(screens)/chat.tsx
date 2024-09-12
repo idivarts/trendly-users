@@ -1,6 +1,6 @@
 import Chat from "@/components/messages/chat";
 import { CONVERSATIONS } from "@/constants/Conversations";
-import { Conversation } from "@/types/Conversation";
+import { Conversation } from "@/types/Groups";
 import { Redirect, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { View } from "react-native";

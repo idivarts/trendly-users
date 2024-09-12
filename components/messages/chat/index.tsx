@@ -1,7 +1,7 @@
 import BackButton from "@/components/ui/back-button/BackButton";
 import Colors from "@/constants/Colors";
 import { useBreakpoints } from "@/hooks";
-import { Conversation } from "@/types/Conversation";
+import { Conversation } from "@/types/Groups";
 import { useEffect, useState } from "react";
 import { FlatList, Image, KeyboardAvoidingView, Platform } from "react-native";
 import { ActivityIndicator, Appbar, Avatar, IconButton, TextInput } from "react-native-paper";
