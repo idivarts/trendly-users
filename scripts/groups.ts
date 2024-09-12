@@ -35,6 +35,7 @@ export const populateGroups = async (db: Firestore, dummyGroups: any[]) => {
             groupId: groupRef.id,
             senderId: message.senderId,
             message: message.message,
+            userType: message.userType,
             attachments: message.attachments,
             timeStamp: message.timeStamp,
           });
