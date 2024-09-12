@@ -32,7 +32,7 @@ const populateFirestore = async () => {
   // await populateUsers(db, dummyUsers);
   // await populateBrands(db, dummyBrands, "zJOdLfzEj5wtmHGZ6tO8");
   // await populateGroups(db, dummyGroups);
-  // await populateCollaborations(db);
+  // await populateCollaborations(db, "EigEYB1sHlr30nOt839l");
 };
 
 populateFirestore()
