@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
+import { View, ScrollView, TouchableOpacity } from "react-native";
 import { Text, Chip, Button } from "react-native-paper";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Slider from "@react-native-community/slider";
@@ -36,7 +36,7 @@ const CollaborationFilter = ({
     currentJobType || "All"
   );
   const [localSalaryRange, setLocalSalaryRange] = useState<number[]>(
-    currentSalaryRange || [0, 999999]
+    currentSalaryRange || [0, 5000]
   );
 
   const applyFilters = () => {
@@ -77,12 +77,12 @@ const CollaborationFilter = ({
       <Text style={styles.sectionTitle}>Salaries</Text>
       <View style={styles.salaryContainer}>
         <Text style={styles.salaryLabel}>
-          Min Salary: ${localSalaryRange[0].toLocaleString()}
+          Min Salary: ${localSalaryRange[0].toLocaleString() || "0"}
         </Text>
         <Slider
           style={{ width: "100%", height: 40 }}
           minimumValue={0}
-          maximumValue={localSalaryRange[1]}
+          maximumValue={localSalaryRange[1]} // Ensure max is the current max
           step={1000}
           value={localSalaryRange[0]}
           onValueChange={(value) =>
@@ -92,12 +92,12 @@ const CollaborationFilter = ({
       </View>
       <View style={styles.salaryContainer}>
         <Text style={styles.salaryLabel}>
-          Max Salary: ${localSalaryRange[1].toLocaleString()}
+          Max Salary: ${localSalaryRange[1].toLocaleString() || "0"}
         </Text>
         <Slider
           style={{ width: "100%", height: 40 }}
-          minimumValue={localSalaryRange[0]}
-          maximumValue={999999}
+          minimumValue={localSalaryRange[0]} // Ensure min is the current min
+          maximumValue={5000} // Set a sensible max limit
           step={1000}
           value={localSalaryRange[1]}
           onValueChange={(value) =>
