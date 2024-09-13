@@ -1,7 +1,7 @@
 import BackButton from "@/components/ui/back-button/BackButton";
 import Colors from "@/constants/Colors";
 import { useBreakpoints } from "@/hooks";
-import { Conversation } from "@/types/Groups";
+import { Groups } from "@/types/Groups";
 import { useEffect, useState } from "react";
 import { FlatList, Image, KeyboardAvoidingView, Platform } from "react-native";
 import { ActivityIndicator, Appbar, Avatar, IconButton, TextInput } from "react-native-paper";
@@ -9,47 +9,54 @@ import * as ImagePicker from 'expo-image-picker';
 import ChatMessage from "./ChatMessage";
 import { View } from "@/components/theme/Themed";
 import styles from "@/styles/messages/Chat.styles";
+import { IMessages } from "@/shared-libs/firestore/trendly-pro/models/groups";
+import { useGroupContext } from "@/contexts";
+import { DocumentSnapshot } from "firebase/firestore";
+import { PLACEHOLDER_IMAGE } from "@/constants/PlaceholderImage";
 
 interface ChatProps {
-  conversation: Conversation;
+  group: Groups;
 }
 
-const PAGE_SIZE = 15;
-
-const Chat: React.FC<ChatProps> = ({ conversation }) => {
+const Chat: React.FC<ChatProps> = ({ group }) => {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [messages, setMessages] = useState(conversation.messages.slice(0, PAGE_SIZE));
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
+  const [messages, setMessages] = useState([] as IMessages[]);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
+  const [lastMessage, setLastMessage] = useState<DocumentSnapshot | null>(null);
+  const [hasNext, setHasNext] = useState(false);
+
+  const {
+    getMessagesByGroupId,
+  } = useGroupContext();
 
   const { xl } = useBreakpoints();
 
-  useEffect(() => {
-    if (page === 1) {
-      loadMessages(1);
-    }
-  }, []);
-
-  const loadMessages = (nextPage: number) => {
+  const fetchMessages = async () => {
     if (loading) return;
     setLoading(true);
 
-    const newMessages = conversation.messages.slice(
-      nextPage * PAGE_SIZE,
-      nextPage * PAGE_SIZE + PAGE_SIZE
-    );
+    let response;
 
-    if (newMessages.length === 0) {
-      setHasMore(false);
+    if (lastMessage) {
+      response = await getMessagesByGroupId(group.id, lastMessage);
     } else {
-      setMessages((prevMessages) => [...prevMessages, ...newMessages]);
-      setPage(nextPage);
-    }
+      response = await getMessagesByGroupId(group.id, null);
+    };
+
+    const newMessages = response.messages;
+    setHasNext(response.hasNext);
+    setLastMessage(response.lastMessage);
+    setMessages([...messages, ...newMessages]);
 
     setLoading(false);
   };
+
+  useEffect(() => {
+    if (group) {
+      fetchMessages();
+    }
+  }, []);
 
   const handleMessageChange = (text: string) => setMessage(text);
 
@@ -74,18 +81,39 @@ const Chat: React.FC<ChatProps> = ({ conversation }) => {
   const handleSend = () => {
     if (!message.trim() && !capturedImage) return;
 
-    const newMessage = {
-      id: Math.random().toString(),
+    const newMessage: IMessages = {
+      attachments: [{
+        url: capturedImage as string,
+        type: "image",
+      }],
+      groupId: group.id,
       message,
-      image: capturedImage,
-      sender: "user" as const,
-      time: new Date().toLocaleTimeString(),
+      userType: "user",
+      senderId: "user-id",
+      timeStamp: new Date().getMilliseconds(),
     };
 
-    setMessages([newMessage, ...messages]);
+    setMessages([...messages, newMessage]);
+
+    // TODO: Create new message in real time and add it to the messages
+
     setMessage("");
     setCapturedImage(null);
   };
+
+  if (messages.length === 0) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <ActivityIndicator />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -93,9 +121,14 @@ const Chat: React.FC<ChatProps> = ({ conversation }) => {
         <View style={[styles.backButtonContainer, { marginLeft: xl ? 10 : 0 }]}>
           <BackButton color={Colors.regular.platinum} />
         </View>
-        <Avatar.Image source={{ uri: conversation.image }} size={48} />
+        <Avatar.Image
+          source={{
+            uri: group.image || PLACEHOLDER_IMAGE,
+          }}
+          size={48}
+        />
         <Appbar.Content
-          title={conversation.title}
+          title={group.name}
           style={styles.appbarContent}
           titleStyle={styles.appbarTitle}
         />
@@ -110,9 +143,9 @@ const Chat: React.FC<ChatProps> = ({ conversation }) => {
           data={messages}
           style={styles.flex}
           contentContainerStyle={styles.messageListContainer}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => <ChatMessage key={item.id} message={item} />}
-          onEndReached={() => hasMore && !loading && loadMessages(page + 1)}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item, index }) => <ChatMessage key={index} message={item} />}
+          onEndReached={() => hasNext && !loading && fetchMessages()}
           onEndReachedThreshold={0.5}
           ListFooterComponent={loading ? <ActivityIndicator style={styles.loadingIndicator} /> : null}
           inverted

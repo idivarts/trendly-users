@@ -1,22 +1,14 @@
-import { IGroups } from "@/shared-libs/firestore/trendly-pro/models/groups";
-
-export type Message = {
-  id: string;
-  message: string;
-  sender?: "user" | null;
-  image?: string | null;
-  time: string;
-};
-
-export type Conversation = {
-  id: string;
-  image: string;
-  messages: Message[];
-  newMessages: number;
-  title: string;
-};
+import {
+  IGroups,
+  IMessages,
+} from "@/shared-libs/firestore/trendly-pro/models/groups";
 
 export interface Groups extends IGroups {
+  // TODO: Finalize the structure of the Groups type
   id: string;
   collaboration?: any;
+  image: string;
+  latestMessage?: IMessages | null;
+  users: any[];
+  managers: any[];
 }

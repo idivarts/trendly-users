@@ -16,8 +16,7 @@ const GroupsScreen = () => {
   };
 
   const fetchGroupsByUserId = async () => {
-    const groups = await getGroupsByUserId("123");
-    console.log(console.log(groups));
+    const groups = await getGroupsByUserId("IjOAHWjc3d8ff8u6Z2rD"); // TODO: get user id from auth context
 
     setGroups(groups);
   };

@@ -1,19 +1,18 @@
-import { Image } from "react-native";
 import { Text, View } from "@/components/theme/Themed";
 import Colors from "@/constants/Colors";
-import { Message } from "@/types/Groups";
 import styles from "@/styles/messages/ChatMessage.styles";
+import { IMessages } from "@/shared-libs/firestore/trendly-pro/models/groups";
 
 interface ChatMessageProps {
-  message: Message;
+  message: IMessages;
 }
 
 const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
-  const isUserMessage = message.sender === "user";
+  // TODO: Match userId with senderId
+  const isUserMessage = message.userType === "user";
 
   return (
     <View
-      key={message.id}
       style={[styles.container, { justifyContent: isUserMessage ? "flex-end" : "flex-start" }]}
     >
       <View style={styles.messageContainer}>
@@ -23,19 +22,19 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
             { backgroundColor: isUserMessage ? Colors.regular.primary : Colors.regular.platinum },
           ]}
         >
-          {message.image && (
+          {/* {message.attachments && (
             <Image
               source={{ uri: message.image }}
               style={styles.messageImage}
             />
-          )}
+          )} */}
           {message.message && (
             <Text style={{ color: isUserMessage ? "white" : "black" }}>
               {message.message}
             </Text>
           )}
         </View>
-        {message.time && (
+        {message.timeStamp && (
           <Text
             style={[
               styles.messageTime,
@@ -46,7 +45,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
               },
             ]}
           >
-            {message.time}
+            {new Date(message.timeStamp).toLocaleTimeString()}
           </Text>
         )}
       </View>

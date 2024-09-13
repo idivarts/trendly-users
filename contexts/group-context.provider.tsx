@@ -1,41 +1,55 @@
-import { IGroups } from "@/shared-libs/firestore/trendly-pro/models/groups";
+import { IMessages } from "@/shared-libs/firestore/trendly-pro/models/groups";
 import { Groups } from "@/types/Groups";
-import { initializeApp } from "firebase/app";
-import { collection, getFirestore, query, where, getDocs, orderBy, getDoc, doc } from "firebase/firestore"; // Import necessary Firestore methods
+import { AuthApp } from "@/utils/auth";
+import { FirestoreDB } from "@/utils/firestore";
+import { signInAnonymously } from "firebase/auth";
+import {
+  collection,
+  doc,
+  DocumentSnapshot,
+  getDoc,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+  startAfter,
+  where,
+} from "firebase/firestore";
 import { createContext, useContext, type PropsWithChildren } from "react";
+
+interface Messages {
+  hasNext: boolean;
+  lastMessage: DocumentSnapshot | null,
+  messages: IMessages[];
+};
 
 interface GroupContextProps {
   getGroupsByUserId: (userId: string) => Promise<Groups[] | null>;
+  getGroupByGroupId: (groupId: string) => Promise<Groups | null>;
+  getMessagesByGroupId: (groupId: string, after: any) => Promise<Messages>;
 }
 
 const GroupContext = createContext<GroupContextProps>({
   getGroupsByUserId: (userId: string) => Promise.resolve(null),
+  getGroupByGroupId: (groupId: string) => Promise.resolve(null),
+  getMessagesByGroupId: (groupId: string, after: any) => Promise.resolve({
+    hasNext: false,
+    lastMessage: null,
+    messages: [],
+  }),
 });
-
-const firebaseConfig = {
-  apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY!,
-  authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN!,
-  projectId: process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID!,
-  storageBucket: process.env.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET!,
-  messagingSenderId: process.env.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID!,
-  appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID!,
-  measurementId: process.env.EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID!,
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
 
 export const useGroupContext = () => useContext(GroupContext);
 
 export const GroupContextProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const getGroupsByUserId = async (userId: string): Promise<Groups[]> => {
+    await signInAnonymously(AuthApp);
     try {
-      const groupsRef = collection(db, "groups");
+      const groupsRef = collection(FirestoreDB, "groups");
 
       const groupsQuery = query(
         groupsRef,
         where("userIds", "array-contains", userId),
-        orderBy("messages.timeStamp", "desc") // Sort based on latest message timestamp
       );
 
       const querySnapshot = await getDocs(groupsQuery);
@@ -47,16 +61,28 @@ export const GroupContextProvider: React.FC<PropsWithChildren> = ({ children }) 
 
         groupData.id = groupDoc.id;
 
+        const messagesRef = collection(groupDoc.ref, "messages");
+        const messagesQuery = query(messagesRef, orderBy("timeStamp", "desc"), limit(1));
+        const messagesSnapshot = await getDocs(messagesQuery);
+
+        let latestMessage: IMessages | null = null;
+        if (!messagesSnapshot.empty) {
+          latestMessage = messagesSnapshot.docs[0].data() as IMessages;
+        }
+
         // Fetch and populate collaboration details if available
         if (groupData.collaborationId) {
-          const collaborationRef = doc(db, "collaborations", groupData.collaborationId);
+          const collaborationRef = doc(FirestoreDB, "collaborations", groupData.collaborationId);
           const collaborationSnap = await getDoc(collaborationRef);
           if (collaborationSnap.exists()) {
             groupData.collaboration = collaborationSnap.data();
           }
         }
 
-        groups.push(groupData);
+        groups.push({
+          ...groupData,
+          latestMessage,
+        });
       }
 
       return groups;
@@ -66,10 +92,105 @@ export const GroupContextProvider: React.FC<PropsWithChildren> = ({ children }) 
     }
   };
 
+  const getGroupByGroupId = async (groupId: string): Promise<Groups | null> => {
+    await signInAnonymously(AuthApp);
+    try {
+      const groupDoc = doc(FirestoreDB, "groups", groupId);
+      const groupSnap = await getDoc(groupDoc);
+
+      if (!groupSnap.exists()) {
+        return null;
+      }
+
+      const groupData = groupSnap.data() as Groups;
+      groupData.id = groupSnap.id;
+
+      if (groupData.collaborationId) {
+        const collaborationRef = doc(FirestoreDB, "collaborations", groupData.collaborationId);
+        const collaborationSnap = await getDoc(collaborationRef);
+        if (collaborationSnap.exists()) {
+          groupData.collaboration = collaborationSnap.data();
+        }
+      }
+
+      const users = [];
+      const managers = [];
+
+      for (const userId of groupSnap.data().userIds) {
+        const userDoc = doc(FirestoreDB, "users", userId);
+        const userSnap = await getDoc(userDoc);
+
+        if (userSnap.exists()) {
+          const userData = userSnap.data();
+          if (userData) {
+            users.push(userData);
+          }
+        }
+      }
+
+      for (const managerId of groupSnap.data().managerIds) {
+        const managerDoc = doc(FirestoreDB, "users", managerId);
+        const managerSnap = await getDoc(managerDoc);
+
+        if (managerSnap.exists()) {
+          const managerData = managerSnap.data();
+          if (managerData) {
+            managers.push(managerData);
+          }
+        }
+      }
+
+      groupData.users = users;
+      groupData.managers = managers
+
+      return groupData;
+    } catch (error) {
+      console.error("Error fetching group: ", error);
+      return null;
+    }
+  };
+
+  const getMessagesByGroupId = async (groupId: string, after: IMessages): Promise<Messages> => {
+    await signInAnonymously(AuthApp);
+    try {
+      const groupDoc = doc(FirestoreDB, "groups", groupId);
+      const groupSnap = await getDoc(groupDoc);
+
+      if (!groupSnap.exists()) {
+        return {
+          hasNext: false,
+          lastMessage: null,
+          messages: [],
+        };
+      }
+
+      const messagesRef = collection(groupSnap.ref, "messages");
+      const messagesQuery = after
+        ? query(messagesRef, orderBy("timeStamp", "desc"), startAfter(after), limit(30))
+        : query(messagesRef, orderBy("timeStamp", "desc"), limit(30));
+      const messagesSnapshot = await getDocs(messagesQuery);
+
+      return {
+        hasNext: messagesSnapshot.docs.length === 30,
+        lastMessage: messagesSnapshot.docs[messagesSnapshot.docs.length - 1],
+        messages: messagesSnapshot.docs.map((doc) => doc.data() as IMessages),
+      }
+    } catch (error) {
+      console.error("Error fetching messages: ", error);
+      return {
+        hasNext: false,
+        lastMessage: null,
+        messages: [],
+      }
+    }
+  };
+
   return (
     <GroupContext.Provider
       value={{
+        getGroupByGroupId,
         getGroupsByUserId,
+        getMessagesByGroupId,
       }}
     >
       {children}

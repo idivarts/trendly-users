@@ -5,6 +5,7 @@ import Colors from "@/constants/Colors";
 import { Pressable, PressableProps, View } from "react-native";
 import { Groups } from "@/types/Groups";
 import styles from "@/styles/messages/MessageCard.styles";
+import { PLACEHOLDER_IMAGE } from "@/constants/PlaceholderImage";
 
 interface MessageCardProps extends PressableProps {
   group: Groups;
@@ -14,32 +15,14 @@ const MessageCard: React.FC<MessageCardProps> = ({
   group,
   ...props
 }) => {
-  const getLastMessage = () => {
-    if (!group.messages) {
-      return null;
-    }
-
-    const totalMessages = group.messages.length;
-
-    if (totalMessages === 0) {
-      return null;
-    }
-
-    return group.messages[totalMessages - 1];
-  }
-
-  const lastMessage = getLastMessage();
-
-  if (!lastMessage) {
-    return null;
-  }
-
   return (
     <Pressable {...props}>
       {({ pressed }) => (
         <View style={[styles.container, { opacity: pressed ? 0.7 : 1 }]}>
           <Avatar.Image
-            source={{ uri: group.image }}
+            source={{
+              uri: group.image || PLACEHOLDER_IMAGE,
+            }}
             style={styles.avatarImage}
             size={54}
           />
@@ -48,17 +31,17 @@ const MessageCard: React.FC<MessageCardProps> = ({
               <Text style={styles.titleText}>
                 {group.name}
               </Text>
-              {lastMessage && (
+              {group.latestMessage && group.latestMessage.message && (
                 <Text>
-                  {lastMessage.message.length > 50 ? `${lastMessage.message.slice(0, 50)}...` : lastMessage.message}
+                  {group.latestMessage.message.length > 50 ? `${group.latestMessage.message.slice(0, 50)}...` : group.latestMessage.message}
                 </Text>
               )}
             </View>
           </View>
           <View style={styles.messageInfo}>
-            {lastMessage && (
+            {group.latestMessage && (
               <Text>
-                {lastMessage.timeStamp}
+                {new Date(group.latestMessage.timeStamp).toLocaleTimeString()}
               </Text>
             )}
             {/* {group.newMessages !== 0 && (
