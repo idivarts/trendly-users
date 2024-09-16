@@ -9,7 +9,6 @@ export const populateManagers = async (db: Firestore, dummyManagers: any[]) => {
       email: manager.email,
       phoneNumber: manager.phoneNumber,
       location: manager.location,
-      dateOfBirth: manager.dateOfBirth,
     });
 
     console.log(`Manager ${manager.name} added successfully.`);
