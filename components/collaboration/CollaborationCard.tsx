@@ -13,6 +13,7 @@ export interface CollaborationAdCardProps extends ICollaboration {
   paymentVerified?: boolean;
   appliedCount?: number;
   aiSuccessRate?: string;
+  id: string;
   brandHireRate?: string;
   cardType: "collaboration" | "proposal" | "invitation";
 }
@@ -105,7 +106,7 @@ const JobCard = (props: CollaborationAdCardProps) => {
         <View style={styles.actionRow}>
           <Link
             href={{
-              pathname: "/collaboration-details",
+              pathname: `/collaboration-details/${props.id}`,
               params: {
                 collaborationName: props.name,
                 brandName: props.brandName,

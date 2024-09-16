@@ -19,6 +19,7 @@ interface ICollaborationAddCardProps extends ICollaboration {
   paymentVerified?: boolean;
   appliedCount?: number;
   aiSuccessRate?: string;
+  id: string;
   brandHireRate?: string;
 }
 
@@ -72,7 +73,9 @@ const Collaboration = () => {
   }) => {
     const collabRef = collection(FirestoreDB, "collaborations");
     const snapshot = await getDocs(collabRef);
-    const data = snapshot.docs.map((doc) => doc.data() as ICollaboration);
+    const data = snapshot.docs.map(
+      (doc) => ({ ...doc.data(), id: doc.id } as ICollaborationAddCardProps)
+    );
 
     const collabsWithBrandNames = data.map((collab) => ({
       ...collab,
