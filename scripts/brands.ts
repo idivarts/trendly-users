@@ -52,6 +52,7 @@ export const populateBrands = async (
           permissions: member.permissions,
         };
         await setDoc(memberDoc, memberData);
+
       }
     }
 

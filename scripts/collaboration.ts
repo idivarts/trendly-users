@@ -1,6 +1,7 @@
 import { addDoc, collection, Firestore, getDocs } from "firebase/firestore";
 import { collaborationsData } from "./dummy-data/collaboration";
 
+
 async function helper(
   FirestoreDB: Firestore,
   brands: {
@@ -21,6 +22,7 @@ async function helper(
 }
 
 export async function populateCollaborations(FirestoreDB: Firestore) {
+
   try {
     const brands = collection(FirestoreDB, "brands");
     const brandsList: { id: string; managerId: string }[] = [];
@@ -52,3 +54,4 @@ export async function populateCollaborations(FirestoreDB: Firestore) {
     console.log(e);
   }
 }
+
