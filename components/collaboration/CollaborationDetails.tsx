@@ -37,8 +37,7 @@ interface CollaborationAdCardProps {
   logo: string;
 }
 
-const CollaborationPage = () => {
-  const params: Partial<CollaborationAdCardProps> = useLocalSearchParams();
+const CollaborationPage = (props: any) => {
   const { colors } = useTheme();
   const styles = createStyles(colors);
 
@@ -52,35 +51,35 @@ const CollaborationPage = () => {
       >
         <BackButton />
         <Appbar.Content title="Collaboration Details" color={colors.text} />
-        <IconButton icon="dots-vertical" onPress={() => { }} />
+        <IconButton icon="dots-vertical" onPress={() => {}} />
       </Appbar.Header>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {/* Collaboration Details */}
         <Card style={styles.profileCard}>
           <Image
-            source={{ uri: params.logo }}
+            source={{ uri: props.logo }}
             style={styles.profileImage}
             resizeMode="contain"
           />
           <Card.Content style={styles.profileContent}>
             <Text variant="headlineMedium" style={styles.name}>
-              {params.collaborationName}
+              {props.collaborationDetail.name}
             </Text>
             <Text variant="bodyMedium" style={styles.brandName}>
-              {params.brandName}
+              {props.collaborationDetail.brandName}
             </Text>
             <Text variant="bodySmall" style={styles.shortDescription}>
-              {params.shortDescription}
+              {props.collaborationDetail.description}
             </Text>
             <View style={styles.statsContainer}>
               <Chip icon="checkbox-marked-circle" style={styles.statChip}>
-                {params.appliedCount} Applied
+                {props.appliedCount} Applied
               </Chip>
               <Chip icon="eye" style={styles.statChip}>
-                {params.brandViewed} Reviewed
+                {props.brandViewed} Reviewed
               </Chip>
               <Chip icon="map-marker" style={styles.statChip}>
-                {params.location}
+                {props.collaborationDetail.location.name}
               </Chip>
             </View>
           </Card.Content>
@@ -95,7 +94,7 @@ const CollaborationPage = () => {
             </Text>
           </View>
           <Card.Content>
-            <Paragraph>{params.adDescription}</Paragraph>
+            <Paragraph>{props.collaborationDetail.description}</Paragraph>
           </Card.Content>
         </Card>
 
@@ -108,7 +107,7 @@ const CollaborationPage = () => {
             </Text>
           </View>
           <Card.Content>
-            <Paragraph>{params.brandDescription}</Paragraph>
+            <Paragraph>{props.collaborationDetail.brandDescription}</Paragraph>
           </Card.Content>
         </Card>
 
@@ -121,7 +120,7 @@ const CollaborationPage = () => {
             </Text>
           </View>
           <Card.Content>
-            <Paragraph>{params.platform}</Paragraph>
+            <Paragraph>{props.collaborationDetail.platform}</Paragraph>
           </Card.Content>
         </Card>
 
@@ -134,8 +133,11 @@ const CollaborationPage = () => {
             </Text>
           </View>
           <Card.Content>
-            <Paragraph>Cost: {params.cost}</Paragraph>
-            <Paragraph>Payment Verified: {params.paymentVerified}</Paragraph>
+            <Paragraph>Cost: {props.collaborationDetail.budget.min}</Paragraph>
+            <Paragraph>
+              Payment Verified:{" "}
+              {props.collaborationDetail.paymentVerified ? "True" : "False"}
+            </Paragraph>
           </Card.Content>
         </Card>
       </ScrollView>

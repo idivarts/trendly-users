@@ -1,4 +1,4 @@
-import { addDoc, collection, Firestore } from "firebase/firestore";
+import { addDoc, collection, Firestore, setDoc, doc } from "firebase/firestore";
 
 export const populateBrands = async (
   db: Firestore,
@@ -45,11 +45,14 @@ export const populateBrands = async (
 
     if (brand.members && brand.members.length > 0) {
       for (const member of brand.members) {
-        await addDoc(membersCollection, {
+        const memberDoc = doc(membersCollection, managerId);
+        const memberData = {
           brandId: brandRef.id,
           managerId,
           permissions: member.permissions,
-        });
+        };
+        await setDoc(memberDoc, memberData);
+
       }
     }
 
