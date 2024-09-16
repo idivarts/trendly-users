@@ -25,10 +25,6 @@ const ChatScreen: React.FC = () => {
     fetchGroupByGroupId();
   }, [params.id]);
 
-  if (!params.id) {
-    <Redirect href="/messages" />;
-  }
-
   if (!group) {
     return (
       <View
@@ -41,6 +37,10 @@ const ChatScreen: React.FC = () => {
         <ActivityIndicator />
       </View>
     );
+  }
+
+  if (!params.id) {
+    <Redirect href="/messages" />;
   }
 
   return (

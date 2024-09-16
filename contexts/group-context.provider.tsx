@@ -113,8 +113,8 @@ export const GroupContextProvider: React.FC<PropsWithChildren> = ({ children }) 
         }
       }
 
-      const users = [];
-      const managers = [];
+      const users: any = {};
+      const managers: any = {};
 
       for (const userId of groupSnap.data().userIds) {
         const userDoc = doc(FirestoreDB, "users", userId);
@@ -123,19 +123,19 @@ export const GroupContextProvider: React.FC<PropsWithChildren> = ({ children }) 
         if (userSnap.exists()) {
           const userData = userSnap.data();
           if (userData) {
-            users.push(userData);
+            users[userSnap.id] = userData;
           }
         }
       }
 
       for (const managerId of groupSnap.data().managerIds) {
-        const managerDoc = doc(FirestoreDB, "users", managerId);
+        const managerDoc = doc(FirestoreDB, "managers", managerId);
         const managerSnap = await getDoc(managerDoc);
 
         if (managerSnap.exists()) {
           const managerData = managerSnap.data();
           if (managerData) {
-            managers.push(managerData);
+            managers[managerSnap.id] = managerData;
           }
         }
       }

@@ -1,8 +1,10 @@
 import Group from '@/components/messages';
+import { View } from '@/components/theme/Themed';
 import { useGroupContext } from '@/contexts';
 import { Groups } from '@/types/Groups';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
+import { ActivityIndicator } from 'react-native-paper';
 
 const GroupsScreen = () => {
   const [groups, setGroups] = useState<Groups[] | null>(null);
@@ -26,7 +28,17 @@ const GroupsScreen = () => {
   }, []);
 
   if (!groups) {
-    return null;
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <ActivityIndicator />
+      </View>
+    )
   }
 
   return (

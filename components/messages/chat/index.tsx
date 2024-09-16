@@ -144,7 +144,14 @@ const Chat: React.FC<ChatProps> = ({ group }) => {
           style={styles.flex}
           contentContainerStyle={styles.messageListContainer}
           keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item, index }) => <ChatMessage key={index} message={item} />}
+          renderItem={({ item, index }) => (
+            <ChatMessage
+              key={index}
+              message={item}
+              users={group.users}
+              managers={group.managers}
+            />
+          )}
           onEndReached={() => hasNext && !loading && fetchMessages()}
           onEndReachedThreshold={0.5}
           ListFooterComponent={loading ? <ActivityIndicator style={styles.loadingIndicator} /> : null}

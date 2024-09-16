@@ -22,6 +22,9 @@ const styles = StyleSheet.create({
   messageTime: {
     fontSize: 10,
   },
+  messageSenderName: {
+    fontWeight: "bold",
+  },
 });
 
 export default styles;
