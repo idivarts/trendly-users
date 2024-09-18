@@ -48,7 +48,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
           ]}
         >
           {message.attachments && message.attachments.length > 0 && message.attachments?.map((attachment) => {
-            if (attachment.type === "image") {
+            if (attachment.type === "image" && attachment.url) {
               return (
                 <Image
                   key={attachment.url}
@@ -59,7 +59,12 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
             }
           })}
           {message.message && (
-            <Text style={{ color: isSender ? "white" : "black" }}>
+            <Text
+              style={{
+                color: isSender ? "white" : "black",
+                textAlign: isSender ? "right" : "left",
+              }}
+            >
               {message.message}
             </Text>
           )}

@@ -11,8 +11,6 @@ const styles = StyleSheet.create({
   messageBubble: {
     borderRadius: 10,
     padding: 10,
-    position: "relative",
-    gap: 10,
   },
   messageImage: {
     width: 200,

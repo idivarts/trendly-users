@@ -27,6 +27,7 @@ const Chat: React.FC<ChatProps> = ({ group }) => {
   const [hasNext, setHasNext] = useState(false);
 
   const {
+    addMessageToGroup,
     getMessagesByGroupId,
   } = useGroupContext();
 
@@ -78,22 +79,26 @@ const Chat: React.FC<ChatProps> = ({ group }) => {
     }
   };
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!message.trim() && !capturedImage) return;
 
+    const attachments = capturedImage ? [{
+      url: capturedImage as string,
+      type: "image" as "image",
+    }] : [];
+
     const newMessage: IMessages = {
-      attachments: [{
-        url: capturedImage as string,
-        type: "image",
-      }],
+      attachments,
       groupId: group.id,
       message,
       userType: "user",
-      senderId: "user-id",
-      timeStamp: new Date().getMilliseconds(),
+      senderId: "IjOAHWjc3d8ff8u6Z2rD",
+      timeStamp: new Date().getTime(),
     };
 
-    setMessages([...messages, newMessage]);
+    await addMessageToGroup(group.id, newMessage);
+
+    setMessages([newMessage, ...messages]);
 
     // TODO: Create new message in real time and add it to the messages
 

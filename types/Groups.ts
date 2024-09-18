@@ -9,6 +9,7 @@ export interface Groups extends IGroups {
   collaboration?: any;
   image: string;
   latestMessage?: IMessages | null;
+  latestMessageTime: number | null;
   users: any[];
   managers: any[];
 }

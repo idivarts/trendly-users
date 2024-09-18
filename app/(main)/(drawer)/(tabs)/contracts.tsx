@@ -1,8 +1,5 @@
 import { FlatList, StyleSheet, TouchableOpacity } from "react-native";
 import { Text, View } from "@/components/theme/Themed";
-import JobCard from "@/components/CollaborationCard";
-import SearchComponent from "@/components/SearchComponent";
-import { useState } from "react";
 import AppLayout from "@/layouts/app-layout";
 import { Link } from "expo-router";
 import ContractCard from "@/components/ContractCard";
