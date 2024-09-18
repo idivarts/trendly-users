@@ -130,7 +130,7 @@ const JobCard = (props: CollaborationAdCardProps) => {
             <Button mode="text">View</Button>
           </Link>
           <Link
-            href={"apply-now"}
+            href={"/apply-now/" + props.id}
             style={{
               borderRadius: 4,
               padding: 10,

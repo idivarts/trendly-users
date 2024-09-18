@@ -51,4 +51,19 @@ export const createStyles = (colors: any) =>
       marginBottom: 12,
       textAlign: "center",
     },
+    uploadedFilesContainer: {
+      marginBottom: 16,
+      padding: 8,
+      borderColor: "gray",
+      borderWidth: 1,
+      borderRadius: 8,
+    },
+    uploadedFilesTitle: {
+      marginBottom: 8,
+      fontWeight: "bold",
+    },
+    fileChip: {
+      marginBottom: 8,
+      marginRight: 8,
+    },
   });
