@@ -5,7 +5,7 @@ export const createStyles = (colors: any) =>
     container: {
       flex: 1,
       padding: 20,
-      backgroundColor: "#f5f5f5",
+      backgroundColor: colors.background,
     },
     title: {
       fontSize: 26,

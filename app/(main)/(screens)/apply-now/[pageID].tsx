@@ -9,6 +9,7 @@ import {
   HelperText,
   IconButton,
   Chip,
+  Appbar,
 } from "react-native-paper";
 import * as DocumentPicker from "expo-document-picker";
 import { useTheme } from "@react-navigation/native";
@@ -26,6 +27,8 @@ import {
 } from "firebase/storage";
 import { StorageApp } from "@/shared-libs/utilities/storage";
 import { createStyles } from "@/styles/ApplyNow.styles";
+import AppLayout from "@/layouts/app-layout";
+import BackButton from "@/components/ui/back-button/BackButton";
 
 const ApplyScreen = () => {
   const theme = useTheme();
@@ -125,70 +128,84 @@ const ApplyScreen = () => {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <Title style={styles.title}>Apply Now</Title>
-
-      <HelperText type="info" style={styles.helperText}>
-        Write a short note to the brand about why you are interested in this
-      </HelperText>
-
-      {/* Note Input */}
-      <TextInput
-        label="Write a Short Note"
-        value={note}
-        onChangeText={(text) => setNote(text)}
-        mode="outlined"
-        style={styles.input}
-        multiline
-        theme={{ colors: { primary: theme.colors.primary } }}
-      />
-
-      {/* CV Upload */}
-      <Card style={styles.card} onPress={handleCvUpload}>
-        <Card.Content style={styles.cardContent}>
-          <IconButton icon="file-upload" size={40} style={styles.uploadIcon} />
-          <Paragraph>Upload Files</Paragraph>
-        </Card.Content>
-      </Card>
-
-      {/* Uploaded Files */}
-      {files.length > 0 && (
-        <View style={styles.uploadedFilesContainer}>
-          <Paragraph style={styles.uploadedFilesTitle}>
-            Uploaded Files:
-          </Paragraph>
-          {files.map((file, index) => (
-            <Chip
-              key={index}
-              icon="file"
-              style={styles.fileChip}
-              onPress={() => {
-                // Optionally, handle file click or remove
-              }}
-            >
-              {file.split("/").pop()}
-            </Chip>
-          ))}
-        </View>
-      )}
-
-      {/* Error Message */}
-      {errorMessage ? (
-        <HelperText type="error" style={styles.errorText}>
-          {errorMessage}
-        </HelperText>
-      ) : null}
-
-      {/* Submit Button */}
-      <Button
-        mode="contained"
-        onPress={handleSubmit}
-        style={styles.submitButton}
-        contentStyle={styles.buttonContent}
+    <AppLayout>
+      <Appbar.Header
+        statusBarHeight={0}
+        style={{
+          backgroundColor: colors.background,
+        }}
       >
-        Submit Application
-      </Button>
-    </ScrollView>
+        <BackButton />
+        <Appbar.Content title="Apply Now" color={colors.text} />
+        <IconButton icon="dots-vertical" onPress={() => {}} />
+      </Appbar.Header>
+      <ScrollView style={styles.container}>
+        <HelperText type="info" style={styles.helperText}>
+          Write a short note to the brand about why you are interested in this
+        </HelperText>
+
+        {/* Note Input */}
+        <TextInput
+          label="Write a Short Note"
+          value={note}
+          onChangeText={(text) => setNote(text)}
+          mode="outlined"
+          style={styles.input}
+          multiline
+          theme={{ colors: { primary: theme.colors.primary } }}
+        />
+
+        {/* CV Upload */}
+        <Card style={styles.card} onPress={handleCvUpload}>
+          <Card.Content style={styles.cardContent}>
+            <IconButton
+              icon="file-upload"
+              size={40}
+              style={styles.uploadIcon}
+            />
+            <Paragraph>Upload Files</Paragraph>
+          </Card.Content>
+        </Card>
+
+        {/* Uploaded Files */}
+        {files.length > 0 && (
+          <View style={styles.uploadedFilesContainer}>
+            <Paragraph style={styles.uploadedFilesTitle}>
+              Uploaded Files:
+            </Paragraph>
+            {files.map((file, index) => (
+              <Chip
+                key={index}
+                icon="file"
+                style={styles.fileChip}
+                onPress={() => {
+                  // Optionally, handle file click or remove
+                }}
+              >
+                {file.split("/").pop()}
+              </Chip>
+            ))}
+          </View>
+        )}
+
+        {/* Error Message */}
+        {errorMessage ? (
+          <HelperText type="error" style={styles.errorText}>
+            {errorMessage}
+          </HelperText>
+        ) : null}
+
+        {/* Submit Button */}
+        <Button
+          mode="contained"
+          onPress={handleSubmit}
+          style={styles.submitButton}
+          contentStyle={styles.buttonContent}
+        >
+          Submit Application
+        </Button>
+      </ScrollView>
+    </AppLayout>
   );
 };
 
