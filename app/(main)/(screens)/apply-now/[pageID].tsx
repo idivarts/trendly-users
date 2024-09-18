@@ -11,7 +11,6 @@ import {
   Chip,
 } from "react-native-paper";
 import * as DocumentPicker from "expo-document-picker";
-import * as FileSystem from "expo-file-system"; // Import FileSystem
 import { useTheme } from "@react-navigation/native";
 import { useLocalSearchParams } from "expo-router";
 import { FirestoreDB } from "@/shared-libs/utilities/firestore";
@@ -77,22 +76,18 @@ const ApplyScreen = () => {
         files.map(async (fileUri) => {
           const fileName = fileUri.split("/").pop();
 
-          // Fetch the file as a Blob
           const response = await fetch(fileUri);
           const blob = await response.blob();
 
           console.log("Uploading file", blob);
 
-          // Create a storage reference
           const fileRef = ref(
             StorageApp,
             `collaboration/${pageID}/applications/${user.user.uid}/${fileName}`
           );
 
-          // Upload the Blob
           await uploadBytes(fileRef, blob);
 
-          // Get the download URL for the uploaded file
           return getDownloadURL(fileRef);
         })
       );
