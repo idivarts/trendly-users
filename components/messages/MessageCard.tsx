@@ -5,7 +5,7 @@ import Colors from "@/constants/Colors";
 import { Pressable, PressableProps, View } from "react-native";
 import { Groups } from "@/types/Groups";
 import styles from "@/styles/messages/MessageCard.styles";
-import { PLACEHOLDER_IMAGE } from "@/constants/PlaceholderImage";
+import { PLACEHOLDER_IMAGE } from "@/constants/Placeholder";
 
 interface MessageCardProps extends PressableProps {
   group: Groups;

@@ -21,6 +21,7 @@ import {
   where,
 } from "firebase/firestore";
 import { createContext, useContext, useLayoutEffect, useState, type PropsWithChildren } from "react";
+import { useAuthContext } from "./auth-context.provider";
 
 interface Messages {
   hasNext: boolean;
@@ -66,7 +67,10 @@ export const useGroupContext = () => useContext(GroupContext);
 
 export const GroupContextProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const [groups, setGroups] = useState<Groups[] | null>(null);
-  const userId = "IjOAHWjc3d8ff8u6Z2rD"; // TODO: get user id from auth context
+
+  const {
+    user,
+  } = useAuthContext();
 
   useLayoutEffect(() => {
     let unsubscribe: (() => void) | undefined;
@@ -88,14 +92,14 @@ export const GroupContextProvider: React.FC<PropsWithChildren> = ({ children }) 
       });
     };
 
-    fetchGroupsByUserId(userId);
+    fetchGroupsByUserId(user?.id || "");
 
     return () => {
       if (typeof unsubscribe === 'function') {
         unsubscribe();
       }
     };
-  }, [userId]);
+  }, [user?.id]);
 
   const getGroupsAndSortByLatestMessage = async (
     snapshot: QuerySnapshot<DocumentData, DocumentData>,
