@@ -42,6 +42,12 @@ const ApplyScreen = () => {
   const { colors } = useTheme();
   const styles = createStyles(colors);
 
+  const resetForm = () => {
+    setNote("");
+    setFiles([]);
+    setErrorMessage("");
+  };
+
   const handleCvUpload = async () => {
     const file = await DocumentPicker.getDocumentAsync({});
     if (!file.canceled) {
@@ -117,6 +123,7 @@ const ApplyScreen = () => {
       if (docset) {
         setErrorMessage("Application submitted successfully");
         console.log("Application submitted successfully");
+        resetForm();
       } else {
         setErrorMessage("Failed to submit application");
         console.log("Failed to submit application");
