@@ -7,6 +7,9 @@ import { Link } from "expo-router";
 import { useTheme } from "@react-navigation/native";
 import { createStyles } from "@/styles/Proposal.styles";
 import { DummyProposalData } from "@/constants/Proposal";
+import { PromotionType } from "@/shared-libs/firestore/trendly-pro/constants/promotion-type";
+import { CollaborationType } from "@/shared-libs/firestore/trendly-pro/constants/collaboration-type";
+import { SocialPlatform } from "@/shared-libs/firestore/trendly-pro/constants/social-platform";
 
 const ProposalScreen = () => {
   const [selectedTab, setSelectedTab] = useState<"proposals" | "forYou">(
@@ -53,14 +56,29 @@ const ProposalScreen = () => {
             data={DummyProposalData}
             renderItem={({ item }) => (
               <JobCard
-                collaborationName={item.collaborationName}
+                name="Proposal"
                 brandName={item.brandName}
-                postedDate={item.postedDateAndTime}
-                cost={item.cost}
-                promotionType={item.promotionType}
-                collaborationType={item.collaborationType}
-                coverLetter={item.coverLetter}
+                brandId="brandId"
+                budget={{
+                  min: Number(item.cost),
+                  max: Number(item.cost),
+                }}
                 cardType="proposal"
+                collaborationType={CollaborationType.PAID}
+                id="1"
+                location={{
+                  latlong: {
+                    latitude: 0,
+                    longitude: 0,
+                  },
+                  name: "Location",
+                  type: "physical",
+                }}
+                managerId="managerId"
+                numberOfInfluencersNeeded={1}
+                platform={SocialPlatform.INSTAGRAM}
+                promotionType={PromotionType.ADD_REVIEWS}
+                timeStamp={new Date().getTime()}
               />
             )}
             keyExtractor={(item, index) => index.toString()}
@@ -106,14 +124,29 @@ const ProposalScreen = () => {
             data={DummyProposalData}
             renderItem={({ item }) => (
               <JobCard
-                collaborationName={item.collaborationName}
+                name="Proposal"
                 brandName={item.brandName}
-                postedDate={item.postedDateAndTime}
-                cost={item.cost}
-                promotionType={item.promotionType}
-                collaborationType={item.collaborationType}
-                coverLetter={item.coverLetter}
-                cardType="invitation"
+                brandId="brandId"
+                budget={{
+                  min: Number(item.cost),
+                  max: Number(item.cost),
+                }}
+                cardType="proposal"
+                collaborationType={CollaborationType.PAID}
+                id="1"
+                location={{
+                  latlong: {
+                    latitude: 0,
+                    longitude: 0,
+                  },
+                  name: "Location",
+                  type: "physical",
+                }}
+                managerId="managerId"
+                numberOfInfluencersNeeded={1}
+                platform={SocialPlatform.INSTAGRAM}
+                promotionType={PromotionType.ADD_REVIEWS}
+                timeStamp={new Date().getTime()}
               />
             )}
             keyExtractor={(item, index) => index.toString()}

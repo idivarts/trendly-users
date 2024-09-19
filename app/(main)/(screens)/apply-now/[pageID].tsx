@@ -14,10 +14,10 @@ import {
 import * as DocumentPicker from "expo-document-picker";
 import { useTheme } from "@react-navigation/native";
 import { useLocalSearchParams } from "expo-router";
-import { FirestoreDB } from "@/shared-libs/utilities/firestore";
+import { FirestoreDB } from "@/utils/firestore";
 import { addDoc, collection } from "firebase/firestore";
 import { signInAnonymously, signInWithEmailAndPassword } from "firebase/auth";
-import { AuthApp } from "@/shared-libs/utilities/auth";
+import { AuthApp } from "@/utils/auth";
 import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import {
   getDownloadURL,
@@ -25,7 +25,7 @@ import {
   uploadBytes,
   uploadString,
 } from "firebase/storage";
-import { StorageApp } from "@/shared-libs/utilities/storage";
+import { StorageApp } from "@/utils/firebase-storage";
 import { createStyles } from "@/styles/ApplyNow.styles";
 import AppLayout from "@/layouts/app-layout";
 import BackButton from "@/components/ui/back-button/BackButton";
