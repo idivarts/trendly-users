@@ -1,29 +1,31 @@
 import Chat from "@/components/messages/chat";
-import { CONVERSATIONS } from "@/constants/Conversations";
-import { Conversation } from "@/types/Conversation";
+import { useGroupContext } from "@/contexts";
+import { Groups } from "@/types/Groups";
 import { Redirect, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { View } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
 
 const ChatScreen: React.FC = () => {
-  const [conversation, setConversation] = useState<Conversation | null>(null);
+  const [group, setGroup] = useState<Groups | null>(null);
   const params = useLocalSearchParams();
 
-  useEffect(() => {
+  const {
+    getGroupByGroupId,
+  } = useGroupContext();
+
+  const fetchGroupByGroupId = async () => {
     if (params.id) {
-      const selectedConversation = CONVERSATIONS.find(
-        (conversation) => conversation.id === params.id
-      );
-      setConversation(selectedConversation as Conversation);
+      const selectedGroup = await getGroupByGroupId(params.id as string);
+      setGroup(selectedGroup as Groups);
     }
+  };
+
+  useEffect(() => {
+    fetchGroupByGroupId();
   }, [params.id]);
 
-  if (!params.id) {
-    <Redirect href="/messages" />;
-  }
-
-  if (!conversation) {
+  if (!group) {
     return (
       <View
         style={{
@@ -37,9 +39,13 @@ const ChatScreen: React.FC = () => {
     );
   }
 
+  if (!params.id) {
+    <Redirect href="/messages" />;
+  }
+
   return (
     <Chat
-      conversation={conversation}
+      group={group}
     />
   );
 };
