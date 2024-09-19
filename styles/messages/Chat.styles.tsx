@@ -31,9 +31,15 @@ const styles = StyleSheet.create({
   capturedImageContainer: {
     flexDirection: "row",
     alignItems: "center",
+    position: "relative",
     backgroundColor: Colors.regular.platinum,
     padding: 10,
     paddingBottom: 0,
+  },
+  closeButton: {
+    position: "absolute",
+    right: 2,
+    top: 2,
   },
   capturedImage: {
     width: 200,

@@ -13,6 +13,7 @@ import { IMessages } from "@/shared-libs/firestore/trendly-pro/models/groups";
 import { useGroupContext } from "@/contexts";
 import { DocumentSnapshot } from "firebase/firestore";
 import { PLACEHOLDER_IMAGE } from "@/constants/PlaceholderImage";
+import { useFirebaseStorageContext } from "@/contexts/firebase-storage-context.provider";
 
 interface ChatProps {
   group: Groups;
@@ -22,6 +23,7 @@ const Chat: React.FC<ChatProps> = ({ group }) => {
   const [message, setMessage] = useState("");
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [isSending, setIsSending] = useState(false);
 
   const [messages, setMessages] = useState([] as IMessages[]);
   const [lastMessage, setLastMessage] = useState<DocumentSnapshot | null>(null);
@@ -32,6 +34,9 @@ const Chat: React.FC<ChatProps> = ({ group }) => {
     fetchNextMessages,
     getMessagesByGroupId,
   } = useGroupContext();
+  const {
+    uploadImage,
+  } = useFirebaseStorageContext();
 
   const { xl } = useBreakpoints();
 
@@ -84,6 +89,7 @@ const Chat: React.FC<ChatProps> = ({ group }) => {
     }
 
     const result = await ImagePicker.launchCameraAsync({
+      cameraType: ImagePicker.CameraType.back,
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       quality: 1,
@@ -96,9 +102,22 @@ const Chat: React.FC<ChatProps> = ({ group }) => {
 
   const handleSend = async () => {
     if (!message.trim() && !capturedImage) return;
+    setIsSending(true);
+    const senderId = "IjOAHWjc3d8ff8u6Z2rD";
+    const timeStamp = new Date().getTime();
+    const userType = "user";
 
-    const attachments = capturedImage ? [{
-      url: capturedImage as string,
+    let uploadedImage: string | null = null;
+
+    if (capturedImage) {
+      uploadedImage = await uploadImage(
+        capturedImage,
+        `groups/${group.id}/${userType}-${senderId}-${timeStamp}`,
+      );
+    }
+
+    const attachments = uploadedImage ? [{
+      url: uploadedImage,
       type: "image" as "image",
     }] : [];
 
@@ -106,9 +125,9 @@ const Chat: React.FC<ChatProps> = ({ group }) => {
       attachments,
       groupId: group.id,
       message,
-      userType: "user",
-      senderId: "IjOAHWjc3d8ff8u6Z2rD",
-      timeStamp: new Date().getTime(),
+      userType,
+      senderId,
+      timeStamp,
     };
 
     await addMessageToGroup(group.id, newMessage);
@@ -117,6 +136,7 @@ const Chat: React.FC<ChatProps> = ({ group }) => {
 
     // TODO: Create new message in real time and add it to the messages
 
+    setIsSending(false);
     setMessage("");
     setCapturedImage(null);
   };
@@ -180,7 +200,15 @@ const Chat: React.FC<ChatProps> = ({ group }) => {
 
         {capturedImage && (
           <View style={styles.capturedImageContainer}>
-            <Image source={{ uri: capturedImage }} style={styles.capturedImage} />
+            <Image
+              source={{ uri: capturedImage }}
+              style={styles.capturedImage}
+            />
+            <IconButton
+              style={styles.closeButton}
+              icon="close"
+              onPress={() => setCapturedImage(null)}
+            />
           </View>
         )}
 
@@ -196,11 +224,22 @@ const Chat: React.FC<ChatProps> = ({ group }) => {
             selectionColor={Colors.regular.primary}
           />
           {(message.length > 0 || capturedImage) ? (
-            <IconButton icon="send" onPress={handleSend} />
+            <IconButton
+              disabled={isSending}
+              icon="send"
+              onPress={handleSend}
+            />
           ) : (
             <>
-              <IconButton icon="camera" onPress={openCamera} />
-              <IconButton icon="microphone" />
+              <IconButton
+                disabled={isSending}
+                icon="camera"
+                onPress={openCamera}
+              />
+              <IconButton
+                disabled={isSending}
+                icon="microphone"
+              />
             </>
           )}
         </View>

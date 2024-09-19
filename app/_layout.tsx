@@ -12,6 +12,7 @@ import "react-native-reanimated";
 
 import { useColorScheme } from "@/components/theme/useColorScheme";
 import { AuthContextProvider, useAuthContext } from "@/contexts";
+import { FirebaseStorageContextProvider } from "@/contexts/firebase-storage-context.provider";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -49,7 +50,9 @@ const RootLayout = () => {
 
   return (
     <AuthContextProvider>
-      <RootLayoutStack />
+      <FirebaseStorageContextProvider>
+        <RootLayoutStack />
+      </FirebaseStorageContextProvider>
     </AuthContextProvider>
   );
 };
