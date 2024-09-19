@@ -5,7 +5,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
-    marginHorizontal: 'auto',
     maxWidth: 560,
     paddingHorizontal: 20,
     paddingVertical: 10,

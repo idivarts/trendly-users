@@ -84,7 +84,12 @@ const BasicProfile: React.FC<BasicProfileProps> = ({
 
   return (
     <View
-      style={styles.container}
+      style={[
+        styles.container,
+        {
+          marginHorizontal: lg ? "auto" : 0,
+        }
+      ]}
     >
       <View
         style={styles.avatarSection}

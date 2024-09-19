@@ -11,6 +11,8 @@ import { useRouter } from "expo-router";
 import { doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
 import { FirestoreDB } from "@/utils/firestore";
 import { User } from "@/types/User";
+import { signInAnonymously } from "firebase/auth";
+import { AuthApp } from "@/utils/auth";
 
 interface AuthContextProps {
   isLoading: boolean;
@@ -45,6 +47,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
   const userId = "IjOAHWjc3d8ff8u6Z2rD"; // TODO: get user id from session
 
   const fetchUser = async () => {
+    await signInAnonymously(AuthApp);
     if (session) {
       const userDocRef = doc(FirestoreDB, 'users', userId);
 
@@ -110,6 +113,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
     userId: string,
     user: Partial<User>,
   ): Promise<void> => {
+    await signInAnonymously(AuthApp);
     const userRef = doc(FirestoreDB, "users", userId);
 
     await updateDoc(userRef, {
