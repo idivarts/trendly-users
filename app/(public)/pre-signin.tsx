@@ -105,12 +105,12 @@ const PreSignIn = () => {
                   () => promptAsync({})
                 )}
                 {renderSocialButton("mail-outline", "Login with Email", () =>
-                  console.log("Email Login")
+                  router.push("/questions")
                 )}
                 {renderSocialButton(
                   "logo-instagram",
                   "Login with Instagram",
-                  () => console.log("Instagram Login")
+                  () => router.push("/questions")
                 )}
               </View>
             )}

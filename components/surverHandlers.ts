@@ -3,6 +3,7 @@ import { signInWithEmailAndPassword, signInAnonymously } from "firebase/auth";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { AuthApp } from "@/shared-libs/utilities/auth";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
+import { useRouter } from "expo-router";
 
 export const handleNextQuestion = (
   currentQuestionIndex: number,
@@ -59,5 +60,6 @@ export const handlePreviousQuestion = (
 };
 
 export const handleSkipQuestion = () => {
-  console.log("Skip pressed");
+  const router = useRouter();
+  router.replace("/proposals");
 };

@@ -9,6 +9,7 @@
     "web": "expo start --web",
     "test": "jest --watchAll",
     "build": "expo export -p web",
+    "build-ios": "expo run:ios",
     "postinstall": "sh shared-libs/scripts/setup-hooks.sh && npm install --prefix shared-libs && npm install --prefix shared-uis && npm install --prefix shared-constants",
     "populate": "ts-node scripts/populate.ts"
   },
