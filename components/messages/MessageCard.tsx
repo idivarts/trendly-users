@@ -31,7 +31,7 @@ const MessageCard: React.FC<MessageCardProps> = ({
               <Text style={styles.titleText}>
                 {group.name}
               </Text>
-              {group.latestMessage && group.latestMessage.message && (
+              {group?.latestMessage && group?.latestMessage?.message && (
                 <Text>
                   {group.latestMessage.message.length > 50 ? `${group.latestMessage.message.slice(0, 50)}...` : group.latestMessage.message}
                 </Text>
@@ -39,9 +39,9 @@ const MessageCard: React.FC<MessageCardProps> = ({
             </View>
           </View>
           <View style={styles.messageInfo}>
-            {group.latestMessage && (
+            {group?.latestMessage && (
               <Text>
-                {new Date(group.latestMessage.timeStamp).toLocaleTimeString()}
+                {new Date(group?.latestMessage?.timeStamp).toLocaleTimeString()}
               </Text>
             )}
             {/* {group.newMessages !== 0 && (

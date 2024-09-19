@@ -17,9 +17,10 @@ import {
   query,
   QuerySnapshot,
   startAfter,
+  updateDoc,
   where,
 } from "firebase/firestore";
-import { createContext, useContext, useEffect, useState, type PropsWithChildren } from "react";
+import { createContext, useContext, useLayoutEffect, useState, type PropsWithChildren } from "react";
 
 interface Messages {
   hasNext: boolean;
@@ -29,15 +30,31 @@ interface Messages {
 
 interface GroupContextProps {
   addMessageToGroup: (groupId: string, message: Partial<IMessages>) => Promise<void>;
+  fetchNextMessages: (
+    groupId: string,
+    after: DocumentSnapshot,
+    count?: number,
+  ) => Promise<Messages>;
   getGroupByGroupId: (groupId: string) => Promise<Groups | null>;
-  getMessagesByGroupId: (groupId: string, after: any) => Promise<Messages>;
+  getMessagesByGroupId: (
+    groupId: string,
+    count?: number,
+  ) => Promise<Messages>;
   groups: Groups[] | null;
 }
 
 const GroupContext = createContext<GroupContextProps>({
   addMessageToGroup: (groupId: string, message: Partial<IMessages>) => Promise.resolve(),
+  fetchNextMessages: (groupId: string, after: DocumentSnapshot, count?: number) => Promise.resolve({
+    hasNext: false,
+    lastMessage: null,
+    messages: [],
+  }),
   getGroupByGroupId: (groupId: string) => Promise.resolve(null),
-  getMessagesByGroupId: (groupId: string, after: any) => Promise.resolve({
+  getMessagesByGroupId: (
+    groupId: string,
+    count?: number,
+  ) => Promise.resolve({
     hasNext: false,
     lastMessage: null,
     messages: [],
@@ -51,7 +68,7 @@ export const GroupContextProvider: React.FC<PropsWithChildren> = ({ children }) 
   const [groups, setGroups] = useState<Groups[] | null>(null);
   const userId = "IjOAHWjc3d8ff8u6Z2rD"; // TODO: get user id from auth context
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     let unsubscribe: (() => void) | undefined;
 
     const fetchGroupsByUserId = async (userId: string) => {
@@ -61,7 +78,8 @@ export const GroupContextProvider: React.FC<PropsWithChildren> = ({ children }) 
 
       const groupsQuery = query(
         groupsRef,
-        where("userIds", "array-contains", userId)
+        where("userIds", "array-contains", userId),
+        orderBy("updatedAt", "desc"),
       );
 
       unsubscribe = onSnapshot(groupsQuery, async (querySnapshot) => {
@@ -82,23 +100,11 @@ export const GroupContextProvider: React.FC<PropsWithChildren> = ({ children }) 
   const getGroupsAndSortByLatestMessage = async (
     snapshot: QuerySnapshot<DocumentData, DocumentData>,
   ): Promise<Groups[]> => {
-    const groups: (Groups & { latestMessageTime?: number })[] = [];
+    const groups: Groups[] = [];
 
     for (const groupDoc of snapshot.docs) {
       const groupData = groupDoc.data() as Groups;
       groupData.id = groupDoc.id;
-
-      const messagesRef = collection(groupDoc.ref, "messages");
-      const messagesQuery = query(messagesRef, orderBy("timeStamp", "desc"), limit(1));
-      const messagesSnapshot = await getDocs(messagesQuery);
-
-      let latestMessage: IMessages | null = null;
-      let latestMessageTime: number | null = null;
-
-      if (!messagesSnapshot.empty) {
-        latestMessage = messagesSnapshot.docs[0].data() as IMessages;
-        latestMessageTime = latestMessage.timeStamp;
-      }
 
       // Fetch and populate collaboration details if available
       if (groupData.collaborationId) {
@@ -111,13 +117,8 @@ export const GroupContextProvider: React.FC<PropsWithChildren> = ({ children }) 
 
       groups.push({
         ...groupData,
-        latestMessage,
-        latestMessageTime: latestMessageTime as number,
       });
     }
-
-    // Sort groups by latest message time (descending)
-    groups.sort((a, b) => (b.latestMessageTime || 0) - (a.latestMessageTime || 0));
 
     return groups;
   };
@@ -180,28 +181,21 @@ export const GroupContextProvider: React.FC<PropsWithChildren> = ({ children }) 
     }
   };
 
-  const getMessagesByGroupId = async (groupId: string, after: IMessages): Promise<Messages> => {
+  const fetchNextMessages = async (
+    groupId: string,
+    after: DocumentSnapshot,
+    count?: number,
+  ): Promise<Messages> => {
     await signInAnonymously(AuthApp);
     try {
-      const groupDoc = doc(FirestoreDB, "groups", groupId);
-      const groupSnap = await getDoc(groupDoc);
+      const groupRef = doc(FirestoreDB, "groups", groupId);
 
-      if (!groupSnap.exists()) {
-        return {
-          hasNext: false,
-          lastMessage: null,
-          messages: [],
-        };
-      }
-
-      const messagesRef = collection(groupSnap.ref, "messages");
-      const messagesQuery = after
-        ? query(messagesRef, orderBy("timeStamp", "desc"), startAfter(after), limit(30))
-        : query(messagesRef, orderBy("timeStamp", "desc"), limit(30));
+      const messagesRef = collection(groupRef, "messages");
+      const messagesQuery = count ? query(messagesRef, orderBy("timeStamp", "desc"), startAfter(after), limit(count)) : query(messagesRef, orderBy("timeStamp", "desc"), startAfter(after));
       const messagesSnapshot = await getDocs(messagesQuery);
 
       return {
-        hasNext: messagesSnapshot.docs.length === 30,
+        hasNext: messagesSnapshot.docs.length === count,
         lastMessage: messagesSnapshot.docs[messagesSnapshot.docs.length - 1],
         messages: messagesSnapshot.docs.map((doc) => doc.data() as IMessages),
       }
@@ -215,13 +209,57 @@ export const GroupContextProvider: React.FC<PropsWithChildren> = ({ children }) 
     }
   };
 
-  const addMessageToGroup = async (groupId: string, message: Partial<IMessages>) => {
+  const fetchMessages = async (
+    snapshot: QuerySnapshot<DocumentData, DocumentData>,
+  ): Promise<Messages> => {
+    return {
+      hasNext: snapshot.docs.length === 30,
+      lastMessage: snapshot.docs[snapshot.docs.length - 1],
+      messages: snapshot.docs.map((doc) => doc.data() as IMessages),
+    }
+  }
+
+  const getMessagesByGroupId = async (
+    groupId: string,
+    count?: number,
+  ): Promise<Messages> => {
+    await signInAnonymously(AuthApp);
+    try {
+      const groupRef = doc(FirestoreDB, "groups", groupId);
+
+      const messagesRef = collection(groupRef, "messages");
+      const messagesQuery = count ? query(messagesRef, orderBy("timeStamp", "desc"), limit(count)) : query(messagesRef, orderBy("timeStamp", "desc"));
+      const messagesSnapshot = await getDocs(messagesQuery);
+
+      return {
+        hasNext: messagesSnapshot.docs.length === count,
+        lastMessage: messagesSnapshot.docs[messagesSnapshot.docs.length - 1],
+        messages: messagesSnapshot.docs.map((doc) => doc.data() as IMessages),
+      }
+    } catch (error) {
+      console.error("Error fetching messages: ", error);
+      return {
+        hasNext: false,
+        lastMessage: null,
+        messages: [],
+      }
+    }
+  };
+
+  const addMessageToGroup = async (
+    groupId: string,
+    message: Partial<IMessages>,
+  ) => {
     await signInAnonymously(AuthApp);
     try {
       const groupDoc = doc(FirestoreDB, "groups", groupId);
       const groupSnap = await getDoc(groupDoc);
       const messagesRef = collection(groupSnap.ref, "messages");
       await addDoc(messagesRef, message);
+      await updateDoc(groupDoc, {
+        latestMessage: message,
+        updatedAt: message.timeStamp,
+      });
     } catch (error) {
       console.error("Error adding message: ", error);
     }
@@ -231,6 +269,7 @@ export const GroupContextProvider: React.FC<PropsWithChildren> = ({ children }) 
     <GroupContext.Provider
       value={{
         addMessageToGroup,
+        fetchNextMessages,
         getGroupByGroupId,
         getMessagesByGroupId,
         groups,

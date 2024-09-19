@@ -20,42 +20,57 @@ interface ChatProps {
 
 const Chat: React.FC<ChatProps> = ({ group }) => {
   const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [messages, setMessages] = useState([] as IMessages[]);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const [messages, setMessages] = useState([] as IMessages[]);
   const [lastMessage, setLastMessage] = useState<DocumentSnapshot | null>(null);
   const [hasNext, setHasNext] = useState(false);
 
   const {
     addMessageToGroup,
+    fetchNextMessages,
     getMessagesByGroupId,
   } = useGroupContext();
 
   const { xl } = useBreakpoints();
 
-  const fetchMessages = async () => {
-    if (loading) return;
+  const fetchFirst30Messages = async () => {
     setLoading(true);
 
-    let response;
+    const response = await getMessagesByGroupId(
+      group.id,
+      30,
+    );
 
-    if (lastMessage) {
-      response = await getMessagesByGroupId(group.id, lastMessage);
-    } else {
-      response = await getMessagesByGroupId(group.id, null);
-    };
-
-    const newMessages = response.messages;
     setHasNext(response.hasNext);
     setLastMessage(response.lastMessage);
-    setMessages([...messages, ...newMessages]);
+    setMessages(response.messages);
 
     setLoading(false);
+  }
+
+  const fetchNext30Messages = async () => {
+    if (lastMessage) {
+      setLoading(true);
+
+      const response = await fetchNextMessages(
+        group.id,
+        lastMessage,
+        30,
+      );
+      const newMessages = response.messages;
+      setHasNext(response.hasNext);
+      setLastMessage(response.lastMessage);
+      setMessages([...messages, ...newMessages]);
+
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
     if (group) {
-      fetchMessages();
+      fetchFirst30Messages();
     }
   }, []);
 
@@ -157,7 +172,7 @@ const Chat: React.FC<ChatProps> = ({ group }) => {
               managers={group.managers}
             />
           )}
-          onEndReached={() => hasNext && !loading && fetchMessages()}
+          onEndReached={() => hasNext && !loading && fetchNext30Messages()}
           onEndReachedThreshold={0.5}
           ListFooterComponent={loading ? <ActivityIndicator style={styles.loadingIndicator} /> : null}
           inverted
