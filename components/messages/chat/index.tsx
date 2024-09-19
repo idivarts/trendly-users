@@ -4,7 +4,7 @@ import { useBreakpoints } from "@/hooks";
 import { Groups } from "@/types/Groups";
 import { useEffect, useState } from "react";
 import { FlatList, Image, KeyboardAvoidingView, Platform } from "react-native";
-import { ActivityIndicator, Appbar, Avatar, IconButton, TextInput } from "react-native-paper";
+import { ActivityIndicator, Appbar, Avatar, IconButton, Modal, TextInput } from "react-native-paper";
 import * as ImagePicker from 'expo-image-picker';
 import ChatMessage from "./ChatMessage";
 import { View } from "@/components/theme/Themed";
@@ -13,6 +13,7 @@ import { IMessages } from "@/shared-libs/firestore/trendly-pro/models/groups";
 import { useGroupContext } from "@/contexts";
 import { DocumentSnapshot } from "firebase/firestore";
 import { PLACEHOLDER_IMAGE } from "@/constants/PlaceholderImage";
+import { useFirebaseStorageContext } from "@/contexts/firebase-storage-context.provider";
 
 interface ChatProps {
   group: Groups;
@@ -20,41 +21,63 @@ interface ChatProps {
 
 const Chat: React.FC<ChatProps> = ({ group }) => {
   const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [messages, setMessages] = useState([] as IMessages[]);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [isSending, setIsSending] = useState(false);
+  const [modalImage, setModalImage] = useState<string | null>(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const [messages, setMessages] = useState([] as IMessages[]);
   const [lastMessage, setLastMessage] = useState<DocumentSnapshot | null>(null);
   const [hasNext, setHasNext] = useState(false);
 
   const {
+    addMessageToGroup,
+    fetchNextMessages,
     getMessagesByGroupId,
   } = useGroupContext();
+  const {
+    uploadImage,
+  } = useFirebaseStorageContext();
 
   const { xl } = useBreakpoints();
 
-  const fetchMessages = async () => {
-    if (loading) return;
+  const fetchFirst30Messages = async () => {
     setLoading(true);
 
-    let response;
+    const response = await getMessagesByGroupId(
+      group.id,
+      30,
+    );
 
-    if (lastMessage) {
-      response = await getMessagesByGroupId(group.id, lastMessage);
-    } else {
-      response = await getMessagesByGroupId(group.id, null);
-    };
-
-    const newMessages = response.messages;
     setHasNext(response.hasNext);
     setLastMessage(response.lastMessage);
-    setMessages([...messages, ...newMessages]);
+    setMessages(response.messages);
 
     setLoading(false);
+  }
+
+  const fetchNext30Messages = async () => {
+    if (lastMessage) {
+      setLoading(true);
+
+      const response = await fetchNextMessages(
+        group.id,
+        lastMessage,
+        30,
+      );
+      const newMessages = response.messages;
+      setHasNext(response.hasNext);
+      setLastMessage(response.lastMessage);
+      setMessages([...messages, ...newMessages]);
+
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
     if (group) {
-      fetchMessages();
+      fetchFirst30Messages();
     }
   }, []);
 
@@ -68,6 +91,7 @@ const Chat: React.FC<ChatProps> = ({ group }) => {
     }
 
     const result = await ImagePicker.launchCameraAsync({
+      cameraType: ImagePicker.CameraType.back,
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       quality: 1,
@@ -78,25 +102,43 @@ const Chat: React.FC<ChatProps> = ({ group }) => {
     }
   };
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!message.trim() && !capturedImage) return;
+    setIsSending(true);
+    const senderId = "IjOAHWjc3d8ff8u6Z2rD";
+    const timeStamp = new Date().getTime();
+    const userType = "user";
+
+    let uploadedImage: string | null = null;
+
+    if (capturedImage) {
+      uploadedImage = await uploadImage(
+        capturedImage,
+        `groups/${group.id}/${userType}-${senderId}-${timeStamp}`,
+      );
+    }
+
+    const attachments = uploadedImage ? [{
+      url: uploadedImage,
+      type: "image" as "image",
+    }] : [];
 
     const newMessage: IMessages = {
-      attachments: [{
-        url: capturedImage as string,
-        type: "image",
-      }],
+      attachments,
       groupId: group.id,
       message,
-      userType: "user",
-      senderId: "user-id",
-      timeStamp: new Date().getMilliseconds(),
+      userType,
+      senderId,
+      timeStamp,
     };
 
-    setMessages([...messages, newMessage]);
+    await addMessageToGroup(group.id, newMessage);
+
+    setMessages([newMessage, ...messages]);
 
     // TODO: Create new message in real time and add it to the messages
 
+    setIsSending(false);
     setMessage("");
     setCapturedImage(null);
   };
@@ -143,16 +185,18 @@ const Chat: React.FC<ChatProps> = ({ group }) => {
           data={messages}
           style={styles.flex}
           contentContainerStyle={styles.messageListContainer}
-          keyExtractor={(item, index) => index.toString()}
+          keyExtractor={(item, index) => index.toString() + item.timeStamp}
           renderItem={({ item, index }) => (
             <ChatMessage
-              key={index}
-              message={item}
-              users={group.users}
+              key={index + item.timeStamp}
               managers={group.managers}
+              message={item}
+              setIsModalVisible={setIsModalVisible}
+              setModalImage={setModalImage}
+              users={group.users}
             />
           )}
-          onEndReached={() => hasNext && !loading && fetchMessages()}
+          onEndReached={() => hasNext && !loading && fetchNext30Messages()}
           onEndReachedThreshold={0.5}
           ListFooterComponent={loading ? <ActivityIndicator style={styles.loadingIndicator} /> : null}
           inverted
@@ -160,7 +204,15 @@ const Chat: React.FC<ChatProps> = ({ group }) => {
 
         {capturedImage && (
           <View style={styles.capturedImageContainer}>
-            <Image source={{ uri: capturedImage }} style={styles.capturedImage} />
+            <Image
+              source={{ uri: capturedImage }}
+              style={styles.capturedImage}
+            />
+            <IconButton
+              style={styles.closeButton}
+              icon="close"
+              onPress={() => setCapturedImage(null)}
+            />
           </View>
         )}
 
@@ -176,15 +228,49 @@ const Chat: React.FC<ChatProps> = ({ group }) => {
             selectionColor={Colors.regular.primary}
           />
           {(message.length > 0 || capturedImage) ? (
-            <IconButton icon="send" onPress={handleSend} />
+            <IconButton
+              disabled={isSending}
+              icon="send"
+              onPress={handleSend}
+            />
           ) : (
             <>
-              <IconButton icon="camera" onPress={openCamera} />
-              <IconButton icon="microphone" />
+              <IconButton
+                disabled={isSending}
+                icon="camera"
+                onPress={openCamera}
+              />
+              <IconButton
+                disabled={isSending}
+                icon="microphone"
+              />
             </>
           )}
         </View>
       </KeyboardAvoidingView>
+      {
+        <Modal
+          contentContainerStyle={styles.imageModalContainer}
+          style={styles.imageModalStyle}
+          visible={isModalVisible}
+        >
+          <View
+            style={styles.imageModalImageContainer}
+          >
+            <IconButton
+              icon="close"
+              onPress={() => setIsModalVisible(false)}
+              style={styles.imageModalCloseButton}
+            />
+            <Image
+              source={{
+                uri: modalImage ?? "",
+              }}
+              style={styles.imageModalImage}
+            />
+          </View>
+        </Modal>
+      }
     </View>
   );
 };
