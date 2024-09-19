@@ -3,9 +3,10 @@
     "name": "trendly-users",
     "slug": "trendly-users",
     "version": "1.0.0",
+    "platforms": ["ios", "android", "web"],
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "scheme": ["trendly-users"],
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.png",
@@ -13,13 +14,15 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.trendly.users"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.trendly.users"
     },
     "web": {
       "bundler": "metro",
@@ -29,6 +32,11 @@
     "plugins": ["expo-router"],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      }
     }
   }
 }

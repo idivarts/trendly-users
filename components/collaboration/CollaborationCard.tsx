@@ -5,23 +5,16 @@ import { Link, useRouter } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useTheme } from "@react-navigation/native";
 import { createStyles } from "@/styles/CollaborationCard.styles";
+import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 
-export interface CollaborationAdCardProps {
-  location?: string;
-  collaborationName: string;
+export interface CollaborationAdCardProps extends ICollaboration {
+  name: string;
   brandName: string;
-  shortDescription?: string;
-  postedDate: string;
-  cost: string;
   paymentVerified?: boolean;
-  promotionType: string;
-  collaborationType: string;
-  influencersNeeded?: number;
   appliedCount?: number;
   aiSuccessRate?: string;
+  id: string;
   brandHireRate?: string;
-  logo?: string;
-  coverLetter?: string;
   cardType: "collaboration" | "proposal" | "invitation";
 }
 
@@ -37,7 +30,7 @@ const JobCard = (props: CollaborationAdCardProps) => {
         {/* Header */}
         <View style={styles.header}>
           <View>
-            <Text style={styles.collabName}>{props.collaborationName}</Text>
+            <Text style={styles.collabName}>{props.name}</Text>
             <Text style={styles.brandName}>{props.brandName}</Text>
           </View>
           <TouchableOpacity onPress={() => setBookmarked(!bookmarked)}>
@@ -51,12 +44,15 @@ const JobCard = (props: CollaborationAdCardProps) => {
         </View>
 
         {/* Short Description */}
-        <Text style={styles.shortDescription}>{props.shortDescription}</Text>
+        <Text style={styles.shortDescription}>{props.description}</Text>
 
         {/* Posted Date and Cost */}
         <View style={styles.infoRow}>
-          <Text style={styles.infoText}>Posted: {props.postedDate}</Text>
-          <Text style={styles.infoText}>Cost: {props.cost}</Text>
+          <Text style={styles.infoText}>Posted: {props.timeStamp}</Text>
+          <Text style={styles.infoText}>
+            Cost: Rs {props.budget ? props.budget.min : ""}-
+            {props.budget ? props.budget.max : ""}
+          </Text>
         </View>
 
         {/* Payment Verified, Promotion and Collaboration Type */}
@@ -90,7 +86,7 @@ const JobCard = (props: CollaborationAdCardProps) => {
           <View>
             <View style={styles.infoRow}>
               <Text style={styles.infoText}>
-                Influencers Needed: {props.influencersNeeded}
+                Influencers Needed: {props.numberOfInfluencersNeeded}
               </Text>
               <Text style={styles.infoText}>Applied: {props.appliedCount}</Text>
             </View>
@@ -109,33 +105,36 @@ const JobCard = (props: CollaborationAdCardProps) => {
         <Divider style={styles.divider} />
         <View style={styles.actionRow}>
           <Link
-            href={{
-              pathname: "/collaboration-details",
-              params: {
-                collaborationName: props.collaborationName,
-                brandName: props.brandName,
-                shortDescription: props.shortDescription,
-                postedDate: props.postedDate,
-                cost: props.cost,
-                paymentVerified:
-                  props.paymentVerified == null
-                    ? "false"
-                    : props.paymentVerified.toString(),
-                promotionType: props.promotionType,
-                collaborationType: props.collaborationType,
-                influencersNeeded: props.influencersNeeded,
-                appliedCount: props.appliedCount,
-                aiSuccessRate: props.aiSuccessRate,
-                brandHireRate: props.brandHireRate,
-                logo: props.logo,
-                location: props.location,
-              },
-            }}
+            href={
+              props.cardType === "collaboration"
+                ? {
+                    pathname: `/collaboration-details/${props.id}`,
+                    params: {
+                      collaborationName: props.name,
+                      brandName: props.brandName,
+                      shortDescription: props.description,
+                      postedDate: props.timeStamp,
+                      cost: props.budget ? props.budget.min : "",
+                      paymentVerified:
+                        props.paymentVerified == null
+                          ? "false"
+                          : props.paymentVerified.toString(),
+                      promotionType: props.promotionType,
+                      collaborationType: props.collaborationType,
+                      influencersNeeded: props.numberOfInfluencersNeeded,
+                      appliedCount: props.appliedCount,
+                      aiSuccessRate: props.aiSuccessRate,
+                      brandHireRate: props.brandHireRate,
+                      location: props.location ? props.location.latlong : "",
+                    },
+                  }
+                : `/collaboration-details/`
+            }
           >
             <Button mode="text">View</Button>
           </Link>
           <Link
-            href={"apply-now"}
+            href={"/apply-now/" + props.id}
             style={{
               borderRadius: 4,
               padding: 10,

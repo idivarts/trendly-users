@@ -5,7 +5,7 @@ export const createStyles = (colors: any) =>
     container: {
       flex: 1,
       padding: 20,
-      backgroundColor: "#f5f5f5",
+      backgroundColor: colors.background,
     },
     title: {
       fontSize: 26,
@@ -50,5 +50,20 @@ export const createStyles = (colors: any) =>
     errorText: {
       marginBottom: 12,
       textAlign: "center",
+    },
+    uploadedFilesContainer: {
+      marginBottom: 16,
+      padding: 8,
+      borderColor: "gray",
+      borderWidth: 1,
+      borderRadius: 8,
+    },
+    uploadedFilesTitle: {
+      marginBottom: 8,
+      fontWeight: "bold",
+    },
+    fileChip: {
+      marginBottom: 8,
+      marginRight: 8,
     },
   });
