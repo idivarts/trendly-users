@@ -9,7 +9,8 @@
     "web": "expo start --web",
     "test": "jest --watchAll",
     "build": "expo export -p web",
-    "postinstall": "sh shared-libs/scripts/setup-hooks.sh && npm install --prefix shared-libs && npm install --prefix shared-uis && npm install --prefix shared-constants"
+    "postinstall": "sh shared-libs/scripts/setup-hooks.sh && npm install --prefix shared-libs && npm install --prefix shared-uis && npm install --prefix shared-constants",
+    "populate": "ts-node scripts/populate.ts"
   },
   "jest": {
     "preset": "jest-expo"
@@ -48,6 +49,7 @@
     "react-test-renderer": "18.2.0",
     "serverless": "^3.39.0",
     "serverless-lift": "^1.29.0",
+    "ts-node": "^10.9.2",
     "typescript": "~5.3.3"
   },
   "private": true
