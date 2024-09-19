@@ -3,6 +3,7 @@ import Colors from "@/constants/Colors";
 import styles from "@/styles/messages/ChatMessage.styles";
 import { IMessages } from "@/shared-libs/firestore/trendly-pro/models/groups";
 import { Image, Pressable } from "react-native";
+import { useAuthContext } from "@/contexts";
 
 interface ChatMessageProps {
   managers: {
@@ -23,8 +24,10 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
   setModalImage,
   users,
 }) => {
-  // TODO: Get user id from auth context
-  const isSender = message.senderId === "IjOAHWjc3d8ff8u6Z2rD";
+  const {
+    user,
+  } = useAuthContext();
+  const isSender = message.senderId === user?.id;
   const isUser = message.userType === "user";
 
   return (

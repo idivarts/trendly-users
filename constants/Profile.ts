@@ -1,24 +1,18 @@
 export const PROFILE_ITEMS = [
   {
     id: "1",
-    title: "Profile",
-    icon: "account",
-    route: "/basic-profile",
-  },
-  {
-    id: "2",
     title: "Connected Socials",
     icon: "account-group",
     route: "/connected-socials",
   },
   {
-    id: "3",
+    id: "2",
     title: "My Stats",
     icon: "file-chart",
     route: "/my-stats",
   },
   {
-    id: "4",
+    id: "3",
     title: "Reports",
     icon: "file-document-outline",
     route: "/reports",
@@ -27,13 +21,13 @@ export const PROFILE_ITEMS = [
 
 export const PROFILE_BOTTOM_ITEMS = [
   {
-    id: "5",
+    id: "4",
     title: "Settings",
     icon: "cog",
     route: "/settings",
   },
   {
-    id: "6",
+    id: "5",
     title: "Help and Support",
     icon: "hand-back-left",
     route: "/help-and-support",

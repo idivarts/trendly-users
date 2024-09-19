@@ -10,7 +10,7 @@ import ChatMessage from "./ChatMessage";
 import { View } from "@/components/theme/Themed";
 import styles from "@/styles/messages/Chat.styles";
 import { IMessages } from "@/shared-libs/firestore/trendly-pro/models/groups";
-import { useGroupContext } from "@/contexts";
+import { useAuthContext, useGroupContext } from "@/contexts";
 import { DocumentSnapshot } from "firebase/firestore";
 import { PLACEHOLDER_IMAGE } from "@/constants/PlaceholderImage";
 import { useFirebaseStorageContext } from "@/contexts/firebase-storage-context.provider";
@@ -39,6 +39,9 @@ const Chat: React.FC<ChatProps> = ({ group }) => {
   const {
     uploadImage,
   } = useFirebaseStorageContext();
+  const {
+    user,
+  } = useAuthContext();
 
   const { xl } = useBreakpoints();
 
@@ -105,7 +108,7 @@ const Chat: React.FC<ChatProps> = ({ group }) => {
   const handleSend = async () => {
     if (!message.trim() && !capturedImage) return;
     setIsSending(true);
-    const senderId = "IjOAHWjc3d8ff8u6Z2rD";
+    const senderId = user?.id || "";
     const timeStamp = new Date().getTime();
     const userType = "user";
 
