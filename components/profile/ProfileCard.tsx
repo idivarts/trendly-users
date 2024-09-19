@@ -3,6 +3,7 @@ import { Text, View } from "../theme/Themed";
 import { Avatar } from "react-native-paper";
 import styles from "@/styles/profile/ProfileCard.styles";
 import { User } from "@/types/User";
+import { PLACEHOLDER_PERSON_IMAGE } from "@/constants/Placeholder";
 
 interface ProfileCardProps {
   item: User;
@@ -17,7 +18,9 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
     <Pressable onPress={onPress}>
       <View style={styles.container}>
         <Avatar.Image
-          source={{ uri: item.profileImage }}
+          source={{
+            uri: item.profileImage || PLACEHOLDER_PERSON_IMAGE,
+          }}
           size={56}
           style={styles.avatar}
         />

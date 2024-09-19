@@ -12,7 +12,7 @@ import styles from "@/styles/messages/Chat.styles";
 import { IMessages } from "@/shared-libs/firestore/trendly-pro/models/groups";
 import { useAuthContext, useGroupContext } from "@/contexts";
 import { DocumentSnapshot } from "firebase/firestore";
-import { PLACEHOLDER_IMAGE } from "@/constants/PlaceholderImage";
+import { PLACEHOLDER_IMAGE } from "@/constants/Placeholder";
 import { useFirebaseStorageContext } from "@/contexts/firebase-storage-context.provider";
 
 interface ChatProps {
