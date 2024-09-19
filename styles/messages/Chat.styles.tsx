@@ -56,6 +56,32 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.regular.platinum,
     paddingHorizontal: 0,
   },
+  imageModalContainer: {
+    flex: 1,
+    width: "100%",
+  },
+  imageModalStyle: {
+    margin: 0,
+  },
+  imageModalImageContainer: {
+    alignItems: "center",
+    backgroundColor: "transparent",
+    flex: 1,
+    justifyContent: "center",
+    position: "relative",
+  },
+  imageModalCloseButton: {
+    backgroundColor: "white",
+    position: "absolute",
+    right: 10,
+    top: 10,
+    zIndex: 1,
+  },
+  imageModalImage: {
+    flex: 1,
+    resizeMode: "contain",
+    width: "100%",
+  },
 });
 
 export default styles;

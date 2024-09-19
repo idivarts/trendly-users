@@ -2,22 +2,26 @@ import { Text, View } from "@/components/theme/Themed";
 import Colors from "@/constants/Colors";
 import styles from "@/styles/messages/ChatMessage.styles";
 import { IMessages } from "@/shared-libs/firestore/trendly-pro/models/groups";
-import { Image } from "react-native";
+import { Image, Pressable } from "react-native";
 
 interface ChatMessageProps {
-  message: IMessages;
-  users: {
+  managers: {
     [key: string]: any,
   };
-  managers: {
+  message: IMessages;
+  setIsModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
+  setModalImage: React.Dispatch<React.SetStateAction<string | null>>;
+  users: {
     [key: string]: any,
   };
 }
 
 const ChatMessage: React.FC<ChatMessageProps> = ({
-  message,
-  users,
   managers,
+  message,
+  setIsModalVisible,
+  setModalImage,
+  users,
 }) => {
   // TODO: Get user id from auth context
   const isSender = message.senderId === "IjOAHWjc3d8ff8u6Z2rD";
@@ -47,23 +51,40 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
             { backgroundColor: isSender ? Colors.regular.primary : Colors.regular.platinum },
           ]}
         >
-          {message.attachments && message.attachments.length > 0 && message.attachments?.map((attachment) => {
-            if (attachment.type === "image" && attachment.url) {
-              return (
-                <Image
-                  key={attachment.url}
-                  source={{ uri: attachment.url }}
-                  style={{ width: 200, height: 200 }}
-                />
-              );
-            }
-          })}
+          {
+            message.attachments
+            && message.attachments.length > 0
+            && message.attachments?.map((attachment) => {
+              if (
+                attachment.type === "image"
+                && attachment.url
+              ) {
+                return (
+                  <Pressable
+                    onPress={() => {
+                      setModalImage(attachment.url);
+                      setIsModalVisible(true);
+                    }}
+                  >
+                    <Image
+                      key={attachment.url}
+                      source={{ uri: attachment.url }}
+                      style={styles.messageImage}
+                    />
+                  </Pressable>
+                );
+              }
+            })
+          }
           {message.message && (
             <Text
-              style={{
-                color: isSender ? "white" : "black",
-                textAlign: isSender ? "right" : "left",
-              }}
+              style={[
+                styles.messageText,
+                {
+                  color: isSender ? "white" : "black",
+                  textAlign: isSender ? "right" : "left",
+                }
+              ]}
             >
               {message.message}
             </Text>

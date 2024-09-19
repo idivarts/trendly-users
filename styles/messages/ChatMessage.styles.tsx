@@ -10,13 +10,15 @@ const styles = StyleSheet.create({
   },
   messageBubble: {
     borderRadius: 10,
-    gap: 10,
-    padding: 10,
   },
   messageImage: {
     width: 200,
     height: 200,
-    borderRadius: 10,
+    borderTopRightRadius: 10,
+    borderTopLeftRadius: 10,
+  },
+  messageText: {
+    padding: 10,
   },
   messageTime: {
     fontSize: 10,
