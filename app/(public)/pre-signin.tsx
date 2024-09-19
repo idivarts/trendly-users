@@ -102,8 +102,7 @@ const PreSignIn = () => {
                 {renderSocialButton(
                   "logo-facebook",
                   "Login with Facebook",
-                  // () => promptAsync({})
-                  () => router.push("/questions")
+                  () => promptAsync({})
                 )}
                 {renderSocialButton("mail-outline", "Login with Email", () =>
                   router.push("/questions")

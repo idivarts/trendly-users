@@ -56,29 +56,22 @@ const ProposalScreen = () => {
             data={DummyProposalData}
             renderItem={({ item }) => (
               <JobCard
-                name="Proposal"
+                name={item.name}
                 brandName={item.brandName}
-                brandId="brandId"
+                brandId={item.brandId}
                 budget={{
-                  min: Number(item.cost),
-                  max: Number(item.cost),
+                  min: Number(item.budget.min),
+                  max: Number(item.budget.max),
                 }}
                 cardType="proposal"
                 collaborationType={CollaborationType.PAID}
                 id="1"
-                location={{
-                  latlong: {
-                    latitude: 0,
-                    longitude: 0,
-                  },
-                  name: "Location",
-                  type: "physical",
-                }}
+                location={item.location}
                 managerId="managerId"
                 numberOfInfluencersNeeded={1}
                 platform={SocialPlatform.INSTAGRAM}
                 promotionType={PromotionType.ADD_REVIEWS}
-                timeStamp={new Date().getTime()}
+                timeStamp={item.timeStamp}
               />
             )}
             keyExtractor={(item, index) => index.toString()}
@@ -124,29 +117,22 @@ const ProposalScreen = () => {
             data={DummyProposalData}
             renderItem={({ item }) => (
               <JobCard
-                name="Proposal"
+                name={item.name}
                 brandName={item.brandName}
-                brandId="brandId"
+                brandId={item.brandId}
                 budget={{
-                  min: Number(item.cost),
-                  max: Number(item.cost),
+                  min: Number(item.budget.min),
+                  max: Number(item.budget.max),
                 }}
                 cardType="proposal"
                 collaborationType={CollaborationType.PAID}
                 id="1"
-                location={{
-                  latlong: {
-                    latitude: 0,
-                    longitude: 0,
-                  },
-                  name: "Location",
-                  type: "physical",
-                }}
+                location={item.location}
                 managerId="managerId"
                 numberOfInfluencersNeeded={1}
                 platform={SocialPlatform.INSTAGRAM}
                 promotionType={PromotionType.ADD_REVIEWS}
-                timeStamp={new Date().getTime()}
+                timeStamp={item.timeStamp}
               />
             )}
             keyExtractor={(item, index) => index.toString()}
