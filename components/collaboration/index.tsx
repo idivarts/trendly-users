@@ -12,6 +12,7 @@ import { signInAnonymously } from "firebase/auth";
 import { AuthApp } from "@/shared-libs/utilities/auth";
 import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
+import { ActivityIndicator } from "react-native-paper";
 
 interface ICollaborationAddCardProps extends ICollaboration {
   name: string;
@@ -34,6 +35,7 @@ const Collaboration = () => {
   const [salaryRange, setSalaryRange] = useState([0, 10000]);
   const [collabs, setCollabs] = useState<ICollaborationAddCardProps[]>([]);
   const { colors } = useTheme();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -41,6 +43,7 @@ const Collaboration = () => {
       const fetchedBrands = await fetchBrands(); // Fetch brands and store in a variable
       console.log("Fetched Brands: ", fetchedBrands);
       await fetchCollabs(fetchedBrands); // Pass the fetched brands to fetchCollabs
+      setLoading(false);
     };
 
     fetchData();
@@ -118,6 +121,26 @@ const Collaboration = () => {
   });
 
   const styles = createStyles(colors);
+
+  if (loading) {
+    return (
+      <AppLayout>
+        <View style={styles.container}>
+          <View style={styles.searchContainer}>
+            <SearchComponent
+              ToggleModal={toggleFilterModal}
+              setSearchQuery={setSearchQuery}
+            />
+          </View>
+          <ActivityIndicator
+            animating={true}
+            color={colors.primary}
+            size="large"
+          />
+        </View>
+      </AppLayout>
+    );
+  }
 
   return (
     <AppLayout>

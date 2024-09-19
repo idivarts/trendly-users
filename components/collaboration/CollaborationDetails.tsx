@@ -63,13 +63,13 @@ const CollaborationPage = (props: any) => {
           />
           <Card.Content style={styles.profileContent}>
             <Text variant="headlineMedium" style={styles.name}>
-              {props.collaborationDetail.name}
+              Collaboration Name
             </Text>
             <Text variant="bodyMedium" style={styles.brandName}>
-              {props.collaborationDetail.brandName}
+              Brand Name
             </Text>
             <Text variant="bodySmall" style={styles.shortDescription}>
-              {props.collaborationDetail.description}
+              Collaboration Description
             </Text>
             <View style={styles.statsContainer}>
               <Chip icon="checkbox-marked-circle" style={styles.statChip}>
@@ -79,7 +79,7 @@ const CollaborationPage = (props: any) => {
                 {props.brandViewed} Reviewed
               </Chip>
               <Chip icon="map-marker" style={styles.statChip}>
-                {props.collaborationDetail.location.name}
+                Remote
               </Chip>
             </View>
           </Card.Content>
@@ -94,7 +94,7 @@ const CollaborationPage = (props: any) => {
             </Text>
           </View>
           <Card.Content>
-            <Paragraph>{props.collaborationDetail.description}</Paragraph>
+            <Paragraph>Description</Paragraph>
           </Card.Content>
         </Card>
 
@@ -107,7 +107,7 @@ const CollaborationPage = (props: any) => {
             </Text>
           </View>
           <Card.Content>
-            <Paragraph>{props.collaborationDetail.brandDescription}</Paragraph>
+            <Paragraph>Brand Description</Paragraph>
           </Card.Content>
         </Card>
 
@@ -120,7 +120,7 @@ const CollaborationPage = (props: any) => {
             </Text>
           </View>
           <Card.Content>
-            <Paragraph>{props.collaborationDetail.platform}</Paragraph>
+            <Paragraph>Instagram</Paragraph>
           </Card.Content>
         </Card>
 
@@ -133,11 +133,8 @@ const CollaborationPage = (props: any) => {
             </Text>
           </View>
           <Card.Content>
-            <Paragraph>Cost: {props.collaborationDetail.budget.min}</Paragraph>
-            <Paragraph>
-              Payment Verified:{" "}
-              {props.collaborationDetail.paymentVerified ? "True" : "False"}
-            </Paragraph>
+            <Paragraph>Cost: $500</Paragraph>
+            <Paragraph>Payment Verified: True</Paragraph>
           </Card.Content>
         </Card>
       </ScrollView>

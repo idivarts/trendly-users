@@ -3,12 +3,10 @@ import { useAuthContext } from "@/contexts";
 import { Button } from "react-native";
 
 const Login = () => {
-  const {
-    signIn,
-  } = useAuthContext();
+  const { signIn } = useAuthContext();
 
   const handleSignIn = () => {
-    signIn();
+    signIn("token");
   };
 
   return (

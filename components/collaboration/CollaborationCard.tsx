@@ -105,32 +105,36 @@ const JobCard = (props: CollaborationAdCardProps) => {
         <Divider style={styles.divider} />
         <View style={styles.actionRow}>
           <Link
-            href={{
-              pathname: `/collaboration-details/${props.id}`,
-              params: {
-                collaborationName: props.name,
-                brandName: props.brandName,
-                shortDescription: props.description,
-                postedDate: props.timeStamp,
-                cost: props.budget ? props.budget.min : "",
-                paymentVerified:
-                  props.paymentVerified == null
-                    ? "false"
-                    : props.paymentVerified.toString(),
-                promotionType: props.promotionType,
-                collaborationType: props.collaborationType,
-                influencersNeeded: props.numberOfInfluencersNeeded,
-                appliedCount: props.appliedCount,
-                aiSuccessRate: props.aiSuccessRate,
-                brandHireRate: props.brandHireRate,
-                location: props.location ? props.location.latlong : "",
-              },
-            }}
+            href={
+              props.cardType === "collaboration"
+                ? {
+                    pathname: `/collaboration-details/${props.id}`,
+                    params: {
+                      collaborationName: props.name,
+                      brandName: props.brandName,
+                      shortDescription: props.description,
+                      postedDate: props.timeStamp,
+                      cost: props.budget ? props.budget.min : "",
+                      paymentVerified:
+                        props.paymentVerified == null
+                          ? "false"
+                          : props.paymentVerified.toString(),
+                      promotionType: props.promotionType,
+                      collaborationType: props.collaborationType,
+                      influencersNeeded: props.numberOfInfluencersNeeded,
+                      appliedCount: props.appliedCount,
+                      aiSuccessRate: props.aiSuccessRate,
+                      brandHireRate: props.brandHireRate,
+                      location: props.location ? props.location.latlong : "",
+                    },
+                  }
+                : `/collaboration-details/`
+            }
           >
             <Button mode="text">View</Button>
           </Link>
           <Link
-            href={"apply-now"}
+            href={"/apply-now/" + props.id}
             style={{
               borderRadius: 4,
               padding: 10,
