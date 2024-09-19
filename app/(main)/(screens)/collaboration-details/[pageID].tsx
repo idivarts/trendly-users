@@ -2,7 +2,7 @@ import CollaborationPage from "@/components/collaboration/CollaborationDetails";
 import { useEffect, useState } from "react";
 import { doc, getDoc } from "firebase/firestore";
 import { useLocalSearchParams } from "expo-router";
-import { FirestoreDB } from "@/shared-libs/utilities/firestore";
+import { FirestoreDB } from "@/utils/firestore";
 import AppLayout from "@/layouts/app-layout";
 import { ActivityIndicator } from "react-native-paper";
 import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";

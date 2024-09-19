@@ -10,7 +10,7 @@ import { slides } from "@/constants/Slides";
 import * as AuthSession from "expo-auth-session";
 import * as WebBrowser from "expo-web-browser";
 import { FacebookAuthProvider, signInWithCredential } from "firebase/auth";
-import { AuthApp as auth } from "@/shared-libs/utilities/auth"; // Assuming this is your Firebase instance
+import { AuthApp as auth } from "@/utils/auth";
 import { useRouter } from "expo-router";
 import { useAuthContext } from "@/contexts";
 
@@ -36,7 +36,7 @@ const PreSignIn = () => {
     { authorizationEndpoint: "https://www.facebook.com/v10.0/dialog/oauth" }
   );
 
-  console.log("Request: ", response);
+  // console.log("Request: ", response);
   const router = useRouter();
 
   // Handle response from Facebook

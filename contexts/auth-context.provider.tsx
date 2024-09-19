@@ -17,7 +17,7 @@ import { AuthApp } from "@/utils/auth";
 interface AuthContextProps {
   isLoading: boolean;
   session?: string | null;
-  signIn: () => void;
+  signIn: (token: string) => void;
   signOut: () => void;
   signUp: () => void;
   getUser: (userId: string) => Promise<User | null>;
@@ -49,14 +49,14 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
   const fetchUser = async () => {
     await signInAnonymously(AuthApp);
     if (session) {
-      const userDocRef = doc(FirestoreDB, 'users', userId);
+      const userDocRef = doc(FirestoreDB, "users", userId);
 
       const unsubscribe = onSnapshot(userDocRef, (userSnap) => {
         if (userSnap.exists()) {
           const userData = {
-            ...userSnap.data() as User,
+            ...(userSnap.data() as User),
             id: userSnap.id as string,
-          }
+          };
           setUser(userData);
         } else {
           console.error("User not found");
@@ -65,21 +65,21 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
 
       return unsubscribe;
     }
-  }
+  };
 
   useEffect(() => {
     fetchUser();
   }, [session]);
 
-  const signIn = async () => {
-    setSession('123');
+  const signIn = async (token: string) => {
+    setSession(token);
     // For existing users, redirect to the main screen.
-    router.replace("/proposals");
+    router.replace("/questions");
     Toaster.success("Signed In Successfully!");
   };
 
   const signUp = async () => {
-    setSession('123');
+    setSession("123");
     // For non-existing users, redirect to the onboarding screen.
     router.replace("/questions");
     Toaster.success("Signed Up Successfully!");
@@ -91,27 +91,25 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
     Toaster.success("Signed Out Successfully!");
   };
 
-  const getUser = async (
-    userId: string,
-  ): Promise<User | null> => {
+  const getUser = async (userId: string): Promise<User | null> => {
     const userRef = doc(FirestoreDB, "users", userId);
     const userSnap = await getDoc(userRef);
 
     if (userSnap.exists()) {
       const userData = {
-        ...userSnap.data() as User,
+        ...(userSnap.data() as User),
         id: userSnap.id as string,
-      }
+      };
       setUser(userData);
       return userData;
     }
 
     return null;
-  }
+  };
 
   const updateUser = async (
     userId: string,
-    user: Partial<User>,
+    user: Partial<User>
   ): Promise<void> => {
     await signInAnonymously(AuthApp);
     const userRef = doc(FirestoreDB, "users", userId);
@@ -119,7 +117,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
     await updateDoc(userRef, {
       ...user,
     });
-  }
+  };
 
   return (
     <AuthContext.Provider

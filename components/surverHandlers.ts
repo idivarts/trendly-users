@@ -1,7 +1,7 @@
-import { FirestoreDB } from "@/shared-libs/utilities/firestore";
+import { FirestoreDB } from "@/utils/firestore";
 import { signInWithEmailAndPassword, signInAnonymously } from "firebase/auth";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { AuthApp } from "@/shared-libs/utilities/auth";
+import { AuthApp } from "@/utils/auth";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { useRouter } from "expo-router";
 
