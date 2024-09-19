@@ -106,7 +106,7 @@ const Questions = () => {
         )}
 
         <TouchableOpacity
-          onPress={handleSkipQuestion}
+          onPress={() => router.replace("/proposals")}
           style={styles.skipButton}
         >
           <Text style={styles.skipText}>Skip</Text>

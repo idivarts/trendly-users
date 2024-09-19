@@ -60,6 +60,5 @@ export const handlePreviousQuestion = (
 };
 
 export const handleSkipQuestion = () => {
-  const router = useRouter();
-  router.replace("/proposals");
+  console.log("Skipping question");
 };
