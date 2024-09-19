@@ -74,7 +74,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
   const signIn = async (token: string) => {
     setSession(token);
     // For existing users, redirect to the main screen.
-    router.replace("/proposals");
+    router.replace("/questions");
     Toaster.success("Signed In Successfully!");
   };
 
