@@ -11,6 +11,7 @@ import {
   submitSurvey,
 } from "@/components/surverHandlers";
 import { createStyles } from "@/styles/Questions.styles";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useAuthContext } from "@/contexts";
 
 const Questions = () => {
@@ -18,8 +19,12 @@ const Questions = () => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [answers, setAnswers] = useState<string[]>([]);
   const { colors } = useTheme();
-  const { signIn } = useAuthContext();
   const styles = createStyles(colors);
+  const router = useRouter();
+
+  // const { user } = useLocalSearchParams();
+  const params = useLocalSearchParams();
+  const user = Array.isArray(params.user) ? params.user[0] : params.user;
 
   const currentQuestion = SURVEY_DATA[currentQuestionIndex];
 
@@ -29,8 +34,16 @@ const Questions = () => {
     setAnswers(updatedAnswers);
 
     if (currentQuestionIndex === SURVEY_DATA.length - 1) {
-      setTimeout(() => submitSurvey(updatedAnswers).then(() => signIn()), 0);
+      // Last question, submit survey and don't move to next
+      submitSurvey(updatedAnswers)
+        .then(() => {
+          router.replace("/proposals");
+        })
+        .catch((error) => {
+          console.error("Error submitting survey:", error);
+        });
     } else {
+      // Move to the next question
       handleNextQuestion(
         currentQuestionIndex,
         setCurrentQuestionIndex,
