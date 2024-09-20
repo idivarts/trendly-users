@@ -1,8 +1,9 @@
 enum SocialPlatform {
-  TWITTER = "TWITTER",
-  INSTAGRAM = "INSTAGRAM",
   FACEBOOK = "FACEBOOK",
-  LINKEDIN = "LINKEDIN",
+  INSTAGRAM = "INSTAGRAM",
+  YOUTUBE = "YOUTUBE",
+  TWITTER = "TWITTER",
+  OTHERS = "OTHERS",
 }
 
 export const dummyUsers = [
@@ -11,12 +12,15 @@ export const dummyUsers = [
     email: "john.doe@gmail.com",
     phoneNumber: "1234567890",
     location: "New York, USA",
-    dateOfBirth: "1989-12-05",
     preferences: {
-      theme: "light",
       question1: "Answer 1",
       question2: "Answer 2",
       question3: "Answer 3",
+    },
+    settings: {
+      theme: "light",
+      emailNotification: true,
+      pushNotification: true,
     },
     notifications: [],
     socials: [
@@ -26,8 +30,6 @@ export const dummyUsers = [
         url: "https://twitter.com/johndoe",
         followers: 1000,
         following: 500,
-        posts: 200,
-        engagementRate: 5.0,
       },
     ],
   },
