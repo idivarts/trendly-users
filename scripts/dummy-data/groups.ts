@@ -4,6 +4,15 @@ export const dummyGroups: any[] = [
     collaborationId: "gajiSpLgGzWTDZ7xSQbQ",
     userIds: ["IjOAHWjc3d8ff8u6Z2rD"],
     managerIds: ["eX3u6oniGErcE7gzdaWG"],
+    latestMessage: {
+      groupId: "gajiSpLgGzWTDZ7xSQbQ",
+      senderId: "IjOAHWjc3d8ff8u6Z2rD",
+      userType: "user",
+      message: "Thanks, you too!",
+      attachments: [],
+      timeStamp: 1697072400000,
+    },
+    updatedAt: 1697071800000,
     messages: [
       {
         groupId: "gajiSpLgGzWTDZ7xSQbQ",

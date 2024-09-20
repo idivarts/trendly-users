@@ -23,6 +23,8 @@ export const populateGroups = async (db: Firestore, dummyGroups: any[]) => {
         collaborationId: group.collaborationId,
         userIds: group.userIds,
         managerIds: group.managerIds,
+        latestMessage: group.latestMessage,
+        updatedAt: group.updatedAt,
       });
 
       console.log(`Group ${group.name} added successfully.`);
