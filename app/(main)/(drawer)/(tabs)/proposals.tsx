@@ -1,15 +1,15 @@
-import { FlatList, TouchableOpacity } from "react-native";
-import { Text, View } from "@/components/theme/Themed";
 import JobCard from "@/components/collaboration/CollaborationCard";
-import { useState } from "react";
-import AppLayout from "@/layouts/app-layout";
-import { Link } from "expo-router";
-import { useTheme } from "@react-navigation/native";
-import { createStyles } from "@/styles/Proposal.styles";
+import { Text, View } from "@/components/theme/Themed";
 import { DummyProposalData } from "@/constants/Proposal";
-import { PromotionType } from "@/shared-libs/firestore/trendly-pro/constants/promotion-type";
+import AppLayout from "@/layouts/app-layout";
 import { CollaborationType } from "@/shared-libs/firestore/trendly-pro/constants/collaboration-type";
+import { PromotionType } from "@/shared-libs/firestore/trendly-pro/constants/promotion-type";
 import { SocialPlatform } from "@/shared-libs/firestore/trendly-pro/constants/social-platform";
+import { createStyles } from "@/styles/Proposal.styles";
+import { useTheme } from "@react-navigation/native";
+import { Link } from "expo-router";
+import { useState } from "react";
+import { FlatList, TouchableOpacity } from "react-native";
 
 const ProposalScreen = () => {
   const [selectedTab, setSelectedTab] = useState<"proposals" | "forYou">(
@@ -71,8 +71,7 @@ const ProposalScreen = () => {
                 numberOfInfluencersNeeded={1}
                 platform={SocialPlatform.INSTAGRAM}
                 promotionType={PromotionType.ADD_REVIEWS}
-                timeStamp={item.timeStamp}
-              />
+                timeStamp={item.timeStamp} applications={undefined} invitaions={undefined} />
             )}
             keyExtractor={(item, index) => index.toString()}
             style={{ height: "100%" }}
@@ -132,8 +131,7 @@ const ProposalScreen = () => {
                 numberOfInfluencersNeeded={1}
                 platform={SocialPlatform.INSTAGRAM}
                 promotionType={PromotionType.ADD_REVIEWS}
-                timeStamp={item.timeStamp}
-              />
+                timeStamp={item.timeStamp} applications={undefined} invitaions={undefined} />
             )}
             keyExtractor={(item, index) => index.toString()}
             style={{ height: "100%" }}
