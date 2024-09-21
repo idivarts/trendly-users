@@ -1,34 +1,32 @@
-import React, { useState } from "react";
-import { View, ScrollView, StyleSheet } from "react-native";
-import {
-  TextInput,
-  Button,
-  Title,
-  Card,
-  Paragraph,
-  HelperText,
-  IconButton,
-  Chip,
-  Appbar,
-} from "react-native-paper";
-import * as DocumentPicker from "expo-document-picker";
-import { useTheme } from "@react-navigation/native";
-import { useLocalSearchParams } from "expo-router";
-import { FirestoreDB } from "@/utils/firestore";
-import { addDoc, collection } from "firebase/firestore";
-import { signInAnonymously, signInWithEmailAndPassword } from "firebase/auth";
-import { AuthApp } from "@/utils/auth";
+import BackButton from "@/components/ui/back-button/BackButton";
+import AppLayout from "@/layouts/app-layout";
 import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
+import { createStyles } from "@/styles/ApplyNow.styles";
+import { AuthApp } from "@/utils/auth";
+import { StorageApp } from "@/utils/firebase-storage";
+import { FirestoreDB } from "@/utils/firestore";
+import { useTheme } from "@react-navigation/native";
+import * as DocumentPicker from "expo-document-picker";
+import { useLocalSearchParams } from "expo-router";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { addDoc, collection } from "firebase/firestore";
 import {
   getDownloadURL,
   ref,
-  uploadBytes,
-  uploadString,
+  uploadBytes
 } from "firebase/storage";
-import { StorageApp } from "@/utils/firebase-storage";
-import { createStyles } from "@/styles/ApplyNow.styles";
-import AppLayout from "@/layouts/app-layout";
-import BackButton from "@/components/ui/back-button/BackButton";
+import React, { useState } from "react";
+import { ScrollView, View } from "react-native";
+import {
+  Appbar,
+  Button,
+  Card,
+  Chip,
+  HelperText,
+  IconButton,
+  Paragraph,
+  TextInput
+} from "react-native-paper";
 
 const ApplyScreen = () => {
   const theme = useTheme();
@@ -144,7 +142,7 @@ const ApplyScreen = () => {
       >
         <BackButton />
         <Appbar.Content title="Apply Now" color={colors.text} />
-        <IconButton icon="dots-vertical" onPress={() => {}} />
+        <IconButton icon="dots-vertical" onPress={() => { }} />
       </Appbar.Header>
       <ScrollView style={styles.container}>
         <HelperText type="info" style={styles.helperText}>
