@@ -13,6 +13,7 @@ import { FacebookAuthProvider, signInWithCredential } from "firebase/auth";
 import { AuthApp as auth } from "@/utils/auth";
 import { useRouter } from "expo-router";
 import { useAuthContext } from "@/contexts";
+import { DUMMY_USER_ID } from "@/constants/User";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -64,6 +65,10 @@ const PreSignIn = () => {
     }
   };
 
+  const handleEmailSignIn = () => {
+    signIn(DUMMY_USER_ID);
+  }
+
   const renderSocialButton = (
     iconName: string,
     label: string,
@@ -104,9 +109,7 @@ const PreSignIn = () => {
                   "Login with Facebook",
                   () => promptAsync({})
                 )}
-                {renderSocialButton("mail-outline", "Login with Email", () =>
-                  router.push("/questions")
-                )}
+                {renderSocialButton("mail-outline", "Login with Email", handleEmailSignIn)}
                 {renderSocialButton(
                   "logo-instagram",
                   "Login with Instagram",
