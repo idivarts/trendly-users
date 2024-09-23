@@ -1,6 +1,8 @@
+import Colors from "@/constants/Colors";
+import { Theme } from "@react-navigation/native";
 import { StyleSheet } from "react-native";
 
-export const createStyles = (colors: any) =>
+export const stylesFn = (theme: Theme) =>
   StyleSheet.create({
     container: {
       flex: 1,
@@ -20,7 +22,7 @@ export const createStyles = (colors: any) =>
       textDecorationLine: "underline",
     },
     card: {
-      backgroundColor: colors.background,
+      backgroundColor: Colors(theme).background,
       padding: 10,
       borderRadius: 5,
       justifyContent: "center",

@@ -3,8 +3,9 @@ import { View, ScrollView, TouchableOpacity } from "react-native";
 import { Text, Chip, Button } from "react-native-paper";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Slider from "@react-native-community/slider";
-import { createStyles } from "@/styles/FilterModal.styles";
+import { stylesFn } from "@/styles/FilterModal.styles";
 import { useTheme } from "@react-navigation/native";
+import Colors from "@/constants/Colors";
 
 interface CollaborationFilterProps {
   onClose: () => void;
@@ -46,15 +47,15 @@ const CollaborationFilter = ({
     onClose();
   };
 
-  const { colors } = useTheme();
-  const styles = createStyles(colors);
+  const theme = useTheme();
+  const styles = stylesFn(theme);
 
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Filter</Text>
         <TouchableOpacity onPress={onClose}>
-          <Ionicons name="close" size={24} color="#000" />
+          <Ionicons name="close" size={24} color={Colors(theme).text} />
         </TouchableOpacity>
       </View>
 

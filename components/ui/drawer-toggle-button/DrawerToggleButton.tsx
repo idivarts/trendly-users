@@ -1,10 +1,9 @@
 import { Pressable } from 'react-native';
-import { DrawerActions } from '@react-navigation/native';
+import { DrawerActions, useTheme } from '@react-navigation/native';
 import { useNavigation } from "expo-router";
 import { Ionicons } from '@expo/vector-icons';
 
 import Colors from '@/constants/Colors';
-import { useColorScheme } from '@/components/theme/useColorScheme';
 import { View } from '@/components/theme/Themed';
 
 interface DrawerToggleButtonProps extends React.ComponentProps<typeof Pressable> { }
@@ -13,7 +12,7 @@ const DrawerToggleButton: React.FC<DrawerToggleButtonProps> = ({
   ...props
 }) => {
   const navigation = useNavigation();
-  const colorScheme = useColorScheme();
+  const theme = useTheme();
 
   return (
     <Pressable
@@ -33,7 +32,7 @@ const DrawerToggleButton: React.FC<DrawerToggleButtonProps> = ({
           size={26}
           style={[{
             marginLeft: 14,
-            color: Colors[colorScheme ?? 'light'].text,
+            color: Colors(theme).text,
             marginBottom: -2,
           }]}
         />

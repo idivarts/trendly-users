@@ -1,12 +1,13 @@
 import Colors from "@/constants/Colors";
+import { Theme } from "@react-navigation/native";
 import { StyleSheet } from "react-native";
 
-const styles = StyleSheet.create({
+const styles = (theme: Theme) => StyleSheet.create({
   container: { flex: 1 },
   appbar: {
     paddingVertical: 10,
     gap: 10,
-    backgroundColor: Colors.regular.primary,
+    backgroundColor: Colors(theme).primary,
   },
   backButtonContainer: {
     backgroundColor: "transparent",
@@ -17,7 +18,7 @@ const styles = StyleSheet.create({
   appbarTitle: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "white",
+    color: Colors(theme).white,
   },
   flex: { flex: 1 },
   messageListContainer: {
@@ -32,7 +33,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     position: "relative",
-    backgroundColor: Colors.regular.platinum,
+    backgroundColor: Colors(theme).platinum,
     padding: 10,
     paddingBottom: 0,
   },
@@ -49,11 +50,11 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: Colors.regular.platinum,
+    backgroundColor: Colors(theme).platinum,
   },
   textInput: {
     flex: 1,
-    backgroundColor: Colors.regular.platinum,
+    backgroundColor: Colors(theme).platinum,
     paddingHorizontal: 0,
   },
   imageModalContainer: {
@@ -71,7 +72,7 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   imageModalCloseButton: {
-    backgroundColor: "white",
+    backgroundColor: Colors(theme).white,
     position: "absolute",
     right: 10,
     top: 10,

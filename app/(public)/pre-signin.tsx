@@ -3,7 +3,7 @@ import { View, Text, Image, TouchableOpacity } from "react-native";
 import Swiper from "react-native-swiper";
 import { Title, Paragraph } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
-import createStyles from "@/styles/tab1.styles";
+import stylesFn from "@/styles/tab1.styles";
 import { useTheme } from "@react-navigation/native";
 import AppLayout from "@/layouts/app-layout";
 import { slides } from "@/constants/Slides";
@@ -14,14 +14,15 @@ import { AuthApp as auth } from "@/utils/auth";
 import { useRouter } from "expo-router";
 import { useAuthContext } from "@/contexts";
 import { DUMMY_USER_ID } from "@/constants/User";
+import Colors from "@/constants/Colors";
 
 WebBrowser.maybeCompleteAuthSession();
 
 const FB_APP_ID = "2223620811324637";
 
 const PreSignIn = () => {
-  const { colors } = useTheme();
-  const styles = createStyles(colors);
+  const theme = useTheme();
+  const styles = stylesFn(theme);
   const [error, setError] = useState<string | null>(null);
   const { signIn } = useAuthContext();
 
@@ -78,7 +79,7 @@ const PreSignIn = () => {
       <Ionicons
         name={iconName as any}
         size={24}
-        color={colors.text}
+        color={Colors(theme).text}
         style={styles.icon}
       />
       <Text style={styles.socialButtonText}>{label}</Text>
@@ -90,7 +91,7 @@ const PreSignIn = () => {
       <Swiper
         style={styles.wrapper}
         dotStyle={styles.dotStyle}
-        activeDotStyle={[styles.dotStyle, { backgroundColor: colors.primary }]}
+        activeDotStyle={[styles.dotStyle, { backgroundColor: Colors(theme).primary }]}
         paginationStyle={styles.pagination}
       >
         {slides.map((slide) => (
@@ -98,7 +99,7 @@ const PreSignIn = () => {
             <View style={styles.imageContainer}>
               <Image source={{ uri: slide.image }} style={styles.image} />
             </View>
-            <Title style={[styles.title, { color: colors.primary }]}>
+            <Title style={[styles.title, { color: Colors(theme).primary }]}>
               {slide.title}
             </Title>
             <Paragraph style={styles.paragraph}>{slide.text}</Paragraph>

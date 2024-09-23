@@ -3,7 +3,8 @@ import { Text, View } from "../theme/Themed";
 import { Ionicons } from "@expo/vector-icons";
 import { Avatar } from "react-native-paper";
 import Colors from "@/constants/Colors";
-import styles from "@/styles/profile/ProfileItemCard.styles";
+import stylesFn from "@/styles/profile/ProfileItemCard.styles";
+import { useTheme } from "@react-navigation/native";
 
 interface ProfileItemCardProps {
   item: any;
@@ -14,6 +15,9 @@ const ProfileItemCard: React.FC<ProfileItemCardProps> = ({
   item,
   onPress,
 }) => {
+  const theme = useTheme();
+  const styles = stylesFn(theme);
+
   return (
     <Pressable onPress={onPress}>
       <View style={styles.container}>
@@ -29,7 +33,7 @@ const ProfileItemCard: React.FC<ProfileItemCardProps> = ({
         </View>
         <Ionicons
           name="chevron-forward"
-          color={Colors.regular.primary}
+          color={Colors(theme).primary}
         />
       </View>
     </Pressable>

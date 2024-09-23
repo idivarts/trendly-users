@@ -4,8 +4,9 @@ import { Avatar } from "react-native-paper";
 import Colors from "@/constants/Colors";
 import { Pressable, PressableProps, View } from "react-native";
 import { Groups } from "@/types/Groups";
-import styles from "@/styles/messages/MessageCard.styles";
+import stylesFn from "@/styles/messages/MessageCard.styles";
 import { PLACEHOLDER_IMAGE } from "@/constants/Placeholder";
+import { useTheme } from "@react-navigation/native";
 
 interface MessageCardProps extends PressableProps {
   group: Groups;
@@ -15,6 +16,9 @@ const MessageCard: React.FC<MessageCardProps> = ({
   group,
   ...props
 }) => {
+  const theme = useTheme();
+  const styles = stylesFn(theme);
+
   return (
     <Pressable {...props}>
       {({ pressed }) => (
@@ -53,7 +57,7 @@ const MessageCard: React.FC<MessageCardProps> = ({
             )} */}
           </View>
           <View style={styles.chevronIcon}>
-            <Ionicons name="chevron-forward" size={24} color={Colors.regular.primary} />
+            <Ionicons name="chevron-forward" size={24} color={Colors(theme).primary} />
           </View>
         </View>
       )}
