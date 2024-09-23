@@ -13,6 +13,7 @@ import { FirestoreDB } from "@/utils/firestore";
 import { User } from "@/types/User";
 import { signInAnonymously } from "firebase/auth";
 import { AuthApp } from "@/utils/auth";
+import { DUMMY_USER_ID } from "@/constants/User";
 
 interface AuthContextProps {
   isLoading: boolean;
@@ -44,12 +45,11 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
   const [[isLoading, session], setSession] = useStorageState("id");
   const [user, setUser] = useState<User | null>(null);
   const router = useRouter();
-  const userId = "IjOAHWjc3d8ff8u6Z2rD"; // TODO: get user id from session
 
   const fetchUser = async () => {
     await signInAnonymously(AuthApp);
     if (session) {
-      const userDocRef = doc(FirestoreDB, "users", userId);
+      const userDocRef = doc(FirestoreDB, "users", session);
 
       const unsubscribe = onSnapshot(userDocRef, (userSnap) => {
         if (userSnap.exists()) {
@@ -79,7 +79,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
   };
 
   const signUp = async () => {
-    setSession("123");
+    setSession(DUMMY_USER_ID);
     // For non-existing users, redirect to the onboarding screen.
     router.replace("/questions");
     Toaster.success("Signed Up Successfully!");

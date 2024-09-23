@@ -1,15 +1,17 @@
+import Colors from "@/constants/Colors";
+import { Theme } from "@react-navigation/native";
 import { StyleSheet } from "react-native";
 
-const createStyles = (colors: any) =>
+const styles = (theme: Theme) =>
   StyleSheet.create({
     wrapper: {
-      backgroundColor: colors.background,
+      backgroundColor: Colors(theme).background,
     },
     slide: {
       flex: 1,
       justifyContent: "center",
       alignItems: "center",
-      backgroundColor: colors.background,
+      backgroundColor: Colors(theme).background,
     },
     imageContainer: {
       borderRadius: 100,
@@ -30,7 +32,7 @@ const createStyles = (colors: any) =>
       fontSize: 16,
       textAlign: "center",
       paddingHorizontal: 20,
-      color: "#6b6b6b",
+      color: Colors(theme).gray100,
     },
     socialContainer: {
       flexDirection: "column",
@@ -41,12 +43,12 @@ const createStyles = (colors: any) =>
     socialButton: {
       flexDirection: "row",
       alignItems: "center",
-      backgroundColor: colors.background,
+      backgroundColor: Colors(theme).background,
       paddingVertical: 12,
       paddingHorizontal: 20,
       borderRadius: 25,
       marginHorizontal: 10,
-      shadowColor: "#000",
+      shadowColor: Colors(theme).black,
       shadowOffset: {
         width: 0,
         height: 2,
@@ -59,7 +61,7 @@ const createStyles = (colors: any) =>
       marginRight: 10,
     },
     socialButtonText: {
-      color: colors.text,
+      color: Colors(theme).text,
       fontWeight: "bold",
     },
     pagination: {
@@ -69,9 +71,9 @@ const createStyles = (colors: any) =>
       width: 10,
       height: 10,
       borderRadius: 5,
-      backgroundColor: "#ccc",
+      backgroundColor: Colors(theme).eerieBlack,
       marginHorizontal: 5,
     },
   });
 
-export default createStyles;
+export default styles;

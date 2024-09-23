@@ -1,12 +1,14 @@
+import Colors from "@/constants/Colors";
+import { Theme } from "@react-navigation/native";
 import { StyleSheet } from "react-native";
 
-export const createStyles = (colors: any) =>
+export const stylesFn = (theme: Theme) =>
   StyleSheet.create({
     card: {
       borderRadius: 16,
       padding: 10,
       margin: 10,
-      backgroundColor: colors.card,
+      backgroundColor: Colors(theme).card,
       elevation: 2,
     },
     header: {
@@ -21,16 +23,16 @@ export const createStyles = (colors: any) =>
       fontSize: 18,
       fontWeight: "bold",
       marginTop: 10,
-      color: colors.text,
+      color: Colors(theme).text,
     },
     brandName: {
       fontSize: 14,
-      color: colors.text,
+      color: Colors(theme).text,
       marginTop: 4,
     },
     shortDescription: {
       fontSize: 14,
-      color: colors.text,
+      color: Colors(theme).text,
       marginTop: 8,
     },
     infoRow: {
@@ -41,7 +43,7 @@ export const createStyles = (colors: any) =>
     },
     infoText: {
       fontSize: 12,
-      color: colors.text,
+      color: Colors(theme).text,
     },
     chipRow: {
       flexDirection: "row",

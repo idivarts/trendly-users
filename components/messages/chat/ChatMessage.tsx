@@ -1,9 +1,10 @@
 import { Text, View } from "@/components/theme/Themed";
 import Colors from "@/constants/Colors";
-import styles from "@/styles/messages/ChatMessage.styles";
+import stylesFn from "@/styles/messages/ChatMessage.styles";
 import { IMessages } from "@/shared-libs/firestore/trendly-pro/models/groups";
 import { Image, Pressable } from "react-native";
 import { useAuthContext } from "@/contexts";
+import { useTheme } from "@react-navigation/native";
 
 interface ChatMessageProps {
   managers: {
@@ -29,6 +30,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
   } = useAuthContext();
   const isSender = message.senderId === user?.id;
   const isUser = message.userType === "user";
+  const theme = useTheme();
+  const styles = stylesFn(theme);
 
   return (
     <View
@@ -51,7 +54,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
         <View
           style={[
             styles.messageBubble,
-            { backgroundColor: isSender ? Colors.regular.primary : Colors.regular.platinum },
+            { backgroundColor: isSender ? Colors(theme).primary : Colors(theme).platinum },
           ]}
         >
           {
@@ -84,7 +87,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
               style={[
                 styles.messageText,
                 {
-                  color: isSender ? "white" : "black",
+                  color: isSender ? Colors(theme).white : Colors(theme).black,
                   textAlign: isSender ? "right" : "left",
                 }
               ]}

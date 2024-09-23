@@ -3,6 +3,7 @@ import {
   DarkTheme,
   DefaultTheme as ExpoDefaultTheme,
   ThemeProvider,
+  useTheme,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import { Stack, usePathname, useRouter, useSegments } from "expo-router";

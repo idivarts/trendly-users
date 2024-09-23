@@ -11,17 +11,17 @@ import {
   HelperText,
   IconButton,
 } from "react-native-paper";
-import { createStyles } from "@/styles/ApplyNow.styles";
+import { stylesFn } from "@/styles/ApplyNow.styles";
 import { useTheme } from "@react-navigation/native";
+import Colors from "@/constants/Colors";
 
 const ApplyScreen = () => {
-  const theme = useTheme();
   const [collabType, setCollabType] = useState("Paid");
   const [note, setNote] = useState("");
   const [cv, setCv] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
-  const { colors } = useTheme();
-  const styles = createStyles(colors);
+  const theme = useTheme();
+  const styles = stylesFn(theme);
 
   const [products, setProducts] = useState<string[]>([
     "Product1",
@@ -71,17 +71,17 @@ const ApplyScreen = () => {
         <RadioButton.Item
           label="Paid"
           value="Paid"
-          color={theme.colors.primary}
+          color={Colors(theme).primary}
         />
         <RadioButton.Item
           label="Unpaid"
           value="Unpaid"
-          color={theme.colors.primary}
+          color={Colors(theme).primary}
         />
         <RadioButton.Item
           label="Product"
           value="Product"
-          color={theme.colors.primary}
+          color={Colors(theme).primary}
         />
       </RadioButton.Group>
 
@@ -93,7 +93,7 @@ const ApplyScreen = () => {
           status={selectedProducts.includes(product) ? "checked" : "unchecked"}
           onPress={() => handleProductSelect(product)}
           key={index}
-          color={theme.colors.primary}
+          color={Colors(theme).primary}
         />
       ))}
 
@@ -105,7 +105,7 @@ const ApplyScreen = () => {
         keyboardType="numeric"
         mode="outlined"
         style={styles.input}
-        theme={{ colors: { primary: theme.colors.primary } }}
+        theme={{ colors: { primary: Colors(theme).primary } }}
       />
       <HelperText type="info" style={styles.helperText}>
         Explain that it's not a hard limit, but it will impact job success rate.
@@ -120,7 +120,7 @@ const ApplyScreen = () => {
         mode="outlined"
         style={styles.input}
         multiline
-        theme={{ colors: { primary: theme.colors.primary } }}
+        theme={{ colors: { primary: Colors(theme).primary } }}
       />
 
       {/* CV Upload */}

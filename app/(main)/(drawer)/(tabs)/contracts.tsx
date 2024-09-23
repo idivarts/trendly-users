@@ -3,13 +3,14 @@ import { Text, View } from "@/components/theme/Themed";
 import AppLayout from "@/layouts/app-layout";
 import { Link } from "expo-router";
 import ContractCard from "@/components/ContractCard";
-import { createStyles } from "@/styles/Contracts.styles";
+import { stylesFn } from "@/styles/Contracts.styles";
 import { useTheme } from "@react-navigation/native";
 import { DummyProposalData } from "@/constants/Contracts";
+import Colors from "@/constants/Colors";
 
 const ContractScreen = () => {
-  const { colors } = useTheme();
-  const styles = createStyles(colors);
+  const theme = useTheme();
+  const styles = stylesFn(theme);
 
   return (
     <AppLayout>
@@ -32,7 +33,7 @@ const ContractScreen = () => {
                   styles.title,
                   {
                     marginBottom: 10,
-                    color: colors.text,
+                    color: Colors(theme).text,
                   },
                 ]}
               >

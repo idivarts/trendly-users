@@ -1,13 +1,15 @@
+import Colors from "@/constants/Colors";
+import { Theme } from "@react-navigation/native";
 import { StyleSheet } from "react-native";
 
-export const createStyles = (colors: any) =>
+export const stylesFn = (theme: Theme) =>
   StyleSheet.create({
     scrollContainer: {
       padding: 16,
     },
     profileCard: {
       alignItems: "center",
-      backgroundColor: colors.card,
+      backgroundColor: Colors(theme).card,
       marginBottom: 16,
       borderRadius: 10,
     },
@@ -21,16 +23,16 @@ export const createStyles = (colors: any) =>
     name: {
       fontWeight: "bold",
       fontSize: 20,
-      color: colors.text,
+      color: Colors(theme).text,
     },
     brandName: {
       fontSize: 16,
-      color: colors.text,
+      color: Colors(theme).text,
       marginTop: 4,
     },
     shortDescription: {
       fontSize: 14,
-      color: "#999",
+      color: Colors(theme).text,
       textAlign: "center",
       marginVertical: 8,
     },
@@ -41,13 +43,13 @@ export const createStyles = (colors: any) =>
     },
     statChip: {
       marginHorizontal: 8,
-      backgroundColor: "#e0e0e0",
+      backgroundColor: Colors(theme).lightgray,
     },
     infoCard: {
       marginBottom: 16,
-      backgroundColor: colors.card,
+      backgroundColor: Colors(theme).card,
       borderRadius: 10,
-      shadowColor: "#000",
+      shadowColor: Colors(theme).black,
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.2,
       shadowRadius: 5,
@@ -56,7 +58,10 @@ export const createStyles = (colors: any) =>
     cardName: {
       fontSize: 16,
       fontWeight: "bold",
-      color: colors.text,
+      color: Colors(theme).text,
       margin: 16,
+    },
+    paragraph: {
+      color: Colors(theme).text,
     },
   });

@@ -1,6 +1,7 @@
+import { Theme } from "@react-navigation/native";
 import { StyleSheet } from "react-native";
 
-const styles = StyleSheet.create({
+const styles = (theme: Theme) => StyleSheet.create({
   container: {
     flexDirection: "row",
   },

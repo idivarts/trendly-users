@@ -1,11 +1,13 @@
+import Colors from "@/constants/Colors";
+import { Theme } from "@react-navigation/native";
 import { StyleSheet } from "react-native";
 
-export const createStyles = (colors: any) =>
+export const stylesFn = (theme: Theme) =>
   StyleSheet.create({
     container: {
       flex: 1,
       padding: 20,
-      backgroundColor: colors.background,
+      backgroundColor: Colors(theme).background,
     },
     header: {
       flexDirection: "row",
@@ -14,13 +16,13 @@ export const createStyles = (colors: any) =>
     },
     title: {
       fontSize: 24,
-      color: colors.text,
+      color: Colors(theme).text,
       fontWeight: "bold",
     },
     sectionTitle: {
       fontSize: 18,
       fontWeight: "bold",
-      color: colors.text,
+      color: Colors(theme).text,
       marginVertical: 10,
     },
     chipContainer: {
@@ -35,7 +37,7 @@ export const createStyles = (colors: any) =>
     },
     salaryLabel: {
       fontSize: 16,
-      color: colors.text,
+      color: Colors(theme).text,
       marginBottom: 5,
     },
     applyButton: {

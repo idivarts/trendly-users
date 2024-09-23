@@ -4,6 +4,7 @@ import { ScrollView } from "react-native";
 import { Searchbar } from "react-native-paper";
 import { useEffect, useState } from "react";
 import Colors from "@/constants/Colors";
+import { useTheme } from "@react-navigation/native";
 
 interface GroupProps {
   changeGroup: (groupId: string) => void;
@@ -16,6 +17,7 @@ const Group: React.FC<GroupProps> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredGroups, setFilteredGroups] = useState<Groups[]>([]);
+  const theme = useTheme();
 
   const onPress = (groupId: string) => {
     changeGroup(groupId);
@@ -42,7 +44,7 @@ const Group: React.FC<GroupProps> = ({
         placeholder="Search"
         value={searchQuery}
         style={{
-          backgroundColor: Colors.regular.platinum,
+          backgroundColor: Colors(theme).platinum,
           marginHorizontal: 10,
         }}
       />

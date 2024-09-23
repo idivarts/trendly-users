@@ -1,8 +1,8 @@
 import { Pressable, View } from "react-native";
 import { useNavigation } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { useColorScheme } from "@/components/theme/useColorScheme";
 import Colors from "@/constants/Colors";
+import { useTheme } from "@react-navigation/native";
 
 interface BackButtonProps {
   color?: string;
@@ -12,7 +12,7 @@ const BackButton: React.FC<BackButtonProps> = ({
   color,
 }) => {
   const navigation = useNavigation();
-  const colorScheme = useColorScheme();
+  const theme = useTheme();
 
   return (
     <Pressable
@@ -33,7 +33,7 @@ const BackButton: React.FC<BackButtonProps> = ({
             <Ionicons
               name="chevron-back"
               size={26}
-              color={color ?? Colors[colorScheme ?? "light"].text}
+              color={color ?? Colors(theme).text}
               style={{
                 opacity: pressed ? 0.8 : 1,
               }}

@@ -1,10 +1,12 @@
+import Colors from "@/constants/Colors";
+import { Theme } from "@react-navigation/native";
 import { StyleSheet } from "react-native";
 
-export const createStyles = (colors: any) =>
+export const stylesFn = (theme: Theme) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: colors.background,
+      backgroundColor: Colors(theme).background,
       padding: 20,
     },
     searchContainer: {
@@ -18,10 +20,10 @@ export const createStyles = (colors: any) =>
     modalContainer: {
       flex: 1,
       justifyContent: "flex-end",
-      backgroundColor: colors.modalBackground,
+      backgroundColor: Colors(theme).modalBackground,
     },
     modalContent: {
-      backgroundColor: colors.background,
+      backgroundColor: Colors(theme).background,
       borderTopLeftRadius: 20,
       borderTopRightRadius: 20,
       padding: 20,

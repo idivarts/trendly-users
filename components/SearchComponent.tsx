@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { TextInput } from "react-native-paper";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import Colors from "@/constants/Colors";
+import { useTheme } from "@react-navigation/native";
 
 interface SearchComponentProps {
   ToggleModal?: (show: boolean) => void;
@@ -13,6 +15,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
   setSearchQuery,
 }) => {
   const [localQuery, setLocalQuery] = useState("");
+  const theme = useTheme();
 
   const handleChangeText = (query: string) => {
     setLocalQuery(query);
@@ -25,18 +28,29 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
   };
 
   return (
-    <View style={styles.searchContainer}>
+    <View style={[
+      styles.searchContainer,
+      {
+        backgroundColor: Colors(theme).unicornSilver,
+      },
+    ]}
+    >
       <Ionicons
         name="search-outline"
         size={24}
-        color="#555"
+        color={Colors(theme).gray100}
         style={styles.icon}
       />
       <TextInput
         value={localQuery}
         onChangeText={handleChangeText}
         placeholder="UI/UX Designs"
-        style={styles.searchInput}
+        style={[
+          styles.searchInput,
+          {
+            backgroundColor: Colors(theme).unicornSilver,
+          }
+        ]}
         underlineColor="transparent"
         activeUnderlineColor="transparent"
         theme={{ roundness: 25 }}
@@ -45,7 +59,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
         <Ionicons
           name="close-outline"
           size={24}
-          color="#555"
+          color={Colors(theme).gray100}
           style={styles.icon}
           onPress={handleClearText}
         />
@@ -58,7 +72,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
         <Ionicons
           name="options-outline"
           size={24}
-          color="#555"
+          color={Colors(theme).gray100}
           style={styles.icon}
         />
       </TouchableOpacity>
@@ -70,7 +84,6 @@ const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#e8e8e8",
     borderRadius: 25,
     borderWidth: 0.3,
     paddingHorizontal: 10,
@@ -79,7 +92,6 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    backgroundColor: "#e8e8e8",
     fontSize: 16,
   },
   icon: {
