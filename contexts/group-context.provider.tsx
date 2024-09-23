@@ -30,6 +30,7 @@ import {
 import { useAuthContext } from "./auth-context.provider";
 
 interface Messages {
+  firstMessage?: DocumentSnapshot | null;
   hasNext: boolean;
   lastMessage: DocumentSnapshot | null,
   messages: IMessages[];
@@ -242,6 +243,7 @@ export const GroupContextProvider: React.FC<PropsWithChildren> = ({ children }) 
       const messagesSnapshot = await getDocs(messagesQuery);
 
       return {
+        firstMessage: messagesSnapshot.docs[0],
         hasNext: messagesSnapshot.docs.length === count,
         lastMessage: messagesSnapshot.docs[messagesSnapshot.docs.length - 1],
         messages: messagesSnapshot.docs.map((doc) => doc.data() as IMessages),
@@ -249,6 +251,7 @@ export const GroupContextProvider: React.FC<PropsWithChildren> = ({ children }) 
     } catch (error) {
       console.error("Error fetching messages: ", error);
       return {
+        firstMessage: null,
         hasNext: false,
         lastMessage: null,
         messages: [],
