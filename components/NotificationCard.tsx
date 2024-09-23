@@ -1,7 +1,7 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { Text, Button, Card, Avatar } from "react-native-paper";
-import { createStyles } from "@/styles/NotificationCard.styles";
+import { stylesFn } from "@/styles/NotificationCard.styles";
 import { useTheme } from "@react-navigation/native";
 
 export const NotificationCard = ({
@@ -21,8 +21,8 @@ export const NotificationCard = ({
   time: string;
   action: { open: boolean; markAsRead: boolean };
 }) => {
-  const { colors } = useTheme();
-  const styles = createStyles(colors);
+  const theme = useTheme();
+  const styles = stylesFn(theme);
   return (
     <Card style={styles.card}>
       <View style={styles.row}>
@@ -35,14 +35,14 @@ export const NotificationCard = ({
       </View>
       <View style={styles.actions}>
         {action.open && (
-          <Button mode="contained" onPress={() => {}}>
+          <Button mode="contained" onPress={() => { }}>
             Open
           </Button>
         )}
         {action.markAsRead && (
           <Button
             mode="outlined"
-            onPress={() => {}}
+            onPress={() => { }}
             style={styles.markAsReadButton}
           >
             Mark as Read

@@ -4,34 +4,35 @@ import { useNavigation } from "expo-router";
 import React from "react";
 import { ScrollView } from "react-native";
 import { Text, Appbar } from "react-native-paper";
-import { createStyles } from "@/styles/NotificationCard.styles";
+import { stylesFn } from "@/styles/NotificationCard.styles";
 import { notifications } from "@/constants/Notification";
 import { useTheme } from "@react-navigation/native";
+import Colors from "@/constants/Colors";
 
 export default function NotificationsScreen() {
-  const { colors } = useTheme();
-  const styles = createStyles(colors);
+  const theme = useTheme();
+  const styles = stylesFn(theme);
   const navigation = useNavigation();
   return (
     <AppLayout>
       <Appbar.Header
         style={{
-          backgroundColor: colors.background,
+          backgroundColor: Colors(theme).background,
           elevation: 0,
         }}
         statusBarHeight={0}
       >
         <Appbar.Action
           icon="arrow-left"
-          color={colors.text}
+          color={Colors(theme).text}
           onPress={() => {
             navigation.goBack();
           }}
         />
 
-        <Appbar.Content title="Notifications" color={colors.text} />
+        <Appbar.Content title="Notifications" color={Colors(theme).text} />
 
-        <Appbar.Action icon="check" onPress={() => { }} color={colors.text} />
+        <Appbar.Action icon="check" onPress={() => { }} color={Colors(theme).text} />
       </Appbar.Header>
       <ScrollView style={styles.container}>
         {notifications.length === 0 && (

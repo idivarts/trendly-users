@@ -1,7 +1,8 @@
 import Colors from "@/constants/Colors";
+import { Theme } from "@react-navigation/native";
 import { StyleSheet } from "react-native";
 
-const styles = StyleSheet.create({
+const styles = (theme: Theme) => StyleSheet.create({
   container: {
     alignItems: "center",
     flexDirection: "row",
@@ -9,7 +10,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   avatarImage: {
-    backgroundColor: Colors.regular.platinum,
+    backgroundColor: Colors(theme).platinum,
   },
   contentContainer: {
     flex: 1,
@@ -25,7 +26,7 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
   newMessagesAvatar: {
-    backgroundColor: Colors.regular.primary,
+    backgroundColor: Colors(theme).primary,
   },
   chevronIcon: {
     alignItems: "flex-end",

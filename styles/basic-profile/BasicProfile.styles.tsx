@@ -1,7 +1,8 @@
 import { StyleSheet } from "react-native";
 import Colors from "@/constants/Colors";
+import { Theme } from "@react-navigation/native";
 
-const styles = StyleSheet.create({
+const styles = (theme: Theme) => StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
@@ -11,7 +12,7 @@ const styles = StyleSheet.create({
   },
   avatarSection: {
     alignItems: "center",
-    borderBottomColor: Colors.regular.aliceBlue,
+    borderBottomColor: Colors(theme).aliceBlue,
     borderBottomWidth: 1,
     paddingVertical: 10,
   },
@@ -23,7 +24,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   editButton: {
-    color: Colors.regular.primary,
+    color: Colors(theme).primary,
     fontSize: 14,
     marginTop: 5,
   },
@@ -37,7 +38,7 @@ const styles = StyleSheet.create({
   },
   saveButton: {
     borderRadius: 4,
-    backgroundColor: Colors.regular.primary,
+    backgroundColor: Colors(theme).primary,
   },
 });
 

@@ -10,16 +10,17 @@ import {
   handleSkipQuestion,
   submitSurvey,
 } from "@/components/surverHandlers";
-import { createStyles } from "@/styles/Questions.styles";
+import { stylesFn } from "@/styles/Questions.styles";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useAuthContext } from "@/contexts";
+import Colors from "@/constants/Colors";
 
 const Questions = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [answers, setAnswers] = useState<string[]>([]);
-  const { colors } = useTheme();
-  const styles = createStyles(colors);
+  const theme = useTheme();
+  const styles = stylesFn(theme);
   const router = useRouter();
 
   // const { user } = useLocalSearchParams();
@@ -68,7 +69,7 @@ const Questions = () => {
             )
           }
         >
-          <Ionicons name="chevron-back-outline" size={30} color="#000" />
+          <Ionicons name="chevron-back-outline" size={30} color={Colors(theme).black} />
         </TouchableOpacity>
         <Text style={styles.questionText}>{currentQuestion.question}</Text>
       </View>
@@ -85,7 +86,7 @@ const Questions = () => {
             style={{
               ...styles.optionItem,
               backgroundColor:
-                selectedOption === option ? "#1b1b1b" : "#f5f5f5",
+                selectedOption === option ? Colors(theme).eerieBlack : Colors(theme).whiteSmoke,
             }}
             labelStyle={
               selectedOption === option ? styles.selectedOption : null
@@ -97,11 +98,11 @@ const Questions = () => {
       <View style={styles.bottomNavigation}>
         {currentQuestionIndex === SURVEY_DATA.length - 1 ? (
           <TouchableOpacity onPress={handleNext} style={styles.nextButton}>
-            <Ionicons name="arrow-forward-circle" size={60} color="#FFBF00" />
+            <Ionicons name="arrow-forward-circle" size={60} color={Colors(theme).amber} />
           </TouchableOpacity>
         ) : (
           <TouchableOpacity onPress={handleNext} style={styles.nextButton}>
-            <Ionicons name="arrow-forward-circle" size={60} color="#FFBF00" />
+            <Ionicons name="arrow-forward-circle" size={60} color={Colors(theme).amber} />
           </TouchableOpacity>
         )}
 

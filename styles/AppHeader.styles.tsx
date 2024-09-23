@@ -1,11 +1,12 @@
 import Colors from "@/constants/Colors";
+import { Theme } from "@react-navigation/native";
 import { StyleSheet } from "react-native";
 
-const appHeaderStyles = StyleSheet.create({
+const appHeaderStyles = (theme: Theme) => StyleSheet.create({
   appbarHeader: {
     paddingVertical: 10,
     gap: 10,
-    backgroundColor: Colors.regular.primary,
+    backgroundColor: Colors(theme).primary,
   },
   backButtonContainer: {
     backgroundColor: "transparent",
@@ -17,7 +18,7 @@ const appHeaderStyles = StyleSheet.create({
     fontSize: 16,
     textAlign: "left",
     fontWeight: "bold",
-    color: "white",
+    color: Colors(theme).white,
   },
 });
 

@@ -8,7 +8,7 @@ import { ActivityIndicator, Appbar, Avatar, IconButton, Modal, TextInput } from 
 import * as ImagePicker from 'expo-image-picker';
 import ChatMessage from "./ChatMessage";
 import { View } from "@/components/theme/Themed";
-import styles from "@/styles/messages/Chat.styles";
+import stylesFn from "@/styles/messages/Chat.styles";
 import { IMessages } from "@/shared-libs/firestore/trendly-pro/models/groups";
 import { useAuthContext, useGroupContext } from "@/contexts";
 import { collection, doc, DocumentSnapshot, endBefore, getDocs, onSnapshot, orderBy, query } from "firebase/firestore";
@@ -17,12 +17,15 @@ import { useFirebaseStorageContext } from "@/contexts/firebase-storage-context.p
 import { signInAnonymously } from "firebase/auth";
 import { AuthApp } from "@/utils/auth";
 import { FirestoreDB } from "@/utils/firestore";
+import { useTheme } from "@react-navigation/native";
 
 interface ChatProps {
   group: Groups;
 }
 
 const Chat: React.FC<ChatProps> = ({ group }) => {
+  const theme = useTheme();
+  const styles = stylesFn(theme);
   const [message, setMessage] = useState("");
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -199,7 +202,7 @@ const Chat: React.FC<ChatProps> = ({ group }) => {
     <View style={styles.container}>
       <Appbar.Header statusBarHeight={0} style={styles.appbar}>
         <View style={[styles.backButtonContainer, { marginLeft: xl ? 10 : 0 }]}>
-          <BackButton color={Colors.regular.platinum} />
+          <BackButton color={Colors(theme).platinum} />
         </View>
         <Avatar.Image
           source={{
@@ -262,8 +265,8 @@ const Chat: React.FC<ChatProps> = ({ group }) => {
             onChangeText={handleMessageChange}
             value={message}
             placeholder="Type a message"
-            activeUnderlineColor={Colors.regular.primary}
-            selectionColor={Colors.regular.primary}
+            activeUnderlineColor={Colors(theme).primary}
+            selectionColor={Colors(theme).primary}
           />
           {(message.length > 0 || capturedImage) ? (
             <IconButton

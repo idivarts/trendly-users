@@ -5,7 +5,7 @@ import JobCard from "./CollaborationCard";
 import CollaborationFilter from "@/components/FilterModal";
 import AppLayout from "@/layouts/app-layout";
 import { useTheme } from "@react-navigation/native";
-import { createStyles } from "@/styles/Collections.styles";
+import { stylesFn } from "@/styles/Collections.styles";
 import { collection, getDocs } from "firebase/firestore";
 import { FirestoreDB } from "@/utils/firestore";
 import { signInAnonymously } from "firebase/auth";
@@ -13,6 +13,7 @@ import { AuthApp } from "@/utils/auth";
 import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
 import { ActivityIndicator } from "react-native-paper";
+import Colors from "@/constants/Colors";
 
 interface ICollaborationAddCardProps extends ICollaboration {
   name: string;
@@ -34,7 +35,7 @@ const Collaboration = () => {
   const [selectedJobType, setSelectedJobType] = useState("");
   const [salaryRange, setSalaryRange] = useState([0, 10000]);
   const [collabs, setCollabs] = useState<ICollaborationAddCardProps[]>([]);
-  const { colors } = useTheme();
+  const theme = useTheme();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -120,7 +121,7 @@ const Collaboration = () => {
     );
   });
 
-  const styles = createStyles(colors);
+  const styles = stylesFn(theme);
 
   if (loading) {
     return (
@@ -134,7 +135,7 @@ const Collaboration = () => {
           </View>
           <ActivityIndicator
             animating={true}
-            color={colors.primary}
+            color={Colors(theme).primary}
             size="large"
           />
         </View>

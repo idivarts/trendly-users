@@ -1,11 +1,12 @@
 import JobCard from "@/components/collaboration/CollaborationCard";
 import { Text, View } from "@/components/theme/Themed";
+import Colors from "@/constants/Colors";
 import { DummyProposalData } from "@/constants/Proposal";
 import AppLayout from "@/layouts/app-layout";
 import { CollaborationType } from "@/shared-libs/firestore/trendly-pro/constants/collaboration-type";
 import { PromotionType } from "@/shared-libs/firestore/trendly-pro/constants/promotion-type";
 import { SocialPlatform } from "@/shared-libs/firestore/trendly-pro/constants/social-platform";
-import { createStyles } from "@/styles/Proposal.styles";
+import { stylesFn } from "@/styles/Proposal.styles";
 import { useTheme } from "@react-navigation/native";
 import { Link } from "expo-router";
 import { useState } from "react";
@@ -15,8 +16,8 @@ const ProposalScreen = () => {
   const [selectedTab, setSelectedTab] = useState<"proposals" | "forYou">(
     "proposals"
   );
-  const { colors } = useTheme();
-  const styles = createStyles(colors);
+  const theme = useTheme();
+  const styles = stylesFn(theme);
 
   return (
     <AppLayout>
@@ -95,7 +96,7 @@ const ProposalScreen = () => {
                 </Text>
                 <View
                   style={{
-                    backgroundColor: colors.card,
+                    backgroundColor: Colors(theme).card,
 
                     padding: 10,
                     borderRadius: 5,
@@ -148,7 +149,7 @@ const ProposalScreen = () => {
                     styles.title,
                     {
                       marginBottom: 10,
-                      color: colors.text,
+                      color: Colors(theme).text,
                     },
                   ]}
                 >
@@ -156,7 +157,7 @@ const ProposalScreen = () => {
                 </Text>
                 <View
                   style={{
-                    backgroundColor: colors.card,
+                    backgroundColor: Colors(theme).card,
                     padding: 10,
                     borderRadius: 5,
                     justifyContent: "center",

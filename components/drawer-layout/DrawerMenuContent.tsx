@@ -2,8 +2,8 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { DrawerContentScrollView } from "@react-navigation/drawer";
 import { usePathname, useRouter } from "expo-router";
 import { APP_NAME } from "@/constants/App";
-import { useColorScheme } from "../theme/useColorScheme";
 import Colors from "@/constants/Colors";
+import { useTheme } from "@react-navigation/native";
 
 interface DrawerMenuContentProps { }
 
@@ -33,7 +33,7 @@ const DRAWER_MENU_CONTENT_ITEMS = [
 const DrawerMenuContent: React.FC<DrawerMenuContentProps> = () => {
   const router = useRouter();
   const pathname = usePathname();
-  const colorScheme = useColorScheme();
+  const theme = useTheme();
 
   return (
     <View
@@ -67,10 +67,10 @@ const DrawerMenuContent: React.FC<DrawerMenuContentProps> = () => {
                 <View
                   style={{
                     backgroundColor: tab.href.includes(pathname)
-                      ? Colors.regular.primary
-                      : Colors[colorScheme].background,
+                      ? Colors(theme).primary
+                      : Colors(theme).background,
                     borderBottomWidth: StyleSheet.hairlineWidth,
-                    borderBottomColor: Colors.regular.aliceBlue,
+                    borderBottomColor: Colors(theme).aliceBlue,
                     paddingHorizontal: 24,
                     paddingVertical: 14,
                   }}
@@ -78,8 +78,8 @@ const DrawerMenuContent: React.FC<DrawerMenuContentProps> = () => {
                   <Text
                     style={{
                       color: tab.href.includes(pathname)
-                        ? Colors.regular.white
-                        : Colors[colorScheme].text,
+                        ? Colors(theme).white
+                        : Colors(theme).text,
                       textAlign: "center",
                       fontSize: 16,
                     }}

@@ -4,9 +4,9 @@ import { Link, Tabs } from "expo-router";
 import { Pressable } from "react-native";
 
 import Colors from "@/constants/Colors";
-import { useColorScheme } from "@/components/theme/useColorScheme";
 import { useClientOnlyValue } from "@/components/useClientOnlyValue";
 import { useBreakpoints } from "@/hooks";
+import { useTheme } from "@react-navigation/native";
 
 const TabBarIcon = (props: {
   name: React.ComponentProps<typeof FontAwesome>["name"];
@@ -16,13 +16,13 @@ const TabBarIcon = (props: {
 };
 
 const TabLayout = () => {
-  const colorScheme = useColorScheme();
   const { xl } = useBreakpoints();
+  const theme = useTheme();
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors.regular.primary,
+        tabBarActiveTintColor: Colors(theme).primary,
         // Disable the static render of the header on web
         // to prevent a hydration error in React Navigation v6.
         headerShown: useClientOnlyValue(false, true),
@@ -52,7 +52,7 @@ const TabLayout = () => {
                   <FontAwesome
                     name="bell"
                     size={22}
-                    color={Colors[colorScheme ?? "light"].text}
+                    color={Colors(theme).text}
                     style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
                   />
                 )}
@@ -75,7 +75,7 @@ const TabLayout = () => {
                   <FontAwesome
                     name="bell"
                     size={22}
-                    color={Colors[colorScheme ?? "light"].text}
+                    color={Colors(theme).text}
                     style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
                   />
                 )}
@@ -95,7 +95,7 @@ const TabLayout = () => {
                   <FontAwesome
                     name="bell"
                     size={25}
-                    color={Colors[colorScheme ?? "light"].text}
+                    color={Colors(theme).text}
                     style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
                   />
                 )}
@@ -124,7 +124,7 @@ const TabLayout = () => {
                   <FontAwesome
                     name="bell"
                     size={25}
-                    color={Colors[colorScheme ?? "light"].text}
+                    color={Colors(theme).text}
                     style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
                   />
                 )}

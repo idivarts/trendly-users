@@ -8,7 +8,8 @@ import { useAuthContext } from "@/contexts";
 import * as ImagePicker from 'expo-image-picker';
 import { User } from "@/types/User";
 import { useBreakpoints } from "@/hooks";
-import styles from "@/styles/basic-profile/BasicProfile.styles";
+import stylesFn from "@/styles/basic-profile/BasicProfile.styles";
+import { useTheme } from "@react-navigation/native";
 
 interface BasicProfileProps {
   user: User;
@@ -22,6 +23,9 @@ const BasicProfile: React.FC<BasicProfileProps> = ({
   const [phoneNumber, setPhoneNumber] = useState(user.phoneNumber || "");
   const [capturedImage, setCapturedImage] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+
+  const theme = useTheme();
+  const styles = stylesFn(theme);
 
   const {
     lg,
@@ -132,21 +136,36 @@ const BasicProfile: React.FC<BasicProfileProps> = ({
         style={styles.textInputContainer}
       >
         <TextInput
-          activeOutlineColor={Colors.regular.primary}
+          style={{
+            backgroundColor: Colors(theme).background,
+          }}
+          textColor={Colors(theme).text}
+          placeholderTextColor={Colors(theme).text}
+          activeOutlineColor={Colors(theme).primary}
           label="Name"
           mode="outlined"
           onChangeText={(text) => setName(text)}
           value={name}
         />
         <TextInput
-          activeOutlineColor={Colors.regular.primary}
+          style={{
+            backgroundColor: Colors(theme).background,
+          }}
+          textColor={Colors(theme).text}
+          placeholderTextColor={Colors(theme).text}
+          activeOutlineColor={Colors(theme).primary}
           label="Email"
           mode="outlined"
           onChangeText={(text) => setEmail(text)}
           value={email}
         />
         <TextInput
-          activeOutlineColor={Colors.regular.primary}
+          style={{
+            backgroundColor: Colors(theme).background,
+          }}
+          textColor={Colors(theme).text}
+          placeholderTextColor={Colors(theme).text}
+          activeOutlineColor={Colors(theme).primary}
           label="Phone number"
           mode="outlined"
           onChangeText={(text) => setPhoneNumber(text)}

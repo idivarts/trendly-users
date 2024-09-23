@@ -5,7 +5,7 @@ import { Link, useRouter } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Colors from "@/constants/Colors";
 import { useTheme } from "@react-navigation/native";
-import { createStyles } from "@/styles/CollaborationCard.styles";
+import { stylesFn } from "@/styles/CollaborationCard.styles";
 
 interface CollaborationAdCardProps {
   collaborationName: string;
@@ -25,8 +25,8 @@ interface CollaborationAdCardProps {
 const ContractCard = (props: CollaborationAdCardProps) => {
   const [bookmarked, setBookmarked] = useState(false);
   const router = useRouter();
-  const { colors } = useTheme();
-  const styles = createStyles(colors);
+  const theme = useTheme();
+  const styles = stylesFn(theme);
 
   return (
     <Card style={styles.card}>
@@ -41,7 +41,7 @@ const ContractCard = (props: CollaborationAdCardProps) => {
             <Ionicons
               name={bookmarked ? "bookmark" : "bookmark-outline"}
               size={24}
-              color="#555"
+              color={Colors(theme).gray100}
               style={styles.bookmarkIcon}
             />
           </TouchableOpacity>
@@ -84,13 +84,13 @@ const ContractCard = (props: CollaborationAdCardProps) => {
             style={{
               borderRadius: 4,
               padding: 10,
-              backgroundColor: colors.primary,
+              backgroundColor: Colors(theme).primary,
               width: 150,
             }}
           >
             <Text
               style={{
-                color: colors.text,
+                color: Colors(theme).white,
                 fontWeight: "bold",
                 textAlign: "center",
                 width: 50,

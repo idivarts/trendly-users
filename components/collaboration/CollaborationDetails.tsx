@@ -11,8 +11,9 @@ import {
 import AppLayout from "@/layouts/app-layout";
 import { useLocalSearchParams } from "expo-router";
 import { useTheme } from "@react-navigation/native";
-import { createStyles } from "@/styles/CollaborationDetails.styles";
+import { stylesFn } from "@/styles/CollaborationDetails.styles";
 import BackButton from "@/components/ui/back-button/BackButton";
+import Colors from "@/constants/Colors";
 
 interface CollaborationAdCardProps {
   collaborationName: string;
@@ -38,20 +39,20 @@ interface CollaborationAdCardProps {
 }
 
 const CollaborationPage = (props: any) => {
-  const { colors } = useTheme();
-  const styles = createStyles(colors);
+  const theme = useTheme();
+  const styles = stylesFn(theme);
 
   return (
     <AppLayout>
       <Appbar.Header
         statusBarHeight={0}
         style={{
-          backgroundColor: colors.background,
+          backgroundColor: Colors(theme).background,
         }}
       >
         <BackButton />
-        <Appbar.Content title="Collaboration Details" color={colors.text} />
-        <IconButton icon="dots-vertical" onPress={() => {}} />
+        <Appbar.Content title="Collaboration Details" color={Colors(theme).text} />
+        <IconButton icon="dots-vertical" onPress={() => { }} />
       </Appbar.Header>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {/* Collaboration Details */}
@@ -94,7 +95,7 @@ const CollaborationPage = (props: any) => {
             </Text>
           </View>
           <Card.Content>
-            <Paragraph>Description</Paragraph>
+            <Paragraph style={styles.paragraph}>Description</Paragraph>
           </Card.Content>
         </Card>
 
@@ -107,7 +108,7 @@ const CollaborationPage = (props: any) => {
             </Text>
           </View>
           <Card.Content>
-            <Paragraph>Brand Description</Paragraph>
+            <Paragraph style={styles.paragraph}>Brand Description</Paragraph>
           </Card.Content>
         </Card>
 
@@ -120,7 +121,7 @@ const CollaborationPage = (props: any) => {
             </Text>
           </View>
           <Card.Content>
-            <Paragraph>Instagram</Paragraph>
+            <Paragraph style={styles.paragraph}>Instagram</Paragraph>
           </Card.Content>
         </Card>
 
@@ -133,8 +134,8 @@ const CollaborationPage = (props: any) => {
             </Text>
           </View>
           <Card.Content>
-            <Paragraph>Cost: $500</Paragraph>
-            <Paragraph>Payment Verified: True</Paragraph>
+            <Paragraph style={styles.paragraph}>Cost: $500</Paragraph>
+            <Paragraph style={styles.paragraph}>Payment Verified: True</Paragraph>
           </Card.Content>
         </Card>
       </ScrollView>

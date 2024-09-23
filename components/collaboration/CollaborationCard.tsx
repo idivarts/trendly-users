@@ -4,8 +4,9 @@ import { Text, Card, Button, Divider, Chip } from "react-native-paper";
 import { Link, useRouter } from "expo-router";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useTheme } from "@react-navigation/native";
-import { createStyles } from "@/styles/CollaborationCard.styles";
+import { stylesFn } from "@/styles/CollaborationCard.styles";
 import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
+import Colors from "@/constants/Colors";
 
 export interface CollaborationAdCardProps extends ICollaboration {
   name: string;
@@ -21,8 +22,8 @@ export interface CollaborationAdCardProps extends ICollaboration {
 const JobCard = (props: CollaborationAdCardProps) => {
   const [bookmarked, setBookmarked] = useState(false);
   const router = useRouter();
-  const { colors } = useTheme();
-  const styles = createStyles(colors);
+  const theme = useTheme();
+  const styles = stylesFn(theme);
 
   return (
     <Card style={styles.card}>
@@ -37,7 +38,7 @@ const JobCard = (props: CollaborationAdCardProps) => {
             <Ionicons
               name={bookmarked ? "bookmark" : "bookmark-outline"}
               size={24}
-              color="#555"
+              color={Colors(theme).gray100}
               style={styles.bookmarkIcon}
             />
           </TouchableOpacity>
@@ -63,14 +64,13 @@ const JobCard = (props: CollaborationAdCardProps) => {
                 styles.chip,
                 {
                   backgroundColor: props.paymentVerified
-                    ? "#d4edda"
-                    : "#f8d7da",
-                  borderColor: props.paymentVerified ? "#c3e6cb" : "#f5c6cb",
+                    ? Colors(theme).success
+                    : Colors(theme).pink,
                 },
               ]}
               icon={props.paymentVerified ? "check-circle" : "alert-circle"}
               mode={props.paymentVerified ? "outlined" : "flat"}
-              selectedColor={props.paymentVerified ? "#28a745" : "#dc3545"}
+              selectedColor={props.paymentVerified ? Colors(theme).successForeground : Colors(theme).pinkForeground}
             >
               {props.paymentVerified
                 ? "Payment Verified"
@@ -108,26 +108,26 @@ const JobCard = (props: CollaborationAdCardProps) => {
             href={
               props.cardType === "collaboration"
                 ? {
-                    pathname: `/collaboration-details/${props.id}`,
-                    params: {
-                      collaborationName: props.name,
-                      brandName: props.brandName,
-                      shortDescription: props.description,
-                      postedDate: props.timeStamp,
-                      cost: props.budget ? props.budget.min : "",
-                      paymentVerified:
-                        props.paymentVerified == null
-                          ? "false"
-                          : props.paymentVerified.toString(),
-                      promotionType: props.promotionType,
-                      collaborationType: props.collaborationType,
-                      influencersNeeded: props.numberOfInfluencersNeeded,
-                      appliedCount: props.appliedCount,
-                      aiSuccessRate: props.aiSuccessRate,
-                      brandHireRate: props.brandHireRate,
-                      location: props.location ? props.location.latlong : "",
-                    },
-                  }
+                  pathname: `/collaboration-details/${props.id}`,
+                  params: {
+                    collaborationName: props.name,
+                    brandName: props.brandName,
+                    shortDescription: props.description,
+                    postedDate: props.timeStamp,
+                    cost: props.budget ? props.budget.min : "",
+                    paymentVerified:
+                      props.paymentVerified == null
+                        ? "false"
+                        : props.paymentVerified.toString(),
+                    promotionType: props.promotionType,
+                    collaborationType: props.collaborationType,
+                    influencersNeeded: props.numberOfInfluencersNeeded,
+                    appliedCount: props.appliedCount,
+                    aiSuccessRate: props.aiSuccessRate,
+                    brandHireRate: props.brandHireRate,
+                    location: props.location ? props.location.latlong : "",
+                  },
+                }
                 : `/collaboration-details/`
             }
           >
@@ -138,12 +138,12 @@ const JobCard = (props: CollaborationAdCardProps) => {
             style={{
               borderRadius: 4,
               padding: 10,
-              backgroundColor: colors.primary,
+              backgroundColor: Colors(theme).primary,
             }}
           >
             <Text
               style={{
-                color: colors.text,
+                color: Colors(theme).white,
                 fontWeight: "bold",
                 textAlign: "center",
               }}
@@ -178,7 +178,7 @@ const JobCard = (props: CollaborationAdCardProps) => {
             >
               <Text
                 style={{
-                  color: colors.primary,
+                  color: Colors(theme).primary,
 
                   textAlign: "center",
                 }}

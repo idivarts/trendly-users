@@ -1,7 +1,8 @@
 import BackButton from "@/components/ui/back-button/BackButton";
+import Colors from "@/constants/Colors";
 import AppLayout from "@/layouts/app-layout";
 import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
-import { createStyles } from "@/styles/ApplyNow.styles";
+import { stylesFn } from "@/styles/ApplyNow.styles";
 import { AuthApp } from "@/utils/auth";
 import { StorageApp } from "@/utils/firebase-storage";
 import { FirestoreDB } from "@/utils/firestore";
@@ -29,7 +30,6 @@ import {
 } from "react-native-paper";
 
 const ApplyScreen = () => {
-  const theme = useTheme();
   const params = useLocalSearchParams();
   const pageID = Array.isArray(params.pageID)
     ? params.pageID[0]
@@ -37,8 +37,8 @@ const ApplyScreen = () => {
   const [note, setNote] = useState<string>("");
   const [files, setFiles] = useState<string[]>([]);
   const [errorMessage, setErrorMessage] = useState("");
-  const { colors } = useTheme();
-  const styles = createStyles(colors);
+  const theme = useTheme();
+  const styles = stylesFn(theme);
 
   const resetForm = () => {
     setNote("");
@@ -137,11 +137,11 @@ const ApplyScreen = () => {
       <Appbar.Header
         statusBarHeight={0}
         style={{
-          backgroundColor: colors.background,
+          backgroundColor: Colors(theme).background,
         }}
       >
         <BackButton />
-        <Appbar.Content title="Apply Now" color={colors.text} />
+        <Appbar.Content title="Apply Now" color={Colors(theme).text} />
         <IconButton icon="dots-vertical" onPress={() => { }} />
       </Appbar.Header>
       <ScrollView style={styles.container}>
@@ -157,7 +157,7 @@ const ApplyScreen = () => {
           mode="outlined"
           style={styles.input}
           multiline
-          theme={{ colors: { primary: theme.colors.primary } }}
+          theme={{ colors: { primary: Colors(theme).primary } }}
         />
 
         {/* CV Upload */}

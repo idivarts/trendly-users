@@ -1,16 +1,18 @@
+import Colors from "@/constants/Colors";
+import { Theme } from "@react-navigation/native";
 import { StyleSheet } from "react-native";
 
-export const createStyles = (colors: any) =>
+export const stylesFn = (theme: Theme) =>
   StyleSheet.create({
     container: {
       flex: 1,
       padding: 10,
-      backgroundColor: colors.background,
+      backgroundColor: Colors(theme).background,
     },
     card: {
       marginVertical: 8,
       padding: 10,
-      backgroundColor: colors.card,
+      backgroundColor: Colors(theme).card,
     },
     row: {
       flexDirection: "row",
@@ -19,14 +21,14 @@ export const createStyles = (colors: any) =>
     content: {
       marginLeft: 10,
       flex: 1,
-      color: colors.text,
+      color: Colors(theme).text,
     },
     adName: {
       fontWeight: "bold",
-      color: colors.text,
+      color: Colors(theme).text,
     },
     time: {
-      color: colors.text,
+      color: Colors(theme).text,
       marginTop: 5,
     },
     actions: {
