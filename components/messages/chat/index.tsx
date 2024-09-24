@@ -27,8 +27,6 @@ const Chat: React.FC<ChatProps> = ({ group }) => {
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [isSending, setIsSending] = useState(false);
-  const [modalImage, setModalImage] = useState<string | null>(null);
-  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const [messages, setMessages] = useState([] as IMessages[]);
   const [lastMessage, setLastMessage] = useState<DocumentSnapshot | null>(null);
@@ -197,8 +195,6 @@ const Chat: React.FC<ChatProps> = ({ group }) => {
               key={index + item.timeStamp}
               managers={group.managers}
               message={item}
-              setIsModalVisible={setIsModalVisible}
-              setModalImage={setModalImage}
               users={group.users}
             />
           )}
@@ -254,29 +250,6 @@ const Chat: React.FC<ChatProps> = ({ group }) => {
           )}
         </View>
       </KeyboardAvoidingView>
-      {
-        <Modal
-          contentContainerStyle={styles.imageModalContainer}
-          style={styles.imageModalStyle}
-          visible={isModalVisible}
-        >
-          <View
-            style={styles.imageModalImageContainer}
-          >
-            <IconButton
-              icon="close"
-              onPress={() => setIsModalVisible(false)}
-              style={styles.imageModalCloseButton}
-            />
-            <Image
-              source={{
-                uri: modalImage ?? "",
-              }}
-              style={styles.imageModalImage}
-            />
-          </View>
-        </Modal>
-      }
     </View>
   );
 };

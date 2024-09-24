@@ -2,17 +2,16 @@ import { Text, View } from "@/components/theme/Themed";
 import Colors from "@/constants/Colors";
 import stylesFn from "@/styles/messages/ChatMessage.styles";
 import { IMessages } from "@/shared-libs/firestore/trendly-pro/models/groups";
-import { Image, Pressable } from "react-native";
+import { Alert, Image, Pressable } from "react-native";
 import { useAuthContext } from "@/contexts";
 import { useTheme } from "@react-navigation/native";
+import * as Linking from 'expo-linking';
 
 interface ChatMessageProps {
   managers: {
     [key: string]: any,
   };
   message: IMessages;
-  setIsModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
-  setModalImage: React.Dispatch<React.SetStateAction<string | null>>;
   users: {
     [key: string]: any,
   };
@@ -21,8 +20,6 @@ interface ChatMessageProps {
 const ChatMessage: React.FC<ChatMessageProps> = ({
   managers,
   message,
-  setIsModalVisible,
-  setModalImage,
   users,
 }) => {
   const {
@@ -32,6 +29,17 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
   const isUser = message.userType === "user";
   const theme = useTheme();
   const styles = stylesFn(theme);
+
+  const openImage = async (url: string) => {
+    if (url) {
+      try {
+        await Linking.openURL(url);
+      } catch (error) {
+        console.error('Error opening image: ', error);
+        Alert.alert('Error', 'Failed to open the image.');
+      }
+    }
+  };
 
   return (
     <View
@@ -68,8 +76,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
                 return (
                   <Pressable
                     onPress={() => {
-                      setModalImage(attachment.url);
-                      setIsModalVisible(true);
+                      openImage(attachment.url);
                     }}
                   >
                     <Image
