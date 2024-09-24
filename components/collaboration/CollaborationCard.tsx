@@ -7,6 +7,7 @@ import { stylesFn } from "@/styles/CollaborationCard.styles";
 import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { router } from "expo-router";
 import { formatDistanceToNow } from "date-fns";
+import Colors from "@/constants/Colors";
 
 export interface CollaborationAdCardProps extends ICollaboration {
   name: string;
@@ -50,7 +51,11 @@ const JobCard = (props: CollaborationAdCardProps) => {
               <Ionicons
                 name={bookmarked ? "bookmark" : "bookmark-outline"}
                 size={24}
-                color="#555"
+                selectedColor={
+                  props.paymentVerified
+                    ? Colors(theme).successForeground
+                    : Colors(theme).pinkForeground
+                }
                 style={styles.bookmarkIcon}
               />
             </TouchableOpacity>
@@ -59,7 +64,11 @@ const JobCard = (props: CollaborationAdCardProps) => {
                 props.onOpenBottomSheet(props.id);
               }}
             >
-              <Ionicons name="ellipsis-vertical" size={24} color="#555" />
+              <Ionicons
+                name="ellipsis-vertical"
+                size={24}
+                color={Colors(theme).gray100}
+              />
             </TouchableOpacity>
           </View>
         </View>

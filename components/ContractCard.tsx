@@ -49,7 +49,7 @@ const ContractCard = (props: CollaborationAdCardProps) => {
               <Ionicons
                 name={bookmarked ? "bookmark" : "bookmark-outline"}
                 size={24}
-                color="#555"
+                color={Colors(theme).gray100}
                 style={styles.bookmarkIcon}
               />
             </TouchableOpacity>
