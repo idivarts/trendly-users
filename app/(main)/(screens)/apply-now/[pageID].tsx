@@ -68,12 +68,14 @@ const ApplyScreen = () => {
         return;
       }
 
-      const user = await signInWithEmailAndPassword(
-        AuthApp,
-        "testuser@gmail.com",
-        "password"
-      );
-      console.log("User signed in anonymously");
+      //fetch current logged in user
+
+      const user = AuthApp.currentUser;
+
+      if (!user) {
+        setErrorMessage("User not found");
+        return;
+      }
 
       const urls = await Promise.all(
         files.map(async (fileUri) => {
@@ -86,7 +88,7 @@ const ApplyScreen = () => {
 
           const fileRef = ref(
             StorageApp,
-            `collaboration/${pageID}/applications/${user.user.uid}/${fileName}`
+            `collaboration/${pageID}/applications/${user?.uid}/${fileName}`
           );
 
           await uploadBytes(fileRef, blob);
@@ -97,8 +99,10 @@ const ApplyScreen = () => {
 
       console.log("Files uploaded successfully");
 
+      console.log("User", user);
+
       const applicantData: IApplications = {
-        userId: user.user.uid,
+        userId: user?.uid,
         collaborationId: pageID,
         status: "pending",
         timeStamp: Date.now(),

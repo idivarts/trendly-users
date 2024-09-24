@@ -75,6 +75,7 @@ const CollaborationFilter = ({
           disappearsOnIndex={-1}
           appearsOnIndex={1}
           pressBehavior="close"
+          style={styles.backdrop}
         />
       )}
       onClose={onClose}

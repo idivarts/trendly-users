@@ -10,7 +10,7 @@ import {
   Button,
 } from "react-native-paper";
 import AppLayout from "@/layouts/app-layout";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useTheme } from "@react-navigation/native";
 import { stylesFn } from "@/styles/CollaborationDetails.styles";
 import BackButton from "@/components/ui/back-button/BackButton";
@@ -46,7 +46,7 @@ interface CollaborationAdCardProps {
 const CollaborationPage = (props: any) => {
   const theme = useTheme();
   const styles = stylesFn(theme);
-
+  console.log("Collaboration Details", props.collaborationDetail);
   return (
     <AppLayout>
       <Appbar.Header
@@ -80,7 +80,13 @@ const CollaborationPage = (props: any) => {
             <Text variant="bodySmall" style={styles.shortDescription}>
               {props.collaborationDetail.description}
             </Text>
-            <Button mode="contained" style={styles.applyButton}>
+            <Button
+              mode="contained"
+              style={styles.applyButton}
+              onPress={() => {
+                router.push(`/apply-now/${props.pageID}`);
+              }}
+            >
               Apply Now
             </Button>
             <View style={styles.statsContainer}>

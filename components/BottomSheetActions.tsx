@@ -108,11 +108,6 @@ const BottomSheetActions = ({
       animationType="fade"
       onRequestClose={handleClose} // Closes when Android back button is pressed
     >
-      {/* Overlay */}
-      {/* <Pressable style={styles.overlay} onPress={handleClose}> */}
-      {/* Dismiss when tapping outside */}
-      {/* </Pressable> */}
-
       {/* Bottom Sheet */}
       <View style={styles.bottomSheetContainer}>
         <BottomSheet

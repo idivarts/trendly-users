@@ -6,6 +6,7 @@ import { useTheme } from "@react-navigation/native";
 import { stylesFn } from "@/styles/CollaborationCard.styles";
 import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { router } from "expo-router";
+import { formatDistanceToNow } from "date-fns";
 
 export interface CollaborationAdCardProps extends ICollaboration {
   name: string;
@@ -23,6 +24,7 @@ const JobCard = (props: CollaborationAdCardProps) => {
   const [bookmarked, setBookmarked] = useState(false);
   const theme = useTheme();
   const styles = stylesFn(theme);
+  const datePosted = new Date(props.timeStamp);
 
   return (
     <Card
@@ -67,7 +69,9 @@ const JobCard = (props: CollaborationAdCardProps) => {
 
         {/* Posted Date and Cost */}
         <View style={styles.infoRow}>
-          <Text style={styles.infoText}>Posted: {props.timeStamp}</Text>
+          <Text style={styles.infoText}>
+            Posted: {formatDistanceToNow(datePosted, { addSuffix: true })}
+          </Text>
           <Text style={styles.infoText}>
             Cost: Rs {props.budget ? props.budget.min : ""}-
             {props.budget ? props.budget.max : ""}
