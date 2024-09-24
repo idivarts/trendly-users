@@ -97,10 +97,6 @@ const ApplyScreen = () => {
         })
       );
 
-      console.log("Files uploaded successfully");
-
-      console.log("User", user);
-
       const applicantData: IApplications = {
         userId: user?.uid,
         collaborationId: pageID,

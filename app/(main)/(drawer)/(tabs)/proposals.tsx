@@ -60,18 +60,13 @@ const ProposalScreen = () => {
             })
           );
 
-          console.log("applicationData", applicationData);
-
           const userApplications = applicationData.filter(
             (application) => application.userId === user?.uid
           );
 
-          console.log("userApplications", userApplications, user?.uid);
           return userApplications.length > 0 ? collab : null;
         })
       );
-
-      console.log("proposalsWithApplications", proposalsWithApplications);
 
       const validProposals = proposalsWithApplications.filter(
         (proposal) => proposal !== null
