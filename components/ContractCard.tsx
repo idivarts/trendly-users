@@ -20,6 +20,8 @@ interface CollaborationAdCardProps {
     prematureEnd: boolean;
     archived: boolean;
   };
+  id: string;
+  onOpenBottomSheet: (id: string) => void;
 }
 
 const ContractCard = (props: CollaborationAdCardProps) => {
@@ -37,14 +39,28 @@ const ContractCard = (props: CollaborationAdCardProps) => {
             <Text style={styles.collabName}>{props.collaborationName}</Text>
             <Text style={styles.brandName}>{props.brandName}</Text>
           </View>
-          <TouchableOpacity onPress={() => setBookmarked(!bookmarked)}>
-            <Ionicons
-              name={bookmarked ? "bookmark" : "bookmark-outline"}
-              size={24}
-              color={Colors(theme).gray100}
-              style={styles.bookmarkIcon}
-            />
-          </TouchableOpacity>
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "row",
+            }}
+          >
+            <TouchableOpacity onPress={() => setBookmarked(!bookmarked)}>
+              <Ionicons
+                name={bookmarked ? "bookmark" : "bookmark-outline"}
+                size={24}
+                color={Colors(theme).gray100}
+                style={styles.bookmarkIcon}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                props.onOpenBottomSheet(props.id);
+              }}
+            >
+              <Ionicons name="ellipsis-vertical" size={24} color="#555" />
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* Posted Date and Cost */}
@@ -60,49 +76,6 @@ const ContractCard = (props: CollaborationAdCardProps) => {
           <Chip style={styles.chip}>
             Approval: {props.status.approvalPending ? "Pending" : "Approved"}
           </Chip>
-        </View>
-
-        {/* Influencers Needed, Applied Count, AI Success Rate, Brand Hire Rate */}
-
-        {/* Actions */}
-        <Divider style={styles.divider} />
-        <View style={styles.actionRow}>
-          <Link
-            href={{
-              pathname: "/collaboration-details",
-              params: {
-                collaborationName: props.collaborationName,
-                brandName: props.brandName,
-                cost: props.cost,
-              },
-            }}
-          >
-            <Button mode="text">View</Button>
-          </Link>
-          <Link
-            href={"apply-now"}
-            style={{
-              borderRadius: 4,
-              padding: 10,
-              backgroundColor: Colors(theme).primary,
-              width: 150,
-            }}
-          >
-            <Text
-              style={{
-                color: Colors(theme).white,
-                fontWeight: "bold",
-                textAlign: "center",
-                width: 50,
-              }}
-            >
-              {/* Apply Now */}
-              Ask for Payments
-            </Text>
-          </Link>
-          <Button onPress={() => router.push("/edit-proposal")} mode="text">
-            End Contract
-          </Button>
         </View>
       </Card.Content>
     </Card>

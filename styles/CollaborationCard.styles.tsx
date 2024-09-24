@@ -11,6 +11,11 @@ export const stylesFn = (theme: Theme) =>
       backgroundColor: Colors(theme).card,
       elevation: 2,
     },
+    bottomSheetContent: {
+      position: "absolute",
+      bottom: 0,
+      padding: 16,
+    },
     header: {
       flexDirection: "row",
       justifyContent: "space-between",

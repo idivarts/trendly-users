@@ -6,7 +6,6 @@ export const stylesFn = (theme: Theme) =>
     container: {
       flex: 1,
       alignItems: "center",
-      justifyContent: "center",
       padding: 20,
     },
     title: {
