@@ -9,8 +9,8 @@ import { useFonts } from "expo-font";
 import { Stack, usePathname, useRouter, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "react-native-reanimated";
-
 import { useColorScheme } from "@/components/theme/useColorScheme";
 import { AuthContextProvider, useAuthContext } from "@/contexts";
 import { FirebaseStorageContextProvider } from "@/contexts/firebase-storage-context.provider";
@@ -51,9 +51,11 @@ const RootLayout = () => {
 
   return (
     <AuthContextProvider>
-      <FirebaseStorageContextProvider>
-        <RootLayoutStack />
-      </FirebaseStorageContextProvider>
+      <GestureHandlerRootView>
+        <FirebaseStorageContextProvider>
+          <RootLayoutStack />
+        </FirebaseStorageContextProvider>
+      </GestureHandlerRootView>
     </AuthContextProvider>
   );
 };
@@ -76,7 +78,7 @@ const RootLayoutStack = () => {
       router.replace(pathname);
     } else if (session) {
       // Redirect to main group if signed in
-      router.replace("/proposals");
+      router.replace("/collaborations");
     } else if (!session && !inAuthGroup) {
       // App should start at pre-signin
       router.replace("/pre-signin");

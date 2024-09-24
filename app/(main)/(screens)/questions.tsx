@@ -38,7 +38,7 @@ const Questions = () => {
       // Last question, submit survey and don't move to next
       submitSurvey(updatedAnswers)
         .then(() => {
-          router.replace("/proposals");
+          router.replace("/collaborations");
         })
         .catch((error) => {
           console.error("Error submitting survey:", error);
@@ -107,7 +107,7 @@ const Questions = () => {
         )}
 
         <TouchableOpacity
-          onPress={() => router.replace("/proposals")}
+          onPress={() => router.replace("/collaborations")}
           style={styles.skipButton}
         >
           <Text style={styles.skipText}>Skip</Text>

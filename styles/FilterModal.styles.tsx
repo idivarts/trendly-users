@@ -29,6 +29,10 @@ export const stylesFn = (theme: Theme) =>
       flexDirection: "row",
       flexWrap: "wrap",
     },
+    backdrop: {
+      flex: 1,
+      backgroundColor: "rgba(0, 0, 0, 0.5)",
+    },
     chip: {
       margin: 5,
     },

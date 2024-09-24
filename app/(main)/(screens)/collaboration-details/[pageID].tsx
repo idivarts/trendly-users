@@ -56,6 +56,8 @@ const CollaborationDetailsScreen = () => {
       </AppLayout>
     );
 
+  if (!collaboration) return null;
+
   return <CollaborationPage collaborationDetail={collaboration} />;
 };
 

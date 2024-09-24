@@ -14,6 +14,7 @@ import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/colla
 import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
 import { ActivityIndicator } from "react-native-paper";
 import Colors from "@/constants/Colors";
+import BottomSheetActions from "../BottomSheetActions";
 
 interface ICollaborationAddCardProps extends ICollaboration {
   name: string;
@@ -36,13 +37,20 @@ const Collaboration = () => {
   const [salaryRange, setSalaryRange] = useState([0, 10000]);
   const [collabs, setCollabs] = useState<ICollaborationAddCardProps[]>([]);
   const theme = useTheme();
+  const [isVisible, setIsVisible] = useState(false);
+  const [selectedCollabId, setSelectedCollabId] = useState<string | null>(null);
+  const openBottomSheet = (id: string) => {
+    setIsVisible(true);
+    setSelectedCollabId(id);
+  };
+  const closeBottomSheet = () => setIsVisible(false);
+
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       await signInAnonymously(AuthApp);
       const fetchedBrands = await fetchBrands(); // Fetch brands and store in a variable
-      console.log("Fetched Brands: ", fetchedBrands);
       await fetchCollabs(fetchedBrands); // Pass the fetched brands to fetchCollabs
       setLoading(false);
     };
@@ -95,16 +103,7 @@ const Collaboration = () => {
     setFilterVisible(!filterVisible);
   };
 
-  console.log(
-    "This is selected",
-    selectedCategory,
-    selectedJobType,
-    salaryRange
-  );
-
   const filteredList = collabs.filter((job) => {
-    console.log("This is job", job);
-
     return (
       (job.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         searchQuery === "") &&
@@ -155,35 +154,39 @@ const Collaboration = () => {
         <FlatList
           data={filteredList}
           renderItem={({ item }) => (
-            <JobCard {...item} cardType={"collaboration"} />
+            <JobCard
+              {...item}
+              cardType={"collaboration"}
+              onOpenBottomSheet={openBottomSheet}
+            />
           )}
-          keyExtractor={(item) => item.name}
+          keyExtractor={(item) => item.id}
           contentContainerStyle={styles.jobList}
         />
-
-        <Modal
-          visible={filterVisible}
-          animationType="slide"
-          transparent={true}
-          onRequestClose={toggleFilterModal}
-        >
-          <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
-              <CollaborationFilter
-                categories={getUniqueValues(collabs, "promotionType")}
-                jobTypes={getUniqueValues(collabs, "collaborationType")}
-                currentCategory={selectedCategory}
-                currentJobType={selectedJobType}
-                currentSalaryRange={salaryRange}
-                setSelectedCategory={setSelectedCategory}
-                setSelectedJobType={setSelectedJobType}
-                setSalaryRange={setSalaryRange}
-                onClose={toggleFilterModal}
-              />
-            </View>
-          </View>
-        </Modal>
+        {filterVisible && (
+          <CollaborationFilter
+            categories={getUniqueValues(collabs, "promotionType")}
+            jobTypes={getUniqueValues(collabs, "collaborationType")}
+            currentCategory={selectedCategory}
+            currentJobType={selectedJobType}
+            currentSalaryRange={salaryRange}
+            isVisible={filterVisible}
+            setSelectedCategory={setSelectedCategory}
+            setSelectedJobType={setSelectedJobType}
+            setSalaryRange={setSalaryRange}
+            onClose={toggleFilterModal}
+          />
+        )}
       </View>
+      {isVisible && (
+        <BottomSheetActions
+          cardId={selectedCollabId || ""} // Pass the selected collab id
+          cardType="collaboration"
+          isVisible={isVisible}
+          onClose={closeBottomSheet}
+          key={selectedCollabId} // Ensure the BottomSheetActions re-renders with new id
+        />
+      )}
     </AppLayout>
   );
 };

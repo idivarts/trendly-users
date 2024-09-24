@@ -1,3 +1,4 @@
+import BottomSheetActions from "@/components/BottomSheetActions";
 import JobCard from "@/components/collaboration/CollaborationCard";
 import { Text, View } from "@/components/theme/Themed";
 import Colors from "@/constants/Colors";
@@ -16,6 +17,13 @@ const ProposalScreen = () => {
   const [selectedTab, setSelectedTab] = useState<"proposals" | "forYou">(
     "proposals"
   );
+  const [isVisible, setIsVisible] = useState(false);
+  const [selectedCollabId, setSelectedCollabId] = useState<string | null>(null);
+  const openBottomSheet = (id: string) => {
+    setIsVisible(true);
+    setSelectedCollabId(id);
+  };
+  const closeBottomSheet = () => setIsVisible(false);
   const theme = useTheme();
   const styles = stylesFn(theme);
 
@@ -37,7 +45,7 @@ const ProposalScreen = () => {
                 selectedTab === "proposals" ? styles.titleActive : styles.title
               }
             >
-              Proposals
+              Applications
             </Text>
           </TouchableOpacity>
           {/* <Text style={styles.title}>For You</Text> */}
@@ -48,7 +56,7 @@ const ProposalScreen = () => {
                 selectedTab === "forYou" ? styles.titleActive : styles.title
               }
             >
-              For You
+              Invitations
             </Text>
           </TouchableOpacity>
         </View>
@@ -64,6 +72,7 @@ const ProposalScreen = () => {
                   min: Number(item.budget.min),
                   max: Number(item.budget.max),
                 }}
+                onOpenBottomSheet={openBottomSheet}
                 cardType="proposal"
                 collaborationType={CollaborationType.PAID}
                 id="1"
@@ -72,7 +81,10 @@ const ProposalScreen = () => {
                 numberOfInfluencersNeeded={1}
                 platform={SocialPlatform.INSTAGRAM}
                 promotionType={PromotionType.ADD_REVIEWS}
-                timeStamp={item.timeStamp} applications={undefined} invitaions={undefined} />
+                timeStamp={item.timeStamp}
+                applications={undefined}
+                invitaions={undefined}
+              />
             )}
             keyExtractor={(item, index) => index.toString()}
             style={{ height: "100%" }}
@@ -119,6 +131,7 @@ const ProposalScreen = () => {
               <JobCard
                 name={item.name}
                 brandName={item.brandName}
+                onOpenBottomSheet={openBottomSheet}
                 brandId={item.brandId}
                 budget={{
                   min: Number(item.budget.min),
@@ -132,7 +145,10 @@ const ProposalScreen = () => {
                 numberOfInfluencersNeeded={1}
                 platform={SocialPlatform.INSTAGRAM}
                 promotionType={PromotionType.ADD_REVIEWS}
-                timeStamp={item.timeStamp} applications={undefined} invitaions={undefined} />
+                timeStamp={item.timeStamp}
+                applications={undefined}
+                invitaions={undefined}
+              />
             )}
             keyExtractor={(item, index) => index.toString()}
             style={{ height: "100%" }}
@@ -173,6 +189,15 @@ const ProposalScreen = () => {
           />
         )}
       </View>
+      {isVisible && (
+        <BottomSheetActions
+          cardId={selectedCollabId || ""} // Pass the selected collab id
+          cardType="proposal"
+          isVisible={isVisible}
+          onClose={closeBottomSheet}
+          key={selectedCollabId} // Ensure the BottomSheetActions re-renders with new id
+        />
+      )}
     </AppLayout>
   );
 };

@@ -11,11 +11,7 @@ import * as DocumentPicker from "expo-document-picker";
 import { useLocalSearchParams } from "expo-router";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { addDoc, collection } from "firebase/firestore";
-import {
-  getDownloadURL,
-  ref,
-  uploadBytes
-} from "firebase/storage";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import React, { useState } from "react";
 import { ScrollView, View } from "react-native";
 import {
@@ -26,7 +22,7 @@ import {
   HelperText,
   IconButton,
   Paragraph,
-  TextInput
+  TextInput,
 } from "react-native-paper";
 
 const ApplyScreen = () => {
@@ -142,7 +138,6 @@ const ApplyScreen = () => {
       >
         <BackButton />
         <Appbar.Content title="Apply Now" color={Colors(theme).text} />
-        <IconButton icon="dots-vertical" onPress={() => { }} />
       </Appbar.Header>
       <ScrollView style={styles.container}>
         <HelperText type="info" style={styles.helperText}>
