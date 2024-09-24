@@ -5,7 +5,7 @@ import { useRouter } from "expo-router";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 
 interface BottomSheetActionsProps {
-  cardType: "collaboration" | "proposal" | "invitation";
+  cardType: "collaboration" | "proposal" | "invitation" | "details";
   cardId: string;
   isVisible: boolean;
   onClose: () => void;
@@ -72,6 +72,25 @@ const BottomSheetActions = ({
               title="View"
               onPress={() => {
                 router.push("/collaboration-details");
+                handleClose();
+              }}
+            />
+          </>
+        );
+      case "details":
+        return (
+          <>
+            <List.Item
+              title="Apply Now"
+              onPress={() => {
+                router.push(`/apply-now/${cardId}`);
+                handleClose();
+              }}
+            />
+            <List.Item
+              title="Report"
+              onPress={() => {
+                router.push("/report");
                 handleClose();
               }}
             />

@@ -15,6 +15,7 @@ import { useTheme } from "@react-navigation/native";
 import { stylesFn } from "@/styles/CollaborationDetails.styles";
 import BackButton from "@/components/ui/back-button/BackButton";
 import Colors from "@/constants/Colors";
+import BottomSheetActions from "../BottomSheetActions";
 
 interface CollaborationAdCardProps {
   collaborationName: string;
@@ -46,6 +47,8 @@ interface CollaborationAdCardProps {
 const CollaborationPage = (props: any) => {
   const theme = useTheme();
   const styles = stylesFn(theme);
+  const [isVisible, setIsVisible] = React.useState(false);
+
   console.log("Collaboration Details", props.collaborationDetail);
   return (
     <AppLayout>
@@ -60,7 +63,12 @@ const CollaborationPage = (props: any) => {
           title="Collaboration Details"
           color={Colors(theme).text}
         />
-        <IconButton icon="dots-vertical" onPress={() => {}} />
+        <IconButton
+          icon="dots-vertical"
+          onPress={() => {
+            setIsVisible(true);
+          }}
+        />
       </Appbar.Header>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {/* Collaboration Details */}
@@ -156,6 +164,14 @@ const CollaborationPage = (props: any) => {
           </Card.Content>
         </Card>
       </ScrollView>
+      <BottomSheetActions
+        cardId={props.pageID}
+        cardType="details"
+        isVisible={isVisible}
+        onClose={() => {
+          setIsVisible(false);
+        }}
+      />
     </AppLayout>
   );
 };
