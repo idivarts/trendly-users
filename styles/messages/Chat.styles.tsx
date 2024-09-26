@@ -1,6 +1,6 @@
 import Colors from "@/constants/Colors";
 import { Theme } from "@react-navigation/native";
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 
 const styles = (theme: Theme) => StyleSheet.create({
   container: { flex: 1 },
@@ -57,25 +57,20 @@ const styles = (theme: Theme) => StyleSheet.create({
     backgroundColor: Colors(theme).platinum,
     paddingHorizontal: 0,
   },
-  imageModalContainer: {
-    flex: 1,
-    width: "100%",
-  },
   imageModalStyle: {
-    margin: 0,
   },
   imageModalImageContainer: {
     alignItems: "center",
-    backgroundColor: "transparent",
+    backgroundColor: Colors(theme).modalBackground,
     flex: 1,
-    justifyContent: "center",
     position: "relative",
+    width: "100%",
   },
   imageModalCloseButton: {
     backgroundColor: Colors(theme).white,
     position: "absolute",
-    right: 10,
-    top: 10,
+    right: 5,
+    top: Platform.OS === "web" ? 10 : 100,
     zIndex: 1,
   },
   imageModalImage: {

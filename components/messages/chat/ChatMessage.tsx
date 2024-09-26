@@ -2,9 +2,10 @@ import { Text, View } from "@/components/theme/Themed";
 import Colors from "@/constants/Colors";
 import stylesFn from "@/styles/messages/ChatMessage.styles";
 import { IMessages } from "@/shared-libs/firestore/trendly-pro/models/groups";
-import { Image, Pressable } from "react-native";
+import { Alert, Image, Pressable } from "react-native";
 import { useAuthContext } from "@/contexts";
 import { useTheme } from "@react-navigation/native";
+import * as Linking from 'expo-linking';
 
 interface ChatMessageProps {
   managers: {
@@ -32,6 +33,17 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
   const isUser = message.userType === "user";
   const theme = useTheme();
   const styles = stylesFn(theme);
+
+  const openAsset = async (url: string) => {
+    if (url) {
+      try {
+        await Linking.openURL(url);
+      } catch (error) {
+        console.error('Error opening image: ', error);
+        Alert.alert('Error', 'Failed to open the image.');
+      }
+    }
+  };
 
   return (
     <View
@@ -77,6 +89,41 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
                       source={{ uri: attachment.url }}
                       style={styles.messageImage}
                     />
+                  </Pressable>
+                );
+              }
+
+              if (
+                attachment.type === "file"
+                && attachment.url
+              ) {
+                return (
+                  <Pressable
+                    onPress={() => {
+                      openAsset(attachment.url);
+                    }}
+                  >
+                    <View
+                      style={[
+                        styles.messageDoc,
+                        {
+                          backgroundColor: isSender ? Colors(theme).primary : Colors(theme).platinum,
+                        }
+                      ]}
+                    >
+                      <Text
+                        key={attachment.url}
+                        style={[
+                          styles.messageDocText,
+                          {
+                            color: isSender ? Colors(theme).white : Colors(theme).black,
+                            textAlign: isSender ? "right" : "left",
+                          }
+                        ]}
+                      >
+                        Document
+                      </Text>
+                    </View>
                   </Pressable>
                 );
               }

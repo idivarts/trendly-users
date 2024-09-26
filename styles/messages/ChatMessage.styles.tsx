@@ -18,6 +18,16 @@ const styles = (theme: Theme) => StyleSheet.create({
     borderTopRightRadius: 10,
     borderTopLeftRadius: 10,
   },
+  messageDoc: {
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    paddingHorizontal: 10,
+    paddingTop: 10,
+  },
+  messageDocText: {
+    textAlign: "center",
+    textDecorationLine: "underline",
+  },
   messageText: {
     padding: 10,
   },

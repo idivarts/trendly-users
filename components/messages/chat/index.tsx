@@ -3,8 +3,8 @@ import Colors from "@/constants/Colors";
 import { useBreakpoints } from "@/hooks";
 import { Groups } from "@/types/Groups";
 import { useEffect, useLayoutEffect, useState } from "react";
-import { FlatList, Image, KeyboardAvoidingView, Platform } from "react-native";
-import { ActivityIndicator, Appbar, Avatar, IconButton, Modal, TextInput } from "react-native-paper";
+import { FlatList, Image, KeyboardAvoidingView, Modal, Platform } from "react-native";
+import { ActivityIndicator, Appbar, Avatar, IconButton, TextInput } from "react-native-paper";
 import * as ImagePicker from 'expo-image-picker';
 import ChatMessage from "./ChatMessage";
 import { View } from "@/components/theme/Themed";
@@ -291,23 +291,26 @@ const Chat: React.FC<ChatProps> = ({ group }) => {
       </KeyboardAvoidingView>
       {
         <Modal
-          contentContainerStyle={styles.imageModalContainer}
           style={styles.imageModalStyle}
           visible={isModalVisible}
+          animationType={Platform.OS === "web" ? "fade" : "slide"}
+          transparent={true}
         >
           <View
             style={styles.imageModalImageContainer}
           >
-            <IconButton
-              icon="close"
-              onPress={() => setIsModalVisible(false)}
-              style={styles.imageModalCloseButton}
-            />
             <Image
               source={{
                 uri: modalImage ?? "",
               }}
+              width={200}
+              height={200}
               style={styles.imageModalImage}
+            />
+            <IconButton
+              icon="close"
+              onPress={() => setIsModalVisible(false)}
+              style={styles.imageModalCloseButton}
             />
           </View>
         </Modal>
