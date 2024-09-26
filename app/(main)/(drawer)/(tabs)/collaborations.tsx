@@ -1,9 +1,7 @@
 import Collaboration from "@/components/collaboration";
 
 const CollaborationsScreen = () => {
-  return (
-    <Collaboration />
-  );
+  return <Collaboration />;
 };
 
 export default CollaborationsScreen;

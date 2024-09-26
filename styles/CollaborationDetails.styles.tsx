@@ -41,6 +41,10 @@ export const stylesFn = (theme: Theme) =>
       justifyContent: "center",
       marginTop: 12,
     },
+    applyButton: {
+      marginVertical: 16,
+      borderRadius: 25,
+    },
     statChip: {
       marginHorizontal: 8,
       backgroundColor: Colors(theme).lightgray,

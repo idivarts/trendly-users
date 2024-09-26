@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { View, TouchableOpacity } from "react-native";
-import { Text, Card, Button, Divider, Chip } from "react-native-paper";
-import { Link, useRouter } from "expo-router";
+import { Text, Card, Divider, Chip } from "react-native-paper";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useTheme } from "@react-navigation/native";
 import { stylesFn } from "@/styles/CollaborationCard.styles";
 import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
+import { router } from "expo-router";
+import { formatDistanceToNow } from "date-fns";
 import Colors from "@/constants/Colors";
 
 export interface CollaborationAdCardProps extends ICollaboration {
@@ -17,16 +18,22 @@ export interface CollaborationAdCardProps extends ICollaboration {
   id: string;
   brandHireRate?: string;
   cardType: "collaboration" | "proposal" | "invitation";
+  onOpenBottomSheet: (id: string) => void;
 }
 
 const JobCard = (props: CollaborationAdCardProps) => {
   const [bookmarked, setBookmarked] = useState(false);
-  const router = useRouter();
   const theme = useTheme();
   const styles = stylesFn(theme);
+  const datePosted = new Date(props.timeStamp);
 
   return (
-    <Card style={styles.card}>
+    <Card
+      style={styles.card}
+      onPress={() => {
+        router.push(`/collaboration-details/${props.id}`);
+      }}
+    >
       <Card.Content>
         {/* Header */}
         <View style={styles.header}>
@@ -34,14 +41,36 @@ const JobCard = (props: CollaborationAdCardProps) => {
             <Text style={styles.collabName}>{props.name}</Text>
             <Text style={styles.brandName}>{props.brandName}</Text>
           </View>
-          <TouchableOpacity onPress={() => setBookmarked(!bookmarked)}>
-            <Ionicons
-              name={bookmarked ? "bookmark" : "bookmark-outline"}
-              size={24}
-              color={Colors(theme).gray100}
-              style={styles.bookmarkIcon}
-            />
-          </TouchableOpacity>
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "row",
+            }}
+          >
+            <TouchableOpacity onPress={() => setBookmarked(!bookmarked)}>
+              <Ionicons
+                name={bookmarked ? "bookmark" : "bookmark-outline"}
+                size={24}
+                selectedColor={
+                  props.paymentVerified
+                    ? Colors(theme).successForeground
+                    : Colors(theme).pinkForeground
+                }
+                style={styles.bookmarkIcon}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                props.onOpenBottomSheet(props.id);
+              }}
+            >
+              <Ionicons
+                name="ellipsis-vertical"
+                size={24}
+                color={Colors(theme).gray100}
+              />
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* Short Description */}
@@ -49,7 +78,9 @@ const JobCard = (props: CollaborationAdCardProps) => {
 
         {/* Posted Date and Cost */}
         <View style={styles.infoRow}>
-          <Text style={styles.infoText}>Posted: {props.timeStamp}</Text>
+          <Text style={styles.infoText}>
+            Posted: {formatDistanceToNow(datePosted, { addSuffix: true })}
+          </Text>
           <Text style={styles.infoText}>
             Cost: Rs {props.budget ? props.budget.min : ""}-
             {props.budget ? props.budget.max : ""}
@@ -64,13 +95,14 @@ const JobCard = (props: CollaborationAdCardProps) => {
                 styles.chip,
                 {
                   backgroundColor: props.paymentVerified
-                    ? Colors(theme).success
-                    : Colors(theme).pink,
+                    ? "#d4edda"
+                    : "#f8d7da",
+                  borderColor: props.paymentVerified ? "#c3e6cb" : "#f5c6cb",
                 },
               ]}
               icon={props.paymentVerified ? "check-circle" : "alert-circle"}
               mode={props.paymentVerified ? "outlined" : "flat"}
-              selectedColor={props.paymentVerified ? Colors(theme).successForeground : Colors(theme).pinkForeground}
+              selectedColor={props.paymentVerified ? "#28a745" : "#dc3545"}
             >
               {props.paymentVerified
                 ? "Payment Verified"
@@ -88,106 +120,20 @@ const JobCard = (props: CollaborationAdCardProps) => {
               <Text style={styles.infoText}>
                 Influencers Needed: {props.numberOfInfluencersNeeded}
               </Text>
-              <Text style={styles.infoText}>Applied: {props.appliedCount}</Text>
+              <Text style={styles.infoText}>
+                Applied: {props.appliedCount || 0}
+              </Text>
             </View>
             <View style={styles.infoRow}>
               <Text style={styles.infoText}>
-                AI Success Rate: {props.aiSuccessRate}
+                AI Success Rate: {props.aiSuccessRate || 0}
               </Text>
               <Text style={styles.infoText}>
-                Brand Hire Rate: {props.brandHireRate}
+                Brand Hire Rate: {props.brandHireRate || 0}
               </Text>
             </View>
           </View>
         )}
-
-        {/* Actions */}
-        <Divider style={styles.divider} />
-        <View style={styles.actionRow}>
-          <Link
-            href={
-              props.cardType === "collaboration"
-                ? {
-                  pathname: `/collaboration-details/${props.id}`,
-                  params: {
-                    collaborationName: props.name,
-                    brandName: props.brandName,
-                    shortDescription: props.description,
-                    postedDate: props.timeStamp,
-                    cost: props.budget ? props.budget.min : "",
-                    paymentVerified:
-                      props.paymentVerified == null
-                        ? "false"
-                        : props.paymentVerified.toString(),
-                    promotionType: props.promotionType,
-                    collaborationType: props.collaborationType,
-                    influencersNeeded: props.numberOfInfluencersNeeded,
-                    appliedCount: props.appliedCount,
-                    aiSuccessRate: props.aiSuccessRate,
-                    brandHireRate: props.brandHireRate,
-                    location: props.location ? props.location.latlong : "",
-                  },
-                }
-                : `/collaboration-details/`
-            }
-          >
-            <Button mode="text">View</Button>
-          </Link>
-          <Link
-            href={"/apply-now/" + props.id}
-            style={{
-              borderRadius: 4,
-              padding: 10,
-              backgroundColor: Colors(theme).primary,
-            }}
-          >
-            <Text
-              style={{
-                color: Colors(theme).white,
-                fontWeight: "bold",
-                textAlign: "center",
-              }}
-            >
-              {/* Apply Now */}
-              {
-                {
-                  collaboration: "Apply Now",
-                  proposal: "Apply Now",
-                  invitation: "Withdraw",
-                }[props.cardType]
-              }
-            </Text>
-          </Link>
-          {props.cardType === "collaboration" && (
-            <Button onPress={() => router.push("/report")} mode="text">
-              Report
-            </Button>
-          )}
-          {props.cardType === "proposal" && (
-            <Button onPress={() => router.push("/edit-proposal")} mode="text">
-              Reject
-            </Button>
-          )}
-          {props.cardType === "invitation" && (
-            <TouchableOpacity
-              onPress={() => router.push("/withdraw")}
-              style={{
-                padding: 10,
-                borderRadius: 4,
-              }}
-            >
-              <Text
-                style={{
-                  color: Colors(theme).primary,
-
-                  textAlign: "center",
-                }}
-              >
-                Change Terms
-              </Text>
-            </TouchableOpacity>
-          )}
-        </View>
       </Card.Content>
     </Card>
   );

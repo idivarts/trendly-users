@@ -38,7 +38,7 @@ const Questions = () => {
       // Last question, submit survey and don't move to next
       submitSurvey(updatedAnswers)
         .then(() => {
-          router.replace("/proposals");
+          router.replace("/collaborations");
         })
         .catch((error) => {
           console.error("Error submitting survey:", error);
@@ -52,9 +52,6 @@ const Questions = () => {
         selectedOption
       );
     }
-
-    console.log("Answers:", updatedAnswers);
-    console.log("Current question index:", currentQuestionIndex);
   };
 
   return (
@@ -69,7 +66,11 @@ const Questions = () => {
             )
           }
         >
-          <Ionicons name="chevron-back-outline" size={30} color={Colors(theme).black} />
+          <Ionicons
+            name="chevron-back-outline"
+            size={30}
+            color={Colors(theme).black}
+          />
         </TouchableOpacity>
         <Text style={styles.questionText}>{currentQuestion.question}</Text>
       </View>
@@ -86,7 +87,9 @@ const Questions = () => {
             style={{
               ...styles.optionItem,
               backgroundColor:
-                selectedOption === option ? Colors(theme).eerieBlack : Colors(theme).whiteSmoke,
+                selectedOption === option
+                  ? Colors(theme).eerieBlack
+                  : Colors(theme).whiteSmoke,
             }}
             labelStyle={
               selectedOption === option ? styles.selectedOption : null
@@ -98,16 +101,24 @@ const Questions = () => {
       <View style={styles.bottomNavigation}>
         {currentQuestionIndex === SURVEY_DATA.length - 1 ? (
           <TouchableOpacity onPress={handleNext} style={styles.nextButton}>
-            <Ionicons name="arrow-forward-circle" size={60} color={Colors(theme).amber} />
+            <Ionicons
+              name="arrow-forward-circle"
+              size={60}
+              color={Colors(theme).amber}
+            />
           </TouchableOpacity>
         ) : (
           <TouchableOpacity onPress={handleNext} style={styles.nextButton}>
-            <Ionicons name="arrow-forward-circle" size={60} color={Colors(theme).amber} />
+            <Ionicons
+              name="arrow-forward-circle"
+              size={60}
+              color={Colors(theme).amber}
+            />
           </TouchableOpacity>
         )}
 
         <TouchableOpacity
-          onPress={() => router.replace("/proposals")}
+          onPress={() => router.replace("/collaborations")}
           style={styles.skipButton}
         >
           <Text style={styles.skipText}>Skip</Text>

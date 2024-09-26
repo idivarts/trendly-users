@@ -28,12 +28,13 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
   };
 
   return (
-    <View style={[
-      styles.searchContainer,
-      {
-        backgroundColor: Colors(theme).unicornSilver,
-      },
-    ]}
+    <View
+      style={[
+        styles.searchContainer,
+        {
+          backgroundColor: Colors(theme).unicornSilver,
+        },
+      ]}
     >
       <Ionicons
         name="search-outline"
@@ -49,7 +50,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
           styles.searchInput,
           {
             backgroundColor: Colors(theme).unicornSilver,
-          }
+          },
         ]}
         underlineColor="transparent"
         activeUnderlineColor="transparent"
@@ -87,12 +88,12 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     borderWidth: 0.3,
     paddingHorizontal: 10,
-    paddingVertical: 5,
     width: "100%",
   },
   searchInput: {
     flex: 1,
     fontSize: 16,
+    borderBottomWidth: 0.3,
   },
   icon: {
     marginHorizontal: 5,

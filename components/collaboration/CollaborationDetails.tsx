@@ -7,13 +7,15 @@ import {
   Card,
   Paragraph,
   IconButton,
+  Button,
 } from "react-native-paper";
 import AppLayout from "@/layouts/app-layout";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useTheme } from "@react-navigation/native";
 import { stylesFn } from "@/styles/CollaborationDetails.styles";
 import BackButton from "@/components/ui/back-button/BackButton";
 import Colors from "@/constants/Colors";
+import BottomSheetActions from "../BottomSheetActions";
 
 interface CollaborationAdCardProps {
   collaborationName: string;
@@ -33,7 +35,11 @@ interface CollaborationAdCardProps {
   influencersNeeded: number;
   appliedCount: number;
   aiSuccessRate: string;
-  location: string;
+  location: {
+    type: string;
+    name?: string;
+    latlong?: any;
+  };
   brandHireRate: string;
   logo: string;
 }
@@ -41,7 +47,9 @@ interface CollaborationAdCardProps {
 const CollaborationPage = (props: any) => {
   const theme = useTheme();
   const styles = stylesFn(theme);
+  const [isVisible, setIsVisible] = React.useState(false);
 
+  console.log("Collaboration Details", props.collaborationDetail);
   return (
     <AppLayout>
       <Appbar.Header
@@ -51,8 +59,16 @@ const CollaborationPage = (props: any) => {
         }}
       >
         <BackButton />
-        <Appbar.Content title="Collaboration Details" color={Colors(theme).text} />
-        <IconButton icon="dots-vertical" onPress={() => { }} />
+        <Appbar.Content
+          title="Collaboration Details"
+          color={Colors(theme).text}
+        />
+        <IconButton
+          icon="dots-vertical"
+          onPress={() => {
+            setIsVisible(true);
+          }}
+        />
       </Appbar.Header>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {/* Collaboration Details */}
@@ -64,23 +80,32 @@ const CollaborationPage = (props: any) => {
           />
           <Card.Content style={styles.profileContent}>
             <Text variant="headlineMedium" style={styles.name}>
-              Collaboration Name
+              {props.collaborationDetail.name}
             </Text>
             <Text variant="bodyMedium" style={styles.brandName}>
-              Brand Name
+              {props.collaborationDetail.brandName}
             </Text>
             <Text variant="bodySmall" style={styles.shortDescription}>
-              Collaboration Description
+              {props.collaborationDetail.description}
             </Text>
+            <Button
+              mode="contained"
+              style={styles.applyButton}
+              onPress={() => {
+                router.push(`/apply-now/${props.pageID}`);
+              }}
+            >
+              Apply Now
+            </Button>
             <View style={styles.statsContainer}>
               <Chip icon="checkbox-marked-circle" style={styles.statChip}>
-                {props.appliedCount} Applied
+                {props.collaborationDetail.appliedCount} Applied
               </Chip>
               <Chip icon="eye" style={styles.statChip}>
-                {props.brandViewed} Reviewed
+                {props.collaborationDetail.brandViewed} Reviewed
               </Chip>
               <Chip icon="map-marker" style={styles.statChip}>
-                Remote
+                {props.collaborationDetail.location.name}
               </Chip>
             </View>
           </Card.Content>
@@ -95,7 +120,7 @@ const CollaborationPage = (props: any) => {
             </Text>
           </View>
           <Card.Content>
-            <Paragraph style={styles.paragraph}>Description</Paragraph>
+            <Paragraph> {props.collaborationDetail.description}</Paragraph>
           </Card.Content>
         </Card>
 
@@ -108,7 +133,7 @@ const CollaborationPage = (props: any) => {
             </Text>
           </View>
           <Card.Content>
-            <Paragraph style={styles.paragraph}>Brand Description</Paragraph>
+            <Paragraph>{props.collaborationDetail.description}</Paragraph>
           </Card.Content>
         </Card>
 
@@ -134,11 +159,19 @@ const CollaborationPage = (props: any) => {
             </Text>
           </View>
           <Card.Content>
-            <Paragraph style={styles.paragraph}>Cost: $500</Paragraph>
-            <Paragraph style={styles.paragraph}>Payment Verified: True</Paragraph>
+            <Paragraph>Cost: {props.collaborationDetail.budget.min}</Paragraph>
+            <Paragraph>Payment Verified: True</Paragraph>
           </Card.Content>
         </Card>
       </ScrollView>
+      <BottomSheetActions
+        cardId={props.pageID}
+        cardType="details"
+        isVisible={isVisible}
+        onClose={() => {
+          setIsVisible(false);
+        }}
+      />
     </AppLayout>
   );
 };

@@ -56,7 +56,11 @@ const CollaborationDetailsScreen = () => {
       </AppLayout>
     );
 
-  return <CollaborationPage collaborationDetail={collaboration} />;
+  if (!collaboration) return null;
+
+  return (
+    <CollaborationPage collaborationDetail={collaboration} pageID={pageID} />
+  );
 };
 
 export default CollaborationDetailsScreen;

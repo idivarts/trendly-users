@@ -11,11 +11,7 @@ import * as DocumentPicker from "expo-document-picker";
 import { useLocalSearchParams } from "expo-router";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { addDoc, collection } from "firebase/firestore";
-import {
-  getDownloadURL,
-  ref,
-  uploadBytes
-} from "firebase/storage";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import React, { useState } from "react";
 import { ScrollView, View } from "react-native";
 import {
@@ -26,7 +22,7 @@ import {
   HelperText,
   IconButton,
   Paragraph,
-  TextInput
+  TextInput,
 } from "react-native-paper";
 
 const ApplyScreen = () => {
@@ -72,12 +68,14 @@ const ApplyScreen = () => {
         return;
       }
 
-      const user = await signInWithEmailAndPassword(
-        AuthApp,
-        "testuser@gmail.com",
-        "password"
-      );
-      console.log("User signed in anonymously");
+      //fetch current logged in user
+
+      const user = AuthApp.currentUser;
+
+      if (!user) {
+        setErrorMessage("User not found");
+        return;
+      }
 
       const urls = await Promise.all(
         files.map(async (fileUri) => {
@@ -90,7 +88,7 @@ const ApplyScreen = () => {
 
           const fileRef = ref(
             StorageApp,
-            `collaboration/${pageID}/applications/${user.user.uid}/${fileName}`
+            `collaboration/${pageID}/applications/${user?.uid}/${fileName}`
           );
 
           await uploadBytes(fileRef, blob);
@@ -99,10 +97,8 @@ const ApplyScreen = () => {
         })
       );
 
-      console.log("Files uploaded successfully");
-
       const applicantData: IApplications = {
-        userId: user.user.uid,
+        userId: user?.uid,
         collaborationId: pageID,
         status: "pending",
         timeStamp: Date.now(),
@@ -142,7 +138,6 @@ const ApplyScreen = () => {
       >
         <BackButton />
         <Appbar.Content title="Apply Now" color={Colors(theme).text} />
-        <IconButton icon="dots-vertical" onPress={() => { }} />
       </Appbar.Header>
       <ScrollView style={styles.container}>
         <HelperText type="info" style={styles.helperText}>

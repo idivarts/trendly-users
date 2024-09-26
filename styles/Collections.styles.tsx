@@ -12,7 +12,7 @@ export const stylesFn = (theme: Theme) =>
     searchContainer: {
       flexDirection: "row",
       alignItems: "center",
-      marginVertical: 15,
+      marginBottom: 10,
     },
     jobList: {
       paddingBottom: 20,

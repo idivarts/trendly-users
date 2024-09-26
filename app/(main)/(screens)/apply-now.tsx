@@ -48,14 +48,6 @@ const ApplyScreen = () => {
       setErrorMessage("Please fill all the required fields");
       return;
     }
-    // Logic to handle form submission
-    console.log({
-      collabType,
-      selectedProducts,
-      targetReach,
-      note,
-      cv,
-    });
   };
 
   return (

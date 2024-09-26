@@ -25,6 +25,7 @@ export const stylesFn = (theme: Theme) =>
     input: {
       marginBottom: 16,
       backgroundColor: Colors(theme).white,
+      height: 150,
     },
     helperText: {
       marginBottom: 12,
