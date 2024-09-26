@@ -21,13 +21,15 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "pro.trendly.creators"
+      "bundleIdentifier": "pro.trendly.creators",
+      "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
+      "googleServicesFile": "./google-services.json",
       "package": "pro.trendly.creators"
     },
     "web": {
@@ -36,7 +38,16 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
+        }
+      ],
+      "@react-native-firebase/app"
     ],
     "experiments": {
       "typedRoutes": true
@@ -44,6 +55,9 @@
     "extra": {
       "router": {
         "origin": false
+      },
+      "eas": {
+        "projectId": "62cd2ba5-50d8-4fba-bbdb-2f8534713871"
       }
     }
   }
