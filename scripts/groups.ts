@@ -12,7 +12,9 @@ export const populateGroups = async (db: Firestore, dummyGroups: any[]) => {
       !group.name ||
       !group.collaborationId ||
       !group.userIds ||
-      !group.managerIds
+      !group.managerIds ||
+      !group.lastManagerReadTime ||
+      !group.lastUserReadTime
     ) {
       throw new Error(`Invalid group data: ${JSON.stringify(group)}`);
     }
@@ -25,6 +27,8 @@ export const populateGroups = async (db: Firestore, dummyGroups: any[]) => {
         managerIds: group.managerIds,
         latestMessage: group.latestMessage,
         updatedAt: group.updatedAt,
+        lastUserReadTime: group.lastUserReadTime,
+        lastManagerReadTime: group.lastManagerReadTime,
       });
 
       console.log(`Group ${group.name} added successfully.`);
