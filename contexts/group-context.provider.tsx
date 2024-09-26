@@ -128,7 +128,7 @@ export const GroupContextProvider: React.FC<PropsWithChildren> = ({ children }) 
         }
       }
 
-      const userLastReadTime = groupData.lastUserReadTime[user?.id as string];
+      const userLastReadTime = groupData.lastUserReadTime?.[user?.id as string];
 
       const time = userLastReadTime ? userLastReadTime : 0;
 
