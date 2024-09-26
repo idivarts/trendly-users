@@ -50,13 +50,6 @@ interface GroupContextProps {
   ) => Promise<Messages>;
   groups: Groups[] | null;
   updateGroup: (groupId: string, group: Partial<Groups>) => Promise<void>;
-  updatedLastUserReadTime: (
-    lastUserReadTime: {
-      [userId: string]: number;
-    }[],
-  ) => {
-    [userId: string]: number;
-  }[] | undefined;
 }
 
 const GroupContext = createContext<GroupContextProps>({
@@ -77,13 +70,6 @@ const GroupContext = createContext<GroupContextProps>({
   }),
   groups: null,
   updateGroup: (groupId: string, group: Partial<Groups>) => Promise.resolve(),
-  updatedLastUserReadTime: (
-    lastUserReadTime: {
-      [userId: string]: number;
-    }[],
-  ) => {
-    return [];
-  },
 });
 
 export const useGroupContext = () => useContext(GroupContext);
@@ -142,9 +128,9 @@ export const GroupContextProvider: React.FC<PropsWithChildren> = ({ children }) 
         }
       }
 
-      const userLastReadTime = groupData.lastUserReadTime?.find((lastUserReadTime) => lastUserReadTime[user?.id as string]);
+      const userLastReadTime = groupData.lastUserReadTime[user?.id as string];
 
-      const time = userLastReadTime ? userLastReadTime[user?.id as string] : 0;
+      const time = userLastReadTime ? userLastReadTime : 0;
 
       groups.push({
         ...groupData,
@@ -280,28 +266,6 @@ export const GroupContextProvider: React.FC<PropsWithChildren> = ({ children }) 
     }
   };
 
-  const updatedLastUserReadTime = (
-    lastUserReadTime: {
-      [userId: string]: number;
-    }[],
-  ): {
-    [userId: string]: number;
-  }[] | undefined => {
-    return lastUserReadTime?.map((lastUserReadTime) => {
-      if (lastUserReadTime[user?.id as string]) {
-        return {
-          [user?.id as string]: Date.now(),
-        };
-      } else if (!lastUserReadTime[user?.id as string]) {
-        return {
-          [user?.id as string]: Date.now(),
-        };
-      }
-
-      return lastUserReadTime;
-    });
-  };
-
   const updateGroup = async (groupId: string, group: Partial<Groups>) => {
     await signInAnonymously(AuthApp);
     try {
@@ -325,7 +289,10 @@ export const GroupContextProvider: React.FC<PropsWithChildren> = ({ children }) 
       await updateDoc(groupDoc, {
         latestMessage: message,
         updatedAt: message.timeStamp,
-        lastUserReadTime: updatedLastUserReadTime(groupSnap.data()?.lastUserReadTime),
+        lastUserReadTime: {
+          ...groupSnap.data()?.lastUserReadTime,
+          [user?.id as string]: Date.now(),
+        },
       });
     } catch (error) {
       console.error("Error adding message: ", error);
@@ -341,7 +308,6 @@ export const GroupContextProvider: React.FC<PropsWithChildren> = ({ children }) 
         getMessagesByGroupId,
         groups,
         updateGroup,
-        updatedLastUserReadTime,
       }}
     >
       {children}

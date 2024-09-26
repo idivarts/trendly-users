@@ -14,7 +14,6 @@ const ChatScreen: React.FC = () => {
   const {
     getGroupByGroupId,
     updateGroup,
-    updatedLastUserReadTime,
   } = useGroupContext();
   const {
     user,
@@ -33,19 +32,21 @@ const ChatScreen: React.FC = () => {
 
   useEffect(() => {
     if (group && user) {
-      if (!group.lastUserReadTime) {
+      if (!group.lastUserReadTime?.[user.id as string]) {
         updateGroup(group.id as string, {
-          lastUserReadTime: [
-            {
-              [user.id as string]: Date.now(),
-            },
-          ],
+          lastUserReadTime: {
+            ...group.lastUserReadTime,
+            [user.id as string]: Date.now(),
+          },
         });
         return;
       }
 
       updateGroup(group.id as string, {
-        lastUserReadTime: updatedLastUserReadTime(group?.lastUserReadTime),
+        lastUserReadTime: {
+          ...group.lastUserReadTime,
+          [user.id as string]: Date.now(),
+        },
       });
     }
   }, [group]);
