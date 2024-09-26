@@ -12,16 +12,12 @@ export const dummyGroups: any[] = [
       attachments: [],
       timeStamp: 1697072400000,
     },
-    lastUserReadTime: [
-      {
-        IjOAHWjc3d8ff8u6Z2rD: 0,
-      },
-    ],
-    lastManagerReadTime: [
-      {
-        eX3u6oniGErcE7gzdaWG: 0,
-      },
-    ],
+    lastUserReadTime: {
+      IjOAHWjc3d8ff8u6Z2rD: 0,
+    },
+    lastManagerReadTime: {
+      eX3u6oniGErcE7gzdaWG: 0,
+    },
     updatedAt: 1697071800000,
     messages: [
       {
