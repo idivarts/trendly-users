@@ -1,5 +1,5 @@
 import Chat from "@/components/messages/chat";
-import { useGroupContext } from "@/contexts";
+import { useAuthContext, useGroupContext } from "@/contexts";
 import { Groups } from "@/types/Groups";
 import { Redirect, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
@@ -13,7 +13,12 @@ const ChatScreen: React.FC = () => {
 
   const {
     getGroupByGroupId,
+    updateGroup,
+    updatedLastUserReadTime,
   } = useGroupContext();
+  const {
+    user,
+  } = useAuthContext();
 
   const fetchGroupByGroupId = async () => {
     if (chatId) {
@@ -25,6 +30,25 @@ const ChatScreen: React.FC = () => {
   useEffect(() => {
     fetchGroupByGroupId();
   }, [chatId]);
+
+  useEffect(() => {
+    if (group && user) {
+      if (!group.lastUserReadTime) {
+        updateGroup(group.id as string, {
+          lastUserReadTime: [
+            {
+              [user.id as string]: Date.now(),
+            },
+          ],
+        });
+        return;
+      }
+
+      updateGroup(group.id as string, {
+        lastUserReadTime: updatedLastUserReadTime(group?.lastUserReadTime),
+      });
+    }
+  }, [group]);
 
   if (!chatId) {
     <Redirect href="/messages" />;
