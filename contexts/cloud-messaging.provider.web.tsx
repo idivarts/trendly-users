@@ -27,7 +27,7 @@ export const CloudMessagingContextProvider: React.FC<PropsWithChildren> = ({
         },
       );
 
-      console.log("Token: ", token);
+      console.log("FCM Web Token: ", token);
     } else if (permission === "denied") {
       alert("You denied the permission to receive notifications");
     }
