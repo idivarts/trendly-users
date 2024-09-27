@@ -18,6 +18,15 @@ const styles = (theme: Theme) => StyleSheet.create({
     borderTopRightRadius: 10,
     borderTopLeftRadius: 10,
   },
+  messageVideo: {
+    width: "100%",
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    minHeight: 100,
+  },
+  messageVideoStyle: {
+    width: "100%",
+  },
   messageDoc: {
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,

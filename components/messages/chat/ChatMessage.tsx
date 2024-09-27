@@ -2,10 +2,10 @@ import { Text, View } from "@/components/theme/Themed";
 import Colors from "@/constants/Colors";
 import stylesFn from "@/styles/messages/ChatMessage.styles";
 import { IMessages } from "@/shared-libs/firestore/trendly-pro/models/groups";
-import { Alert, Image, Pressable } from "react-native";
 import { useAuthContext } from "@/contexts";
 import { useTheme } from "@react-navigation/native";
-import * as Linking from 'expo-linking';
+import { ModalAsset } from ".";
+import MessageAssetPreview from "./MessageAssetPreview";
 
 interface ChatMessageProps {
   managers: {
@@ -13,7 +13,7 @@ interface ChatMessageProps {
   };
   message: IMessages;
   setIsModalVisible: React.Dispatch<React.SetStateAction<boolean>>;
-  setModalImage: React.Dispatch<React.SetStateAction<string | null>>;
+  setModalAsset: React.Dispatch<React.SetStateAction<ModalAsset | null>>;
   users: {
     [key: string]: any,
   };
@@ -23,7 +23,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
   managers,
   message,
   setIsModalVisible,
-  setModalImage,
+  setModalAsset,
   users,
 }) => {
   const {
@@ -33,17 +33,6 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
   const isUser = message.userType === "user";
   const theme = useTheme();
   const styles = stylesFn(theme);
-
-  const openAsset = async (url: string) => {
-    if (url) {
-      try {
-        await Linking.openURL(url);
-      } catch (error) {
-        console.error('Error opening image: ', error);
-        Alert.alert('Error', 'Failed to open the image.');
-      }
-    }
-  };
 
   return (
     <View
@@ -69,66 +58,12 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
             { backgroundColor: isSender ? Colors(theme).primary : Colors(theme).platinum },
           ]}
         >
-          {
-            message.attachments
-            && message.attachments.length > 0
-            && message.attachments?.map((attachment) => {
-              if (
-                attachment.type === "image"
-                && attachment.url
-              ) {
-                return (
-                  <Pressable
-                    onPress={() => {
-                      setModalImage(attachment.url);
-                      setIsModalVisible(true);
-                    }}
-                  >
-                    <Image
-                      key={attachment.url}
-                      source={{ uri: attachment.url }}
-                      style={styles.messageImage}
-                    />
-                  </Pressable>
-                );
-              }
-
-              if (
-                attachment.type === "file"
-                && attachment.url
-              ) {
-                return (
-                  <Pressable
-                    onPress={() => {
-                      openAsset(attachment.url);
-                    }}
-                  >
-                    <View
-                      style={[
-                        styles.messageDoc,
-                        {
-                          backgroundColor: isSender ? Colors(theme).primary : Colors(theme).platinum,
-                        }
-                      ]}
-                    >
-                      <Text
-                        key={attachment.url}
-                        style={[
-                          styles.messageDocText,
-                          {
-                            color: isSender ? Colors(theme).white : Colors(theme).black,
-                            textAlign: isSender ? "right" : "left",
-                          }
-                        ]}
-                      >
-                        Document
-                      </Text>
-                    </View>
-                  </Pressable>
-                );
-              }
-            })
-          }
+          <MessageAssetPreview
+            attachments={message.attachments}
+            isSender={isSender}
+            setIsModalVisible={setIsModalVisible}
+            setModalAsset={setModalAsset}
+          />
           {message.message && (
             <Text
               style={[
