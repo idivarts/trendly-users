@@ -47,7 +47,6 @@ const PreSignIn = () => {
   useEffect(() => {
     if (response?.type === "success") {
       const { access_token } = response.params;
-      console.log("Access token: ", response);
       handleFirebaseSignIn(access_token);
     } else if (response?.type === "error") {
       setError("Facebook login failed. Please try again.");
