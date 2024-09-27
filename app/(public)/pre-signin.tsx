@@ -15,6 +15,8 @@ import { useRouter } from "expo-router";
 import { useAuthContext } from "@/contexts";
 import { DUMMY_USER_ID } from "@/constants/User";
 import Colors from "@/constants/Colors";
+import { FirestoreDB } from "@/utils/firestore";
+import { collection, doc, getDoc, setDoc } from "firebase/firestore";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -24,7 +26,7 @@ const PreSignIn = () => {
   const theme = useTheme();
   const styles = stylesFn(theme);
   const [error, setError] = useState<string | null>(null);
-  const { signIn } = useAuthContext();
+  const { signIn, signUp } = useAuthContext();
 
   const [request, response, promptAsync] = AuthSession.useAuthRequest(
     {
@@ -45,6 +47,7 @@ const PreSignIn = () => {
   useEffect(() => {
     if (response?.type === "success") {
       const { access_token } = response.params;
+      console.log("Access token: ", response);
       handleFirebaseSignIn(access_token);
     } else if (response?.type === "error") {
       setError("Facebook login failed. Please try again.");
@@ -59,7 +62,23 @@ const PreSignIn = () => {
       const result = await signInWithCredential(auth, credential);
       if (result.user) {
         console.log("User signed in: ", result.user);
-        signIn(result.user.uid);
+
+        const userCollection = collection(FirestoreDB, "users");
+        const userDocRef = doc(userCollection, result.user.uid);
+
+        const findUser = await getDoc(userDocRef);
+        if (findUser.exists()) {
+          signIn(result.user.uid);
+          return;
+        }
+
+        const userData = {
+          accessToken,
+          name: result.user.displayName,
+        };
+
+        await setDoc(userDocRef, userData);
+        signUp(result.user.uid);
       }
     } catch (error: any) {
       setError(error.message);
@@ -68,7 +87,7 @@ const PreSignIn = () => {
 
   const handleEmailSignIn = () => {
     signIn(DUMMY_USER_ID);
-  }
+  };
 
   const renderSocialButton = (
     iconName: string,
@@ -91,7 +110,10 @@ const PreSignIn = () => {
       <Swiper
         style={styles.wrapper}
         dotStyle={styles.dotStyle}
-        activeDotStyle={[styles.dotStyle, { backgroundColor: Colors(theme).primary }]}
+        activeDotStyle={[
+          styles.dotStyle,
+          { backgroundColor: Colors(theme).primary },
+        ]}
         paginationStyle={styles.pagination}
       >
         {slides.map((slide) => (
@@ -110,7 +132,11 @@ const PreSignIn = () => {
                   "Login with Facebook",
                   () => promptAsync({})
                 )}
-                {renderSocialButton("mail-outline", "Login with Email", handleEmailSignIn)}
+                {renderSocialButton(
+                  "mail-outline",
+                  "Login with Email",
+                  handleEmailSignIn
+                )}
                 {renderSocialButton(
                   "logo-instagram",
                   "Login with Instagram",

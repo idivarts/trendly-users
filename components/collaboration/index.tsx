@@ -8,7 +8,6 @@ import { useTheme } from "@react-navigation/native";
 import { stylesFn } from "@/styles/Collections.styles";
 import { collection, getDocs } from "firebase/firestore";
 import { FirestoreDB } from "@/utils/firestore";
-import { signInAnonymously } from "firebase/auth";
 import { AuthApp } from "@/utils/auth";
 import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
@@ -40,7 +39,6 @@ const Collaboration = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      await signInAnonymously(AuthApp);
       const fetchedBrands = await fetchBrands(); // Fetch brands and store in a variable
       console.log("Fetched Brands: ", fetchedBrands);
       await fetchCollabs(fetchedBrands); // Pass the fetched brands to fetchCollabs

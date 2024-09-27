@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Trendly",
-    "slug": "trendly-users",
+    "slug": "trendly-creators",
     "version": "1.0.0",
     "platforms": [
       "ios",
@@ -44,7 +44,11 @@
     "extra": {
       "router": {
         "origin": false
+      },
+      "eas": {
+        "projectId": "36cae13c-e8b0-456c-9818-eee801a8c51e"
       }
-    }
+    },
+    "owner": "idiv"
   }
 }
