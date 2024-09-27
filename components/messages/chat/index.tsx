@@ -309,21 +309,18 @@ const Chat: React.FC<ChatProps> = ({ group }) => {
           >
             {
               modalAsset?.type === "video" ? (
-                <View
-                  style={styles.videoAssetContainer}
-                >
-                  <Video
-                    onPlaybackStatusUpdate={status => setStatus(() => status)}
-                    ref={video}
-                    style={styles.videoAsset}
-                    videoStyle={styles.videoAssetStyle}
-                    source={{
-                      uri: modalAsset?.url ?? "",
-                    }}
-                    resizeMode={ResizeMode.COVER}
-                    useNativeControls
-                  />
-                </View>
+                <Video
+                  isLooping
+                  onPlaybackStatusUpdate={status => setStatus(() => status)}
+                  ref={video}
+                  style={styles.videoAsset}
+                  videoStyle={styles.videoAssetStyle}
+                  source={{
+                    uri: modalAsset?.url ?? "",
+                  }}
+                  resizeMode={ResizeMode.COVER}
+                  useNativeControls={true}
+                />
               ) : (
                 <Image
                   source={{

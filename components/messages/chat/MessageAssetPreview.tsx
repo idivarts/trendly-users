@@ -89,7 +89,7 @@ const MessageAssetPreview: React.FC<MessageAssetPreviewProps> = ({
                     uri: attachment?.url,
                   }}
                   videoStyle={styles.messageVideoStyle}
-                  resizeMode={ResizeMode.CONTAIN}
+                  resizeMode={ResizeMode.STRETCH}
                   useNativeControls={false}
                   shouldPlay={false}
                 />

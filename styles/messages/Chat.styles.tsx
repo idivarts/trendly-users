@@ -61,6 +61,7 @@ const styles = (theme: Theme) => StyleSheet.create({
   },
   assetModalContainer: {
     alignItems: "center",
+    justifyContent: "center",
     backgroundColor: Colors(theme).modalBackground,
     flex: 1,
     position: "relative",
@@ -78,18 +79,10 @@ const styles = (theme: Theme) => StyleSheet.create({
     resizeMode: "contain",
     width: "100%",
   },
-  videoAssetContainer: {
-    backgroundColor: "transparent",
-    flex: 1,
-    width: "100%",
-    height: "100%",
-    justifyContent: "center",
-    alignItems: "center",
-  },
   videoAsset: {
-    alignSelf: "center",
+    resizeMode: "contain",
     width: "100%",
-    flex: 1,
+    height: Platform.OS === "web" ? "100%" : 300,
   },
   videoAssetStyle: {
     width: "100%",
