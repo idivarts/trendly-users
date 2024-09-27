@@ -65,7 +65,13 @@ const RootLayoutStack = () => {
   const router = useRouter();
   const pathname = usePathname();
   const segments = useSegments();
-  const { isLoading, session } = useAuthContext();
+  const {
+    isLoading,
+    session,
+    user,
+  } = useAuthContext();
+
+  const appTheme = user?.settings?.theme || colorScheme;
 
   useEffect(() => {
     const inAuthGroup = segments[0] === "(auth)";
@@ -90,7 +96,7 @@ const RootLayoutStack = () => {
 
   return (
     <ThemeProvider
-      value={colorScheme === "dark" ? DarkTheme : ExpoDefaultTheme}
+      value={appTheme === "dark" ? DarkTheme : ExpoDefaultTheme}
     >
       <Stack
         screenOptions={{
