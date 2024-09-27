@@ -14,6 +14,10 @@ import { User } from "@/types/User";
 import { signInAnonymously } from "firebase/auth";
 import { AuthApp } from "@/utils/auth";
 import { DUMMY_USER_ID } from "@/constants/User";
+import { logEvent } from "firebase/analytics";
+import { Platform } from "react-native";
+import analyticsWeb from "@/utils/analytics-web";
+import analytics from '@react-native-firebase/analytics';
 
 interface AuthContextProps {
   isLoading: boolean;
@@ -73,6 +77,22 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
 
   const signIn = async (token: string) => {
     setSession(token);
+    if (Platform.OS === 'web') {
+      logEvent(
+        analyticsWeb,
+        'signed_in',
+        {
+          method: 'email_password',
+        }
+      );
+    } else {
+      await analytics().logEvent(
+        'login',
+        {
+          method: 'email_password',
+        },
+      );
+    }
     // For existing users, redirect to the main screen.
     router.replace("/questions");
     Toaster.success("Signed In Successfully!");
@@ -85,9 +105,27 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
     Toaster.success("Signed Up Successfully!");
   };
 
-  const signOut = () => {
+  const signOut = async () => {
     setSession("");
-    router.replace("/login");
+    if (Platform.OS === 'web') {
+      logEvent(
+        analyticsWeb,
+        'signed_out',
+        {
+          id: user?.id,
+          email: user?.email,
+        },
+      );
+    } else {
+      await analytics().logEvent(
+        'signed_out',
+        {
+          id: user?.id,
+          email: user?.email,
+        },
+      );
+    }
+    router.replace("/pre-signin");
     Toaster.success("Signed Out Successfully!");
   };
 

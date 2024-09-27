@@ -5,10 +5,13 @@ import {
   useEffect,
 } from "react";
 import messaging from "@react-native-firebase/messaging";
-import { Alert } from "react-native";
+import { Alert, Platform } from "react-native";
 
 import { PermissionsAndroid } from 'react-native';
-PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+
+if (Platform.OS === 'android') {
+  PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+}
 
 interface CloudMessagingContextProps { }
 
