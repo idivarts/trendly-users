@@ -43,18 +43,18 @@ const MessageCard: React.FC<MessageCardProps> = ({
             </View>
           </View>
           <View style={styles.messageInfo}>
-            {group?.latestMessage && (
-              <Text>
-                {new Date(group?.latestMessage?.timeStamp).toLocaleTimeString()}
-              </Text>
-            )}
-            {/* {group.newMessages !== 0 && (
-              <Avatar.Text
-                label={group.newMessages.toString()}
-                size={18}
-                style={styles.newMessagesAvatar}
+            {group.isUnreadMessages && (
+              <View
+                style={styles.newMessagesIcon}
               />
-            )} */}
+            )}
+            {group?.latestMessage && (
+              <View>
+                <Text>
+                  {new Date(group?.latestMessage?.timeStamp).toLocaleTimeString()}
+                </Text>
+              </View>
+            )}
           </View>
           <View style={styles.chevronIcon}>
             <Ionicons name="chevron-forward" size={24} color={Colors(theme).primary} />

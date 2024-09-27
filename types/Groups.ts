@@ -10,4 +10,5 @@ export interface Groups extends IGroups {
   image: string;
   users: any[];
   managers: any[];
+  isUnreadMessages: boolean;
 }
