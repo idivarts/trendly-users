@@ -2,17 +2,21 @@ import BackButton from "@/components/ui/back-button/BackButton";
 import Colors from "@/constants/Colors";
 import { useBreakpoints } from "@/hooks";
 import { Groups } from "@/types/Groups";
-import { useEffect, useState } from "react";
-import { FlatList, Image, KeyboardAvoidingView, Platform } from "react-native";
-import { ActivityIndicator, Appbar, Avatar, IconButton, Modal, TextInput } from "react-native-paper";
+import { useEffect, useLayoutEffect, useState } from "react";
+import { FlatList, Image, KeyboardAvoidingView, Modal, Platform } from "react-native";
+import { ActivityIndicator, Appbar, Avatar, IconButton, TextInput } from "react-native-paper";
 import * as ImagePicker from 'expo-image-picker';
 import ChatMessage from "./ChatMessage";
 import { View } from "@/components/theme/Themed";
 import stylesFn from "@/styles/messages/Chat.styles";
 import { IMessages } from "@/shared-libs/firestore/trendly-pro/models/groups";
+
 import { useAuthContext, useFirebaseStorageContext, useGroupContext } from "@/contexts";
-import { DocumentSnapshot } from "firebase/firestore";
+import { collection, doc, DocumentSnapshot, endBefore, getDocs, onSnapshot, orderBy, query } from "firebase/firestore";
 import { PLACEHOLDER_IMAGE } from "@/constants/Placeholder";
+import { signInAnonymously } from "firebase/auth";
+import { AuthApp } from "@/utils/auth";
+import { FirestoreDB } from "@/utils/firestore";
 import { useTheme } from "@react-navigation/native";
 
 interface ChatProps {
@@ -30,6 +34,7 @@ const Chat: React.FC<ChatProps> = ({ group }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const [messages, setMessages] = useState([] as IMessages[]);
+  const [endMessage, setEndMessage] = useState<DocumentSnapshot | null>(null);
   const [lastMessage, setLastMessage] = useState<DocumentSnapshot | null>(null);
   const [hasNext, setHasNext] = useState(false);
 
@@ -55,6 +60,7 @@ const Chat: React.FC<ChatProps> = ({ group }) => {
       30,
     );
 
+    setEndMessage(response.firstMessage!);
     setHasNext(response.hasNext);
     setLastMessage(response.lastMessage);
     setMessages(response.messages);
@@ -79,6 +85,38 @@ const Chat: React.FC<ChatProps> = ({ group }) => {
       setLoading(false);
     }
   };
+
+  useLayoutEffect(() => {
+    let unsubscribe: (() => void) | undefined;
+
+    if (endMessage && messages.length > 0) {
+      const fetchRealtimeMessages = async (groupId: string) => {
+        try {
+          await signInAnonymously(AuthApp);
+          const groupRef = doc(FirestoreDB, "groups", groupId);
+
+          const messagesRef = collection(groupRef, "messages");
+          const messagesQuery = query(messagesRef, orderBy("timeStamp", "desc"), endBefore(endMessage));
+
+          unsubscribe = onSnapshot(messagesQuery, async (querySnapshot) => {
+            const realtimeMessages = querySnapshot.docs.map((doc) => doc.data() as IMessages);
+
+            setMessages([...realtimeMessages, ...messages]);
+          });
+        } catch (error) {
+          console.error("Error fetching messages: ", error);
+        }
+      };
+
+      fetchRealtimeMessages(group.id);
+    }
+
+    return () => {
+      if (typeof unsubscribe === 'function') {
+        unsubscribe();
+      }
+    };
+  }, [endMessage]);
 
   useEffect(() => {
     if (group) {
@@ -141,8 +179,6 @@ const Chat: React.FC<ChatProps> = ({ group }) => {
 
     setMessages([newMessage, ...messages]);
 
-    // TODO: Create new message in real time and add it to the messages
-
     setIsSending(false);
     setMessage("");
     setCapturedImage(null);
@@ -190,7 +226,7 @@ const Chat: React.FC<ChatProps> = ({ group }) => {
           data={messages}
           style={styles.flex}
           contentContainerStyle={styles.messageListContainer}
-          keyExtractor={(item, index) => index.toString() + item.timeStamp}
+          keyExtractor={(item, index) => item.message?.toString() + index.toString() + item.timeStamp}
           renderItem={({ item, index }) => (
             <ChatMessage
               key={index + item.timeStamp}
@@ -255,23 +291,26 @@ const Chat: React.FC<ChatProps> = ({ group }) => {
       </KeyboardAvoidingView>
       {
         <Modal
-          contentContainerStyle={styles.imageModalContainer}
           style={styles.imageModalStyle}
           visible={isModalVisible}
+          animationType={Platform.OS === "web" ? "fade" : "slide"}
+          transparent={true}
         >
           <View
             style={styles.imageModalImageContainer}
           >
-            <IconButton
-              icon="close"
-              onPress={() => setIsModalVisible(false)}
-              style={styles.imageModalCloseButton}
-            />
             <Image
               source={{
                 uri: modalImage ?? "",
               }}
+              width={200}
+              height={200}
               style={styles.imageModalImage}
+            />
+            <IconButton
+              icon="close"
+              onPress={() => setIsModalVisible(false)}
+              style={styles.imageModalCloseButton}
             />
           </View>
         </Modal>

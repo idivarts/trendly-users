@@ -9,21 +9,26 @@ import { ActivityIndicator } from "react-native-paper";
 const ChatScreen: React.FC = () => {
   const [group, setGroup] = useState<Groups | null>(null);
   const params = useLocalSearchParams();
+  const { chatId } = params;
 
   const {
     getGroupByGroupId,
   } = useGroupContext();
 
   const fetchGroupByGroupId = async () => {
-    if (params.id) {
-      const selectedGroup = await getGroupByGroupId(params.id as string);
+    if (chatId) {
+      const selectedGroup = await getGroupByGroupId(chatId as string);
       setGroup(selectedGroup as Groups);
     }
   };
 
   useEffect(() => {
     fetchGroupByGroupId();
-  }, [params.id]);
+  }, [chatId]);
+
+  if (!chatId) {
+    <Redirect href="/messages" />;
+  }
 
   if (!group) {
     return (
@@ -37,10 +42,6 @@ const ChatScreen: React.FC = () => {
         <ActivityIndicator />
       </View>
     );
-  }
-
-  if (!params.id) {
-    <Redirect href="/messages" />;
   }
 
   return (

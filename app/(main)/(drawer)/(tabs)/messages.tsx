@@ -11,7 +11,7 @@ const GroupsScreen = () => {
   } = useGroupContext();
 
   const changeGroup = (id: string) => {
-    router.push(`/chat?id=${id}`);
+    router.push(`/chat/${id}`);
   };
 
   if (!groups) {
