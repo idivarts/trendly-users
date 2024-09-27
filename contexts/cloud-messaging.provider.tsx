@@ -7,6 +7,9 @@ import {
 import messaging from "@react-native-firebase/messaging";
 import { Alert } from "react-native";
 
+import { PermissionsAndroid } from 'react-native';
+PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+
 interface CloudMessagingContextProps { }
 
 const CloudMessagingContext = createContext<CloudMessagingContextProps>(null!);
@@ -27,7 +30,7 @@ export const CloudMessagingContextProvider: React.FC<PropsWithChildren> = ({
 
   const getToken = async () => {
     const token = await messaging().getToken();
-    console.log("Token:", token);
+    console.log("FCM Native Token:", token);
     return token;
   }
 
@@ -42,6 +45,10 @@ export const CloudMessagingContextProvider: React.FC<PropsWithChildren> = ({
           console.log("Notification caused app to open from quit state:", remoteMessage);
         }
       });
+  }
+
+  useEffect(() => {
+    initNotification();
 
     messaging().onNotificationOpenedApp((remoteMessage) => {
       console.log("Notification caused app to open from background state:", remoteMessage.notification);
@@ -50,10 +57,6 @@ export const CloudMessagingContextProvider: React.FC<PropsWithChildren> = ({
     messaging().setBackgroundMessageHandler(async (remoteMessage) => {
       console.log("Message handled in the background:", remoteMessage);
     });
-  }
-
-  useEffect(() => {
-    initNotification();
 
     const unsubscribe = messaging().onMessage(async (remoteMessage) => {
       Alert.alert("A new FCM message arrived!", JSON.stringify(remoteMessage));
