@@ -7,7 +7,7 @@ const Signup = () => {
   } = useAuthContext();
 
   const handleSignUp = () => {
-    signUp();
+    signUp('');
   };
 
   return (

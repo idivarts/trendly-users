@@ -2,7 +2,7 @@ import BackButton from "@/components/ui/back-button/BackButton";
 import Colors from "@/constants/Colors";
 import { useBreakpoints } from "@/hooks";
 import { Groups } from "@/types/Groups";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { FlatList, Image, KeyboardAvoidingView, Modal, Platform } from "react-native";
 import { ActivityIndicator, Appbar, Avatar, IconButton, TextInput } from "react-native-paper";
 import * as ImagePicker from 'expo-image-picker';
@@ -18,6 +18,12 @@ import { signInAnonymously } from "firebase/auth";
 import { AuthApp } from "@/utils/auth";
 import { FirestoreDB } from "@/utils/firestore";
 import { useTheme } from "@react-navigation/native";
+import { ResizeMode, Video } from "expo-av";
+
+export type ModalAsset = {
+  url: string,
+  type: "image" | "video",
+};
 
 interface ChatProps {
   group: Groups;
@@ -30,8 +36,10 @@ const Chat: React.FC<ChatProps> = ({ group }) => {
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [isSending, setIsSending] = useState(false);
-  const [modalImage, setModalImage] = useState<string | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const video = useRef(null);
+  const [status, setStatus] = useState({});
+  const [modalAsset, setModalAsset] = useState<ModalAsset | null>(null);
 
   const [messages, setMessages] = useState([] as IMessages[]);
   const [endMessage, setEndMessage] = useState<DocumentSnapshot | null>(null);
@@ -233,7 +241,7 @@ const Chat: React.FC<ChatProps> = ({ group }) => {
               managers={group.managers}
               message={item}
               setIsModalVisible={setIsModalVisible}
-              setModalImage={setModalImage}
+              setModalAsset={setModalAsset}
               users={group.users}
             />
           )}
@@ -291,26 +299,46 @@ const Chat: React.FC<ChatProps> = ({ group }) => {
       </KeyboardAvoidingView>
       {
         <Modal
-          style={styles.imageModalStyle}
+          style={styles.assetModalStyle}
           visible={isModalVisible}
           animationType={Platform.OS === "web" ? "fade" : "slide"}
           transparent={true}
         >
           <View
-            style={styles.imageModalImageContainer}
+            style={styles.assetModalContainer}
           >
-            <Image
-              source={{
-                uri: modalImage ?? "",
-              }}
-              width={200}
-              height={200}
-              style={styles.imageModalImage}
-            />
+            {
+              modalAsset?.type === "video" ? (
+                <View
+                  style={styles.videoAssetContainer}
+                >
+                  <Video
+                    onPlaybackStatusUpdate={status => setStatus(() => status)}
+                    ref={video}
+                    style={styles.videoAsset}
+                    videoStyle={styles.videoAssetStyle}
+                    source={{
+                      uri: modalAsset?.url ?? "",
+                    }}
+                    resizeMode={ResizeMode.COVER}
+                    useNativeControls
+                  />
+                </View>
+              ) : (
+                <Image
+                  source={{
+                    uri: modalAsset?.url ?? "",
+                  }}
+                  width={200}
+                  height={200}
+                  style={styles.assetModalAsset}
+                />
+              )
+            }
             <IconButton
               icon="close"
               onPress={() => setIsModalVisible(false)}
-              style={styles.imageModalCloseButton}
+              style={styles.assetModalCloseButton}
             />
           </View>
         </Modal>
