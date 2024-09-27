@@ -26,6 +26,10 @@ const ScreensLayout = () => {
         />
         <Stack.Screen name="basic-profile" />
         <Stack.Screen name="connected-socials" />
+        <Stack.Screen name="my-stats" />
+        <Stack.Screen name="reports" />
+        <Stack.Screen name="settings" />
+        <Stack.Screen name="help-and-support" />
       </Stack>
     </AppLayout>
   );

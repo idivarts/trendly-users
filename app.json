@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Trendly",
-    "slug": "trendly-users",
+    "slug": "trendly-creators",
     "version": "1.0.0",
     "platforms": [
       "ios",
@@ -57,8 +57,9 @@
         "origin": false
       },
       "eas": {
-        "projectId": "62cd2ba5-50d8-4fba-bbdb-2f8534713871"
+        "projectId": "36cae13c-e8b0-456c-9818-eee801a8c51e"
       }
-    }
+    },
+    "owner": "idiv"
   }
 }
