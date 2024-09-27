@@ -11,7 +11,6 @@ import { useRouter } from "expo-router";
 import { doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
 import { FirestoreDB } from "@/utils/firestore";
 import { User } from "@/types/User";
-import { signInAnonymously } from "firebase/auth";
 import { AuthApp } from "@/utils/auth";
 import { DUMMY_USER_ID } from "@/constants/User";
 
@@ -20,7 +19,7 @@ interface AuthContextProps {
   session?: string | null;
   signIn: (token: string) => void;
   signOut: () => void;
-  signUp: () => void;
+  signUp: (token: string) => void;
   getUser: (userId: string) => Promise<User | null>;
   updateUser: (userId: string, user: Partial<User>) => Promise<void>;
   user: User | null;
@@ -29,9 +28,9 @@ interface AuthContextProps {
 const AuthContext = createContext<AuthContextProps>({
   isLoading: false,
   session: null,
-  signIn: () => null,
+  signIn: (token: string) => null,
   signOut: () => null,
-  signUp: () => null,
+  signUp: (token: string) => null,
   getUser: () => Promise.resolve(null),
   updateUser: () => Promise.resolve(),
   user: null,
@@ -47,7 +46,6 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
   const router = useRouter();
 
   const fetchUser = async () => {
-    await signInAnonymously(AuthApp);
     if (session) {
       const userDocRef = doc(FirestoreDB, "users", session);
 
@@ -74,12 +72,12 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
   const signIn = async (token: string) => {
     setSession(token);
     // For existing users, redirect to the main screen.
-    router.replace("/questions");
+    router.replace("/collaborations");
     Toaster.success("Signed In Successfully!");
   };
 
-  const signUp = async () => {
-    setSession(DUMMY_USER_ID);
+  const signUp = async (token: string) => {
+    setSession(token);
     // For non-existing users, redirect to the onboarding screen.
     router.replace("/questions");
     Toaster.success("Signed Up Successfully!");
@@ -111,7 +109,6 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
     userId: string,
     user: Partial<User>
   ): Promise<void> => {
-    await signInAnonymously(AuthApp);
     const userRef = doc(FirestoreDB, "users", userId);
 
     await updateDoc(userRef, {

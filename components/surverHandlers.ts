@@ -1,5 +1,4 @@
 import { FirestoreDB } from "@/utils/firestore";
-import { signInWithEmailAndPassword, signInAnonymously } from "firebase/auth";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { AuthApp } from "@/utils/auth";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
@@ -19,16 +18,16 @@ export const handleNextQuestion = (
 
 export const submitSurvey = async (answers: string[]) => {
   try {
-    const user = await signInWithEmailAndPassword(
-      AuthApp,
-      "testuser@gmail.com",
-      "password"
-    );
-    const userRef = doc(FirestoreDB, "users", "IjOAHWjc3d8ff8u6Z2rD");
+    const user = AuthApp.currentUser;
+    if (!user) {
+      console.error("User not signed in");
+      return;
+    }
+    const userRef = doc(FirestoreDB, "users", user.uid);
     const userSnap = await getDoc(userRef);
 
     if (userSnap.exists()) {
-      const userData = userSnap.data() as IUsers;
+      const userData = userSnap.data();
 
       await updateDoc(userRef, {
         preferences: {
