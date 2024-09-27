@@ -49,6 +49,7 @@ interface GroupContextProps {
     count?: number,
   ) => Promise<Messages>;
   groups: Groups[] | null;
+  updateGroup: (groupId: string, group: Partial<Groups>) => Promise<void>;
 }
 
 const GroupContext = createContext<GroupContextProps>({
@@ -68,6 +69,7 @@ const GroupContext = createContext<GroupContextProps>({
     messages: [],
   }),
   groups: null,
+  updateGroup: (groupId: string, group: Partial<Groups>) => Promise.resolve(),
 });
 
 export const useGroupContext = () => useContext(GroupContext);
@@ -126,8 +128,13 @@ export const GroupContextProvider: React.FC<PropsWithChildren> = ({ children }) 
         }
       }
 
+      const userLastReadTime = groupData.lastUserReadTime?.[user?.id as string];
+
+      const time = userLastReadTime ? userLastReadTime : 0;
+
       groups.push({
         ...groupData,
+        isUnreadMessages: time < groupData.updatedAt,
       });
     }
 
@@ -259,6 +266,16 @@ export const GroupContextProvider: React.FC<PropsWithChildren> = ({ children }) 
     }
   };
 
+  const updateGroup = async (groupId: string, group: Partial<Groups>) => {
+    await signInAnonymously(AuthApp);
+    try {
+      const groupDoc = doc(FirestoreDB, "groups", groupId);
+      await updateDoc(groupDoc, group);
+    } catch (error) {
+      console.error("Error updating group: ", error);
+    }
+  }
+
   const addMessageToGroup = async (
     groupId: string,
     message: Partial<IMessages>,
@@ -272,6 +289,10 @@ export const GroupContextProvider: React.FC<PropsWithChildren> = ({ children }) 
       await updateDoc(groupDoc, {
         latestMessage: message,
         updatedAt: message.timeStamp,
+        lastUserReadTime: {
+          ...groupSnap.data()?.lastUserReadTime,
+          [user?.id as string]: Date.now(),
+        },
       });
     } catch (error) {
       console.error("Error adding message: ", error);
@@ -286,6 +307,7 @@ export const GroupContextProvider: React.FC<PropsWithChildren> = ({ children }) 
         getGroupByGroupId,
         getMessagesByGroupId,
         groups,
+        updateGroup,
       }}
     >
       {children}

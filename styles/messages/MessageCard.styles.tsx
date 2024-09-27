@@ -22,11 +22,16 @@ const styles = (theme: Theme) => StyleSheet.create({
     fontWeight: "bold",
   },
   messageInfo: {
-    gap: 5,
-    alignItems: "flex-end",
+    alignItems: "center",
+    flexDirection: "row",
+    gap: 10,
   },
-  newMessagesAvatar: {
+  newMessagesIcon: {
     backgroundColor: Colors(theme).primary,
+    borderRadius: 10,
+    height: 10,
+    marginTop: 2.5,
+    width: 10,
   },
   chevronIcon: {
     alignItems: "flex-end",
