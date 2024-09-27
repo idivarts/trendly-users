@@ -1,9 +1,21 @@
-import { Text, View } from "@/components/theme/Themed";
-import { useEffect } from "react";
+import {
+  useContext,
+  createContext,
+  type PropsWithChildren,
+  useEffect,
+} from "react";
 import messaging from "@react-native-firebase/messaging";
 import { Alert } from "react-native";
 
-const TestingCloudMessaging = () => {
+interface CloudMessagingContextProps { }
+
+const CloudMessagingContext = createContext<CloudMessagingContextProps>(null!);
+
+export const useCloudMessagingContext = () => useContext(CloudMessagingContext);
+
+export const CloudMessagingContextProvider: React.FC<PropsWithChildren> = ({
+  children,
+}) => {
   const requestUserPermission = async () => {
     const authStatus = await messaging().requestPermission();
     const enabled = authStatus === messaging.AuthorizationStatus.AUTHORIZED || authStatus === messaging.AuthorizationStatus.PROVISIONAL;
@@ -51,16 +63,10 @@ const TestingCloudMessaging = () => {
   }, []);
 
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
+    <CloudMessagingContext.Provider
+      value={null!}
     >
-      <Text>Testing for cloud messaging services</Text>
-    </View>
+      {children}
+    </CloudMessagingContext.Provider>
   );
-}
-
-export default TestingCloudMessaging;
+};

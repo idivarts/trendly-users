@@ -10,10 +10,9 @@ import ChatMessage from "./ChatMessage";
 import { View } from "@/components/theme/Themed";
 import stylesFn from "@/styles/messages/Chat.styles";
 import { IMessages } from "@/shared-libs/firestore/trendly-pro/models/groups";
-import { useAuthContext, useGroupContext } from "@/contexts";
+import { useAuthContext, useFirebaseStorageContext, useGroupContext } from "@/contexts";
 import { DocumentSnapshot } from "firebase/firestore";
 import { PLACEHOLDER_IMAGE } from "@/constants/Placeholder";
-import { useFirebaseStorageContext } from "@/contexts/firebase-storage-context.provider";
 import { useTheme } from "@react-navigation/native";
 
 interface ChatProps {
