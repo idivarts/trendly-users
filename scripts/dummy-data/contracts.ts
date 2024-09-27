@@ -1,0 +1,42 @@
+export const dummyContracts = [
+  {
+    brandId: "b1234567-89ab-4cde-f012-3456789abcde",
+    managerId: "m1234567-89ab-4cde-f012-3456789abcde",
+    userId: "u1234567-89ab-4cde-f012-3456789abcde",
+    startDate: "2024-01-01",
+    endDate: "2024-12-31",
+    status: "active",
+  },
+  {
+    brandId: "b2345678-89ab-4cde-f012-3456789abcde",
+    managerId: "m2345678-89ab-4cde-f012-3456789abcde",
+    userId: "u2345678-89ab-4cde-f012-3456789abcde",
+    startDate: "2024-02-15",
+    endDate: "2024-08-15",
+    status: "pending",
+  },
+  {
+    brandId: "b3456789-89ab-4cde-f012-3456789abcde",
+    managerId: "m3456789-89ab-4cde-f012-3456789abcde",
+    userId: "u3456789-89ab-4cde-f012-3456789abcde",
+    startDate: "2023-06-01",
+    endDate: "2023-12-01",
+    status: "expired",
+  },
+  {
+    brandId: "b4567890-89ab-4cde-f012-3456789abcde",
+    managerId: "m4567890-89ab-4cde-f012-3456789abcde",
+    userId: "u4567890-89ab-4cde-f012-3456789abcde",
+    startDate: "2024-03-01",
+    endDate: "2024-11-30",
+    status: "active",
+  },
+  {
+    brandId: "b5678901-89ab-4cde-f012-3456789abcde",
+    managerId: "m5678901-89ab-4cde-f012-3456789abcde",
+    userId: "u5678901-89ab-4cde-f012-3456789abcde",
+    startDate: "2024-05-01",
+    endDate: "2024-10-30",
+    status: "pending",
+  },
+];

@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
+import { getAuth, signInAnonymously } from "firebase/auth";
 import { dummyBrands } from "./dummy-data/brands";
 import { dummyGroups } from "./dummy-data/groups";
 import { dummyManagers } from "./dummy-data/managers";
@@ -10,6 +10,10 @@ import { populateGroups } from "./groups";
 import { populateManagers } from "./managers";
 import { populateUsers } from "./users";
 import { populateCollaborations } from "./collaboration";
+import { populateApplications } from "./invitations";
+import { dummyInvitations } from "./dummy-data/invitations";
+import { populateContracts } from "./contracts";
+import { dummyContracts } from "./dummy-data/contracts";
 
 const firebaseConfig = {
   apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY!,
@@ -33,6 +37,17 @@ const populateFirestore = async () => {
   // await populateBrands(db, dummyBrands, "zJOdLfzEj5wtmHGZ6tO8");
   // await populateGroups(db, dummyGroups);
   // await populateCollaborations(db);
+  // await populateApplications(
+  //   db,
+  //   //@ts-ignore
+  //   dummyInvitations,
+  //   "09cNbHT14AYyy1t2joVL3aMeRMm1"
+  // );
+  // await populateContracts(
+  //   db,
+  //   dummyContracts,
+  //   "09cNbHT14AYyy1t2joVL3aMeRMm1"
+  // );
 };
 
 populateFirestore()
