@@ -57,27 +57,36 @@ const styles = (theme: Theme) => StyleSheet.create({
     backgroundColor: Colors(theme).platinum,
     paddingHorizontal: 0,
   },
-  imageModalStyle: {
+  assetModalStyle: {
   },
-  imageModalImageContainer: {
+  assetModalContainer: {
     alignItems: "center",
+    justifyContent: "center",
     backgroundColor: Colors(theme).modalBackground,
     flex: 1,
     position: "relative",
     width: "100%",
   },
-  imageModalCloseButton: {
+  assetModalCloseButton: {
     backgroundColor: Colors(theme).white,
     position: "absolute",
     right: 5,
     top: Platform.OS === "web" ? 10 : 100,
     zIndex: 1,
   },
-  imageModalImage: {
+  assetModalAsset: {
     flex: 1,
     resizeMode: "contain",
     width: "100%",
   },
+  videoAsset: {
+    resizeMode: "contain",
+    width: "100%",
+    height: Platform.OS === "web" ? "100%" : 300,
+  },
+  videoAssetStyle: {
+    width: "100%",
+  }
 });
 
 export default styles;
