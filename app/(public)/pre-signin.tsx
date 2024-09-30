@@ -64,6 +64,7 @@ const PreSignIn = () => {
 
         const userCollection = collection(FirestoreDB, "users");
         const userDocRef = doc(userCollection, result.user.uid);
+        const fbid = result.user.providerData[0].uid;
 
         const findUser = await getDoc(userDocRef);
         if (findUser.exists()) {
@@ -74,6 +75,7 @@ const PreSignIn = () => {
         const userData = {
           accessToken,
           name: result.user.displayName,
+          fbid,
         };
 
         await setDoc(userDocRef, userData);
