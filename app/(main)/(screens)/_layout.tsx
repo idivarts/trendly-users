@@ -24,7 +24,6 @@ const ScreensLayout = () => {
             presentation: "modal",
           }}
         />
-        <Stack.Screen name="chat" />
         <Stack.Screen name="basic-profile" />
         <Stack.Screen name="connected-socials" />
         <Stack.Screen name="my-stats" />

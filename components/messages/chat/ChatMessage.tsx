@@ -6,6 +6,7 @@ import { useAuthContext } from "@/contexts";
 import { useTheme } from "@react-navigation/native";
 import { ModalAsset } from ".";
 import MessageAssetPreview from "./MessageAssetPreview";
+import { DUMMY_USER_ID } from "@/constants/User";
 
 interface ChatMessageProps {
   managers: {
@@ -29,7 +30,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
   const {
     user,
   } = useAuthContext();
-  const isSender = message.senderId === user?.id;
+  // const isSender = message.senderId === user?.id;
+  const isSender = message.senderId === DUMMY_USER_ID;
   const isUser = message.userType === "user";
   const theme = useTheme();
   const styles = stylesFn(theme);

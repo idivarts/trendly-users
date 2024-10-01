@@ -12,12 +12,12 @@ import { ActivityIndicator } from 'react-native-paper';
 const ProfileScreen = () => {
   const router = useRouter();
   const {
-    signOut,
+    signOutUser,
     user,
   } = useAuthContext();
 
   const handleSignout = () => {
-    signOut();
+    signOutUser();
   };
 
   if (!user) {

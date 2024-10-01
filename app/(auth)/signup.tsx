@@ -1,5 +1,6 @@
 import { Button, Text, View } from "react-native";
 import { useAuthContext } from "@/contexts";
+import { DUMMY_USER_CREDENTIALS } from "@/constants/User";
 
 const Signup = () => {
   const {
@@ -7,7 +8,11 @@ const Signup = () => {
   } = useAuthContext();
 
   const handleSignUp = () => {
-    signUp('');
+    signUp(
+      DUMMY_USER_CREDENTIALS.name,
+      DUMMY_USER_CREDENTIALS.email,
+      DUMMY_USER_CREDENTIALS.password
+    );
   };
 
   return (
