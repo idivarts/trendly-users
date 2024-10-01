@@ -13,7 +13,7 @@ import { FacebookAuthProvider, signInWithCredential } from "firebase/auth";
 import { AuthApp as auth } from "@/utils/auth";
 import { useRouter } from "expo-router";
 import { useAuthContext } from "@/contexts";
-import { DUMMY_USER_ID } from "@/constants/User";
+import { DUMMY_USER_CREDENTIALS, DUMMY_USER_CREDENTIALS2 } from "@/constants/User";
 import Colors from "@/constants/Colors";
 import { FirestoreDB } from "@/utils/firestore";
 import { collection, doc, getDoc, setDoc } from "firebase/firestore";
@@ -26,7 +26,7 @@ const PreSignIn = () => {
   const theme = useTheme();
   const styles = stylesFn(theme);
   const [error, setError] = useState<string | null>(null);
-  const { signIn, signUp } = useAuthContext();
+  const { signIn, firebaseSignIn, firebaseSignUp } = useAuthContext();
 
   const [request, response, promptAsync] = AuthSession.useAuthRequest(
     {
@@ -40,7 +40,6 @@ const PreSignIn = () => {
     { authorizationEndpoint: "https://www.facebook.com/v10.0/dialog/oauth" }
   );
 
-  // console.log("Request: ", response);
   const router = useRouter();
 
   // Handle response from Facebook
@@ -60,15 +59,13 @@ const PreSignIn = () => {
       // Sign in with Firebase using the Facebook credential
       const result = await signInWithCredential(auth, credential);
       if (result.user) {
-        console.log("User signed in: ", result.user);
-
         const userCollection = collection(FirestoreDB, "users");
         const userDocRef = doc(userCollection, result.user.uid);
         const fbid = result.user.providerData[0].uid;
 
         const findUser = await getDoc(userDocRef);
         if (findUser.exists()) {
-          signIn(result.user.uid);
+          firebaseSignIn(result.user.uid);
           return;
         }
 
@@ -79,7 +76,7 @@ const PreSignIn = () => {
         };
 
         await setDoc(userDocRef, userData);
-        signUp(result.user.uid);
+        firebaseSignUp(result.user.uid);
       }
     } catch (error: any) {
       setError(error.message);
@@ -87,8 +84,18 @@ const PreSignIn = () => {
   };
 
   const handleEmailSignIn = () => {
-    signIn(DUMMY_USER_ID);
+    signIn(
+      DUMMY_USER_CREDENTIALS.email,
+      DUMMY_USER_CREDENTIALS.password
+    );
   };
+
+  const handleInstagramSignIn = () => {
+    signIn(
+      DUMMY_USER_CREDENTIALS2.email,
+      DUMMY_USER_CREDENTIALS2.password
+    );
+  }
 
   const renderSocialButton = (
     iconName: string,
@@ -141,7 +148,7 @@ const PreSignIn = () => {
                 {renderSocialButton(
                   "logo-instagram",
                   "Login with Instagram",
-                  () => router.push("/questions")
+                  handleInstagramSignIn,
                 )}
               </View>
             )}
