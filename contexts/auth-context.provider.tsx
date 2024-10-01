@@ -12,7 +12,7 @@ import { doc, getDoc, onSnapshot, setDoc, updateDoc } from "firebase/firestore";
 import { FirestoreDB } from "@/utils/firestore";
 import { User } from "@/types/User";
 import { AuthApp } from "@/utils/auth";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
 
 interface AuthContextProps {
   firebaseSignIn: (token: string) => void;
@@ -24,7 +24,7 @@ interface AuthContextProps {
     email: string,
     password: string
   ) => void;
-  signOut: () => void;
+  signOutUser: () => void;
   signUp: (
     name: string,
     email: string,
@@ -44,7 +44,7 @@ const AuthContext = createContext<AuthContextProps>({
     email: string,
     password: string
   ) => null,
-  signOut: () => null,
+  signOutUser: () => null,
   signUp: (
     name: string,
     email: string,
@@ -91,12 +91,17 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
     email: string,
     password: string,
   ) => {
-    const userCredential = await signInWithEmailAndPassword(AuthApp, email, password);
-    setSession(userCredential.user.uid);
+    try {
+      const userCredential = await signInWithEmailAndPassword(AuthApp, email, password);
+      setSession(userCredential.user.uid);
 
-    // For existing users, redirect to the main screen.
-    router.replace("/collaborations");
-    Toaster.success("Signed In Successfully!");
+      // For existing users, redirect to the main screen.
+      router.replace("/collaborations");
+      Toaster.success("Signed In Successfully!");
+    } catch (error) {
+      console.error("Error signing in: ", error);
+      Toaster.error("Error signing in. Please try again.");
+    }
   };
 
   const signUp = async (
@@ -104,31 +109,36 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
     email: string,
     password: string,
   ) => {
-    const userCredential = await createUserWithEmailAndPassword(AuthApp, email, password);
+    try {
+      const userCredential = await createUserWithEmailAndPassword(AuthApp, email, password);
 
-    await setDoc(doc(FirestoreDB, "users", userCredential.user.uid), {
-      name,
-      email,
-      location: "",
-      phoneNumber: "",
-      preferences: {
-        question1: "",
-        question2: "",
-        question3: "",
-      },
-      profileImage: "",
-      settings: {
-        emailNotifications: true,
-        pushNotifications: true,
-        theme: "light",
-      },
-    });
+      await setDoc(doc(FirestoreDB, "users", userCredential.user.uid), {
+        name,
+        email,
+        location: "",
+        phoneNumber: "",
+        preferences: {
+          question1: "",
+          question2: "",
+          question3: "",
+        },
+        profileImage: "",
+        settings: {
+          emailNotifications: true,
+          pushNotifications: true,
+          theme: "light",
+        },
+      });
 
-    setSession(userCredential.user.uid);
+      setSession(userCredential.user.uid);
 
-    // For non-existing users, redirect to the onboarding screen.
-    router.replace("/questions");
-    Toaster.success("Signed Up Successfully!");
+      // For non-existing users, redirect to the onboarding screen.
+      router.replace("/questions");
+      Toaster.success("Signed Up Successfully!");
+    } catch (error) {
+      console.error("Error signing up: ", error);
+      Toaster.error("Error signing up. Please try again.");
+    }
   };
 
   const firebaseSignIn = async (token: string) => {
@@ -145,10 +155,15 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
     Toaster.success("Signed Up Successfully!");
   }
 
-  const signOut = () => {
-    setSession("");
-    router.replace("/pre-signin");
-    Toaster.success("Signed Out Successfully!");
+  const signOutUser = () => {
+    signOut(AuthApp).then(() => {
+      setSession("");
+      router.replace("/pre-signin");
+      Toaster.success("Signed Out Successfully!");
+    })
+      .catch((error) => {
+        console.error("Error signing out: ", error);
+      });
   };
 
   const getUser = async (userId: string): Promise<User | null> => {
@@ -187,7 +202,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
         isLoading,
         session,
         signIn,
-        signOut,
+        signOutUser,
         signUp,
         updateUser,
         user,
