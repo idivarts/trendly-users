@@ -14,8 +14,6 @@ import { useAuthContext, useGroupContext } from "@/contexts";
 import { collection, doc, DocumentSnapshot, endBefore, getDocs, onSnapshot, orderBy, query } from "firebase/firestore";
 import { PLACEHOLDER_IMAGE } from "@/constants/Placeholder";
 import { useFirebaseStorageContext } from "@/contexts/firebase-storage-context.provider";
-import { signInAnonymously } from "firebase/auth";
-import { AuthApp } from "@/utils/auth";
 import { FirestoreDB } from "@/utils/firestore";
 import { useTheme } from "@react-navigation/native";
 import { ResizeMode, Video } from "expo-av";
@@ -100,7 +98,6 @@ const Chat: React.FC<ChatProps> = ({ group }) => {
     if (endMessage && messages.length > 0) {
       const fetchRealtimeMessages = async (groupId: string) => {
         try {
-          await signInAnonymously(AuthApp);
           const groupRef = doc(FirestoreDB, "groups", groupId);
 
           const messagesRef = collection(groupRef, "messages");
