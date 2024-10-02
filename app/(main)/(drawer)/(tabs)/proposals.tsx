@@ -7,10 +7,10 @@ import { useTheme } from "@react-navigation/native";
 import { Link } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import { collection, getDocs, query, where } from "firebase/firestore";
-import { FlatList, TouchableOpacity } from "react-native";
+import { ActivityIndicator, FlatList, TouchableOpacity } from "react-native";
 import { FirestoreDB } from "@/utils/firestore";
 import { AuthApp } from "@/utils/auth";
-import { DummyProposalData } from "@/constants/Proposal";
+import { RefreshControl } from "react-native";
 import { CollaborationType } from "@/shared-libs/firestore/trendly-pro/constants/collaboration-type";
 import { PromotionType } from "@/shared-libs/firestore/trendly-pro/constants/promotion-type";
 import { SocialPlatform } from "@/shared-libs/firestore/trendly-pro/constants/social-platform";
@@ -23,6 +23,7 @@ const ProposalScreen = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [proposals, setProposals] = useState<any[]>([]);
   const [selectedCollabId, setSelectedCollabId] = useState<string | null>(null);
+  const [invitations, setInvitations] = useState<any[]>([]);
 
   const openBottomSheet = (id: string) => {
     setIsVisible(true);
@@ -33,6 +34,15 @@ const ProposalScreen = () => {
   const theme = useTheme();
   const styles = stylesFn(theme);
   const user = AuthApp.currentUser;
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await fetchProposals();
+    setRefreshing(false);
+  };
 
   const fetchProposals = async () => {
     try {
@@ -75,14 +85,76 @@ const ProposalScreen = () => {
       setProposals(validProposals);
     } catch (error) {
       console.error("Error fetching proposals: ", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchInvitations = async () => {
+    try {
+      const collaborationCol = collection(FirestoreDB, "collaborations");
+      const collabSnapshot = await getDocs(collaborationCol);
+
+      // Map over the collaborations to fetch applications for each collaboration
+      const invitationsWithApplications = await Promise.all(
+        collabSnapshot.docs.map(async (doc) => {
+          const collab = { id: doc.id, ...doc.data() };
+
+          // Fetch applications for the current collaboration
+          const applicationCol = collection(
+            FirestoreDB,
+            "collaborations",
+            collab.id,
+            "invitations"
+          );
+          const applicationSnapshot = await getDocs(applicationCol);
+          const applicationData = applicationSnapshot.docs.map(
+            (applicationDoc) => ({
+              id: applicationDoc.id,
+              userId: applicationDoc.data().userId,
+              collaborationId: applicationDoc.data().collaborationId,
+              ...applicationDoc.data(),
+            })
+          );
+
+          const userApplications = applicationData.filter(
+            (application) => application.userId === user?.uid
+          );
+
+          return userApplications.length > 0 ? collab : null;
+        })
+      );
+
+      const validProposals = invitationsWithApplications.filter(
+        (proposal) => proposal !== null
+      );
+
+      setInvitations(validProposals);
+
+      console.log("Invitations: ", validProposals);
+    } catch (error) {
+      console.error("Error fetching proposals: ", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
     fetchProposals();
+    fetchInvitations();
   }, [user]);
 
   const filteredProposals = useMemo(() => proposals, [proposals]);
+
+  if (isLoading) {
+    return (
+      <AppLayout>
+        <View style={styles.container}>
+          <ActivityIndicator size="large" color={Colors(theme).primary} />
+        </View>
+      </AppLayout>
+    );
+  }
 
   return (
     <AppLayout>
@@ -159,7 +231,7 @@ const ProposalScreen = () => {
                 />
               )}
               keyExtractor={(item, index) => index.toString()}
-              style={{ height: "100%" }}
+              style={{ height: "100%", width: "100%" }}
               ListFooterComponent={
                 <View
                   style={{
@@ -194,14 +266,22 @@ const ProposalScreen = () => {
                   </View>
                 </View>
               }
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={handleRefresh}
+                  colors={[Colors(theme).primary]} // Customize color based on theme
+                />
+              }
             />
           ))}
 
         {selectedTab === "forYou" && (
           <FlatList
-            data={DummyProposalData}
+            data={invitations}
             renderItem={({ item }) => (
               <JobCard
+                id={item.id}
                 name={item.name}
                 brandName={item.brandName}
                 onOpenBottomSheet={openBottomSheet}
@@ -212,7 +292,6 @@ const ProposalScreen = () => {
                 }}
                 cardType="proposal"
                 collaborationType={CollaborationType.PAID}
-                id="1"
                 location={item.location}
                 managerId="managerId"
                 numberOfInfluencersNeeded={1}
@@ -224,7 +303,7 @@ const ProposalScreen = () => {
               />
             )}
             keyExtractor={(item, index) => index.toString()}
-            style={{ height: "100%" }}
+            style={{ height: "100%", width: "100%" }}
             ListFooterComponent={
               <View
                 style={{
