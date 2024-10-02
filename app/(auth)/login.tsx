@@ -1,12 +1,16 @@
 import { Text, View } from "react-native";
 import { useAuthContext } from "@/contexts";
 import { Button } from "react-native";
+import { DUMMY_USER_CREDENTIALS } from "@/constants/User";
 
 const Login = () => {
   const { signIn } = useAuthContext();
 
   const handleSignIn = () => {
-    signIn("token");
+    signIn(
+      DUMMY_USER_CREDENTIALS.email,
+      DUMMY_USER_CREDENTIALS.password
+    );
   };
 
   return (
