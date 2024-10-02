@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, TouchableOpacity } from "react-native";
+import { View, Text, Image, TouchableOpacity, Platform } from "react-native";
 import Swiper from "react-native-swiper";
 import { Title, Paragraph } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
@@ -18,8 +18,15 @@ import {
   DUMMY_USER_CREDENTIALS2,
 } from "@/constants/User";
 import Colors from "@/constants/Colors";
+import { LoginManager } from "react-native-fbsdk-next";
 import { FirestoreDB } from "@/utils/firestore";
 import { collection, doc, getDoc, setDoc } from "firebase/firestore";
+import {
+  AccessToken,
+  LoginButton,
+  Settings,
+  Profile,
+} from "react-native-fbsdk-next";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -29,7 +36,7 @@ const PreSignIn = () => {
   const theme = useTheme();
   const styles = stylesFn(theme);
   const [error, setError] = useState<string | null>(null);
-  const { signIn, firebaseSignIn, firebaseSignUp } = useAuthContext();
+  const { firebaseSignIn, firebaseSignUp, signIn, signUp } = useAuthContext();
 
   const [request, response, promptAsync] = AuthSession.useAuthRequest(
     {
@@ -43,6 +50,7 @@ const PreSignIn = () => {
     { authorizationEndpoint: "https://www.facebook.com/v10.0/dialog/oauth" }
   );
 
+  // console.log("Request: ", response);
   const router = useRouter();
 
   // Handle response from Facebook
@@ -62,6 +70,8 @@ const PreSignIn = () => {
       // Sign in with Firebase using the Facebook credential
       const result = await signInWithCredential(auth, credential);
       if (result.user) {
+        console.log("User signed in: ", result.user);
+
         const userCollection = collection(FirestoreDB, "users");
         const userDocRef = doc(userCollection, result.user.uid);
         const fbid = result.user.providerData[0].uid;
@@ -92,6 +102,32 @@ const PreSignIn = () => {
 
   const handleInstagramSignIn = () => {
     signIn(DUMMY_USER_CREDENTIALS2.email, DUMMY_USER_CREDENTIALS2.password);
+  };
+
+  const handleFacebookSignIn = async () => {
+    if (Platform.OS === "android" || Platform.OS === "ios") {
+      LoginManager.logInWithPermissions(["public_profile"]).then(
+        function (result) {
+          if (result.isCancelled) {
+            console.log("==> Login cancelled");
+          } else {
+            AccessToken.getCurrentAccessToken().then((data) => {
+              //get the access token
+              console.log("==> Login success with data: " + data?.accessToken);
+              const token = data?.accessToken;
+              if (token) {
+                handleFirebaseSignIn(token);
+              }
+            });
+          }
+        },
+        function (error) {
+          console.log("==> Login fail with error: " + error);
+        }
+      );
+    } else {
+      await promptAsync();
+    }
   };
 
   const renderSocialButton = (
@@ -135,7 +171,8 @@ const PreSignIn = () => {
                 {renderSocialButton(
                   "logo-facebook",
                   "Login with Facebook",
-                  () => promptAsync({})
+                  // () => promptAsync({}),
+                  () => handleFacebookSignIn()
                 )}
                 {renderSocialButton(
                   "mail-outline",
