@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, TouchableOpacity } from "react-native";
+import { View, Text, Image, TouchableOpacity, Platform } from "react-native";
 import Swiper from "react-native-swiper";
 import { Title, Paragraph } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
@@ -13,10 +13,20 @@ import { FacebookAuthProvider, signInWithCredential } from "firebase/auth";
 import { AuthApp as auth } from "@/utils/auth";
 import { useRouter } from "expo-router";
 import { useAuthContext } from "@/contexts";
-import { DUMMY_USER_CREDENTIALS, DUMMY_USER_CREDENTIALS2 } from "@/constants/User";
+import {
+  DUMMY_USER_CREDENTIALS,
+  DUMMY_USER_CREDENTIALS2,
+} from "@/constants/User";
 import Colors from "@/constants/Colors";
+import { LoginManager } from "react-native-fbsdk-next";
 import { FirestoreDB } from "@/utils/firestore";
 import { collection, doc, getDoc, setDoc } from "firebase/firestore";
+import {
+  AccessToken,
+  LoginButton,
+  Settings,
+  Profile,
+} from "react-native-fbsdk-next";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -26,7 +36,7 @@ const PreSignIn = () => {
   const theme = useTheme();
   const styles = stylesFn(theme);
   const [error, setError] = useState<string | null>(null);
-  const { signIn, firebaseSignIn, firebaseSignUp } = useAuthContext();
+  const { firebaseSignIn, firebaseSignUp, signIn, signUp } = useAuthContext();
 
   const [request, response, promptAsync] = AuthSession.useAuthRequest(
     {
@@ -84,18 +94,35 @@ const PreSignIn = () => {
   };
 
   const handleEmailSignIn = () => {
-    signIn(
-      DUMMY_USER_CREDENTIALS.email,
-      DUMMY_USER_CREDENTIALS.password
-    );
+    signIn(DUMMY_USER_CREDENTIALS.email, DUMMY_USER_CREDENTIALS.password);
   };
 
   const handleInstagramSignIn = () => {
-    signIn(
-      DUMMY_USER_CREDENTIALS2.email,
-      DUMMY_USER_CREDENTIALS2.password
-    );
-  }
+    signIn(DUMMY_USER_CREDENTIALS2.email, DUMMY_USER_CREDENTIALS2.password);
+  };
+
+  const handleFacebookSignIn = async () => {
+    if (Platform.OS === "android" || Platform.OS === "ios") {
+      LoginManager.logInWithPermissions(["public_profile"]).then(
+        function (result) {
+          if (result.isCancelled) {
+          } else {
+            AccessToken.getCurrentAccessToken().then((data) => {
+              const token = data?.accessToken;
+              if (token) {
+                handleFirebaseSignIn(token);
+              }
+            });
+          }
+        },
+        function (error) {
+          console.log("==> Login fail with error: " + error);
+        }
+      );
+    } else {
+      await promptAsync();
+    }
+  };
 
   const renderSocialButton = (
     iconName: string,
@@ -138,7 +165,8 @@ const PreSignIn = () => {
                 {renderSocialButton(
                   "logo-facebook",
                   "Login with Facebook",
-                  () => promptAsync({})
+                  // () => promptAsync({}),
+                  () => handleFacebookSignIn()
                 )}
                 {renderSocialButton(
                   "mail-outline",
@@ -148,7 +176,7 @@ const PreSignIn = () => {
                 {renderSocialButton(
                   "logo-instagram",
                   "Login with Instagram",
-                  handleInstagramSignIn,
+                  handleInstagramSignIn
                 )}
               </View>
             )}

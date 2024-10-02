@@ -5,6 +5,7 @@
   "scripts": {
     "start": "expo start",
     "android": "expo run:android",
+    "eas-build-pre-install": "./eas-prebuild.sh",
     "ios": "expo run:ios",
     "web": "expo start --web",
     "test": "jest --watchAll",
@@ -19,12 +20,14 @@
   "dependencies": {
     "@expo/vector-icons": "^14.0.2",
     "@gorhom/bottom-sheet": "^4.6.4",
+    "@react-native-async-storage/async-storage": "^1.24.0",
     "@react-native-community/slider": "^4.5.2",
     "@react-navigation/drawer": "^6.7.2",
     "@react-navigation/native": "^6.0.2",
     "date-fns": "^4.1.0",
     "expo": "~51.0.21",
     "expo-auth-session": "^5.5.2",
+    "expo-av": "~14.0.7",
     "expo-constants": "~16.0.2",
     "expo-document-picker": "~12.0.2",
     "expo-file-system": "^17.0.1",
@@ -36,11 +39,13 @@
     "expo-splash-screen": "~0.27.5",
     "expo-status-bar": "~1.12.1",
     "expo-system-ui": "~3.0.7",
+    "expo-tracking-transparency": "^4.0.2",
     "expo-web-browser": "~13.0.3",
     "firebase": "^10.13.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-native": "0.74.3",
+    "react-native-fbsdk-next": "^13.1.2",
     "react-native-gesture-handler": "~2.16.1",
     "react-native-paper": "^5.12.5",
     "react-native-reanimated": "~3.10.1",
@@ -48,8 +53,7 @@
     "react-native-screens": "3.31.1",
     "react-native-swiper": "^1.6.0",
     "react-native-web": "~0.19.10",
-    "reanimated-bottom-sheet": "^1.0.0-alpha.22",
-    "expo-av": "~14.0.7"
+    "reanimated-bottom-sheet": "^1.0.0-alpha.22"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

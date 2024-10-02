@@ -3,16 +3,10 @@
     "name": "Trendly",
     "slug": "trendly-creators",
     "version": "1.0.0",
-    "platforms": [
-      "ios",
-      "android",
-      "web"
-    ],
+    "platforms": ["ios", "android", "web"],
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": [
-      "trendly-users"
-    ],
+    "scheme": ["trendly-creators"],
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.png",
@@ -41,6 +35,17 @@
         "expo-av",
         {
           "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone."
+        }
+      ],
+      [
+        "react-native-fbsdk-next",
+        {
+          "appID": "2223620811324637",
+          "displayName": "Trendly Creators",
+          "isAutoInitEnabled": true,
+          "clientToken": "76ca0bb2d6e0e4df680137f19590b737",
+          "scheme": "fb2223620811324637",
+          "iosUserTrackingPermission": "This identifier will be used to deliver personalized ads to you."
         }
       ]
     ],
