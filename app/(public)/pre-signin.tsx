@@ -13,7 +13,10 @@ import { FacebookAuthProvider, signInWithCredential } from "firebase/auth";
 import { AuthApp as auth } from "@/utils/auth";
 import { useRouter } from "expo-router";
 import { useAuthContext } from "@/contexts";
-import { DUMMY_USER_CREDENTIALS, DUMMY_USER_CREDENTIALS2 } from "@/constants/User";
+import {
+  DUMMY_USER_CREDENTIALS,
+  DUMMY_USER_CREDENTIALS2,
+} from "@/constants/User";
 import Colors from "@/constants/Colors";
 import { FirestoreDB } from "@/utils/firestore";
 import { collection, doc, getDoc, setDoc } from "firebase/firestore";
@@ -84,18 +87,12 @@ const PreSignIn = () => {
   };
 
   const handleEmailSignIn = () => {
-    signIn(
-      DUMMY_USER_CREDENTIALS.email,
-      DUMMY_USER_CREDENTIALS.password
-    );
+    signIn(DUMMY_USER_CREDENTIALS.email, DUMMY_USER_CREDENTIALS.password);
   };
 
   const handleInstagramSignIn = () => {
-    signIn(
-      DUMMY_USER_CREDENTIALS2.email,
-      DUMMY_USER_CREDENTIALS2.password
-    );
-  }
+    signIn(DUMMY_USER_CREDENTIALS2.email, DUMMY_USER_CREDENTIALS2.password);
+  };
 
   const renderSocialButton = (
     iconName: string,
@@ -148,7 +145,7 @@ const PreSignIn = () => {
                 {renderSocialButton(
                   "logo-instagram",
                   "Login with Instagram",
-                  handleInstagramSignIn,
+                  handleInstagramSignIn
                 )}
               </View>
             )}
