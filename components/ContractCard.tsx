@@ -31,7 +31,12 @@ const ContractCard = (props: CollaborationAdCardProps) => {
   const styles = stylesFn(theme);
 
   return (
-    <Card style={styles.card}>
+    <Card
+      style={styles.card}
+      onPress={() => {
+        router.push(`/collaboration-details/${props.id}`);
+      }}
+    >
       <Card.Content>
         {/* Header */}
         <View style={styles.header}>
@@ -55,6 +60,7 @@ const ContractCard = (props: CollaborationAdCardProps) => {
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
+                console.log("Opening bottom sheet for id from caard: ", props);
                 props.onOpenBottomSheet(props.id);
               }}
             >

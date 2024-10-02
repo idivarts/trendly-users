@@ -5,40 +5,35 @@ export const populateContracts = async (
   dummyApplications: any[],
   userId: string
 ) => {
-  const brandsCollections = collection(db, "brands");
-  const brandDataFetch = await getDocs(brandsCollections);
-  const brandData = brandDataFetch.docs.map((doc) => ({
+  const collabCollections = collection(db, "collaborations");
+  const collabDataFetch = await getDocs(collabCollections);
+  const collabData = collabDataFetch.docs.map((doc) => ({
     id: doc.id,
+    brandId: doc.data().brandId,
+    managerId: doc.data().managerId,
     ...doc.data(),
   }));
-  for (const brand of brandData) {
+  for (const collab of collabData) {
     const applicationsCollection = collection(db, "contracts");
-
-    const managerCol = collection(db, "brands", brand.id, "members");
-    const managerDataFetch = await getDocs(managerCol);
-    const managerData = managerDataFetch.docs.map((doc: any) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-
     for (const application of dummyApplications) {
       try {
         // Adding each application to Firestore
         await addDoc(applicationsCollection, {
           userId: userId,
-          brandId: brand.id,
-          managerId: managerData[0].managerId,
+          brandId: collab.brandId,
+          managerId: collab.managerId,
+          collaborationId: collab.id,
           startDate: application.startDate,
           endDate: application.endDate,
           status: application.status,
         });
 
         console.log(
-          `Application for collaboration ${brand.id} added successfully.`
+          `Application for collaboration ${collab.id} added successfully.`
         );
       } catch (error) {
         console.error(
-          `Failed to add application for collaboration ${brand.id}:`,
+          `Failed to add application for collaboration ${collab.id}:`,
           error
         );
       }
