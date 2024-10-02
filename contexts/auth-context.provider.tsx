@@ -52,7 +52,6 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
   const [[isLoading, session], setSession] = useStorageState("id");
   const [user, setUser] = useState<User | null>(null);
   const router = useRouter();
-  console.log("Session: ", session);
 
   const fetchUser = async () => {
     if (session) {
