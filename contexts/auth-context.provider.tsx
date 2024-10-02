@@ -52,6 +52,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
   const [[isLoading, session], setSession] = useStorageState("id");
   const [user, setUser] = useState<User | null>(null);
   const router = useRouter();
+  console.log("Session: ", session);
 
   const fetchUser = async () => {
     if (session) {
@@ -134,14 +135,12 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
 
   const firebaseSignIn = async (token: string) => {
     setSession(token);
-    fetchUser();
     router.replace("/collaborations");
     Toaster.success("Signed In Successfully!");
   };
 
   const firebaseSignUp = async (token: string) => {
     setSession(token);
-    fetchUser();
     router.replace("/questions");
     Toaster.success("Signed Up Successfully!");
   };
