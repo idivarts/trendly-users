@@ -50,7 +50,6 @@ const PreSignIn = () => {
     { authorizationEndpoint: "https://www.facebook.com/v10.0/dialog/oauth" }
   );
 
-  // console.log("Request: ", response);
   const router = useRouter();
 
   // Handle response from Facebook
@@ -70,8 +69,6 @@ const PreSignIn = () => {
       // Sign in with Firebase using the Facebook credential
       const result = await signInWithCredential(auth, credential);
       if (result.user) {
-        console.log("User signed in: ", result.user);
-
         const userCollection = collection(FirestoreDB, "users");
         const userDocRef = doc(userCollection, result.user.uid);
         const fbid = result.user.providerData[0].uid;
@@ -109,11 +106,8 @@ const PreSignIn = () => {
       LoginManager.logInWithPermissions(["public_profile"]).then(
         function (result) {
           if (result.isCancelled) {
-            console.log("==> Login cancelled");
           } else {
             AccessToken.getCurrentAccessToken().then((data) => {
-              //get the access token
-              console.log("==> Login success with data: " + data?.accessToken);
               const token = data?.accessToken;
               if (token) {
                 handleFirebaseSignIn(token);
