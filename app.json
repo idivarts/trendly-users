@@ -43,6 +43,7 @@
           "appID": "2223620811324637",
           "displayName": "Trendly Creators",
           "isAutoInitEnabled": true,
+          "clientToken": "76ca0bb2d6e0e4df680137f19590b737",
           "scheme": "fb2223620811324637",
           "iosUserTrackingPermission": "This identifier will be used to deliver personalized ads to you."
         }
