@@ -3,12 +3,16 @@ import { initializeAuth, getReactNativePersistence } from "firebase/auth";
 import { FirebaseApp } from "./firebase";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-if (!FirebaseApp) {
-  throw new Error("Firebase app is not initialized");
-}
+let AuthApp: Auth;
 
-const AuthApp = initializeAuth(FirebaseApp, {
-  persistence: getReactNativePersistence(AsyncStorage),
-});
+if (!getAuth(FirebaseApp)._isInitialized) {
+  AuthApp = initializeAuth(FirebaseApp, {
+    persistence: getReactNativePersistence(AsyncStorage),
+  });
+  console.log("AuthApp initialized");
+} else {
+  AuthApp = getAuth(FirebaseApp);
+  console.log("AuthApp reused");
+}
 
 export { AuthApp };
