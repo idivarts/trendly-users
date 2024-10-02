@@ -12,7 +12,11 @@ import { doc, getDoc, onSnapshot, setDoc, updateDoc } from "firebase/firestore";
 import { FirestoreDB } from "@/utils/firestore";
 import { User } from "@/types/User";
 import { AuthApp } from "@/utils/auth";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+} from "firebase/auth";
 
 interface AuthContextProps {
   firebaseSignIn: (token: string) => void;
@@ -20,16 +24,9 @@ interface AuthContextProps {
   getUser: (userId: string) => Promise<User | null>;
   isLoading: boolean;
   session?: string | null;
-  signIn: (
-    email: string,
-    password: string
-  ) => void;
+  signIn: (email: string, password: string) => void;
   signOutUser: () => void;
-  signUp: (
-    name: string,
-    email: string,
-    password: string
-  ) => void;
+  signUp: (name: string, email: string, password: string) => void;
   updateUser: (userId: string, user: Partial<User>) => Promise<void>;
   user: User | null;
 }
@@ -40,16 +37,9 @@ const AuthContext = createContext<AuthContextProps>({
   getUser: () => Promise.resolve(null),
   isLoading: false,
   session: null,
-  signIn: (
-    email: string,
-    password: string
-  ) => null,
+  signIn: (email: string, password: string) => null,
   signOutUser: () => null,
-  signUp: (
-    name: string,
-    email: string,
-    password: string
-  ) => null,
+  signUp: (name: string, email: string, password: string) => null,
   updateUser: () => Promise.resolve(),
   user: null,
 });
@@ -87,12 +77,13 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
     fetchUser();
   }, [session]);
 
-  const signIn = async (
-    email: string,
-    password: string,
-  ) => {
+  const signIn = async (email: string, password: string) => {
     try {
-      const userCredential = await signInWithEmailAndPassword(AuthApp, email, password);
+      const userCredential = await signInWithEmailAndPassword(
+        AuthApp,
+        email,
+        password
+      );
       setSession(userCredential.user.uid);
 
       // For existing users, redirect to the main screen.
@@ -104,13 +95,13 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
     }
   };
 
-  const signUp = async (
-    name: string,
-    email: string,
-    password: string,
-  ) => {
+  const signUp = async (name: string, email: string, password: string) => {
     try {
-      const userCredential = await createUserWithEmailAndPassword(AuthApp, email, password);
+      const userCredential = await createUserWithEmailAndPassword(
+        AuthApp,
+        email,
+        password
+      );
 
       await setDoc(doc(FirestoreDB, "users", userCredential.user.uid), {
         name,
@@ -143,24 +134,25 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
 
   const firebaseSignIn = async (token: string) => {
     setSession(token);
-
+    fetchUser();
     router.replace("/collaborations");
     Toaster.success("Signed In Successfully!");
-  }
+  };
 
   const firebaseSignUp = async (token: string) => {
     setSession(token);
-
+    fetchUser();
     router.replace("/questions");
     Toaster.success("Signed Up Successfully!");
-  }
+  };
 
   const signOutUser = () => {
-    signOut(AuthApp).then(() => {
-      setSession("");
-      router.replace("/pre-signin");
-      Toaster.success("Signed Out Successfully!");
-    })
+    signOut(AuthApp)
+      .then(() => {
+        setSession("");
+        router.replace("/pre-signin");
+        Toaster.success("Signed Out Successfully!");
+      })
       .catch((error) => {
         console.error("Error signing out: ", error);
       });
