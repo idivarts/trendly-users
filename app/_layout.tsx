@@ -44,8 +44,6 @@ const RootLayout = () => {
   useEffect(() => {
     const requestTracking = async () => {
       const { status } = await requestTrackingPermissionsAsync();
-      if (!process.env.FACEBOOK_CLIENT_TOKEN) return;
-      Settings.setClientToken(process.env.FACEBOOK_CLIENT_TOKEN);
       Settings.initializeSDK();
 
       if (status === "granted") {
