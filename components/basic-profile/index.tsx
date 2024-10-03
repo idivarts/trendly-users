@@ -9,6 +9,7 @@ import { User } from "@/types/User";
 import { useBreakpoints } from "@/hooks";
 import stylesFn from "@/styles/basic-profile/BasicProfile.styles";
 import { useTheme } from "@react-navigation/native";
+import { DUMMY_IMAGE } from "@/constants/User";
 
 interface BasicProfileProps {
   user: User;
@@ -105,7 +106,7 @@ const BasicProfile: React.FC<BasicProfileProps> = ({
           >
             <Avatar.Image
               source={{
-                uri: capturedImage || user.profileImage,
+                uri: capturedImage || user.profileImage || DUMMY_IMAGE,
               }}
               size={56}
             />

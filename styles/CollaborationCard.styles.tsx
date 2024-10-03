@@ -28,6 +28,7 @@ export const stylesFn = (theme: Theme) =>
       fontSize: 18,
       fontWeight: "bold",
       marginTop: 10,
+      maxWidth: "80%",
       color: Colors(theme).text,
     },
     brandName: {

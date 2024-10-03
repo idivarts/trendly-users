@@ -10,8 +10,6 @@ import {
   getDownloadURL,
 } from "firebase/storage";
 import { StorageApp } from "@/utils/firebase-storage";
-import { signInAnonymously } from "firebase/auth";
-import { AuthApp } from "@/utils/auth";
 
 interface FirebaseStorageContextProps {
   uploadImage: (image: string, path: string) => Promise<string>;
@@ -28,7 +26,6 @@ export const FirebaseStorageContextProvider: React.FC<PropsWithChildren> = ({
     image: string,
     path: string,
   ): Promise<string> => {
-    await signInAnonymously(AuthApp);
     const storageRef = ref(StorageApp, path);
     await uploadString(storageRef, image, "data_url");
 

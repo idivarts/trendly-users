@@ -18,6 +18,8 @@ import {
   FirebaseStorageContextProvider,
   useAuthContext,
 } from "@/contexts";
+import { requestTrackingPermissionsAsync } from "expo-tracking-transparency";
+import { Settings } from "react-native-fbsdk-next";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -42,6 +44,19 @@ const RootLayout = () => {
   useEffect(() => {
     if (error) throw error;
   }, [error]);
+
+  useEffect(() => {
+    const requestTracking = async () => {
+      const { status } = await requestTrackingPermissionsAsync();
+      Settings.initializeSDK();
+
+      if (status === "granted") {
+        await Settings.setAdvertiserTrackingEnabled(true);
+      }
+    };
+
+    requestTracking();
+  }, []);
 
   useEffect(() => {
     if (loaded) {
@@ -71,11 +86,7 @@ const RootLayoutStack = () => {
   const router = useRouter();
   const pathname = usePathname();
   const segments = useSegments();
-  const {
-    isLoading,
-    session,
-    user,
-  } = useAuthContext();
+  const { isLoading, session, user } = useAuthContext();
 
   const appTheme = user?.settings?.theme || colorScheme;
 
@@ -91,6 +102,7 @@ const RootLayoutStack = () => {
     } else if (session) {
       // Redirect to main group if signed in
       router.replace("/collaborations");
+      // router.replace("/pre-signin");
     } else if (!session && !inAuthGroup) {
       // App should start at pre-signin
       router.replace("/pre-signin");
@@ -101,9 +113,7 @@ const RootLayoutStack = () => {
   }, [session, isLoading]);
 
   return (
-    <ThemeProvider
-      value={appTheme === "dark" ? DarkTheme : ExpoDefaultTheme}
-    >
+    <ThemeProvider value={appTheme === "dark" ? DarkTheme : ExpoDefaultTheme}>
       <Stack
         screenOptions={{
           animation: "ios",

@@ -8,7 +8,7 @@ import {
 } from "react";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { useRouter } from "expo-router";
-import { doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
+import { doc, getDoc, onSnapshot, setDoc, updateDoc } from "firebase/firestore";
 import { FirestoreDB } from "@/utils/firestore";
 import { User } from "@/types/User";
 import { AuthApp } from "@/utils/auth";
@@ -17,25 +17,34 @@ import { logEvent } from "firebase/analytics";
 import { Platform } from "react-native";
 import analyticsWeb from "@/utils/analytics-web";
 import analytics from '@react-native-firebase/analytics';
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+} from "firebase/auth";
 
 interface AuthContextProps {
+  firebaseSignIn: (token: string) => void;
+  firebaseSignUp: (token: string) => void;
+  getUser: (userId: string) => Promise<User | null>;
   isLoading: boolean;
   session?: string | null;
-  signIn: (token: string) => void;
-  signOut: () => void;
-  signUp: (token: string) => void;
-  getUser: (userId: string) => Promise<User | null>;
+  signIn: (email: string, password: string) => void;
+  signOutUser: () => void;
+  signUp: (name: string, email: string, password: string) => void;
   updateUser: (userId: string, user: Partial<User>) => Promise<void>;
   user: User | null;
 }
 
 const AuthContext = createContext<AuthContextProps>({
+  firebaseSignIn: (token: string) => null,
+  firebaseSignUp: (token: string) => null,
+  getUser: () => Promise.resolve(null),
   isLoading: false,
   session: null,
-  signIn: (token: string) => null,
-  signOut: () => null,
-  signUp: (token: string) => null,
-  getUser: () => Promise.resolve(null),
+  signIn: (email: string, password: string) => null,
+  signOutUser: () => null,
+  signUp: (name: string, email: string, password: string) => null,
   updateUser: () => Promise.resolve(),
   user: null,
 });
@@ -73,58 +82,121 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
     fetchUser();
   }, [session]);
 
-  const signIn = async (token: string) => {
-    setSession(token);
-    if (Platform.OS === 'web') {
-      logEvent(
-        analyticsWeb,
-        'signed_in',
-        {
-          method: 'email_password',
-        }
+  const signIn = async (email: string, password: string) => {
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        AuthApp,
+        email,
+        password
       );
-    } else {
-      await analytics().logEvent(
-        'login',
-        {
-          method: 'email_password',
-        },
-      );
+      setSession(userCredential.user.uid);
+      
+      if (Platform.OS === 'web') {
+        logEvent(
+          analyticsWeb,
+          'signed_in',
+          {
+            method: 'email_password',
+          }
+        );
+      } else {
+        await analytics().logEvent(
+          'login',
+          {
+            method: 'email_password',
+          },
+        );
+      }
+
+      // For existing users, redirect to the main screen.
+      router.replace("/collaborations");
+      Toaster.success("Signed In Successfully!");
+    } catch (error) {
+      console.error("Error signing in: ", error);
+      Toaster.error("Error signing in. Please try again.");
     }
-    // For existing users, redirect to the main screen.
+  };
+
+  const signUp = async (name: string, email: string, password: string) => {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        AuthApp,
+        email,
+        password
+      );
+
+      await setDoc(doc(FirestoreDB, "users", userCredential.user.uid), {
+        name,
+        email,
+        location: "",
+        phoneNumber: "",
+        preferences: {
+          question1: "",
+          question2: "",
+          question3: "",
+        },
+        profileImage: "",
+        settings: {
+          emailNotifications: true,
+          pushNotifications: true,
+          theme: "light",
+        },
+      });
+
+      setSession(userCredential.user.uid);
+
+      // For non-existing users, redirect to the onboarding screen.
+      router.replace("/questions");
+      Toaster.success("Signed Up Successfully!");
+    } catch (error) {
+      console.error("Error signing up: ", error);
+      Toaster.error("Error signing up. Please try again.");
+    }
+  };
+
+  const firebaseSignIn = async (token: string) => {
+    setSession(token);
+
     router.replace("/collaborations");
     Toaster.success("Signed In Successfully!");
   };
 
-  const signUp = async (token: string) => {
+  const firebaseSignUp = async (token: string) => {
     setSession(token);
-    // For non-existing users, redirect to the onboarding screen.
     router.replace("/questions");
     Toaster.success("Signed Up Successfully!");
   };
 
-  const signOut = async () => {
-    setSession("");
-    if (Platform.OS === 'web') {
-      logEvent(
-        analyticsWeb,
-        'signed_out',
-        {
-          id: user?.id,
-          email: user?.email,
-        },
-      );
-    } else {
-      await analytics().logEvent(
-        'signed_out',
-        {
-          id: user?.id,
-          email: user?.email,
-        },
-      );
-    }
-    router.replace("/pre-signin");
-    Toaster.success("Signed Out Successfully!");
+  const signOutUser = () => {
+    signOut(AuthApp)
+      .then(() => {
+        setSession("");
+      
+        if (Platform.OS === 'web') {
+          logEvent(
+            analyticsWeb,
+            'signed_out',
+            {
+              id: user?.id,
+              email: user?.email,
+            },
+          );
+        } else {
+          await analytics().logEvent(
+            'signed_out',
+            {
+              id: user?.id,
+              email: user?.email,
+            },
+          );
+        }
+ 
+        router.replace("/pre-signin");
+        Toaster.success("Signed Out Successfully!");
+      })
+      .catch((error) => {
+        console.error("Error signing out: ", error);
+      });
   };
 
   const getUser = async (userId: string): Promise<User | null> => {
@@ -157,12 +229,14 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
   return (
     <AuthContext.Provider
       value={{
+        firebaseSignIn,
+        firebaseSignUp,
+        getUser,
         isLoading,
         session,
         signIn,
-        signOut,
+        signOutUser,
         signUp,
-        getUser,
         updateUser,
         user,
       }}

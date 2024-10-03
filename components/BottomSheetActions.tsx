@@ -71,7 +71,7 @@ const BottomSheetActions = ({
             <List.Item
               title="View"
               onPress={() => {
-                router.push("/collaboration-details");
+                router.push(`/collaboration-details/${cardId}`);
                 handleClose();
               }}
             />

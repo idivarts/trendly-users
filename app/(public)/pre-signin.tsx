@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, TouchableOpacity } from "react-native";
+import { View, Text, Image, TouchableOpacity, Platform } from "react-native";
 import Swiper from "react-native-swiper";
 import { Title, Paragraph } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
@@ -13,10 +13,20 @@ import { FacebookAuthProvider, signInWithCredential } from "firebase/auth";
 import { AuthApp as auth } from "@/utils/auth";
 import { useRouter } from "expo-router";
 import { useAuthContext } from "@/contexts";
-import { DUMMY_USER_ID } from "@/constants/User";
+import {
+  DUMMY_USER_CREDENTIALS,
+  DUMMY_USER_CREDENTIALS2,
+} from "@/constants/User";
 import Colors from "@/constants/Colors";
+import { LoginManager } from "react-native-fbsdk-next";
 import { FirestoreDB } from "@/utils/firestore";
 import { collection, doc, getDoc, setDoc } from "firebase/firestore";
+import {
+  AccessToken,
+  LoginButton,
+  Settings,
+  Profile,
+} from "react-native-fbsdk-next";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -26,7 +36,7 @@ const PreSignIn = () => {
   const theme = useTheme();
   const styles = stylesFn(theme);
   const [error, setError] = useState<string | null>(null);
-  const { signIn, signUp } = useAuthContext();
+  const { firebaseSignIn, firebaseSignUp, signIn, signUp } = useAuthContext();
 
   const [request, response, promptAsync] = AuthSession.useAuthRequest(
     {
@@ -40,7 +50,6 @@ const PreSignIn = () => {
     { authorizationEndpoint: "https://www.facebook.com/v10.0/dialog/oauth" }
   );
 
-  // console.log("Request: ", response);
   const router = useRouter();
 
   // Handle response from Facebook
@@ -60,24 +69,24 @@ const PreSignIn = () => {
       // Sign in with Firebase using the Facebook credential
       const result = await signInWithCredential(auth, credential);
       if (result.user) {
-        console.log("User signed in: ", result.user);
-
         const userCollection = collection(FirestoreDB, "users");
         const userDocRef = doc(userCollection, result.user.uid);
+        const fbid = result.user.providerData[0].uid;
 
         const findUser = await getDoc(userDocRef);
         if (findUser.exists()) {
-          signIn(result.user.uid);
+          firebaseSignIn(result.user.uid);
           return;
         }
 
         const userData = {
           accessToken,
           name: result.user.displayName,
+          fbid,
         };
 
         await setDoc(userDocRef, userData);
-        signUp(result.user.uid);
+        firebaseSignUp(result.user.uid);
       }
     } catch (error: any) {
       setError(error.message);
@@ -85,7 +94,34 @@ const PreSignIn = () => {
   };
 
   const handleEmailSignIn = () => {
-    signIn(DUMMY_USER_ID);
+    signIn(DUMMY_USER_CREDENTIALS.email, DUMMY_USER_CREDENTIALS.password);
+  };
+
+  const handleInstagramSignIn = () => {
+    signIn(DUMMY_USER_CREDENTIALS2.email, DUMMY_USER_CREDENTIALS2.password);
+  };
+
+  const handleFacebookSignIn = async () => {
+    if (Platform.OS === "android" || Platform.OS === "ios") {
+      LoginManager.logInWithPermissions(["public_profile"]).then(
+        function (result) {
+          if (result.isCancelled) {
+          } else {
+            AccessToken.getCurrentAccessToken().then((data) => {
+              const token = data?.accessToken;
+              if (token) {
+                handleFirebaseSignIn(token);
+              }
+            });
+          }
+        },
+        function (error) {
+          console.log("==> Login fail with error: " + error);
+        }
+      );
+    } else {
+      await promptAsync();
+    }
   };
 
   const renderSocialButton = (
@@ -129,7 +165,8 @@ const PreSignIn = () => {
                 {renderSocialButton(
                   "logo-facebook",
                   "Login with Facebook",
-                  () => promptAsync({})
+                  // () => promptAsync({}),
+                  () => handleFacebookSignIn()
                 )}
                 {renderSocialButton(
                   "mail-outline",
@@ -139,7 +176,7 @@ const PreSignIn = () => {
                 {renderSocialButton(
                   "logo-instagram",
                   "Login with Instagram",
-                  () => router.push("/questions")
+                  handleInstagramSignIn
                 )}
               </View>
             )}

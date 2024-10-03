@@ -1,8 +1,6 @@
 import { IMessages } from "@/shared-libs/firestore/trendly-pro/models/groups";
 import { Groups } from "@/types/Groups";
-import { AuthApp } from "@/utils/auth";
 import { FirestoreDB } from "@/utils/firestore";
-import { signInAnonymously } from "firebase/auth";
 import {
   addDoc,
   collection,
@@ -28,6 +26,7 @@ import {
   type PropsWithChildren,
 } from "react";
 import { useAuthContext } from "./auth-context.provider";
+import { DUMMY_USER_ID } from "@/constants/User";
 
 interface Messages {
   firstMessage?: DocumentSnapshot | null;
@@ -85,8 +84,6 @@ export const GroupContextProvider: React.FC<PropsWithChildren> = ({ children }) 
     let unsubscribe: (() => void) | undefined;
 
     const fetchGroupsByUserId = async (userId: string) => {
-      await signInAnonymously(AuthApp);
-
       const groupsRef = collection(FirestoreDB, "groups");
 
       const groupsQuery = query(
@@ -101,7 +98,8 @@ export const GroupContextProvider: React.FC<PropsWithChildren> = ({ children }) 
       });
     };
 
-    fetchGroupsByUserId(user?.id || "");
+    // fetchGroupsByUserId(user?.id || "");
+    fetchGroupsByUserId(DUMMY_USER_ID);
 
     return () => {
       if (typeof unsubscribe === 'function') {
@@ -128,7 +126,8 @@ export const GroupContextProvider: React.FC<PropsWithChildren> = ({ children }) 
         }
       }
 
-      const userLastReadTime = groupData.lastUserReadTime?.[user?.id as string];
+      const userLastReadTime = groupData.lastUserReadTime?.[DUMMY_USER_ID as string];
+      // const userLastReadTime = groupData.lastUserReadTime?.[user?.id as string];
 
       const time = userLastReadTime ? userLastReadTime : 0;
 
@@ -142,7 +141,6 @@ export const GroupContextProvider: React.FC<PropsWithChildren> = ({ children }) 
   };
 
   const getGroupByGroupId = async (groupId: string): Promise<Groups | null> => {
-    await signInAnonymously(AuthApp);
     try {
       const groupDoc = doc(FirestoreDB, "groups", groupId);
       const groupSnap = await getDoc(groupDoc);
@@ -204,7 +202,6 @@ export const GroupContextProvider: React.FC<PropsWithChildren> = ({ children }) 
     after: DocumentSnapshot,
     count?: number,
   ): Promise<Messages> => {
-    await signInAnonymously(AuthApp);
     try {
       const groupRef = doc(FirestoreDB, "groups", groupId);
 
@@ -241,7 +238,6 @@ export const GroupContextProvider: React.FC<PropsWithChildren> = ({ children }) 
     groupId: string,
     count?: number,
   ): Promise<Messages> => {
-    await signInAnonymously(AuthApp);
     try {
       const groupRef = doc(FirestoreDB, "groups", groupId);
 
@@ -267,7 +263,6 @@ export const GroupContextProvider: React.FC<PropsWithChildren> = ({ children }) 
   };
 
   const updateGroup = async (groupId: string, group: Partial<Groups>) => {
-    await signInAnonymously(AuthApp);
     try {
       const groupDoc = doc(FirestoreDB, "groups", groupId);
       await updateDoc(groupDoc, group);
@@ -280,7 +275,6 @@ export const GroupContextProvider: React.FC<PropsWithChildren> = ({ children }) 
     groupId: string,
     message: Partial<IMessages>,
   ) => {
-    await signInAnonymously(AuthApp);
     try {
       const groupDoc = doc(FirestoreDB, "groups", groupId);
       const groupSnap = await getDoc(groupDoc);
@@ -291,7 +285,8 @@ export const GroupContextProvider: React.FC<PropsWithChildren> = ({ children }) 
         updatedAt: message.timeStamp,
         lastUserReadTime: {
           ...groupSnap.data()?.lastUserReadTime,
-          [user?.id as string]: Date.now(),
+          [DUMMY_USER_ID as string]: Date.now(),
+          // [user?.id as string]: Date.now(),
         },
       });
     } catch (error) {
