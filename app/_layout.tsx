@@ -20,6 +20,7 @@ import {
 } from "@/contexts";
 import { requestTrackingPermissionsAsync } from "expo-tracking-transparency";
 import { Settings } from "react-native-fbsdk-next";
+import { Platform } from "react-native";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -44,19 +45,6 @@ const RootLayout = () => {
   useEffect(() => {
     if (error) throw error;
   }, [error]);
-
-  useEffect(() => {
-    const requestTracking = async () => {
-      const { status } = await requestTrackingPermissionsAsync();
-      Settings.initializeSDK();
-
-      if (status === "granted") {
-        await Settings.setAdvertiserTrackingEnabled(true);
-      }
-    };
-
-    requestTracking();
-  }, []);
 
   useEffect(() => {
     if (loaded) {
