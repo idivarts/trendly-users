@@ -18,10 +18,11 @@ import {
   DUMMY_USER_CREDENTIALS2,
 } from "@/constants/User";
 import Colors from "@/constants/Colors";
-// import { LoginManager } from "react-native-fbsdk-next";
+import { LoginManager, Settings } from "react-native-fbsdk-next";
 import { FirestoreDB } from "@/utils/firestore";
 import { collection, doc, getDoc, setDoc } from "firebase/firestore";
-// import { AccessToken } from "react-native-fbsdk-next";
+import { AccessToken } from "react-native-fbsdk-next";
+import { requestTrackingPermissionsAsync } from "expo-tracking-transparency";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -97,27 +98,24 @@ const PreSignIn = () => {
   };
 
   const handleFacebookSignIn = async () => {
-    if (Platform.OS === "web") {
-      await promptAsync();
+    if (Platform.OS === "android" || Platform.OS === "ios") {
+      LoginManager.logInWithPermissions(["public_profile"]).then(
+        function (result) {
+          if (result.isCancelled) {
+          } else {
+            AccessToken.getCurrentAccessToken().then((data) => {
+              const token = data?.accessToken;
+              if (token) {
+                handleFirebaseSignIn(token);
+              }
+            });
+          }
+        },
+        function (error) {
+          console.log("==> Login fail with error: " + error);
+        }
+      );
     }
-    // } else if (Platform.OS === "android" || Platform.OS === "ios") {
-    //   LoginManager.logInWithPermissions(["public_profile"]).then(
-    //     function (result) {
-    //       if (result.isCancelled) {
-    //       } else {
-    //         AccessToken.getCurrentAccessToken().then((data) => {
-    //           const token = data?.accessToken;
-    //           if (token) {
-    //             handleFirebaseSignIn(token);
-    //           }
-    //         });
-    //       }
-    //     },
-    //     function (error) {
-    //       console.log("==> Login fail with error: " + error);
-    //     }
-    //   );
-    // }
   };
 
   const renderSocialButton = (
@@ -135,6 +133,19 @@ const PreSignIn = () => {
       <Text style={styles.socialButtonText}>{label}</Text>
     </TouchableOpacity>
   );
+
+  useEffect(() => {
+    if (Platform.OS === "ios" || Platform.OS === "android") {
+      const requestTracking = async () => {
+        const { status } = await requestTrackingPermissionsAsync();
+        Settings.initializeSDK();
+        if (status === "granted") {
+          await Settings.setAdvertiserTrackingEnabled(true);
+        }
+      };
+      requestTracking();
+    }
+  }, []);
 
   return (
     <AppLayout>
@@ -158,12 +169,12 @@ const PreSignIn = () => {
             <Paragraph style={styles.paragraph}>{slide.text}</Paragraph>
             {slide.key === "connect" && (
               <View style={styles.socialContainer}>
-                {/* {renderSocialButton(
+                {renderSocialButton(
                   "logo-facebook",
                   "Login with Facebook",
                   // () => promptAsync({}),
                   () => handleFacebookSignIn()
-                )} */}
+                )}
                 {renderSocialButton(
                   "mail-outline",
                   "Login with Email",
