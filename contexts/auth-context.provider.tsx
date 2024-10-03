@@ -90,7 +90,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
         password
       );
       setSession(userCredential.user.uid);
-      
+
       if (Platform.OS === 'web') {
         logEvent(
           analyticsWeb,
@@ -171,7 +171,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
     signOut(AuthApp)
       .then(() => {
         setSession("");
-      
+
         if (Platform.OS === 'web') {
           logEvent(
             analyticsWeb,
@@ -182,7 +182,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
             },
           );
         } else {
-          await analytics().logEvent(
+          analytics().logEvent(
             'signed_out',
             {
               id: user?.id,
@@ -190,7 +190,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
             },
           );
         }
- 
+
         router.replace("/pre-signin");
         Toaster.success("Signed Out Successfully!");
       })
