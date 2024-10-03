@@ -40,19 +40,19 @@ export const CloudMessagingContextProvider: React.FC<PropsWithChildren> = ({
 
   const getToken = async () => {
     const token = await messaging().getToken();
-    if (session) {
+    if (session && user) {
       const nativeToken = Platform.OS === "ios" ? {
+        ...user?.pushNotificationToken,
         ios: token,
       } : {
+        ...user?.pushNotificationToken,
         android: token,
       };
+
       await updateUser(
         session as string,
         {
-          pushNotificationToken: {
-            ...user?.pushNotificationToken,
-            ...nativeToken,
-          },
+          pushNotificationToken: nativeToken,
         },
       );
     }
@@ -80,30 +80,27 @@ export const CloudMessagingContextProvider: React.FC<PropsWithChildren> = ({
   }, [session]);
 
   useEffect(() => {
-    let backgroundSubscription = () => { };
-    let foregroundSubscription = () => { };
+    if (!session && !user) return;
 
-    if (session && Platform.OS === "android" || Platform.OS === "ios") {
-      initNotification();
+    initNotification();
 
-      backgroundSubscription = messaging().onNotificationOpenedApp((remoteMessage) => {
-        console.log("Notification caused app to open from background state:", remoteMessage.notification);
-      });
+    const backgroundSubscription = messaging().onNotificationOpenedApp((remoteMessage) => {
+      console.log("Notification caused app to open from background state:", remoteMessage.notification);
+    });
 
-      messaging().setBackgroundMessageHandler(async (remoteMessage) => {
-        console.log("Message handled in the background:", remoteMessage);
-      });
+    messaging().setBackgroundMessageHandler(async (remoteMessage) => {
+      console.log("Message handled in the background:", remoteMessage);
+    });
 
-      foregroundSubscription = messaging().onMessage(async (remoteMessage) => {
-        console.log("A new FCM message arrived!", remoteMessage);
-      });
-    }
+    const foregroundSubscription = messaging().onMessage(async (remoteMessage) => {
+      console.log("A new FCM message arrived!", remoteMessage);
+    });
 
     return () => {
       backgroundSubscription();
       foregroundSubscription();
     };
-  }, [session]);
+  }, [session, user]);
 
   return (
     <CloudMessagingContext.Provider
