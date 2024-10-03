@@ -8,6 +8,7 @@ import messaging from "@react-native-firebase/messaging";
 import { Alert, Platform } from "react-native";
 
 import { PermissionsAndroid } from 'react-native';
+import { useAuthContext } from "./auth-context.provider";
 
 if (Platform.OS === 'android') {
   PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
@@ -26,6 +27,12 @@ export const useCloudMessagingContext = () => useContext(CloudMessagingContext);
 export const CloudMessagingContextProvider: React.FC<PropsWithChildren> = ({
   children,
 }) => {
+  const {
+    session,
+    user,
+    updateUser,
+  } = useAuthContext();
+
   const requestUserPermission = async () => {
     const authStatus = await messaging().requestPermission();
     const enabled = authStatus === messaging.AuthorizationStatus.AUTHORIZED || authStatus === messaging.AuthorizationStatus.PROVISIONAL;
@@ -37,7 +44,23 @@ export const CloudMessagingContextProvider: React.FC<PropsWithChildren> = ({
 
   const getToken = async () => {
     const token = await messaging().getToken();
-    console.log("FCM Native Token:", token);
+    if (session) {
+      const nativeToken = Platform.OS === "ios" ? {
+        ios: token,
+      } : {
+        android: token,
+      };
+      await updateUser(
+        session as string,
+        {
+          pushNotificationToken: {
+            ...user?.pushNotificationToken,
+            ...nativeToken,
+          },
+        },
+      );
+    }
+
     return token;
   }
 
@@ -58,7 +81,7 @@ export const CloudMessagingContextProvider: React.FC<PropsWithChildren> = ({
     let backgroundSubscription = () => { };
     let foregroundSubscription = () => { };
 
-    if (Platform.OS === "android" || Platform.OS === "ios") {
+    if (session && Platform.OS === "android" || Platform.OS === "ios") {
       initNotification();
 
       backgroundSubscription = messaging().onNotificationOpenedApp((remoteMessage) => {
@@ -78,7 +101,7 @@ export const CloudMessagingContextProvider: React.FC<PropsWithChildren> = ({
       backgroundSubscription();
       foregroundSubscription();
     };
-  }, []);
+  }, [session]);
 
   return (
     <CloudMessagingContext.Provider
