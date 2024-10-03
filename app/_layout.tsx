@@ -16,6 +16,7 @@ import { AuthContextProvider, useAuthContext } from "@/contexts";
 import { FirebaseStorageContextProvider } from "@/contexts/firebase-storage-context.provider";
 import { requestTrackingPermissionsAsync } from "expo-tracking-transparency";
 import { Settings } from "react-native-fbsdk-next";
+import { Platform } from "react-native";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -42,16 +43,18 @@ const RootLayout = () => {
   }, [error]);
 
   useEffect(() => {
-    const requestTracking = async () => {
-      const { status } = await requestTrackingPermissionsAsync();
-      Settings.initializeSDK();
+    if (Platform.OS === "ios" || Platform.OS === "android") {
+      const requestTracking = async () => {
+        const { status } = await requestTrackingPermissionsAsync();
+        Settings.initializeSDK();
 
-      if (status === "granted") {
-        await Settings.setAdvertiserTrackingEnabled(true);
-      }
-    };
+        if (status === "granted") {
+          await Settings.setAdvertiserTrackingEnabled(true);
+        }
+      };
 
-    requestTracking();
+      requestTracking();
+    }
   }, []);
 
   useEffect(() => {
