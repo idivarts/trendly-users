@@ -113,10 +113,6 @@ const TabLayout = () => {
           ),
           title: "Contracts",
           headerTitleAlign: "left",
-          headerTitleStyle: {
-            fontSize: 30,
-            fontWeight: "bold",
-          },
           headerRight: () => (
             <Link href="/notifications" asChild>
               <Pressable>

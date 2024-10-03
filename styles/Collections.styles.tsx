@@ -14,9 +14,6 @@ export const stylesFn = (theme: Theme) =>
       alignItems: "center",
       marginBottom: 10,
     },
-    jobList: {
-      paddingBottom: 20,
-    },
     modalContainer: {
       flex: 1,
       justifyContent: "flex-end",

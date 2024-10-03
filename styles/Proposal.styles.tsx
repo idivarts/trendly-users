@@ -18,4 +18,8 @@ export const stylesFn = (theme: Theme) =>
       color: "rgb(120, 69, 172)",
       textDecorationLine: "underline",
     },
+    subtitle: {
+      fontSize: 16,
+      textAlign: "center",
+    },
   });
