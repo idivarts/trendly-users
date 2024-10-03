@@ -49,7 +49,6 @@ const CollaborationPage = (props: any) => {
   const styles = stylesFn(theme);
   const [isVisible, setIsVisible] = React.useState(false);
 
-  console.log("Collaboration Details", props.collaborationDetail);
   return (
     <AppLayout>
       <Appbar.Header

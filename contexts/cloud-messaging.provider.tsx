@@ -55,19 +55,24 @@ export const CloudMessagingContextProvider: React.FC<PropsWithChildren> = ({
   }
 
   useEffect(() => {
-    initNotification();
+    let backgroundSubscription = () => { };
+    let foregroundSubscription = () => { };
 
-    const backgroundSubscription = messaging().onNotificationOpenedApp((remoteMessage) => {
-      console.log("Notification caused app to open from background state:", remoteMessage.notification);
-    });
+    if (Platform.OS === "android" || Platform.OS === "ios") {
+      initNotification();
 
-    messaging().setBackgroundMessageHandler(async (remoteMessage) => {
-      console.log("Message handled in the background:", remoteMessage);
-    });
+      backgroundSubscription = messaging().onNotificationOpenedApp((remoteMessage) => {
+        console.log("Notification caused app to open from background state:", remoteMessage.notification);
+      });
 
-    const foregroundSubscription = messaging().onMessage(async (remoteMessage) => {
-      Alert.alert("A new FCM message arrived!", JSON.stringify(remoteMessage));
-    });
+      messaging().setBackgroundMessageHandler(async (remoteMessage) => {
+        console.log("Message handled in the background:", remoteMessage);
+      });
+
+      foregroundSubscription = messaging().onMessage(async (remoteMessage) => {
+        Alert.alert("A new FCM message arrived!", JSON.stringify(remoteMessage));
+      });
+    }
 
     return () => {
       backgroundSubscription();

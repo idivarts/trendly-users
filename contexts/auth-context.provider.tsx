@@ -12,7 +12,7 @@ import { doc, getDoc, onSnapshot, setDoc, updateDoc } from "firebase/firestore";
 import { FirestoreDB } from "@/utils/firestore";
 import { User } from "@/types/User";
 import { AuthApp } from "@/utils/auth";
-import { logEvent } from "firebase/analytics";
+import { Analytics, logEvent } from "firebase/analytics";
 import { Platform } from "react-native";
 import analyticsWeb from "@/utils/analytics-web";
 import analytics from '@react-native-firebase/analytics';
@@ -92,7 +92,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
 
       if (Platform.OS === 'web') {
         logEvent(
-          analyticsWeb,
+          analyticsWeb as Analytics,
           'signed_in',
           {
             method: 'email_password',
@@ -173,7 +173,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
 
         if (Platform.OS === 'web') {
           logEvent(
-            analyticsWeb,
+            analyticsWeb as Analytics,
             'signed_out',
             {
               id: user?.id,

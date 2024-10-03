@@ -7,6 +7,7 @@ import {
 
 import { getToken } from "firebase/messaging";
 import { messaging } from "@/utils/messaging-web";
+import { Platform } from "react-native";
 
 interface CloudMessagingContextProps { }
 
@@ -34,7 +35,9 @@ export const CloudMessagingContextProvider: React.FC<PropsWithChildren> = ({
   }
 
   useEffect(() => {
-    requestPermission();
+    if (Platform.OS === "web") {
+      requestPermission();
+    }
   }, []);
 
   return (

@@ -116,7 +116,7 @@ const PreSignIn = () => {
           }
         },
         function (error) {
-          console.log("==> Login fail with error: " + error);
+          console.error("==> Login fail with error: " + error);
         }
       );
     } else {

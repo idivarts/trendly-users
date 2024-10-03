@@ -60,7 +60,6 @@ const ContractCard = (props: CollaborationAdCardProps) => {
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
-                console.log("Opening bottom sheet for id from caard: ", props);
                 props.onOpenBottomSheet(props.id);
               }}
             >

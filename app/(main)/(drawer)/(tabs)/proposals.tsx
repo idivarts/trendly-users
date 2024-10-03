@@ -130,8 +130,6 @@ const ProposalScreen = () => {
       );
 
       setInvitations(validProposals);
-
-      console.log("Invitations: ", validProposals);
     } catch (error) {
       console.error("Error fetching proposals: ", error);
     } finally {
