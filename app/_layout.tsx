@@ -43,21 +43,6 @@ const RootLayout = () => {
   }, [error]);
 
   useEffect(() => {
-    if (Platform.OS === "ios" || Platform.OS === "android") {
-      const requestTracking = async () => {
-        const { status } = await requestTrackingPermissionsAsync();
-        Settings.initializeSDK();
-
-        if (status === "granted") {
-          await Settings.setAdvertiserTrackingEnabled(true);
-        }
-      };
-
-      requestTracking();
-    }
-  }, []);
-
-  useEffect(() => {
     if (loaded) {
       SplashScreen.hideAsync();
     }
