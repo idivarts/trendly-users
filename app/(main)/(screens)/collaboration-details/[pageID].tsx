@@ -39,7 +39,7 @@ const CollaborationDetailsScreen = () => {
         brandDescription: brandData?.description || "",
       });
     } catch (e) {
-      console.log(e);
+      console.error(e);
     } finally {
       setLoading(false);
     }

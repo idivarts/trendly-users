@@ -12,8 +12,12 @@ import { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "react-native-reanimated";
 import { useColorScheme } from "@/components/theme/useColorScheme";
-import { AuthContextProvider, useAuthContext } from "@/contexts";
-import { FirebaseStorageContextProvider } from "@/contexts/firebase-storage-context.provider";
+import {
+  AuthContextProvider,
+  CloudMessagingContextProvider,
+  FirebaseStorageContextProvider,
+  useAuthContext,
+} from "@/contexts";
 import { requestTrackingPermissionsAsync } from "expo-tracking-transparency";
 import { Settings } from "react-native-fbsdk-next";
 
@@ -68,7 +72,9 @@ const RootLayout = () => {
     <AuthContextProvider>
       <GestureHandlerRootView>
         <FirebaseStorageContextProvider>
-          <RootLayoutStack />
+          <CloudMessagingContextProvider>
+            <RootLayoutStack />
+          </CloudMessagingContextProvider>
         </FirebaseStorageContextProvider>
       </GestureHandlerRootView>
     </AuthContextProvider>

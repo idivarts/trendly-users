@@ -17,6 +17,7 @@ import {
   signInWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
+import { analyticsLogEvent } from "@/utils/analytics";
 
 interface AuthContextProps {
   firebaseSignIn: (token: string) => void;
@@ -86,6 +87,12 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
       );
       setSession(userCredential.user.uid);
 
+      await analyticsLogEvent('signed_in', {
+        id: userCredential.user.uid,
+        name: userCredential.user.displayName,
+        email: userCredential.user.email,
+      });
+
       // For existing users, redirect to the main screen.
       router.replace("/collaborations");
       Toaster.success("Signed In Successfully!");
@@ -134,6 +141,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
 
   const firebaseSignIn = async (token: string) => {
     setSession(token);
+
     router.replace("/collaborations");
     Toaster.success("Signed In Successfully!");
   };
@@ -148,6 +156,12 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
     signOut(AuthApp)
       .then(() => {
         setSession("");
+
+        analyticsLogEvent('signed_out', {
+          id: user?.id,
+          email: user?.email,
+        });
+
         router.replace("/pre-signin");
         Toaster.success("Signed Out Successfully!");
       })

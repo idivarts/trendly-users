@@ -3,10 +3,16 @@
     "name": "Trendly",
     "slug": "trendly-creators",
     "version": "1.0.0",
-    "platforms": ["ios", "android", "web"],
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
     "orientation": "portrait",
     "icon": "./assets/images/logo.jpg",
-    "scheme": ["trendly-creators"],
+    "scheme": [
+      "trendly-creators"
+    ],
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.png",
@@ -15,13 +21,15 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "pro.trendly.creators"
+      "bundleIdentifier": "pro.trendly.creators",
+      "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
+      "googleServicesFile": "./google-services.json",
       "package": "pro.trendly.creators"
     },
     "web": {
@@ -31,6 +39,15 @@
     },
     "plugins": [
       "expo-router",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
+        }
+      ],
+      "@react-native-firebase/app",
       [
         "expo-av",
         {
