@@ -1,4 +1,4 @@
-import { getAnalytics, isSupported } from "firebase/analytics";
+import { getAnalytics } from "firebase/analytics";
 import { FirebaseApp } from "./firebase";
 
 const analyticsWeb = getAnalytics(FirebaseApp);

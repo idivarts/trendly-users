@@ -13,9 +13,13 @@ if (Platform.OS === 'android') {
   PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
 }
 
-interface CloudMessagingContextProps { }
+interface CloudMessagingContextProps {
+  getToken: () => Promise<string>;
+}
 
-const CloudMessagingContext = createContext<CloudMessagingContextProps>(null!);
+const CloudMessagingContext = createContext<CloudMessagingContextProps>({
+  getToken: async () => "",
+});
 
 export const useCloudMessagingContext = () => useContext(CloudMessagingContext);
 
@@ -53,7 +57,7 @@ export const CloudMessagingContextProvider: React.FC<PropsWithChildren> = ({
   useEffect(() => {
     initNotification();
 
-    messaging().onNotificationOpenedApp((remoteMessage) => {
+    const backgroundSubscription = messaging().onNotificationOpenedApp((remoteMessage) => {
       console.log("Notification caused app to open from background state:", remoteMessage.notification);
     });
 
@@ -61,16 +65,21 @@ export const CloudMessagingContextProvider: React.FC<PropsWithChildren> = ({
       console.log("Message handled in the background:", remoteMessage);
     });
 
-    const unsubscribe = messaging().onMessage(async (remoteMessage) => {
+    const foregroundSubscription = messaging().onMessage(async (remoteMessage) => {
       Alert.alert("A new FCM message arrived!", JSON.stringify(remoteMessage));
     });
 
-    return unsubscribe;
+    return () => {
+      backgroundSubscription();
+      foregroundSubscription();
+    };
   }, []);
 
   return (
     <CloudMessagingContext.Provider
-      value={null!}
+      value={{
+        getToken,
+      }}
     >
       {children}
     </CloudMessagingContext.Provider>

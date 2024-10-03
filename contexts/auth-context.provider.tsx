@@ -12,7 +12,6 @@ import { doc, getDoc, onSnapshot, setDoc, updateDoc } from "firebase/firestore";
 import { FirestoreDB } from "@/utils/firestore";
 import { User } from "@/types/User";
 import { AuthApp } from "@/utils/auth";
-import { DUMMY_USER_ID } from "@/constants/User";
 import { logEvent } from "firebase/analytics";
 import { Platform } from "react-native";
 import analyticsWeb from "@/utils/analytics-web";
