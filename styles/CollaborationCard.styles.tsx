@@ -7,7 +7,8 @@ export const stylesFn = (theme: Theme) =>
     card: {
       borderRadius: 16,
       padding: 10,
-      margin: 10,
+      marginVertical: 8,
+      marginHorizontal: 5,
       backgroundColor: Colors(theme).card,
       elevation: 2,
     },

@@ -37,8 +37,6 @@ export const submitSurvey = async (answers: string[]) => {
           question3: answers[2] || "",
         },
       });
-
-      console.log("Survey submitted successfully!");
     } else {
       console.log("User data does not exist");
     }

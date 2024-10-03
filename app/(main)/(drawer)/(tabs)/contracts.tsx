@@ -85,11 +85,8 @@ const ContractScreen = () => {
     }
   };
 
-  console.log("Contracts: ", contracts);
-
   const openBottomSheet = (id: string) => {
     setIsVisible(true);
-    console.log("Opening bottom sheet with id: ", id);
     setSelectedCollabId(id);
   };
 
