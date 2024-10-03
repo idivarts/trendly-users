@@ -51,8 +51,6 @@ const ApplyScreen = () => {
 
   const handleSubmit = async () => {
     try {
-      console.log("Submitting application");
-
       if (!note) {
         setErrorMessage("Note is required");
         return;
@@ -84,8 +82,6 @@ const ApplyScreen = () => {
           const response = await fetch(fileUri);
           const blob = await response.blob();
 
-          console.log("Uploading file", blob);
-
           const fileRef = ref(
             StorageApp,
             `collaboration/${pageID}/applications/${user?.uid}/${fileName}`
@@ -116,11 +112,9 @@ const ApplyScreen = () => {
 
       if (docset) {
         setErrorMessage("Application submitted successfully");
-        console.log("Application submitted successfully");
         resetForm();
       } else {
         setErrorMessage("Failed to submit application");
-        console.log("Failed to submit application");
       }
     } catch (e) {
       console.error(e);

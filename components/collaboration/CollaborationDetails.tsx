@@ -49,7 +49,6 @@ const CollaborationPage = (props: any) => {
   const styles = stylesFn(theme);
   const [isVisible, setIsVisible] = React.useState(false);
 
-  console.log("Collaboration Details", props.collaborationDetail);
   return (
     <AppLayout>
       <Appbar.Header
@@ -74,9 +73,12 @@ const CollaborationPage = (props: any) => {
         {/* Collaboration Details */}
         <Card style={styles.profileCard}>
           <Image
-            source={{ uri: props.logo }}
+            source={{
+              uri:
+                props.logo ||
+                "https://cdn.pixabay.com/photo/2022/09/21/17/02/blue-background-7470781_640.jpg",
+            }}
             style={styles.profileImage}
-            resizeMode="contain"
           />
           <Card.Content style={styles.profileContent}>
             <Text variant="headlineMedium" style={styles.name}>

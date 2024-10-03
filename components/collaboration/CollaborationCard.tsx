@@ -47,25 +47,13 @@ const JobCard = (props: CollaborationAdCardProps) => {
               flexDirection: "row",
             }}
           >
-            <TouchableOpacity onPress={() => setBookmarked(!bookmarked)}>
-              <Ionicons
-                name={bookmarked ? "bookmark" : "bookmark-outline"}
-                size={24}
-                selectedColor={
-                  props.paymentVerified
-                    ? Colors(theme).successForeground
-                    : Colors(theme).pinkForeground
-                }
-                style={styles.bookmarkIcon}
-              />
-            </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
                 props.onOpenBottomSheet(props.id);
               }}
             >
               <Ionicons
-                name="ellipsis-vertical"
+                name="ellipsis-horizontal"
                 size={24}
                 color={Colors(theme).gray100}
               />
