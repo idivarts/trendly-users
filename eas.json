@@ -13,7 +13,10 @@
       "env": {}
     },
     "preview": {
-      "distribution": "internal"
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {}
     },
     "production": {
       "autoIncrement": true,

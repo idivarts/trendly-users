@@ -12,15 +12,12 @@ import { doc, getDoc, onSnapshot, setDoc, updateDoc } from "firebase/firestore";
 import { FirestoreDB } from "@/utils/firestore";
 import { User } from "@/types/User";
 import { AuthApp } from "@/utils/auth";
-import { Analytics, logEvent } from "firebase/analytics";
-import { Platform } from "react-native";
-import analyticsWeb from "@/utils/analytics-web";
-import analytics from '@react-native-firebase/analytics';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
+import { analyticsLogEvent } from "@/utils/analytics";
 
 interface AuthContextProps {
   firebaseSignIn: (token: string) => void;
@@ -90,22 +87,11 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
       );
       setSession(userCredential.user.uid);
 
-      if (Platform.OS === 'web') {
-        logEvent(
-          analyticsWeb as Analytics,
-          'signed_in',
-          {
-            method: 'email_password',
-          }
-        );
-      } else {
-        await analytics().logEvent(
-          'login',
-          {
-            method: 'email_password',
-          },
-        );
-      }
+      await analyticsLogEvent('signed_in', {
+        id: userCredential.user.uid,
+        name: userCredential.user.displayName,
+        email: userCredential.user.email,
+      });
 
       // For existing users, redirect to the main screen.
       router.replace("/collaborations");
@@ -171,24 +157,10 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
       .then(() => {
         setSession("");
 
-        if (Platform.OS === 'web') {
-          logEvent(
-            analyticsWeb as Analytics,
-            'signed_out',
-            {
-              id: user?.id,
-              email: user?.email,
-            },
-          );
-        } else {
-          analytics().logEvent(
-            'signed_out',
-            {
-              id: user?.id,
-              email: user?.email,
-            },
-          );
-        }
+        analyticsLogEvent('signed_out', {
+          id: user?.id,
+          email: user?.email,
+        });
 
         router.replace("/pre-signin");
         Toaster.success("Signed Out Successfully!");

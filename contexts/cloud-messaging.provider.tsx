@@ -5,14 +5,10 @@ import {
   useEffect,
 } from "react";
 import messaging from "@react-native-firebase/messaging";
-import { Alert, Platform } from "react-native";
+import { Platform } from "react-native";
 
 import { PermissionsAndroid } from 'react-native';
 import { useAuthContext } from "./auth-context.provider";
-
-if (Platform.OS === 'android') {
-  PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
-}
 
 interface CloudMessagingContextProps {
   getToken: () => Promise<string>;
@@ -78,6 +74,12 @@ export const CloudMessagingContextProvider: React.FC<PropsWithChildren> = ({
   }
 
   useEffect(() => {
+    if (session && Platform.OS === 'android') {
+      PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+    }
+  }, [session]);
+
+  useEffect(() => {
     let backgroundSubscription = () => { };
     let foregroundSubscription = () => { };
 
@@ -93,7 +95,7 @@ export const CloudMessagingContextProvider: React.FC<PropsWithChildren> = ({
       });
 
       foregroundSubscription = messaging().onMessage(async (remoteMessage) => {
-        Alert.alert("A new FCM message arrived!", JSON.stringify(remoteMessage));
+        console.log("A new FCM message arrived!", remoteMessage);
       });
     }
 
