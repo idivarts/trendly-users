@@ -4,10 +4,15 @@ import { Text, View } from "@/components/theme/Themed";
 import Colors from "@/constants/Colors";
 import AppLayout from "@/layouts/app-layout";
 import { useTheme } from "@react-navigation/native";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import { collection, getDocs, query, where } from "firebase/firestore";
-import { ActivityIndicator, FlatList, TouchableOpacity } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  TouchableOpacity,
+  Image,
+} from "react-native";
 import { FirestoreDB } from "@/utils/firestore";
 import { AuthApp } from "@/utils/auth";
 import { RefreshControl } from "react-native";
@@ -15,6 +20,7 @@ import { CollaborationType } from "@/shared-libs/firestore/trendly-pro/constants
 import { PromotionType } from "@/shared-libs/firestore/trendly-pro/constants/promotion-type";
 import { SocialPlatform } from "@/shared-libs/firestore/trendly-pro/constants/social-platform";
 import { stylesFn } from "@/styles/Proposal.styles";
+import { Button } from "react-native-paper";
 
 const ProposalScreen = () => {
   const [selectedTab, setSelectedTab] = useState<"proposals" | "forYou">(
@@ -189,18 +195,50 @@ const ProposalScreen = () => {
 
         {selectedTab === "proposals" &&
           (proposals.length === 0 ? (
-            <View>
-              <Text
-                style={[
-                  styles.title,
-                  {
-                    marginBottom: 10,
-                    color: Colors(theme).text,
-                  },
-                ]}
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                gap: 50,
+              }}
+            >
+              <Image
+                source={{ uri: "https://via.placeholder.com/150" }}
+                width={150}
+                height={150}
+                style={{
+                  borderRadius: 10,
+                }}
+              />
+              <View
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  gap: 10,
+                }}
               >
-                No Application found
-              </Text>
+                <Text style={styles.title}>No Applications found</Text>
+                <Text style={styles.subtitle}>
+                  Go to the Collaborations page to start applying for new
+                  collaborations
+                </Text>
+              </View>
+              {/* <TouchableOpacity onPress={() => router.push("/collaborations")}>
+                <Text style={styles.title}>New Collaborations</Text>
+              </TouchableOpacity> */}
+              <Button
+                onPress={() => router.push("/collaborations")}
+                style={{
+                  backgroundColor: Colors(theme).platinum,
+                  padding: 5,
+                  borderRadius: 5,
+                }}
+                textColor={Colors(theme).text}
+              >
+                New Collaborations
+              </Button>
             </View>
           ) : (
             <FlatList
@@ -246,7 +284,7 @@ const ProposalScreen = () => {
                       },
                     ]}
                   >
-                    Looking for past proposals
+                    Looking for past applications
                   </Text>
                   <View
                     style={{
@@ -259,7 +297,7 @@ const ProposalScreen = () => {
                     }}
                   >
                     <Link href={"/collaboration-details"} style={{}}>
-                      <Text>View Past Proposals</Text>
+                      <Text>View Past Applications</Text>
                     </Link>
                   </View>
                 </View>
@@ -319,7 +357,7 @@ const ProposalScreen = () => {
                     },
                   ]}
                 >
-                  Looking for past proposals
+                  Looking for past invitations
                 </Text>
                 <View
                   style={{
@@ -331,7 +369,7 @@ const ProposalScreen = () => {
                   }}
                 >
                   <Link href={"/collaboration-details"} style={{}}>
-                    <Text>View Past Proposals</Text>
+                    <Text>View Past Invitations</Text>
                   </Link>
                 </View>
               </View>

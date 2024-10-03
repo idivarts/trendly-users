@@ -50,20 +50,12 @@ const ContractCard = (props: CollaborationAdCardProps) => {
               flexDirection: "row",
             }}
           >
-            <TouchableOpacity onPress={() => setBookmarked(!bookmarked)}>
-              <Ionicons
-                name={bookmarked ? "bookmark" : "bookmark-outline"}
-                size={24}
-                color={Colors(theme).gray100}
-                style={styles.bookmarkIcon}
-              />
-            </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
                 props.onOpenBottomSheet(props.id);
               }}
             >
-              <Ionicons name="ellipsis-vertical" size={24} color="#555" />
+              <Ionicons name="ellipsis-horizontal" size={24} color="#555" />
             </TouchableOpacity>
           </View>
         </View>

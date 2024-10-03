@@ -11,11 +11,12 @@ export const stylesFn = (theme: Theme) =>
       alignItems: "center",
       backgroundColor: Colors(theme).card,
       marginBottom: 16,
+      paddingHorizontal: 16,
       borderRadius: 10,
     },
     profileImage: {
       height: 100,
-      marginVertical: 16,
+      marginVertical: 5,
     },
     profileContent: {
       alignItems: "center",

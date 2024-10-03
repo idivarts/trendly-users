@@ -11,6 +11,7 @@ import { FirestoreDB } from "@/utils/firestore";
 import { AuthApp } from "@/utils/auth";
 import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
+import { Searchbar } from "react-native-paper";
 import { ActivityIndicator } from "react-native-paper";
 import Colors from "@/constants/Colors";
 import BottomSheetActions from "../BottomSheetActions";
@@ -159,7 +160,6 @@ const Collaboration = () => {
             />
           )}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.jobList}
         />
         {filterVisible && (
           <CollaborationFilter

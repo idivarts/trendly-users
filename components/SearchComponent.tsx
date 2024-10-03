@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
-import { TextInput } from "react-native-paper";
+import { Searchbar, TextInput } from "react-native-paper";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Colors from "@/constants/Colors";
 import { useTheme } from "@react-navigation/native";
@@ -28,43 +28,17 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
   };
 
   return (
-    <View
-      style={[
-        styles.searchContainer,
-        {
-          backgroundColor: Colors(theme).unicornSilver,
-        },
-      ]}
-    >
-      <Ionicons
-        name="search-outline"
-        size={24}
-        color={Colors(theme).gray100}
-        style={styles.icon}
-      />
-      <TextInput
+    <View style={[styles.searchContainer]}>
+      <Searchbar
+        placeholder="Search"
         value={localQuery}
         onChangeText={handleChangeText}
-        placeholder="UI/UX Designs"
         style={[
           styles.searchInput,
-          {
-            backgroundColor: Colors(theme).unicornSilver,
-          },
+          { backgroundColor: Colors(theme).platinum },
         ]}
-        underlineColor="transparent"
-        activeUnderlineColor="transparent"
-        theme={{ roundness: 25 }}
+        iconColor={Colors(theme).gray100}
       />
-      {localQuery ? (
-        <Ionicons
-          name="close-outline"
-          size={24}
-          color={Colors(theme).gray100}
-          style={styles.icon}
-          onPress={handleClearText}
-        />
-      ) : null}
       <TouchableOpacity
         onPress={() => {
           if (ToggleModal) ToggleModal(true);
@@ -86,14 +60,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     borderRadius: 25,
-    borderWidth: 0.3,
-    paddingHorizontal: 10,
+
     width: "100%",
   },
   searchInput: {
     flex: 1,
     fontSize: 16,
-    borderBottomWidth: 0.3,
   },
   icon: {
     marginHorizontal: 5,
