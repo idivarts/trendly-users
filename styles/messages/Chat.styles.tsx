@@ -50,11 +50,11 @@ const styles = (theme: Theme) => StyleSheet.create({
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: Colors(theme).platinum,
+    backgroundColor: Colors(theme).aliceBlue,
   },
   textInput: {
     flex: 1,
-    backgroundColor: Colors(theme).platinum,
+    backgroundColor: Colors(theme).aliceBlue,
     paddingHorizontal: 0,
   },
   assetModalStyle: {

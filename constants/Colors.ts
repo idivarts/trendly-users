@@ -42,4 +42,5 @@ export default (theme: Theme) => ({
   surface: "#ffffff",
   surfaceVariant: "#ffffff",
   white: "#ffffff",
+  transparent: "transparent",
 });

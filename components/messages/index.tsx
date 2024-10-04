@@ -31,12 +31,12 @@ const Group: React.FC<GroupProps> = ({
     );
   }, [groups, searchQuery]);
 
-  // TODO: List should be sorted and updated in real-time based on the last message
   return (
     <ScrollView
       style={{
         flex: 1,
         paddingVertical: 10,
+        backgroundColor: Colors(theme).background,
       }}
     >
       <Searchbar

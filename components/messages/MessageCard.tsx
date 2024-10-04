@@ -51,7 +51,13 @@ const MessageCard: React.FC<MessageCardProps> = ({
             {group?.latestMessage && (
               <View>
                 <Text>
-                  {new Date(group?.latestMessage?.timeStamp).toLocaleTimeString()}
+                  {new Date(group?.latestMessage?.timeStamp).toLocaleTimeString(
+                    "en-US",
+                    {
+                      hour: "numeric",
+                      minute: "numeric",
+                    }
+                  )}
                 </Text>
               </View>
             )}
