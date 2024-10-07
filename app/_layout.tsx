@@ -16,6 +16,7 @@ import {
   AuthContextProvider,
   CloudMessagingContextProvider,
   FirebaseStorageContextProvider,
+  NotificationContextProvider,
   useAuthContext,
 } from "@/contexts";
 import { requestTrackingPermissionsAsync } from "expo-tracking-transparency";
@@ -60,9 +61,11 @@ const RootLayout = () => {
     <AuthContextProvider>
       <GestureHandlerRootView>
         <FirebaseStorageContextProvider>
-          <CloudMessagingContextProvider>
-            <RootLayoutStack />
-          </CloudMessagingContextProvider>
+          <NotificationContextProvider>
+            <CloudMessagingContextProvider>
+              <RootLayoutStack />
+            </CloudMessagingContextProvider>
+          </NotificationContextProvider>
         </FirebaseStorageContextProvider>
       </GestureHandlerRootView>
     </AuthContextProvider>
