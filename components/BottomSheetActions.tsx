@@ -8,6 +8,7 @@ interface BottomSheetActionsProps {
   cardType: "collaboration" | "proposal" | "invitation" | "details";
   cardId: string;
   isVisible: boolean;
+  snapPointsRange: [string, string];
   onClose: () => void;
 }
 
@@ -15,13 +16,17 @@ const BottomSheetActions = ({
   cardType,
   cardId,
   isVisible,
+  snapPointsRange,
   onClose,
 }: BottomSheetActionsProps) => {
   const router = useRouter();
   const sheetRef = React.useRef<BottomSheet>(null);
 
   // Adjust snap points for the bottom sheet height
-  const snapPoints = React.useMemo(() => ["25%", "50%"], []);
+  const snapPoints = React.useMemo(
+    () => [snapPointsRange[0], snapPointsRange[1]],
+    []
+  );
 
   const handleClose = () => {
     if (sheetRef.current) {

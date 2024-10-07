@@ -98,6 +98,7 @@ const JobCard = (props: CollaborationAdCardProps) => {
             </Chip>
           )}
           <Chip style={styles.chip}>{props.promotionType}</Chip>
+          <Chip style={styles.chip}>{props.platform}</Chip>
           <Chip style={styles.chip}>{props.collaborationType}</Chip>
         </View>
 
