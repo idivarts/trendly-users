@@ -180,6 +180,7 @@ const Collaboration = () => {
         <BottomSheetActions
           cardId={selectedCollabId || ""} // Pass the selected collab id
           cardType="collaboration"
+          snapPointsRange={["25%", "50%"]}
           isVisible={isVisible}
           onClose={closeBottomSheet}
           key={selectedCollabId} // Ensure the BottomSheetActions re-renders with new id
