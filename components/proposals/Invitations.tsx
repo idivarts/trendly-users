@@ -44,6 +44,7 @@ const Invitations = () => {
     try {
       const collaborationCol = collection(FirestoreDB, "collaborations");
       const collabSnapshot = await getDocs(collaborationCol);
+      let totalNotPendingInvitations = 0;
 
       // Map over the collaborations to fetch applications for each collaboration
       const invitationsWithApplications = await Promise.all(
@@ -93,7 +94,7 @@ const Invitations = () => {
             (application) => application.status !== "pending"
           ).length;
 
-          setNotPendingInvitations(notPendingApplications);
+          totalNotPendingInvitations += notPendingApplications;
 
           if (applicationData.length === 0) {
             return null;
@@ -112,6 +113,7 @@ const Invitations = () => {
       );
 
       setInvitations(validProposals);
+      setNotPendingInvitations(totalNotPendingInvitations);
     } catch (error) {
       console.error("Error fetching proposals: ", error);
     } finally {
@@ -223,7 +225,7 @@ const Invitations = () => {
               promotionType={item.promotionType}
               timeStamp={item.timeStamp}
               applications={undefined}
-              invitaions={undefined}
+              invitations={undefined}
             />
           )}
           keyExtractor={(item, index) => index.toString()}

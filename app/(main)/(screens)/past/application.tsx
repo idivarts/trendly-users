@@ -7,18 +7,15 @@ import { stylesFn } from "@/styles/CollaborationDetails.styles";
 import BackButton from "@/components/ui/back-button/BackButton";
 import JobCard from "@/components/collaboration/CollaborationCard";
 import Colors from "@/constants/Colors";
-import { CollaborationType } from "@/shared-libs/firestore/trendly-pro/constants/collaboration-type";
-import { SocialPlatform } from "@/shared-libs/firestore/trendly-pro/constants/social-platform";
-import { PromotionType } from "@/shared-libs/firestore/trendly-pro/constants/promotion-type";
 import {
   collection,
   getDoc,
   query,
   where,
+  getDocs,
   doc as firebaseDoc,
 } from "firebase/firestore";
 import { FirestoreDB } from "@/utils/firestore";
-import { getDocs } from "firebase/firestore";
 import { AuthApp } from "@/utils/auth";
 import BottomSheetActions from "@/components/BottomSheetActions";
 
@@ -156,15 +153,15 @@ const PastApplicationPage = (props: any) => {
               description={item.description}
               onOpenBottomSheet={openBottomSheet}
               cardType="proposal"
-              collaborationType={CollaborationType.PAID}
+              collaborationType={item.collaborationType}
               location={item.location}
-              managerId="managerId"
+              managerId={item.managerId}
               numberOfInfluencersNeeded={1}
-              platform={SocialPlatform.INSTAGRAM}
-              promotionType={PromotionType.ADD_REVIEWS}
+              platform={item.platform}
+              promotionType={item.promotionType}
               timeStamp={item.timeStamp}
               applications={undefined}
-              invitaions={undefined}
+              invitations={undefined}
             />
           )}
           style={{ height: "100%", width: "100%" }}
