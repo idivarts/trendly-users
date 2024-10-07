@@ -8,9 +8,9 @@ import Applications from "@/components/proposals/Applications";
 import Invitations from "@/components/proposals/Invitations";
 
 const ProposalScreen = () => {
-  const [selectedTab, setSelectedTab] = useState<"proposals" | "forYou">(
-    "proposals"
-  );
+  const [selectedTab, setSelectedTab] = useState<
+    "applications" | "invitations"
+  >("applications");
 
   const theme = useTheme();
   const styles = stylesFn(theme);
@@ -27,20 +27,24 @@ const ProposalScreen = () => {
             marginBottom: 20,
           }}
         >
-          <TouchableOpacity onPress={() => setSelectedTab("proposals")}>
+          <TouchableOpacity onPress={() => setSelectedTab("applications")}>
             <Text
               style={
-                selectedTab === "proposals" ? styles.titleActive : styles.title
+                selectedTab === "applications"
+                  ? styles.titleActive
+                  : styles.title
               }
             >
               Applications
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => setSelectedTab("forYou")}>
+          <TouchableOpacity onPress={() => setSelectedTab("invitations")}>
             <Text
               style={
-                selectedTab === "forYou" ? styles.titleActive : styles.title
+                selectedTab === "invitations"
+                  ? styles.titleActive
+                  : styles.title
               }
             >
               Invitations
@@ -48,9 +52,9 @@ const ProposalScreen = () => {
           </TouchableOpacity>
         </View>
 
-        {selectedTab === "proposals" && <Applications />}
+        {selectedTab === "applications" && <Applications />}
 
-        {selectedTab === "forYou" && <Invitations />}
+        {selectedTab === "invitations" && <Invitations />}
       </View>
     </AppLayout>
   );

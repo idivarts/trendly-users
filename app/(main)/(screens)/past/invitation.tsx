@@ -164,7 +164,7 @@ const PastApplicationPage = (props: any) => {
               promotionType={PromotionType.ADD_REVIEWS}
               timeStamp={item.timeStamp}
               applications={undefined}
-              invitaions={undefined}
+              invitations={undefined}
             />
           )}
           style={{ height: "100%", width: "100%" }}
