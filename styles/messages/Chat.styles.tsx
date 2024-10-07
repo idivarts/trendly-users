@@ -16,7 +16,7 @@ const styles = (theme: Theme) => StyleSheet.create({
     alignItems: "flex-start",
   },
   appbarTitle: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: "bold",
     color: Colors(theme).white,
   },
