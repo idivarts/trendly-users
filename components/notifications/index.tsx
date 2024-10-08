@@ -30,11 +30,10 @@ const Notifications: React.FC<NotificationsProps> = ({
       )}
       {notifications.map((item) => (
         <NotificationCard
-          action=""
           avatar="https://cdn.iconscout.com/icon/free/png-256/avatar-370-456322.png"
-          brand={item.data?.collaborationId?.toString() || ""}
+          collaborationId={item.data?.collaborationId || ""}
           description={item.description}
-          group={item.data?.groupId?.toString() || ""}
+          groupId={item.data?.groupId || ""}
           isRead={item.isRead}
           key={item.id}
           onMarkAsRead={() => onMarkAsRead(item.id)}

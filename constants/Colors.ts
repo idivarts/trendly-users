@@ -43,4 +43,5 @@ export default (theme: Theme) => ({
   surfaceVariant: "#ffffff",
   white: "#ffffff",
   transparent: "transparent",
+  notificationDot: "red",
 });

@@ -27,9 +27,9 @@ const NotificationIcon: React.FC = () => {
             <Badge
               visible={unreadNotifications !== 0}
               size={20}
-              selectionColor={Colors(theme).primary}
+              selectionColor={Colors(theme).notificationDot}
               style={{
-                backgroundColor: Colors(theme).primary,
+                backgroundColor: Colors(theme).notificationDot,
                 zIndex: 1,
                 position: "absolute",
                 top: -7,

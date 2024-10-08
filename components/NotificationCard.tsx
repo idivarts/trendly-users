@@ -1,15 +1,15 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View } from "react-native";
 import { Text, Button, Card, Avatar } from "react-native-paper";
 import { stylesFn } from "@/styles/NotificationCard.styles";
 import { useTheme } from "@react-navigation/native";
+import { useRouter } from "expo-router";
 
 interface NotificationCardProps {
-  action: string;
   avatar: string;
-  brand: string;
+  collaborationId: string;
   description: string;
-  group: string;
+  groupId: string;
   isRead: boolean;
   onMarkAsRead: () => void;
   time: number;
@@ -17,11 +17,10 @@ interface NotificationCardProps {
 }
 
 export const NotificationCard: React.FC<NotificationCardProps> = ({
-  action,
   avatar,
-  brand,
+  collaborationId,
   description,
-  group,
+  groupId,
   isRead,
   onMarkAsRead,
   time,
@@ -29,6 +28,15 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({
 }) => {
   const theme = useTheme();
   const styles = stylesFn(theme);
+  const router = useRouter();
+
+  let action: string | undefined;
+
+  if (collaborationId) {
+    action = `/collaboration-details/${collaborationId}`;
+  } else if (groupId) {
+    action = `/chat/${groupId}`;
+  }
 
   return (
     <Card style={styles.card}>
@@ -67,7 +75,10 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({
       </View>
       <View style={styles.actions}>
         {action && (
-          <Button mode="contained" onPress={() => { }}>
+          <Button
+            mode="contained"
+            onPress={action ? () => router.push(action as string) : undefined}
+          >
             Open
           </Button>
         )}
