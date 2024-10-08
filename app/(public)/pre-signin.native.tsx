@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { View, Text, Image, TouchableOpacity, Platform } from "react-native";
 import Swiper from "react-native-swiper";
 import { Title, Paragraph } from "react-native-paper";
@@ -23,6 +23,7 @@ import { FirestoreDB } from "@/utils/firestore";
 import { collection, doc, getDoc, setDoc } from "firebase/firestore";
 import { AccessToken } from "react-native-fbsdk-next";
 import { requestTrackingPermissionsAsync } from "expo-tracking-transparency";
+import BottomSheetActions from "@/components/BottomSheetActions";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -33,6 +34,8 @@ const PreSignIn = () => {
   const styles = stylesFn(theme);
   const [error, setError] = useState<string | null>(null);
   const { firebaseSignIn, firebaseSignUp, signIn, signUp } = useAuthContext();
+  const swiperRef = useRef<Swiper>(null); // Use ref for Swiper
+  const [visible, setVisible] = useState(false);
 
   const [request, response, promptAsync] = AuthSession.useAuthRequest(
     {
@@ -89,14 +92,6 @@ const PreSignIn = () => {
     }
   };
 
-  const handleEmailSignIn = () => {
-    signIn(DUMMY_USER_CREDENTIALS.email, DUMMY_USER_CREDENTIALS.password);
-  };
-
-  const handleInstagramSignIn = () => {
-    signIn(DUMMY_USER_CREDENTIALS2.email, DUMMY_USER_CREDENTIALS2.password);
-  };
-
   const handleFacebookSignIn = async () => {
     if (Platform.OS === "android" || Platform.OS === "ios") {
       LoginManager.logInWithPermissions(["public_profile"]).then(
@@ -147,9 +142,20 @@ const PreSignIn = () => {
     }
   }, []);
 
+  const skipToConnect = () => {
+    // Calculate how many slides away the "connect" slide is
+    const connectSlideIndex = slides.findIndex(
+      (slide) => slide.key === "connect"
+    );
+    if (connectSlideIndex !== -1) {
+      swiperRef.current?.scrollBy(connectSlideIndex);
+    }
+  };
+
   return (
     <AppLayout>
       <Swiper
+        ref={swiperRef} // Attach the ref to Swiper
         style={styles.wrapper}
         dotStyle={styles.dotStyle}
         activeDotStyle={[
@@ -158,8 +164,46 @@ const PreSignIn = () => {
         ]}
         paginationStyle={styles.pagination}
       >
-        {slides.map((slide) => (
+        {slides.map((slide, index) => (
           <View style={styles.slide} key={slide.key}>
+            {slide.key !== "connect" && (
+              <TouchableOpacity
+                style={styles.skipButton}
+                onPress={skipToConnect} // Navigate to "connect" slide
+              >
+                <Text style={styles.skipButtonText}>Skip</Text>
+              </TouchableOpacity>
+            )}
+            {slide.key === "connect" && (
+              <View
+                style={[
+                  styles.skipButton,
+                  {
+                    backgroundColor: Colors(theme).white,
+                    paddingHorizontal: 10,
+                  },
+                ]}
+              >
+                {/* {renderSocialButton(
+                  "mail-outline",
+                  "Login with Email",
+                  handleEmailSignIn
+                )}
+                {renderSocialButton(
+                  "logo-instagram",
+                  "Login with Instagram",
+                  handleInstagramSignIn
+                )} */}
+                <Ionicons
+                  name="ellipsis-horizontal"
+                  size={24}
+                  color={Colors(theme).gray100}
+                  onPress={() => {
+                    setVisible(true);
+                  }}
+                />
+              </View>
+            )}
             <View style={styles.imageContainer}>
               <Image source={{ uri: slide.image }} style={styles.image} />
             </View>
@@ -172,18 +216,7 @@ const PreSignIn = () => {
                 {renderSocialButton(
                   "logo-facebook",
                   "Login with Facebook",
-                  // () => promptAsync({}),
                   () => handleFacebookSignIn()
-                )}
-                {renderSocialButton(
-                  "mail-outline",
-                  "Login with Email",
-                  handleEmailSignIn
-                )}
-                {renderSocialButton(
-                  "logo-instagram",
-                  "Login with Instagram",
-                  handleInstagramSignIn
                 )}
               </View>
             )}
@@ -192,6 +225,12 @@ const PreSignIn = () => {
       </Swiper>
 
       {error && <Text style={{ color: "red" }}>Error: {error}</Text>}
+      <BottomSheetActions
+        isVisible={visible}
+        cardType="pre-signin"
+        onClose={() => setVisible(false)}
+        snapPointsRange={["25%", "40%"]}
+      />
     </AppLayout>
   );
 };
