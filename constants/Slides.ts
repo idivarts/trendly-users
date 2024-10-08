@@ -1,20 +1,20 @@
 export const slides = [
   {
     key: "manage",
-    title: "Manage",
-    text: "Manage the progress of the tasks completion, track the time and analyze the stats",
+    title: "Welcome to Trendly",
+    text: "The ultimate platform for brands and influencer to collaborate",
     image: "https://via.placeholder.com/150", // Replace with the actual image URI
   },
   {
     key: "share",
-    title: "Share",
-    text: "Share the tasks and updates with your team conveniently for higher productivity",
+    title: "Explore with us",
+    text: "Explore wide range of collaborations with us",
     image: "https://via.placeholder.com/150", // Replace with the actual image URI
   },
   {
     key: "connect",
-    title: "Connect",
-    text: "Connect your account with social media",
+    title: "Collab with Top Brands",
+    text: "Join our community of successful influencer and watch your influence grow",
     image: "https://via.placeholder.com/150", // Replace with the actual image URI
   },
 ];
