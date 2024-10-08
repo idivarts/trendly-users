@@ -156,6 +156,7 @@ const ContractScreen = () => {
           cardType="proposal"
           isVisible={isVisible}
           onClose={closeBottomSheet}
+          snapPointsRange={["20%", "50%"]}
           key={selectedCollabId} // Ensure the BottomSheetActions re-renders with new id
         />
       )}

@@ -57,7 +57,7 @@ const ApplyScreen = () => {
       }
 
       if (!files.length) {
-        setErrorMessage("CV is required");
+        setErrorMessage("File is required");
         return;
       }
 

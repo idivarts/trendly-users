@@ -3,11 +3,22 @@ import { Modal, Pressable, StyleSheet, View, Dimensions } from "react-native";
 import { List } from "react-native-paper";
 import { useRouter } from "expo-router";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
+import {
+  DUMMY_USER_CREDENTIALS,
+  DUMMY_USER_CREDENTIALS2,
+} from "@/constants/User";
+import { useAuthContext } from "@/contexts";
 
 interface BottomSheetActionsProps {
-  cardType: "collaboration" | "proposal" | "invitation" | "details";
-  cardId: string;
+  cardType:
+    | "collaboration"
+    | "proposal"
+    | "invitation"
+    | "details"
+    | "pre-signin";
+  cardId?: string;
   isVisible: boolean;
+  snapPointsRange: [string, string];
   onClose: () => void;
 }
 
@@ -15,13 +26,17 @@ const BottomSheetActions = ({
   cardType,
   cardId,
   isVisible,
+  snapPointsRange,
   onClose,
 }: BottomSheetActionsProps) => {
   const router = useRouter();
   const sheetRef = React.useRef<BottomSheet>(null);
 
   // Adjust snap points for the bottom sheet height
-  const snapPoints = React.useMemo(() => ["25%", "50%"], []);
+  const snapPoints = React.useMemo(
+    () => [snapPointsRange[0], snapPointsRange[1]],
+    []
+  );
 
   const handleClose = () => {
     if (sheetRef.current) {
@@ -31,6 +46,16 @@ const BottomSheetActions = ({
   };
 
   const renderContent = () => {
+    const { signIn } = useAuthContext();
+
+    const handleEmailSignIn = () => {
+      signIn(DUMMY_USER_CREDENTIALS.email, DUMMY_USER_CREDENTIALS.password);
+    };
+
+    const handleInstagramSignIn = () => {
+      signIn(DUMMY_USER_CREDENTIALS2.email, DUMMY_USER_CREDENTIALS2.password);
+    };
+
     switch (cardType) {
       case "collaboration":
         return (
@@ -110,6 +135,25 @@ const BottomSheetActions = ({
               title="Change Terms"
               onPress={() => {
                 router.push("/change-terms");
+                handleClose();
+              }}
+            />
+          </>
+        );
+      case "pre-signin":
+        return (
+          <>
+            <List.Item
+              title="Login With Email"
+              onPress={() => {
+                handleEmailSignIn();
+                handleClose();
+              }}
+            />
+            <List.Item
+              title="Login With Instagram"
+              onPress={() => {
+                handleInstagramSignIn();
                 handleClose();
               }}
             />

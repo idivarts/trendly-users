@@ -170,6 +170,7 @@ const CollaborationPage = (props: any) => {
         cardId={props.pageID}
         cardType="details"
         isVisible={isVisible}
+        snapPointsRange={["20%", "50%"]}
         onClose={() => {
           setIsVisible(false);
         }}
