@@ -30,7 +30,6 @@ const NotificationIcon: React.FC = () => {
               selectionColor={Colors(theme).primary}
               style={{
                 backgroundColor: Colors(theme).primary,
-                // color: Colors(theme).primary,
                 zIndex: 1,
                 position: "absolute",
                 top: -7,
