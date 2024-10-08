@@ -9,7 +9,7 @@
       "web"
     ],
     "orientation": "portrait",
-    "icon": "./assets/images/logo.jpg",
+    "icon": "./assets/images/icon.png",
     "scheme": [
       "trendly-creators"
     ],
