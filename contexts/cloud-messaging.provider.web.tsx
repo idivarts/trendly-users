@@ -8,6 +8,8 @@ import {
 import { getToken } from "firebase/messaging";
 import { messaging } from "@/utils/messaging-web";
 import { Platform } from "react-native";
+import { useAuthContext } from "./auth-context.provider";
+import { newToken } from "@/utils/token";
 
 interface CloudMessagingContextProps { }
 
@@ -18,6 +20,12 @@ export const useCloudMessagingContext = () => useContext(CloudMessagingContext);
 export const CloudMessagingContextProvider: React.FC<PropsWithChildren> = ({
   children,
 }) => {
+  const {
+    session,
+    user,
+    updateUser,
+  } = useAuthContext();
+
   const requestPermission = async () => {
     const permission = await Notification.requestPermission();
     if (permission === "granted") {
@@ -28,17 +36,23 @@ export const CloudMessagingContextProvider: React.FC<PropsWithChildren> = ({
         },
       );
 
-      console.log("FCM Web Token: ", token);
+      const newNativeToken = newToken("web", user!, token);
+
+      if (newNativeToken) {
+        await updateUser(session as string, {
+          pushNotificationToken: newNativeToken,
+        });
+      }
     } else if (permission === "denied") {
       alert("You denied the permission to receive notifications");
     }
   }
 
   useEffect(() => {
-    if (Platform.OS === "web") {
+    if (Platform.OS === "web" && session && user) {
       requestPermission();
     }
-  }, []);
+  }, [session, user]);
 
   return (
     <CloudMessagingContext.Provider
