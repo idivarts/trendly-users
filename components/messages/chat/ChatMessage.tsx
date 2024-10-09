@@ -91,7 +91,13 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
               },
             ]}
           >
-            {new Date(message.timeStamp).toLocaleTimeString()}
+            {new Date(message.timeStamp).toLocaleTimeString(
+              "en-US",
+              {
+                hour: "numeric",
+                minute: "numeric",
+              }
+            )}
           </Text>
         )}
       </View>

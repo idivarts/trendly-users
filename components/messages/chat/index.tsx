@@ -3,20 +3,22 @@ import Colors from "@/constants/Colors";
 import { useBreakpoints } from "@/hooks";
 import { Groups } from "@/types/Groups";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { FlatList, Image, KeyboardAvoidingView, Modal, Platform } from "react-native";
-import { ActivityIndicator, Appbar, Avatar, IconButton, TextInput } from "react-native-paper";
+import { ActivityIndicator, FlatList, Image, KeyboardAvoidingView, Modal, Platform } from "react-native";
+import { Appbar, Avatar, IconButton, TextInput } from "react-native-paper";
 import * as ImagePicker from 'expo-image-picker';
 import ChatMessage from "./ChatMessage";
-import { View } from "@/components/theme/Themed";
+import { Text, View } from "@/components/theme/Themed";
 import stylesFn from "@/styles/messages/Chat.styles";
 import { IMessages } from "@/shared-libs/firestore/trendly-pro/models/groups";
 
 import { useAuthContext, useFirebaseStorageContext, useGroupContext } from "@/contexts";
-import { collection, doc, DocumentSnapshot, endBefore, getDocs, onSnapshot, orderBy, query } from "firebase/firestore";
+import { collection, doc, DocumentSnapshot, endBefore, onSnapshot, orderBy, query } from "firebase/firestore";
 import { PLACEHOLDER_IMAGE } from "@/constants/Placeholder";
 import { FirestoreDB } from "@/utils/firestore";
 import { useTheme } from "@react-navigation/native";
 import { ResizeMode, Video } from "expo-av";
+import DocumentUploadModal from "@/components/ui/modal/DocumentUploadModal";
+import AssetPreview from "./AssetPreview";
 
 export type ModalAsset = {
   url: string,
@@ -32,12 +34,16 @@ const Chat: React.FC<ChatProps> = ({ group }) => {
   const styles = stylesFn(theme);
   const [message, setMessage] = useState("");
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
+  const [capturedDocument, setCapturedDocument] = useState<string | null>(null);
+  const [capturedVideo, setCapturedVideo] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const video = useRef(null);
   const [status, setStatus] = useState({});
   const [modalAsset, setModalAsset] = useState<ModalAsset | null>(null);
+  const [isUploadModalVisible, setIsUploadModalVisible] = useState(false);
+  const [processingText, setProcessingText] = useState("");
 
   const [messages, setMessages] = useState([] as IMessages[]);
   const [endMessage, setEndMessage] = useState<DocumentSnapshot | null>(null);
@@ -131,6 +137,18 @@ const Chat: React.FC<ChatProps> = ({ group }) => {
 
   const handleMessageChange = (text: string) => setMessage(text);
 
+  const onImageUpload = (image: string) => {
+    setCapturedImage(image);
+  }
+
+  const onVideoUpload = (video: string) => {
+    setCapturedVideo(video);
+  }
+
+  const onDocumentUpload = (url: string) => {
+    setCapturedDocument(url);
+  }
+
   const openCamera = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== 'granted') {
@@ -156,20 +174,46 @@ const Chat: React.FC<ChatProps> = ({ group }) => {
     const senderId = user?.id || "";
     const timeStamp = new Date().getTime();
     const userType = "user";
-
-    let uploadedImage: string | null = null;
+    let attachments: {
+      type: "image" | "video" | "file";
+      url: string;
+    }[] = [];
 
     if (capturedImage) {
-      uploadedImage = await uploadImage(
+      const uploadedImage = await uploadImage(
         capturedImage,
-        `groups/${group.id}/${userType}-${senderId}-${timeStamp}`,
+        `groups/${group.id}/images/${userType}-${senderId}-${timeStamp}`,
       );
+      attachments.push({
+        type: "image",
+        url: uploadedImage,
+      });
+      setProcessingText("Uploading image...");
     }
 
-    const attachments = uploadedImage ? [{
-      url: uploadedImage,
-      type: "image" as "image",
-    }] : [];
+    if (capturedDocument) {
+      const uploadedDocument = await uploadImage(
+        capturedDocument,
+        `groups/${group.id}/documents/${userType}-${senderId}-${timeStamp}`,
+      );
+      attachments.push({
+        type: "file",
+        url: uploadedDocument,
+      });
+      setProcessingText("Uploading document...");
+    }
+
+    if (capturedVideo) {
+      const uploadedVideo = await uploadImage(
+        capturedVideo,
+        `groups/${group.id}/videos/${userType}-${senderId}-${timeStamp}`,
+      );
+      attachments.push({
+        type: "video",
+        url: uploadedVideo,
+      });
+      setProcessingText("Uploading video...");
+    }
 
     const newMessage: IMessages = {
       attachments,
@@ -187,6 +231,7 @@ const Chat: React.FC<ChatProps> = ({ group }) => {
     setIsSending(false);
     setMessage("");
     setCapturedImage(null);
+    setProcessingText("");
   };
 
   if (messages.length === 0) {
@@ -198,7 +243,7 @@ const Chat: React.FC<ChatProps> = ({ group }) => {
           alignItems: "center",
         }}
       >
-        <ActivityIndicator />
+        <ActivityIndicator size="large" color={Colors(theme).primary} />
       </View>
     );
   }
@@ -248,29 +293,47 @@ const Chat: React.FC<ChatProps> = ({ group }) => {
           inverted
         />
 
-        {capturedImage && (
-          <View style={styles.capturedImageContainer}>
-            <Image
-              source={{ uri: capturedImage }}
-              style={styles.capturedImage}
-            />
-            <IconButton
-              style={styles.closeButton}
-              icon="close"
-              onPress={() => setCapturedImage(null)}
-            />
-          </View>
-        )}
+        {
+          processingText && (
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                marginBottom: 10,
+                gap: 10,
+              }}
+            >
+              <ActivityIndicator
+                color={Colors(theme).primary}
+              />
+              <Text>{processingText}</Text>
+            </View>
+          )
+        }
+
+        <AssetPreview
+          capturedImage={capturedImage}
+          capturedVideo={capturedVideo}
+          capturedDocument={capturedDocument}
+          setCapturedImage={setCapturedImage}
+          setCapturedVideo={setCapturedVideo}
+          setCapturedDocument={setCapturedDocument}
+        />
 
         <View style={styles.inputContainer}>
-          <IconButton icon="plus" />
+          <IconButton
+            icon="plus"
+            onPress={() => setIsUploadModalVisible(true)}
+          />
           <TextInput
             inputMode="text"
             style={styles.textInput}
             onChangeText={handleMessageChange}
             value={message}
             placeholder="Type a message"
-            activeUnderlineColor={Colors(theme).primary}
+            activeUnderlineColor={Colors(theme).aliceBlue}
+            underlineColor={Colors(theme).aliceBlue}
             selectionColor={Colors(theme).primary}
           />
           {(message.length > 0 || capturedImage) ? (
@@ -286,14 +349,17 @@ const Chat: React.FC<ChatProps> = ({ group }) => {
                 icon="camera"
                 onPress={openCamera}
               />
-              <IconButton
-                disabled={isSending}
-                icon="microphone"
-              />
             </>
           )}
         </View>
       </KeyboardAvoidingView>
+      <DocumentUploadModal
+        onDocumentUpload={onDocumentUpload}
+        onImageUpload={onImageUpload}
+        onVideoUpload={onVideoUpload}
+        setVisible={setIsUploadModalVisible}
+        visible={isUploadModalVisible}
+      />
       {
         <Modal
           style={styles.assetModalStyle}

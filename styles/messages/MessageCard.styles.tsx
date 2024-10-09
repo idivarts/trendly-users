@@ -20,11 +20,13 @@ const styles = (theme: Theme) => StyleSheet.create({
   },
   titleText: {
     fontWeight: "bold",
+    fontSize: 14,
   },
   messageInfo: {
     alignItems: "center",
     flexDirection: "row",
     gap: 10,
+    fontSize: 12,
   },
   newMessagesIcon: {
     backgroundColor: Colors(theme).primary,

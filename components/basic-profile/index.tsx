@@ -4,12 +4,12 @@ import { Pressable } from "react-native";
 import Colors from "@/constants/Colors";
 import { useState } from "react";
 import { useAuthContext, useFirebaseStorageContext } from "@/contexts";
-import * as ImagePicker from 'expo-image-picker';
 import { User } from "@/types/User";
 import { useBreakpoints } from "@/hooks";
 import stylesFn from "@/styles/basic-profile/BasicProfile.styles";
 import { useTheme } from "@react-navigation/native";
 import { DUMMY_IMAGE } from "@/constants/User";
+import ImageUploadModal from "../ui/modal/ImageUploadModal";
 
 interface BasicProfileProps {
   user: User;
@@ -23,6 +23,7 @@ const BasicProfile: React.FC<BasicProfileProps> = ({
   const [phoneNumber, setPhoneNumber] = useState(user.phoneNumber || "");
   const [capturedImage, setCapturedImage] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const theme = useTheme();
   const styles = stylesFn(theme);
@@ -67,24 +68,9 @@ const BasicProfile: React.FC<BasicProfileProps> = ({
     setIsSaving(false);
   }
 
-  const imageUpload = async () => {
-    const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    if (status !== 'granted') {
-      alert('We need camera permissions');
-      return;
-    }
-
-    const result = await ImagePicker.launchCameraAsync({
-      cameraType: ImagePicker.CameraType.back,
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      setCapturedImage(result.assets[0].uri);
-    }
-  };
+  const onImageUpload = (image: string) => {
+    setCapturedImage(image);
+  }
 
   return (
     <View
@@ -111,7 +97,7 @@ const BasicProfile: React.FC<BasicProfileProps> = ({
               size={56}
             />
             <Pressable
-              onPress={imageUpload}
+              onPress={() => setIsModalVisible(true)}
             >
               <Text
                 style={styles.editButton}
@@ -187,6 +173,11 @@ const BasicProfile: React.FC<BasicProfileProps> = ({
           }
         </Button>
       </View>
+      <ImageUploadModal
+        onImageUpload={onImageUpload}
+        setVisible={setIsModalVisible}
+        visible={isModalVisible}
+      />
     </View>
   );
 };

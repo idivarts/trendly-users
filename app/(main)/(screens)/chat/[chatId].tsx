@@ -1,14 +1,16 @@
 import Chat from "@/components/messages/chat";
+import Colors from "@/constants/Colors";
 import { useAuthContext, useGroupContext } from "@/contexts";
 import { Groups } from "@/types/Groups";
+import { useTheme } from "@react-navigation/native";
 import { Redirect, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { View } from "react-native";
-import { ActivityIndicator } from "react-native-paper";
+import { View, ActivityIndicator } from "react-native";
 
 const ChatScreen: React.FC = () => {
   const [group, setGroup] = useState<Groups | null>(null);
   const params = useLocalSearchParams();
+  const theme = useTheme();
   const { chatId } = params;
 
   const {
@@ -64,7 +66,7 @@ const ChatScreen: React.FC = () => {
           alignItems: "center",
         }}
       >
-        <ActivityIndicator />
+        <ActivityIndicator size="large" color={Colors(theme).primary} />
       </View>
     );
   }

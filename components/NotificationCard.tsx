@@ -1,48 +1,91 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View } from "react-native";
 import { Text, Button, Card, Avatar } from "react-native-paper";
 import { stylesFn } from "@/styles/NotificationCard.styles";
 import { useTheme } from "@react-navigation/native";
+import { useRouter } from "expo-router";
 
-export const NotificationCard = ({
-  adName,
-  userName,
-  brandName,
-  notification,
-  avatar,
-  time,
-  action,
-}: {
-  adName: string;
-  userName: string;
-  brandName: string;
-  notification: string;
+interface NotificationCardProps {
   avatar: string;
-  time: string;
-  action: { open: boolean; markAsRead: boolean };
+  collaborationId: string;
+  description: string;
+  groupId: string;
+  isRead: boolean;
+  onMarkAsRead: () => void;
+  time: number;
+  title: string;
+}
+
+export const NotificationCard: React.FC<NotificationCardProps> = ({
+  avatar,
+  collaborationId,
+  description,
+  groupId,
+  isRead,
+  onMarkAsRead,
+  time,
+  title,
 }) => {
   const theme = useTheme();
   const styles = stylesFn(theme);
+  const router = useRouter();
+
+  let action: string | undefined;
+
+  if (collaborationId) {
+    action = `/collaboration-details/${collaborationId}`;
+  } else if (groupId) {
+    action = `/chat/${groupId}`;
+  }
+
   return (
     <Card style={styles.card}>
       <View style={styles.row}>
         <Avatar.Image size={50} source={{ uri: avatar }} />
         <View style={styles.content}>
-          <Text style={styles.adName}>{adName}</Text>
-          <Text style={styles.time}>{notification}</Text>
-          <Text style={styles.time}>{time}</Text>
+          <Text style={styles.title}>
+            {title}
+          </Text>
+          <Text style={styles.time}>
+            {description}
+          </Text>
+          <Text style={styles.time}>
+            {
+              new Date(time).toLocaleTimeString(
+                "en-US",
+                {
+                  hour: "numeric",
+                  minute: "numeric",
+                }
+              )
+            }
+            {", "}
+            {
+              new Date(time).toLocaleDateString(
+                "en-US",
+                {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                }
+              )
+            }
+          </Text>
         </View>
       </View>
       <View style={styles.actions}>
-        {action.open && (
-          <Button mode="contained" onPress={() => { }}>
+        {action && (
+          <Button
+            mode="contained"
+            onPress={action ? () => router.push(action as string) : undefined}
+          >
             Open
           </Button>
         )}
-        {action.markAsRead && (
+        {!isRead && (
           <Button
             mode="outlined"
-            onPress={() => { }}
+            onPress={onMarkAsRead}
             style={styles.markAsReadButton}
           >
             Mark as Read

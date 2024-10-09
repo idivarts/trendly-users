@@ -16,7 +16,7 @@ const styles = (theme: Theme) => StyleSheet.create({
     alignItems: "flex-start",
   },
   appbarTitle: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: "bold",
     color: Colors(theme).white,
   },
@@ -29,32 +29,49 @@ const styles = (theme: Theme) => StyleSheet.create({
     paddingTop: 10,
     paddingBottom: 22,
   },
-  capturedImageContainer: {
+  processingText: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 10,
+    gap: 10,
+  },
+  capturedAssetContainer: {
     flexDirection: "row",
     alignItems: "center",
     position: "relative",
-    backgroundColor: Colors(theme).platinum,
-    padding: 10,
-    paddingBottom: 0,
+    backgroundColor: Colors(theme).aliceBlue,
   },
   closeButton: {
     position: "absolute",
     right: 2,
     top: 2,
+    zIndex: 1,
+    backgroundColor: Colors(theme).white,
   },
   capturedImage: {
-    width: 200,
-    height: 200,
+    width: 180,
+    height: 180,
     borderRadius: 10,
+    zIndex: 0,
+  },
+  capturedVideo: {
+    width: "100%",
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    minHeight: 100,
+  },
+  capturedVideoStyle: {
+    width: "100%",
   },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: Colors(theme).platinum,
+    backgroundColor: Colors(theme).aliceBlue,
   },
   textInput: {
     flex: 1,
-    backgroundColor: Colors(theme).platinum,
+    backgroundColor: Colors(theme).aliceBlue,
     paddingHorizontal: 0,
   },
   assetModalStyle: {

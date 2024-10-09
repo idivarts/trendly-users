@@ -23,7 +23,7 @@ export const stylesFn = (theme: Theme) =>
       flex: 1,
       color: Colors(theme).text,
     },
-    adName: {
+    title: {
       fontWeight: "bold",
       color: Colors(theme).text,
     },
