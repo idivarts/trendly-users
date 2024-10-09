@@ -11,14 +11,20 @@ import {
   FirebaseStorageContextProvider,
   useFirebaseStorageContext,
 } from "./firebase-storage-context.provider";
+import {
+  NotificationContextProvider,
+  useNotificationContext,
+} from "./notification-context.provider";
 
 export {
   AuthContextProvider,
   CloudMessagingContextProvider,
   FirebaseStorageContextProvider,
   GroupContextProvider,
+  NotificationContextProvider,
   useAuthContext,
   useCloudMessagingContext,
   useFirebaseStorageContext,
   useGroupContext,
+  useNotificationContext,
 };

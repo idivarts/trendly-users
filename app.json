@@ -9,7 +9,7 @@
       "web"
     ],
     "orientation": "portrait",
-    "icon": "./assets/images/logo.jpg",
+    "icon": "./assets/images/icon.png",
     "scheme": [
       "trendly-creators"
     ],
@@ -63,6 +63,12 @@
           "clientToken": "76ca0bb2d6e0e4df680137f19590b737",
           "scheme": "fb2223620811324637",
           "iosUserTrackingPermission": "This identifier will be used to deliver personalized ads to you."
+        }
+      ],
+      [
+        "expo-document-picker",
+        {
+          "iCloudContainerEnvironment": "Production"
         }
       ]
     ],

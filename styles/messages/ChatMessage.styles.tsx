@@ -39,11 +39,13 @@ const styles = (theme: Theme) => StyleSheet.create({
   },
   messageText: {
     padding: 10,
+    fontSize: 14,
   },
   messageTime: {
-    fontSize: 10,
+    fontSize: 12,
   },
   messageSenderName: {
+    fontSize: 16,
     fontWeight: "bold",
   },
 });

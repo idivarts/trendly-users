@@ -7,6 +7,7 @@ import Colors from "@/constants/Colors";
 import { useClientOnlyValue } from "@/components/useClientOnlyValue";
 import { useBreakpoints } from "@/hooks";
 import { useTheme } from "@react-navigation/native";
+import NotificationIcon from "@/components/notifications/notification-icon";
 
 const TabBarIcon = (props: {
   name: React.ComponentProps<typeof FontAwesome>["name"];
@@ -45,20 +46,7 @@ const TabLayout = () => {
           tabBarIcon: ({ color }) => (
             <TabBarIcon name="handshake-o" color={color} />
           ),
-          headerRight: () => (
-            <Link href="/notifications" asChild>
-              <Pressable>
-                {({ pressed }) => (
-                  <FontAwesome
-                    name="bell"
-                    size={22}
-                    color={Colors(theme).text}
-                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            </Link>
-          ),
+          headerRight: () => <NotificationIcon />,
         }}
       />
       <Tabs.Screen
@@ -68,40 +56,14 @@ const TabLayout = () => {
           tabBarIcon: ({ color }) => (
             <TabBarIcon name="comments" color={color} />
           ),
-          headerRight: () => (
-            <Link href="/notifications" asChild>
-              <Pressable>
-                {({ pressed }) => (
-                  <FontAwesome
-                    name="bell"
-                    size={22}
-                    color={Colors(theme).text}
-                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            </Link>
-          ),
+          headerRight: () => <NotificationIcon />,
         }}
       />
       <Tabs.Screen
         name="collaborations"
         options={{
           title: "Collaborations",
-          headerRight: () => (
-            <Link href="/notifications" asChild>
-              <Pressable>
-                {({ pressed }) => (
-                  <FontAwesome
-                    name="bell"
-                    size={25}
-                    color={Colors(theme).text}
-                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            </Link>
-          ),
+          headerRight: () => <NotificationIcon />,
           tabBarIcon: ({ color }) => <TabBarIcon name="group" color={color} />,
         }}
       />
@@ -113,20 +75,7 @@ const TabLayout = () => {
           ),
           title: "Contracts",
           headerTitleAlign: "left",
-          headerRight: () => (
-            <Link href="/notifications" asChild>
-              <Pressable>
-                {({ pressed }) => (
-                  <FontAwesome
-                    name="bell"
-                    size={25}
-                    color={Colors(theme).text}
-                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            </Link>
-          ),
+          headerRight: () => <NotificationIcon />,
         }}
       />
       <Tabs.Screen
