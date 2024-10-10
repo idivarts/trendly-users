@@ -36,12 +36,14 @@ export const CloudMessagingContextProvider: React.FC<PropsWithChildren> = ({
         },
       );
 
-      const newNativeToken = newToken("web", user!, token);
+      if (user && session) {
+        const newNativeToken = newToken("web", user, token);
 
-      if (newNativeToken) {
-        await updateUser(session as string, {
-          pushNotificationToken: newNativeToken,
-        });
+        if (newNativeToken) {
+          await updateUser(session, {
+            pushNotificationToken: newNativeToken,
+          });
+        }
       }
     } else if (permission === "denied") {
       alert("You denied the permission to receive notifications");
