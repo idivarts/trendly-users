@@ -9,8 +9,8 @@ export const populateUsers = async (db: Firestore, dummyUsers: any[]) => {
       email: user.email,
       phoneNumber: user.phoneNumber,
       location: user.location,
-      dateOfBirth: user.dateOfBirth,
       preferences: user.preferences,
+      settings: user.settings,
     });
 
     console.log(`User ${user.name} added successfully.`);
@@ -50,8 +50,6 @@ export const populateUsers = async (db: Firestore, dummyUsers: any[]) => {
           url: social.url,
           followers: social.followers,
           following: social.following,
-          posts: social.posts,
-          engagementRate: social.engagementRate,
         });
       }
     }
