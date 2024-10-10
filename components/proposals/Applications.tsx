@@ -277,11 +277,10 @@ const Applications = () => {
           }
         />
       ) : (
-        <View>
+        <>
           {pendingProposals.length === 0 && notPendingProposals !== 0 && (
             <View
               style={{
-                flex: 1,
                 justifyContent: "center",
                 alignItems: "center",
                 gap: 50,
@@ -304,14 +303,8 @@ const Applications = () => {
                 }}
               >
                 <Text style={styles.title}>No Applications found</Text>
-                <Text style={styles.subtitle}>
-                  Go to the Collaborations page to start applying for new
-                  collaborations
-                </Text>
               </View>
-              {/* <TouchableOpacity onPress={() => router.push("/collaborations")}>
-               <Text style={styles.title}>New Collaborations</Text>
-             </TouchableOpacity> */}
+
               <Button
                 onPress={() => router.push("/collaborations")}
                 style={{
@@ -357,7 +350,7 @@ const Applications = () => {
               </View>
             </View>
           )}
-        </View>
+        </>
       )}
       {isVisible && (
         <BottomSheetActions
