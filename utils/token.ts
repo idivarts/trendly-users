@@ -5,6 +5,8 @@ export const newToken = (
   user: User,
   token: string
 ) => {
+  if (!user) return null;
+
   const createOrUpdateToken = (platformTokens: string[] = []) => {
     if (!platformTokens.includes(token)) {
       return platformTokens.concat(token);
