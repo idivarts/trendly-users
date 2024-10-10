@@ -9,6 +9,7 @@ import { Platform } from "react-native";
 
 import { PermissionsAndroid } from 'react-native';
 import { useAuthContext } from "./auth-context.provider";
+import { newToken } from "@/utils/token";
 
 interface CloudMessagingContextProps {
   getToken: () => Promise<string>;
@@ -41,24 +42,17 @@ export const CloudMessagingContextProvider: React.FC<PropsWithChildren> = ({
   const getToken = async () => {
     const token = await messaging().getToken();
     if (session && user) {
-      const nativeToken = Platform.OS === "ios" ? {
-        ...user?.pushNotificationToken,
-        ios: token,
-      } : {
-        ...user?.pushNotificationToken,
-        android: token,
-      };
+      const newNativeToken = Platform.OS === "ios" ? newToken("ios", user, token) : newToken("android", user, token);
 
-      await updateUser(
-        session as string,
-        {
-          pushNotificationToken: nativeToken,
-        },
-      );
+      if (newNativeToken) {
+        await updateUser(session as string, {
+          pushNotificationToken: newNativeToken,
+        });
+      }
     }
 
     return token;
-  }
+  };
 
   const initNotification = async () => {
     await requestUserPermission();
