@@ -150,7 +150,16 @@ const PreSignIn = () => {
         {slides.map((slide) => (
           <View style={styles.slide} key={slide.key}>
             <View style={styles.imageContainer}>
-              <Image source={{ uri: slide.image }} style={styles.image} />
+              <Image
+                source={
+                  slide.key === "manage"
+                    ? require("../../assets/images/design3.png")
+                    : slide.key === "share"
+                    ? require("../../assets/images/design2.png")
+                    : require("../../assets/images/design1.png")
+                }
+                style={styles.image}
+              />
             </View>
             <Title style={[styles.title, { color: Colors(theme).primary }]}>
               {slide.title}
