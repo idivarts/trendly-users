@@ -31,7 +31,7 @@ const BackButton: React.FC<BackButtonProps> = ({
         >
           {({ pressed }) => (
             <Ionicons
-              name="chevron-back"
+              name="arrow-back"
               size={26}
               color={color ?? Colors(theme).text}
               style={{

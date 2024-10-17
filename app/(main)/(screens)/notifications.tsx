@@ -15,6 +15,7 @@ export default function NotificationsScreen() {
     user,
   } = useAuthContext();
   const {
+    markAllNotificationsAsRead,
     userNotifications,
     updateUserNotification,
   } = useNotificationContext();
@@ -53,7 +54,9 @@ export default function NotificationsScreen() {
 
         <Appbar.Action
           icon="check"
-          onPress={() => { }}
+          onPress={() => {
+            markAllNotificationsAsRead(user?.id as string);
+          }}
           color={Colors(theme).text}
         />
       </Appbar.Header>

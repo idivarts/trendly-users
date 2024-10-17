@@ -1,0 +1,61 @@
+import { Text, View } from "@/components/theme/Themed";
+import Colors from "@/constants/Colors";
+import { PLACEHOLDER_IMAGE } from "@/constants/Placeholder";
+import stylesFn from "@/styles/empty-state/EmptyState.styles";
+import { useTheme } from "@react-navigation/native";
+import { useNavigation, useRouter } from "expo-router";
+import { Image } from "react-native";
+import { Button } from "react-native-paper";
+
+type EmptyStateProps = {
+  actionHref?: string;
+  actionLabel?: string;
+  image?: string;
+  subtitle?: string;
+  title: string;
+};
+
+const EmptyState: React.FC<EmptyStateProps> = ({
+  actionHref,
+  actionLabel = "Go back",
+  image,
+  subtitle,
+  title,
+}) => {
+  const theme = useTheme();
+  const styles = stylesFn(theme);
+  const router = useRouter();
+  const navigation = useNavigation();
+
+  return (
+    <View
+      style={styles.container}
+    >
+      <Image
+        source={{ uri: image ?? PLACEHOLDER_IMAGE }}
+        width={150}
+        height={150}
+        style={styles.image}
+      />
+      <View
+        style={styles.contentContainer}
+      >
+        <Text style={styles.title}>
+          {title}
+        </Text>
+        <Text style={styles.subtitle}>
+          {subtitle}
+        </Text>
+      </View>
+      <Button
+        onPress={() => actionHref ? router.push(actionHref) : navigation.goBack()}
+        style={styles.action}
+        textColor={Colors(theme).text}
+      >
+        {actionLabel}
+      </Button>
+    </View>
+  );
+};
+
+export default EmptyState;

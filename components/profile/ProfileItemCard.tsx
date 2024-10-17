@@ -32,8 +32,10 @@ const ProfileItemCard: React.FC<ProfileItemCardProps> = ({
           </Text>
         </View>
         <Ionicons
-          name="chevron-forward"
           color={Colors(theme).primary}
+          name="chevron-forward"
+          size={16}
+          style={styles.icon}
         />
       </View>
     </Pressable>

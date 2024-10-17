@@ -77,7 +77,10 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({
         {action && (
           <Button
             mode="contained"
-            onPress={action ? () => router.push(action as string) : undefined}
+            onPress={action ? () => {
+              onMarkAsRead();
+              router.push(action as string);
+            } : undefined}
           >
             Open
           </Button>

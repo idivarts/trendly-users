@@ -4,6 +4,7 @@ import { ScrollView } from "react-native";
 import { Text } from "../theme/Themed";
 import { NotificationCard } from "../NotificationCard";
 import { Notification } from "@/types/Notification";
+import EmptyState from "../ui/empty-state";
 
 interface NotificationsProps {
   notifications: Notification[];
@@ -19,16 +20,12 @@ const Notifications: React.FC<NotificationsProps> = ({
 
   return (
     <ScrollView style={styles.container}>
-      {notifications.length === 0 && (
-        <Text
-          style={{
-            textAlign: "center",
-          }}
-        >
-          No notifications
-        </Text>
-      )}
-      {notifications.map((item) => (
+      {notifications.length === 0 ? (
+        <EmptyState
+          actionLabel="Go back"
+          title="No notifications found"
+        />
+      ) : notifications.map((item) => (
         <NotificationCard
           avatar="https://cdn.iconscout.com/icon/free/png-256/avatar-370-456322.png"
           collaborationId={item.data?.collaborationId || ""}

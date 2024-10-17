@@ -35,7 +35,7 @@ const Group: React.FC<GroupProps> = ({
     <ScrollView
       style={{
         flex: 1,
-        paddingVertical: 10,
+        paddingVertical: 20,
         backgroundColor: Colors(theme).background,
       }}
     >
@@ -45,7 +45,8 @@ const Group: React.FC<GroupProps> = ({
         value={searchQuery}
         style={{
           backgroundColor: Colors(theme).platinum,
-          marginHorizontal: 10,
+          marginHorizontal: 20,
+          marginBottom: 10,
         }}
       />
       {filteredGroups.map((group) => (

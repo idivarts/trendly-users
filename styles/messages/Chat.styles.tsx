@@ -6,24 +6,25 @@ const styles = (theme: Theme) => StyleSheet.create({
   container: { flex: 1 },
   appbar: {
     paddingVertical: 10,
-    gap: 10,
-    backgroundColor: Colors(theme).primary,
+    backgroundColor: Colors(theme).aliceBlue,
   },
   backButtonContainer: {
     backgroundColor: "transparent",
   },
   appbarContent: {
+    marginLeft: 10,
     alignItems: "flex-start",
   },
   appbarTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: Colors(theme).white,
+    color: Colors(theme).black,
   },
   flex: { flex: 1 },
   messageListContainer: {
     gap: 10,
-    padding: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
   },
   loadingIndicator: {
     paddingTop: 10,

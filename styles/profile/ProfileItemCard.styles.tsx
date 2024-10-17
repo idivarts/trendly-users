@@ -6,7 +6,7 @@ const styles = (theme: Theme) => StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 10,
+    paddingVertical: 10,
     gap: 10,
   },
   avatar: {
@@ -20,6 +20,9 @@ const styles = (theme: Theme) => StyleSheet.create({
   titleText: {
     fontSize: 16,
   },
+  icon: {
+    marginRight: 0,
+  }
 });
 
 export default styles;

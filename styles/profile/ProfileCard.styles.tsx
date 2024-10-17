@@ -6,7 +6,7 @@ const styles = (theme: Theme) => StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 10,
+    paddingVertical: 10,
     gap: 10,
     borderBottomColor: Colors(theme).aliceBlue,
     borderBottomWidth: 1,

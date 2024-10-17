@@ -7,7 +7,8 @@ const styles = (theme: Theme) => StyleSheet.create({
     alignItems: "center",
     flexDirection: "row",
     gap: 10,
-    padding: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
   },
   avatarImage: {
     backgroundColor: Colors(theme).platinum,
