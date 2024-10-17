@@ -1,4 +1,3 @@
-import BackButton from "@/components/ui/back-button/BackButton";
 import Colors from "@/constants/Colors";
 import { useBreakpoints } from "@/hooks";
 import { Groups } from "@/types/Groups";
@@ -19,6 +18,7 @@ import { useTheme } from "@react-navigation/native";
 import { ResizeMode, Video } from "expo-av";
 import DocumentUploadModal from "@/components/ui/modal/DocumentUploadModal";
 import AssetPreview from "./AssetPreview";
+import { useNavigation } from "expo-router";
 
 export type ModalAsset = {
   url: string,
@@ -49,6 +49,7 @@ const Chat: React.FC<ChatProps> = ({ group }) => {
   const [endMessage, setEndMessage] = useState<DocumentSnapshot | null>(null);
   const [lastMessage, setLastMessage] = useState<DocumentSnapshot | null>(null);
   const [hasNext, setHasNext] = useState(false);
+  const navigation = useNavigation();
 
   const {
     addMessageToGroup,
@@ -250,15 +251,22 @@ const Chat: React.FC<ChatProps> = ({ group }) => {
 
   return (
     <View style={styles.container}>
-      <Appbar.Header statusBarHeight={0} style={styles.appbar}>
-        <View style={[styles.backButtonContainer, { marginLeft: xl ? 10 : 0 }]}>
-          <BackButton color={Colors(theme).platinum} />
-        </View>
+      <Appbar.Header
+        statusBarHeight={0}
+        style={styles.appbar}
+      >
+        <Appbar.Action
+          icon="arrow-left"
+          color={Colors(theme).text}
+          onPress={() => {
+            navigation.goBack();
+          }}
+        />
         <Avatar.Image
           source={{
             uri: group.image || PLACEHOLDER_IMAGE,
           }}
-          size={48}
+          size={46}
         />
         <Appbar.Content
           title={group.name}

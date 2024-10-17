@@ -63,7 +63,11 @@ const MessageCard: React.FC<MessageCardProps> = ({
             )}
           </View>
           <View style={styles.chevronIcon}>
-            <Ionicons name="chevron-forward" size={24} color={Colors(theme).primary} />
+            <Ionicons
+              color={Colors(theme).primary}
+              name="chevron-forward"
+              size={16}
+            />
           </View>
         </View>
       )}
