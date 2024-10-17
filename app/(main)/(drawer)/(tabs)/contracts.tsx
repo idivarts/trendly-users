@@ -1,7 +1,7 @@
-import { ActivityIndicator, FlatList } from "react-native";
+import { ActivityIndicator, FlatList, Image } from "react-native";
 import { Text, View } from "@/components/theme/Themed";
 import AppLayout from "@/layouts/app-layout";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import ContractCard from "@/components/ContractCard";
 import { stylesFn } from "@/styles/Contracts.styles";
 import { useTheme } from "@react-navigation/native";
@@ -11,6 +11,7 @@ import BottomSheetActions from "@/components/BottomSheetActions";
 import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 import { FirestoreDB } from "@/utils/firestore";
 import { AuthApp } from "@/utils/auth";
+import { Button } from "react-native-paper";
 
 const ContractScreen = () => {
   const theme = useTheme();
@@ -126,7 +127,7 @@ const ContractScreen = () => {
         Looking for past contracts
       </Text>
       <View style={styles.card}>
-        <Link href={"/collaboration-details"}>
+        <Link href={"/past/contracts"}>
           <Text>View Past Contracts</Text>
         </Link>
       </View>
@@ -136,19 +137,59 @@ const ContractScreen = () => {
   return (
     <AppLayout>
       <View style={styles.container}>
-        <FlatList
-          data={contracts}
-          renderItem={({ item, index }) => (
-            <ContractCard
-              {...item}
-              onOpenBottomSheet={openBottomSheet}
-              id={item.collaborationId}
+        {contracts.length === 0 ? (
+          <View
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+              gap: 50,
+            }}
+          >
+            <Image
+              source={{ uri: "https://via.placeholder.com/150" }}
+              width={150}
+              height={150}
+              style={{
+                borderRadius: 10,
+              }}
             />
-          )}
-          keyExtractor={(item, index) => index.toString()}
-          style={{ height: "100%", width: "100%" }}
-          ListFooterComponent={renderFooter}
-        />
+            <View
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: 10,
+              }}
+            >
+              <Text style={styles.title}>No Contracts found</Text>
+            </View>
+            <Button
+              onPress={() => router.push("/collaborations")}
+              style={{
+                backgroundColor: Colors(theme).platinum,
+                padding: 5,
+                borderRadius: 5,
+              }}
+              textColor={Colors(theme).text}
+            >
+              New Collaborations
+            </Button>
+          </View>
+        ) : (
+          <FlatList
+            data={contracts}
+            renderItem={({ item, index }) => (
+              <ContractCard
+                {...item}
+                onOpenBottomSheet={openBottomSheet}
+                id={item.collaborationId}
+              />
+            )}
+            keyExtractor={(item, index) => index.toString()}
+            style={{ height: "100%", width: "100%" }}
+            ListFooterComponent={renderFooter}
+          />
+        )}
       </View>
       {isVisible && (
         <BottomSheetActions

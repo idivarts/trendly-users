@@ -155,7 +155,6 @@ const Applications = () => {
       {proposals.length === 0 && notPendingProposals === 0 ? (
         <View
           style={{
-            flex: 1,
             justifyContent: "center",
             alignItems: "center",
             gap: 50,
@@ -254,7 +253,6 @@ const Applications = () => {
                       alignItems: "center",
                     }}
                   >
-                    {/* <Link href={"/past/application"} style={{}}> */}
                     <Link
                       href={{
                         pathname: "/past/application",

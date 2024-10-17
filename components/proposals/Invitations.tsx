@@ -158,7 +158,6 @@ const Invitations = () => {
       {pendingInvitations.length === 0 && notPendingInvitations === 0 ? (
         <View
           style={{
-            flex: 1,
             justifyContent: "center",
             alignItems: "center",
             gap: 50,

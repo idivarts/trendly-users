@@ -158,6 +158,7 @@ const PreSignIn = () => {
         ref={swiperRef} // Attach the ref to Swiper
         style={styles.wrapper}
         dotStyle={styles.dotStyle}
+        loop={false}
         activeDotStyle={[
           styles.dotStyle,
           { backgroundColor: Colors(theme).primary },

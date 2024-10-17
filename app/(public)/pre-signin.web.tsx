@@ -119,6 +119,7 @@ const PreSignIn = () => {
       <Swiper
         style={styles.wrapper}
         dotStyle={styles.dotStyle}
+        loop={false}
         activeDotStyle={[
           styles.dotStyle,
           { backgroundColor: Colors(theme).primary },

@@ -42,7 +42,7 @@ const TabLayout = () => {
       <Tabs.Screen
         name="proposals"
         options={{
-          title: "Applications",
+          title: "Proposals",
           tabBarIcon: ({ color }) => (
             <TabBarIcon name="handshake-o" color={color} />
           ),
