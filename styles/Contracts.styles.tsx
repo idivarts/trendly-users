@@ -13,7 +13,7 @@ export const stylesFn = (theme: Theme) =>
     title: {
       fontSize: 20,
       fontWeight: "bold",
-      color: "lightblue",
+      color: Colors(theme).text,
     },
     titleActive: {
       fontSize: 20,
