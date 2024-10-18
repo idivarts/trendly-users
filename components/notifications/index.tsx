@@ -1,7 +1,6 @@
 import { stylesFn } from "@/styles/NotificationCard.styles";
 import { useTheme } from "@react-navigation/native";
 import { ScrollView } from "react-native";
-import { Text } from "../theme/Themed";
 import { NotificationCard } from "../NotificationCard";
 import { Notification } from "@/types/Notification";
 import EmptyState from "../ui/empty-state";

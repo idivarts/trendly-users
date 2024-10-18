@@ -266,7 +266,7 @@ const Chat: React.FC<ChatProps> = ({ group }) => {
           source={{
             uri: group.image || PLACEHOLDER_IMAGE,
           }}
-          size={46}
+          size={42}
         />
         <Appbar.Content
           title={group.name}

@@ -30,8 +30,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
   const {
     user,
   } = useAuthContext();
-  // const isSender = message.senderId === user?.id;
-  const isSender = message.senderId === DUMMY_USER_ID;
+  const isSender = message.senderId === user?.id;
   const isUser = message.userType === "user";
   const theme = useTheme();
   const styles = stylesFn(theme);

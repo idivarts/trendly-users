@@ -5,6 +5,7 @@ import { Searchbar } from "react-native-paper";
 import { useEffect, useState } from "react";
 import Colors from "@/constants/Colors";
 import { useTheme } from "@react-navigation/native";
+import EmptyState from "../ui/empty-state";
 
 interface GroupProps {
   changeGroup: (groupId: string) => void;
@@ -49,13 +50,22 @@ const Group: React.FC<GroupProps> = ({
           marginBottom: 10,
         }}
       />
-      {filteredGroups.map((group) => (
-        <MessageCard
-          group={group}
-          key={group.id}
-          onPress={() => onPress(group.id)}
-        />
-      ))}
+      {
+        filteredGroups.length === 0 ? (
+          <EmptyState
+            title="No groups found"
+            hideAction
+          />
+        ) : (
+          filteredGroups.map((group) => (
+            <MessageCard
+              group={group}
+              key={group.id}
+              onPress={() => onPress(group.id)}
+            />
+          ))
+        )
+      }
     </ScrollView>
   );
 };

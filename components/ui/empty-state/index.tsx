@@ -8,6 +8,7 @@ import { Image } from "react-native";
 import { Button } from "react-native-paper";
 
 type EmptyStateProps = {
+  hideAction?: boolean;
   actionHref?: string;
   actionLabel?: string;
   image?: string;
@@ -16,6 +17,7 @@ type EmptyStateProps = {
 };
 
 const EmptyState: React.FC<EmptyStateProps> = ({
+  hideAction = false,
   actionHref,
   actionLabel = "Go back",
   image,
@@ -47,13 +49,17 @@ const EmptyState: React.FC<EmptyStateProps> = ({
           {subtitle}
         </Text>
       </View>
-      <Button
-        onPress={() => actionHref ? router.push(actionHref) : navigation.goBack()}
-        style={styles.action}
-        textColor={Colors(theme).text}
-      >
-        {actionLabel}
-      </Button>
+      {
+        !hideAction && (
+          <Button
+            onPress={() => actionHref ? router.push(actionHref) : navigation.goBack()}
+            style={styles.action}
+            textColor={Colors(theme).text}
+          >
+            {actionLabel}
+          </Button>
+        )
+      }
     </View>
   );
 };
