@@ -27,7 +27,7 @@ const TabLayout = () => {
         // Disable the static render of the header on web
         // to prevent a hydration error in React Navigation v6.
         headerShown: useClientOnlyValue(false, true),
-        tabBarShowLabel: xl,
+        tabBarShowLabel: !xl,
         tabBarHideOnKeyboard: true,
         tabBarStyle: {
           display: xl ? "none" : "flex", // Hide the tab bar on desktop screens
@@ -43,6 +43,7 @@ const TabLayout = () => {
         name="proposals"
         options={{
           title: "Proposals",
+          tabBarLabel: "Proposals",
           tabBarIcon: ({ color }) => (
             <TabBarIcon name="handshake-o" color={color} />
           ),
@@ -53,6 +54,7 @@ const TabLayout = () => {
         name="messages"
         options={{
           title: "Messages",
+          tabBarLabel: "Messages",
           tabBarIcon: ({ color }) => (
             <TabBarIcon name="comments" color={color} />
           ),
@@ -63,6 +65,7 @@ const TabLayout = () => {
         name="collaborations"
         options={{
           title: "Collaborations",
+          tabBarLabel: "Collaborations",
           headerRight: () => <NotificationIcon />,
           tabBarIcon: ({ color }) => <TabBarIcon name="group" color={color} />,
         }}
@@ -74,6 +77,7 @@ const TabLayout = () => {
             <TabBarIcon name="file-text-o" color={color} />
           ),
           title: "Contracts",
+          tabBarLabel: "Contracts",
           headerTitleAlign: "left",
           headerRight: () => <NotificationIcon />,
         }}
@@ -82,6 +86,7 @@ const TabLayout = () => {
         name="profile"
         options={{
           title: "Profile",
+          tabBarLabel: "Profile",
           tabBarIcon: ({ color }) => (
             <TabBarIcon name="user-circle-o" color={color} />
           ),

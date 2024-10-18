@@ -3,7 +3,7 @@ import { View } from "react-native";
 import { Text, Button, Card, Avatar } from "react-native-paper";
 import { stylesFn } from "@/styles/NotificationCard.styles";
 import { useTheme } from "@react-navigation/native";
-import { useRouter } from "expo-router";
+import { Href, useRouter } from "expo-router";
 
 interface NotificationCardProps {
   avatar: string;
@@ -77,7 +77,10 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({
         {action && (
           <Button
             mode="contained"
-            onPress={action ? () => router.push(action as string) : undefined}
+            onPress={action ? () => {
+              onMarkAsRead();
+              router.push(action as Href);
+            } : undefined}
           >
             Open
           </Button>

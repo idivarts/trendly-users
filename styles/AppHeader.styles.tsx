@@ -6,19 +6,15 @@ const appHeaderStyles = (theme: Theme) => StyleSheet.create({
   appbarHeader: {
     paddingVertical: 10,
     gap: 10,
-    backgroundColor: Colors(theme).primary,
+    backgroundColor: Colors(theme).white,
   },
   backButtonContainer: {
     backgroundColor: "transparent",
   },
   appbarContent: {
-    alignItems: "flex-start",
   },
   appbarTitle: {
-    fontSize: 16,
-    textAlign: "left",
-    fontWeight: "bold",
-    color: Colors(theme).white,
+    color: Colors(theme).black,
   },
 });
 

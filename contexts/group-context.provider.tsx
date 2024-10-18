@@ -26,7 +26,6 @@ import {
   type PropsWithChildren,
 } from "react";
 import { useAuthContext } from "./auth-context.provider";
-import { DUMMY_USER_ID } from "@/constants/User";
 
 interface Messages {
   firstMessage?: DocumentSnapshot | null;
@@ -98,8 +97,7 @@ export const GroupContextProvider: React.FC<PropsWithChildren> = ({ children }) 
       });
     };
 
-    // fetchGroupsByUserId(user?.id || "");
-    fetchGroupsByUserId(DUMMY_USER_ID);
+    fetchGroupsByUserId(user?.id || "");
 
     return () => {
       if (typeof unsubscribe === 'function') {
@@ -126,8 +124,7 @@ export const GroupContextProvider: React.FC<PropsWithChildren> = ({ children }) 
         }
       }
 
-      const userLastReadTime = groupData.lastUserReadTime?.[DUMMY_USER_ID as string];
-      // const userLastReadTime = groupData.lastUserReadTime?.[user?.id as string];
+      const userLastReadTime = groupData.lastUserReadTime?.[user?.id as string];
 
       const time = userLastReadTime ? userLastReadTime : 0;
 
@@ -285,8 +282,7 @@ export const GroupContextProvider: React.FC<PropsWithChildren> = ({ children }) 
         updatedAt: message.timeStamp,
         lastUserReadTime: {
           ...groupSnap.data()?.lastUserReadTime,
-          [DUMMY_USER_ID as string]: Date.now(),
-          // [user?.id as string]: Date.now(),
+          [user?.id as string]: Date.now(),
         },
       });
     } catch (error) {
