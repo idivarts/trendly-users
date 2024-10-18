@@ -19,10 +19,6 @@ import {
   NotificationContextProvider,
   useAuthContext,
 } from "@/contexts";
-import { requestTrackingPermissionsAsync } from "expo-tracking-transparency";
-import { Settings } from "react-native-fbsdk-next";
-import { Platform } from "react-native";
-
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,

@@ -51,10 +51,13 @@ const JobCard = (props: CollaborationAdCardProps) => {
               onPress={() => {
                 props.onOpenBottomSheet(props.id);
               }}
+              style={{
+                padding: 10,
+              }}
             >
               <Ionicons
                 name="ellipsis-horizontal"
-                size={24}
+                size={30}
                 color={Colors(theme).gray100}
               />
             </TouchableOpacity>
