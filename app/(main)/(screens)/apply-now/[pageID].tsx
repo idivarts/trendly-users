@@ -9,11 +9,10 @@ import { FirestoreDB } from "@/utils/firestore";
 import { useTheme } from "@react-navigation/native";
 import * as DocumentPicker from "expo-document-picker";
 import { useLocalSearchParams } from "expo-router";
-import { signInWithEmailAndPassword } from "firebase/auth";
 import { addDoc, collection } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import React, { useState } from "react";
-import { ScrollView, View } from "react-native";
+import { ScrollView, View, ActivityIndicator } from "react-native";
 import {
   Appbar,
   Button,
@@ -33,6 +32,7 @@ const ApplyScreen = () => {
   const [note, setNote] = useState<string>("");
   const [files, setFiles] = useState<string[]>([]);
   const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false);
   const theme = useTheme();
   const styles = stylesFn(theme);
 
@@ -43,13 +43,31 @@ const ApplyScreen = () => {
   };
 
   const handleCvUpload = async () => {
-    const file = await DocumentPicker.getDocumentAsync({});
-    if (!file.canceled) {
-      setFiles((prevFiles) => [...prevFiles, file.assets[0].uri]);
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: "*/*",
+        copyToCacheDirectory: true,
+      });
+
+      if (result.canceled) {
+        console.log("Document picker was canceled");
+        return;
+      }
+
+      if (result.assets && result.assets.length > 0 && result.assets[0].uri) {
+        setFiles([...files, result.assets[0].uri]);
+      } else {
+        throw new Error("Invalid file selected");
+      }
+    } catch (e) {
+      console.error(e);
+      setErrorMessage("Error uploading file");
     }
   };
 
   const handleSubmit = async () => {
+    setLoading(true);
+    setErrorMessage("");
     try {
       if (!note) {
         setErrorMessage("Note is required");
@@ -66,12 +84,17 @@ const ApplyScreen = () => {
         return;
       }
 
+      console.log("Submitting application");
+      console.log("Note:", note);
+      console.log("Files:", files);
+
       //fetch current logged in user
 
       const user = AuthApp.currentUser;
 
       if (!user) {
         setErrorMessage("User not found");
+        console.error("User not found");
         return;
       }
 
@@ -112,6 +135,7 @@ const ApplyScreen = () => {
 
       if (docset) {
         setErrorMessage("Application submitted successfully");
+        console.log("Application submitted successfully");
         resetForm();
       } else {
         setErrorMessage("Failed to submit application");
@@ -119,6 +143,8 @@ const ApplyScreen = () => {
     } catch (e) {
       console.error(e);
       setErrorMessage("Error submitting application");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -196,7 +222,11 @@ const ApplyScreen = () => {
           style={styles.submitButton}
           contentStyle={styles.buttonContent}
         >
-          Submit Application
+          {loading ? (
+            <ActivityIndicator size="small" color={Colors(theme).background} />
+          ) : (
+            "Submit Application"
+          )}
         </Button>
       </ScrollView>
     </AppLayout>
