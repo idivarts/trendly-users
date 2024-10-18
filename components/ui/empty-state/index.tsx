@@ -1,9 +1,8 @@
 import { Text, View } from "@/components/theme/Themed";
 import Colors from "@/constants/Colors";
-import { PLACEHOLDER_IMAGE } from "@/constants/Placeholder";
 import stylesFn from "@/styles/empty-state/EmptyState.styles";
 import { useTheme } from "@react-navigation/native";
-import { useNavigation, useRouter } from "expo-router";
+import { Href, useNavigation, useRouter } from "expo-router";
 import { Image } from "react-native";
 import { Button } from "react-native-paper";
 
@@ -34,9 +33,9 @@ const EmptyState: React.FC<EmptyStateProps> = ({
       style={styles.container}
     >
       <Image
-        source={{ uri: image ?? PLACEHOLDER_IMAGE }}
-        width={150}
-        height={150}
+        source={image ?? require("../../../assets/images/placeholder-image.jpg")}
+        width={50}
+        height={50}
         style={styles.image}
       />
       <View
@@ -52,7 +51,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({
       {
         !hideAction && (
           <Button
-            onPress={() => actionHref ? router.push(actionHref) : navigation.goBack()}
+            onPress={() => actionHref ? router.push(actionHref as Href) : navigation.goBack()}
             style={styles.action}
             textColor={Colors(theme).text}
           >

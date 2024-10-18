@@ -1,7 +1,7 @@
 import React from "react";
 import { Modal, Pressable, StyleSheet, View, Dimensions } from "react-native";
 import { List } from "react-native-paper";
-import { useRouter } from "expo-router";
+import { Href, useRouter } from "expo-router";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import {
   DUMMY_USER_CREDENTIALS,
@@ -11,11 +11,11 @@ import { useAuthContext } from "@/contexts";
 
 interface BottomSheetActionsProps {
   cardType:
-    | "collaboration"
-    | "proposal"
-    | "invitation"
-    | "details"
-    | "pre-signin";
+  | "collaboration"
+  | "proposal"
+  | "invitation"
+  | "details"
+  | "pre-signin";
   cardId?: string;
   isVisible: boolean;
   snapPointsRange: [string, string];
@@ -77,7 +77,7 @@ const BottomSheetActions = ({
             <List.Item
               title="Report"
               onPress={() => {
-                router.push("/report");
+                router.push("/report" as Href);
                 handleClose();
               }}
             />
@@ -89,7 +89,7 @@ const BottomSheetActions = ({
             <List.Item
               title="Reject"
               onPress={() => {
-                router.push("/edit-proposal");
+                router.push("/edit-proposal" as Href);
                 handleClose();
               }}
             />
@@ -115,7 +115,7 @@ const BottomSheetActions = ({
             <List.Item
               title="Report"
               onPress={() => {
-                router.push("/report");
+                router.push("/report" as Href);
                 handleClose();
               }}
             />
@@ -127,14 +127,14 @@ const BottomSheetActions = ({
             <List.Item
               title="Withdraw"
               onPress={() => {
-                router.push("/withdraw");
+                router.push("/withdraw" as Href);
                 handleClose();
               }}
             />
             <List.Item
               title="Change Terms"
               onPress={() => {
-                router.push("/change-terms");
+                router.push("/change-terms" as Href);
                 handleClose();
               }}
             />

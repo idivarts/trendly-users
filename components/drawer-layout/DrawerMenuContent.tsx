@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { DrawerContentScrollView } from "@react-navigation/drawer";
-import { usePathname, useRouter } from "expo-router";
+import { Href, usePathname, useRouter } from "expo-router";
 import { APP_NAME } from "@/constants/App";
 import Colors from "@/constants/Colors";
 import { useTheme } from "@react-navigation/native";
@@ -63,7 +63,7 @@ const DrawerMenuContent: React.FC<DrawerMenuContentProps> = () => {
           </View>
           <View>
             {DRAWER_MENU_CONTENT_ITEMS.map((tab, index) => (
-              <Pressable key={index} onPress={() => router.push(tab.href)}>
+              <Pressable key={index} onPress={() => router.push(tab.href as Href)}>
                 <View
                   style={{
                     backgroundColor: tab.href.includes(pathname)

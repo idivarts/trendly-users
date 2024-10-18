@@ -6,7 +6,7 @@ import {
   useTheme,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack, usePathname, useRouter, useSegments } from "expo-router";
+import { Href, Stack, usePathname, useRouter, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -89,7 +89,7 @@ const RootLayoutStack = () => {
 
     if (session && inMainGroup) {
       // Redirect to main group path if signed in
-      router.replace(pathname);
+      router.replace(pathname as Href);
     } else if (session) {
       // Redirect to main group if signed in
       router.replace("/collaborations");
