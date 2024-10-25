@@ -1,9 +1,5 @@
 import { AuthContextProvider, useAuthContext } from "./auth-context.provider";
 import {
-  GroupContextProvider,
-  useGroupContext,
-} from "./group-context.provider";
-import {
   CloudMessagingContextProvider,
   useCloudMessagingContext,
 } from "./cloud-messaging.provider";
@@ -15,16 +11,16 @@ import {
   NotificationContextProvider,
   useNotificationContext,
 } from "./notification-context.provider";
+import { ChatProvider } from "./chat.provider";
 
 export {
   AuthContextProvider,
+  ChatProvider,
   CloudMessagingContextProvider,
   FirebaseStorageContextProvider,
-  GroupContextProvider,
   NotificationContextProvider,
   useAuthContext,
   useCloudMessagingContext,
   useFirebaseStorageContext,
-  useGroupContext,
   useNotificationContext,
 };

@@ -1,9 +1,9 @@
-import { GroupContextProvider } from "@/contexts";
+import { ChatProvider } from "@/contexts";
 import { Stack } from "expo-router";
 
 const MainLayout = () => {
   return (
-    <GroupContextProvider>
+    <ChatProvider>
       <Stack
         screenOptions={{
           animation: "ios",
@@ -23,7 +23,7 @@ const MainLayout = () => {
           }}
         />
       </Stack>
-    </GroupContextProvider>
+    </ChatProvider>
   );
 };
 
