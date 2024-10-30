@@ -201,6 +201,8 @@ const Applications = () => {
             <JobCard
               name={item.name}
               id={item.id}
+              data={item.applications}
+              status="pending"
               brandName={item.brandName}
               description={item.description}
               brandId={item.brandId}

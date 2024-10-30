@@ -20,16 +20,19 @@ export const stylesFn = (theme: Theme) =>
     },
     profileContent: {
       alignItems: "center",
+      width: "100%",
     },
     name: {
       fontWeight: "bold",
+      width: "100%",
       fontSize: 20,
       color: Colors(theme).text,
+      lineHeight: 20,
+      marginTop: 8,
     },
     brandName: {
       fontSize: 16,
       color: Colors(theme).text,
-      marginTop: 4,
     },
     shortDescription: {
       fontSize: 14,
@@ -41,6 +44,8 @@ export const stylesFn = (theme: Theme) =>
       flexDirection: "row",
       justifyContent: "center",
       marginTop: 12,
+      flexWrap: "wrap",
+      gap: 8,
     },
     applyButton: {
       marginVertical: 16,

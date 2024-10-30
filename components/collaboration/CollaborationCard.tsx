@@ -18,6 +18,7 @@ export interface CollaborationAdCardProps extends ICollaboration {
   id: string;
   brandHireRate?: string;
   cardType: "collaboration" | "proposal" | "invitation";
+  data?: any;
   onOpenBottomSheet: (id: string) => void;
 }
 
@@ -26,12 +27,20 @@ const JobCard = (props: CollaborationAdCardProps) => {
   const theme = useTheme();
   const styles = stylesFn(theme);
   const datePosted = new Date(props.timeStamp);
-
   return (
     <Card
       style={styles.card}
       onPress={() => {
-        router.push(`/collaboration-details/${props.id}`);
+        router.push({
+          // @ts-ignore
+          pathname: `/collaboration-details/${props.id}`,
+          params: {
+            cardType: props.cardType,
+            cardId: props.data ? props.data.id : "",
+            collaborationID:
+              props.cardType === "invitation" ? props.data.collaborationId : "",
+          },
+        });
       }}
     >
       <Card.Content>

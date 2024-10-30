@@ -1,11 +1,19 @@
 import CollaborationPage from "@/components/collaboration/CollaborationDetails";
 import { useEffect, useState } from "react";
-import { doc, getDoc } from "firebase/firestore";
+import {
+  collectionGroup,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
 import { useLocalSearchParams } from "expo-router";
 import { FirestoreDB } from "@/utils/firestore";
 import AppLayout from "@/layouts/app-layout";
 import { ActivityIndicator } from "react-native-paper";
 import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
+import { AuthApp } from "@/utils/auth";
 
 interface Collaboration extends ICollaboration {
   brandName: string;
@@ -14,12 +22,15 @@ interface Collaboration extends ICollaboration {
 }
 
 const CollaborationDetailsScreen = () => {
-  const pageID = useLocalSearchParams().pageID;
+  const { pageID, cardType, collaborationID, cardId } = useLocalSearchParams();
   const [collaboration, setCollaboration] = useState<Collaboration | undefined>(
     undefined
-  ); // Explicit type
+  );
   const [loading, setLoading] = useState(true);
+  const [invitation, setInvitation] = useState<any>();
+  const [application, setApplication] = useState();
 
+  // Fetch Collaboration Data
   const fetchCollaboration = async () => {
     if (!pageID) return;
     try {
@@ -45,9 +56,61 @@ const CollaborationDetailsScreen = () => {
     }
   };
 
+  const fetchSpecificCollaboration = async () => {
+    try {
+      // Create a query for the "applications" collection group with specific conditions
+      const applicationsQuery = query(
+        collectionGroup(FirestoreDB, "applications"),
+        where("userId", "==", AuthApp.currentUser?.uid)
+      );
+
+      // Execute the query and get the documents
+      const querySnapshot = await getDocs(applicationsQuery);
+      const applications = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      return applications;
+    } catch (error) {
+      console.error("Error fetching applications:", error);
+    }
+  };
+
+  // Fetch Specific Invitation Data
+  const fetchSpecificInvitation = async () => {
+    if (!collaborationID || !cardId) return;
+    try {
+      const invitationRef = doc(
+        // @ts-ignore
+        FirestoreDB,
+        "collaborations",
+        collaborationID,
+        "invitations",
+        cardId
+      );
+      const invitationSnapshot = await getDoc(invitationRef);
+      const invitationData = {
+        id: invitationSnapshot.id,
+        ...invitationSnapshot.data(),
+      };
+      setInvitation(invitationData);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   useEffect(() => {
     fetchCollaboration();
   }, [pageID]);
+
+  useEffect(() => {
+    if (cardType === "invitation") {
+      fetchSpecificInvitation();
+    }
+    if (cardType === "collaboration") {
+      fetchSpecificCollaboration();
+    }
+  }, [cardType, collaborationID, cardId]);
 
   if (loading)
     return (
@@ -59,7 +122,12 @@ const CollaborationDetailsScreen = () => {
   if (!collaboration) return null;
 
   return (
-    <CollaborationPage collaborationDetail={collaboration} pageID={pageID} />
+    <CollaborationPage
+      collaborationDetail={collaboration}
+      pageID={pageID}
+      cardType={cardType}
+      invitationData={invitation} // Pass invitation data if needed
+    />
   );
 };
 

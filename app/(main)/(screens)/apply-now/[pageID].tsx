@@ -50,7 +50,6 @@ const ApplyScreen = () => {
       });
 
       if (result.canceled) {
-        console.log("Document picker was canceled");
         return;
       }
 
@@ -83,10 +82,6 @@ const ApplyScreen = () => {
         setErrorMessage("Invalid page ID");
         return;
       }
-
-      console.log("Submitting application");
-      console.log("Note:", note);
-      console.log("Files:", files);
 
       //fetch current logged in user
 
@@ -135,7 +130,6 @@ const ApplyScreen = () => {
 
       if (docset) {
         setErrorMessage("Application submitted successfully");
-        console.log("Application submitted successfully");
         resetForm();
       } else {
         setErrorMessage("Failed to submit application");
