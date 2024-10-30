@@ -1,39 +1,28 @@
-import Group from '@/components/messages';
-import { View } from '@/components/theme/Themed';
-import { useGroupContext } from '@/contexts';
-import { useRouter } from 'expo-router';
-import { ActivityIndicator } from 'react-native-paper';
+import { ChannelList } from "stream-chat-expo";
 
-const GroupsScreen = () => {
-  const router = useRouter();
+import { Href, router } from "expo-router";
+import { useAuthContext } from "@/contexts";
+
+const ChannelListScreen = () => {
   const {
-    groups,
-  } = useGroupContext();
+    user,
+  } = useAuthContext();
 
-  const changeGroup = (id: string) => {
-    router.push(`/chat/${id}`);
-  };
-
-  if (!groups) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        <ActivityIndicator />
-      </View>
-    )
+  if (!user?.id) {
+    return null;
   }
 
   return (
-    <Group
-      changeGroup={changeGroup}
-      groups={groups}
+    <ChannelList
+      filters={{
+        members: { $in: [user?.id as string] },
+      }}
+      sort={{ last_updated: -1 }}
+      onSelect={(channel) => {
+        router.push(`/channel/${channel.cid}` as Href);
+      }}
     />
   );
-}
+};
 
-export default GroupsScreen;
+export default ChannelListScreen;

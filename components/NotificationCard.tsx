@@ -35,7 +35,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({
   if (collaborationId) {
     action = `/collaboration-details/${collaborationId}`;
   } else if (groupId) {
-    action = `/chat/${groupId}`;
+    action = `/channel/${groupId}`;
   }
 
   return (
