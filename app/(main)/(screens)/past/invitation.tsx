@@ -147,15 +147,17 @@ const PastApplicationPage = (props: any) => {
             <JobCard
               name={item.name}
               id={item.id}
+              data={item.applications}
               brandName={item.brandName}
               description={item.description}
+              status={item.applications.status}
               brandId={item.brandId}
               budget={{
                 min: Number(item.budget.min),
                 max: Number(item.budget.max),
               }}
               onOpenBottomSheet={openBottomSheet}
-              cardType="proposal"
+              cardType="invitation"
               collaborationType={CollaborationType.PAID}
               location={item.location}
               managerId="managerId"

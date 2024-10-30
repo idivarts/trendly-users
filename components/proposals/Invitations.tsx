@@ -206,6 +206,7 @@ const Invitations = () => {
           renderItem={({ item }) => (
             <JobCard
               id={item.id}
+              status="pending"
               name={item.name}
               brandName={item.brandName}
               onOpenBottomSheet={openBottomSheet}
@@ -215,7 +216,7 @@ const Invitations = () => {
                 min: Number(item.budget.min),
                 max: Number(item.budget.max),
               }}
-              cardType="proposal"
+              cardType="invitation"
               collaborationType={item.collaborationType}
               location={item.location}
               managerId="managerId"
@@ -225,6 +226,7 @@ const Invitations = () => {
               timeStamp={item.timeStamp}
               applications={undefined}
               invitations={undefined}
+              data={item.applications}
             />
           )}
           keyExtractor={(item, index) => index.toString()}

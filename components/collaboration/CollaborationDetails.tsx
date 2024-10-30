@@ -16,38 +16,78 @@ import { stylesFn } from "@/styles/CollaborationDetails.styles";
 import BackButton from "@/components/ui/back-button/BackButton";
 import Colors from "@/constants/Colors";
 import BottomSheetActions from "../BottomSheetActions";
+import { FirestoreDB } from "@/utils/firestore";
+import { doc, updateDoc } from "firebase/firestore";
+import Toaster from "@/shared-uis/components/toaster/Toaster";
 
 interface CollaborationAdCardProps {
-  collaborationName: string;
-  brandName: string;
-  shortDescription: string;
-  brandDescription: string;
-  adDescription: string;
-  platform: string;
-  externalLinks: string[];
-  influencersViewed: number;
-  brandViewed: number;
-  postedDate: string;
-  cost: string;
-  paymentVerified: string;
-  promotionType: string;
-  collaborationType: string;
-  influencersNeeded: number;
-  appliedCount: number;
-  aiSuccessRate: string;
-  location: {
-    type: string;
-    name?: string;
-    latlong?: any;
+  pageID: string;
+  cardType: "collaboration" | "invitation";
+  collaborationDetail: {
+    name: string;
+    brandName: string;
+    description: string;
+    appliedCount: number;
+    brandViewed: number;
+    location: {
+      name: string;
+    };
+    budget: {
+      min: number;
+      max: number;
+    };
   };
-  brandHireRate: string;
-  logo: string;
+  logo?: string;
+  invitationData?: {
+    collaborationId: string;
+    managerId: string;
+    message: string;
+    status: string;
+    timeStamp: number;
+    userId: string;
+  };
 }
 
 const CollaborationPage = (props: any) => {
   const theme = useTheme();
   const styles = stylesFn(theme);
   const [isVisible, setIsVisible] = React.useState(false);
+  const cardType = props.cardType;
+
+  const acceptInvitation = () => {
+    const invitationRef = doc(
+      FirestoreDB,
+      "collaborations",
+      props.invitationData.collaborationId,
+      "invitations",
+      props.invitationData.id
+    );
+    const updation = updateDoc(invitationRef, {
+      status: "accepted",
+    });
+    props.invitationData = {
+      ...props.invitationData,
+      status: "accepted",
+    };
+    Toaster.success("Invitation Accepted");
+  };
+  const rejectInvitation = () => {
+    const invitationRef = doc(
+      FirestoreDB,
+      "collaborations",
+      props.invitationData.collaborationId,
+      "invitations",
+      props.invitationData.id
+    );
+    const updation = updateDoc(invitationRef, {
+      status: "Rejected",
+    });
+    Toaster.success("Invitation Rejected");
+    props.invitationData = {
+      ...props.invitationData,
+      status: "Rejected",
+    };
+  };
 
   return (
     <AppLayout>
@@ -90,15 +130,47 @@ const CollaborationPage = (props: any) => {
             <Text variant="bodySmall" style={styles.shortDescription}>
               {props.collaborationDetail.description}
             </Text>
-            <Button
-              mode="contained"
-              style={styles.applyButton}
-              onPress={() => {
-                router.push(`/apply-now/${props.pageID}`);
-              }}
-            >
-              Apply Now
-            </Button>
+            {cardType === "collaboration" && (
+              <Button
+                mode="contained"
+                style={styles.applyButton}
+                onPress={() => {
+                  router.push(`/apply-now/${props.pageID}`);
+                }}
+              >
+                Apply Now
+              </Button>
+            )}
+            {cardType === "invitation" &&
+              props.invitationData?.status === "pending" && (
+                <View
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    gap: 16,
+                  }}
+                >
+                  <Button
+                    mode="contained"
+                    style={styles.applyButton}
+                    onPress={() => {
+                      acceptInvitation();
+                    }}
+                  >
+                    Accept
+                  </Button>
+                  <Button
+                    mode="contained"
+                    style={styles.applyButton}
+                    onPress={() => {
+                      rejectInvitation();
+                    }}
+                  >
+                    Reject
+                  </Button>
+                </View>
+              )}
             <View style={styles.statsContainer}>
               <Chip icon="checkbox-marked-circle" style={styles.statChip}>
                 {props.collaborationDetail.appliedCount} Applied

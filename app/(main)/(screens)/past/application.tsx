@@ -144,6 +144,7 @@ const PastApplicationPage = (props: any) => {
             <JobCard
               name={item.name}
               id={item.id}
+              data={item.applications}
               brandName={item.brandName}
               brandId={item.brandId}
               budget={{
@@ -151,6 +152,7 @@ const PastApplicationPage = (props: any) => {
                 max: Number(item.budget.max),
               }}
               description={item.description}
+              status={item.status}
               onOpenBottomSheet={openBottomSheet}
               cardType="proposal"
               collaborationType={item.collaborationType}
