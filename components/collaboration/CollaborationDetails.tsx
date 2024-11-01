@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Image, StyleSheet, ScrollView } from "react-native";
+import { View, Image, ScrollView } from "react-native";
 import {
   Text,
   Chip,
@@ -10,7 +10,7 @@ import {
   Button,
 } from "react-native-paper";
 import AppLayout from "@/layouts/app-layout";
-import { router, useLocalSearchParams } from "expo-router";
+import { router } from "expo-router";
 import { useTheme } from "@react-navigation/native";
 import { stylesFn } from "@/styles/CollaborationDetails.styles";
 import BackButton from "@/components/ui/back-button/BackButton";
@@ -19,6 +19,8 @@ import BottomSheetActions from "../BottomSheetActions";
 import { FirestoreDB } from "@/utils/firestore";
 import { doc, updateDoc } from "firebase/firestore";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
+import { useAuthContext, useChatContext as useChat, useNotificationContext } from "@/contexts";
+import { useChatContext } from "stream-chat-expo";
 
 interface CollaborationAdCardProps {
   pageID: string;
@@ -54,7 +56,18 @@ const CollaborationPage = (props: any) => {
   const [isVisible, setIsVisible] = React.useState(false);
   const cardType = props.cardType;
 
-  const acceptInvitation = () => {
+  const { client } = useChatContext();
+  const {
+    createGroupWithMembers,
+  } = useChat();
+  const {
+    createNotification,
+  } = useNotificationContext();
+  const {
+    user,
+  } = useAuthContext();
+
+  const acceptInvitation = async () => {
     const invitationRef = doc(
       FirestoreDB,
       "collaborations",
@@ -62,15 +75,34 @@ const CollaborationPage = (props: any) => {
       "invitations",
       props.invitationData.id
     );
-    const updation = updateDoc(invitationRef, {
+    await updateDoc(invitationRef, {
       status: "accepted",
+    }).then(() => {
+      createGroupWithMembers(client, props.collaborationDetail.name, [
+        client.user?.id as string,
+        props.invitationData.managerId,
+      ]).then(() => {
+        createNotification(props.invitationData.managerId, {
+          data: {
+            collaborationId: props.invitationData.collaborationId,
+          },
+          description: `${user?.name} with email id ${user?.email} accepted invitation to collaborate for ${props.collaborationDetail.name}`,
+          isRead: false,
+          timeStamp: Date.now(),
+          title: "Invitation Accepted",
+          type: "invitation-accepted",
+        }, "managers");
+
+        Toaster.success("Invitation accepted successfully");
+      });
     });
+
     props.invitationData = {
       ...props.invitationData,
       status: "accepted",
     };
-    Toaster.success("Invitation Accepted");
   };
+
   const rejectInvitation = () => {
     const invitationRef = doc(
       FirestoreDB,
