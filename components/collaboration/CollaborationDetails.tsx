@@ -20,6 +20,7 @@ import { FirestoreDB } from "@/utils/firestore";
 import { doc, updateDoc } from "firebase/firestore";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { useAuthContext, useNotificationContext } from "@/contexts";
+import Toast from "react-native-toast-message";
 
 interface CollaborationAdCardProps {
   pageID: string;
@@ -53,14 +54,11 @@ const CollaborationPage = (props: any) => {
   const theme = useTheme();
   const styles = stylesFn(theme);
   const [isVisible, setIsVisible] = React.useState(false);
+  const [status, setStatus] = React.useState("pending");
   const cardType = props.cardType;
 
-  const {
-    createNotification,
-  } = useNotificationContext();
-  const {
-    user,
-  } = useAuthContext();
+  const { createNotification } = useNotificationContext();
+  const { user } = useAuthContext();
 
   const acceptInvitation = async () => {
     const invitationRef = doc(
@@ -73,25 +71,31 @@ const CollaborationPage = (props: any) => {
     await updateDoc(invitationRef, {
       status: "accepted",
     }).then(() => {
-      createNotification(props.invitationData.managerId, {
-        data: {
-          userId: user?.id,
-          collaborationId: props.invitationData.collaborationId,
+      createNotification(
+        props.invitationData.managerId,
+        {
+          data: {
+            userId: user?.id,
+            collaborationId: props.invitationData.collaborationId,
+          },
+          description: `${user?.name} with email id ${user?.email} accepted invitation to collaborate for ${props.collaborationDetail.name}`,
+          isRead: false,
+          timeStamp: Date.now(),
+          title: "Invitation Accepted",
+          type: "invitation-accepted",
         },
-        description: `${user?.name} with email id ${user?.email} accepted invitation to collaborate for ${props.collaborationDetail.name}`,
-        isRead: false,
-        timeStamp: Date.now(),
-        title: "Invitation Accepted",
-        type: "invitation-accepted",
-      }, "managers");
-
-      Toaster.success("Invitation accepted successfully");
+        "managers"
+      );
     });
+
+    Toaster.success("Invitation accepted successfully");
 
     props.invitationData = {
       ...props.invitationData,
       status: "accepted",
     };
+    setStatus("accepted");
+    Toaster.success("Invitation Accepted");
   };
 
   const rejectInvitation = () => {
@@ -103,13 +107,14 @@ const CollaborationPage = (props: any) => {
       props.invitationData.id
     );
     const updation = updateDoc(invitationRef, {
-      status: "Rejected",
+      status: "rejected",
     });
     Toaster.success("Invitation Rejected");
     props.invitationData = {
       ...props.invitationData,
-      status: "Rejected",
+      status: "rejected",
     };
+    setStatus("rejected");
   };
 
   return (
@@ -132,6 +137,13 @@ const CollaborationPage = (props: any) => {
           }}
         />
       </Appbar.Header>
+      <View
+        style={{
+          zIndex: 1000,
+        }}
+      >
+        <Toast />
+      </View>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {/* Collaboration Details */}
         <Card style={styles.profileCard}>
@@ -165,7 +177,8 @@ const CollaborationPage = (props: any) => {
               </Button>
             )}
             {cardType === "invitation" &&
-              props.invitationData?.status === "pending" && (
+              props.invitationData?.status === "pending" &&
+              status === "pending" && (
                 <View
                   style={{
                     display: "flex",
