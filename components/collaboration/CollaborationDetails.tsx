@@ -19,8 +19,7 @@ import BottomSheetActions from "../BottomSheetActions";
 import { FirestoreDB } from "@/utils/firestore";
 import { doc, updateDoc } from "firebase/firestore";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
-import { useAuthContext, useChatContext as useChat, useNotificationContext } from "@/contexts";
-import { useChatContext } from "stream-chat-expo";
+import { useAuthContext, useNotificationContext } from "@/contexts";
 
 interface CollaborationAdCardProps {
   pageID: string;
@@ -56,10 +55,6 @@ const CollaborationPage = (props: any) => {
   const [isVisible, setIsVisible] = React.useState(false);
   const cardType = props.cardType;
 
-  const { client } = useChatContext();
-  const {
-    createGroupWithMembers,
-  } = useChat();
   const {
     createNotification,
   } = useNotificationContext();
@@ -78,27 +73,19 @@ const CollaborationPage = (props: any) => {
     await updateDoc(invitationRef, {
       status: "accepted",
     }).then(() => {
-      createGroupWithMembers(
-        client, // TODO: Fix this to create group as user cant create group, only managers can.
-        props.collaborationDetail.name,
-        [
-          client.user?.id as string,
-          props.invitationData.managerId,
-        ],
-      ).then(() => {
-        createNotification(props.invitationData.managerId, {
-          data: {
-            collaborationId: props.invitationData.collaborationId,
-          },
-          description: `${user?.name} with email id ${user?.email} accepted invitation to collaborate for ${props.collaborationDetail.name}`,
-          isRead: false,
-          timeStamp: Date.now(),
-          title: "Invitation Accepted",
-          type: "invitation-accepted",
-        }, "managers");
+      createNotification(props.invitationData.managerId, {
+        data: {
+          userId: user?.id,
+          collaborationId: props.invitationData.collaborationId,
+        },
+        description: `${user?.name} with email id ${user?.email} accepted invitation to collaborate for ${props.collaborationDetail.name}`,
+        isRead: false,
+        timeStamp: Date.now(),
+        title: "Invitation Accepted",
+        type: "invitation-accepted",
+      }, "managers");
 
-        Toaster.success("Invitation accepted successfully");
-      });
+      Toaster.success("Invitation accepted successfully");
     });
 
     props.invitationData = {
