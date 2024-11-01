@@ -6,12 +6,18 @@ import {
   useEffect,
 } from "react";
 
-import { collection, query, doc, orderBy, updateDoc, onSnapshot, where, getDocs, writeBatch } from "firebase/firestore";
+import { collection, query, doc, orderBy, updateDoc, onSnapshot, where, getDocs, writeBatch, addDoc } from "firebase/firestore";
 import { Notification } from "@/types/Notification";
 import { FirestoreDB } from "@/utils/firestore";
 import { useAuthContext } from "./auth-context.provider";
+import { INotifications } from "@/shared-libs/firestore/trendly-pro/models/notifications";
 
 interface NotificationContextProps {
+  createNotification: (
+    userId: string,
+    notification: INotifications,
+    userType?: string
+  ) => Promise<void>;
   markAllNotificationsAsRead: (userId: string) => Promise<void>;
   userNotifications: Notification[];
   unreadNotifications: number;
@@ -74,6 +80,24 @@ export const NotificationContextProvider: React.FC<PropsWithChildren> = ({
     };
   }, [user]);
 
+  const createNotification = async (
+    userId: string,
+    notification: INotifications,
+    userType: string = "users",
+  ) => {
+    const userRef = doc(FirestoreDB, userType, userId);
+    const notificationsRef = collection(userRef, "notifications");
+
+    await addDoc(notificationsRef, {
+      data: notification.data,
+      description: notification.description,
+      isRead: notification.isRead,
+      timeStamp: notification.timeStamp,
+      title: notification.title,
+      type: notification.type,
+    });
+  }
+
   const updateUserNotification = async (
     userId: string,
     notificationId: string,
@@ -116,6 +140,7 @@ export const NotificationContextProvider: React.FC<PropsWithChildren> = ({
   return (
     <NotificationContext.Provider
       value={{
+        createNotification,
         markAllNotificationsAsRead,
         userNotifications,
         unreadNotifications,
