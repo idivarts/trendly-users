@@ -5,8 +5,6 @@ import {
 } from "react";
 import { DefaultGenerics, StreamChat } from "stream-chat";
 
-import Toaster from "@/shared-uis/components/toaster/Toaster";
-
 interface ChatContextProps {
   createGroupWithMembers: (
     client: StreamChat<DefaultGenerics>,

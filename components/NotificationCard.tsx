@@ -35,7 +35,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({
   if (collaborationId) {
     action = `/collaboration-details/${collaborationId}`;
   } else if (groupId) {
-    action = `/channel/${groupId}`;
+    action = `/channel/${groupId}`; // TODO: Save the groupId or cid in the database
   }
 
   return (
