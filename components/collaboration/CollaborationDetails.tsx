@@ -78,10 +78,14 @@ const CollaborationPage = (props: any) => {
     await updateDoc(invitationRef, {
       status: "accepted",
     }).then(() => {
-      createGroupWithMembers(client, props.collaborationDetail.name, [
-        client.user?.id as string,
-        props.invitationData.managerId,
-      ]).then(() => {
+      createGroupWithMembers(
+        client, // TODO: Fix this to create group as user cant create group, only managers can.
+        props.collaborationDetail.name,
+        [
+          client.user?.id as string,
+          props.invitationData.managerId,
+        ],
+      ).then(() => {
         createNotification(props.invitationData.managerId, {
           data: {
             collaborationId: props.invitationData.collaborationId,
