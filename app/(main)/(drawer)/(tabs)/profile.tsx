@@ -7,17 +7,21 @@ import { PROFILE_BOTTOM_ITEMS, PROFILE_ITEMS } from '@/constants/Profile';
 import ProfileItemCard from '@/components/profile/ProfileItemCard';
 import ProfileCard from '@/components/profile/ProfileCard';
 import { useRouter } from 'expo-router';
+import ConfirmationModal from '@/components/ui/modal/ConfirmationModal';
+import { useState } from 'react';
 
 const ProfileScreen = () => {
   const router = useRouter();
+  const [logoutModalVisible, setLogoutModalVisible] = useState(false);
   const {
     signOutUser,
     user,
   } = useAuthContext();
 
-  const handleSignout = () => {
+  const handleSignOut = () => {
+    setLogoutModalVisible(false);
     signOutUser();
-  };
+  }
 
   return (
     <View style={styles.container}>
@@ -42,7 +46,9 @@ const ProfileScreen = () => {
           items={PROFILE_BOTTOM_ITEMS}
         />
         <ProfileItemCard
-          onPress={handleSignout}
+          onPress={() => {
+            setLogoutModalVisible(true);
+          }}
           item={{
             id: "7",
             title: "Logout",
@@ -50,6 +56,14 @@ const ProfileScreen = () => {
           }}
         />
       </View>
+      <ConfirmationModal
+        cancelAction={() => setLogoutModalVisible(false)}
+        confirmAction={handleSignOut}
+        confirmText="Logout"
+        description="Are you sure you want to logout?"
+        setVisible={setLogoutModalVisible}
+        visible={logoutModalVisible}
+      />
     </View>
   );
 }
