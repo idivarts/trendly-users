@@ -1,5 +1,5 @@
-import ChannelListNative from "@/components/channel/channel-list";
-import ChannelListWeb from "@/components/channel/channel-list.web";
+import ChannelListNative from "@/components/channel/channel";
+import ChannelListWeb from "@/components/channel/channel.web";
 import { Platform } from "react-native";
 
 const ChannelScreen = () => {
