@@ -16,6 +16,29 @@ export const stylesFn = (theme: Theme) =>
       marginBottom: 24,
       color: Colors(theme).gray100,
     },
+    previewContainer: {
+      flexDirection: "row",
+      marginTop: 10,
+    },
+    previewItem: {
+      marginRight: 10,
+      width: 80,
+      height: 80,
+      borderRadius: 8,
+      overflow: "hidden",
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: "#f0f0f0",
+    },
+    previewImage: {
+      width: "100%",
+      height: "100%",
+    },
+    previewVideo: {
+      width: "100%",
+      height: "100%",
+    },
+
     label: {
       fontSize: 16,
       fontWeight: "600",
@@ -25,7 +48,6 @@ export const stylesFn = (theme: Theme) =>
     input: {
       marginBottom: 16,
       backgroundColor: Colors(theme).white,
-      height: 150,
     },
     helperText: {
       marginBottom: 12,
@@ -33,8 +55,10 @@ export const stylesFn = (theme: Theme) =>
     },
     card: {
       marginVertical: 16,
+      marginHorizontal: "auto",
       borderRadius: 8,
       elevation: 3,
+      width: "80%",
     },
     cardContent: {
       alignItems: "center",
