@@ -6,7 +6,7 @@ import CollaborationFilter from "@/components/FilterModal";
 import AppLayout from "@/layouts/app-layout";
 import { useTheme } from "@react-navigation/native";
 import { stylesFn } from "@/styles/Collections.styles";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import { FirestoreDB } from "@/utils/firestore";
 import { AuthApp } from "@/utils/auth";
 import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
@@ -83,14 +83,23 @@ const Collaboration = () => {
     [key: string]: { name: string; paymentMethodVerified: boolean };
   }) => {
     const collabRef = collection(FirestoreDB, "collaborations");
-    const snapshot = await getDocs(collabRef);
-    const data = snapshot.docs.map(
-      (doc) => ({ ...doc.data(), id: doc.id } as ICollaborationAddCardProps)
-    );
+
+    // Use Firestore sorting by "timeStamp" in descending order (newest first)
+    const collabQuery = query(collabRef, orderBy("timeStamp", "desc"));
+    const snapshot = await getDocs(collabQuery);
+
+    const data = snapshot.docs.map((doc) => {
+      const docData = doc.data() as ICollaborationAddCardProps;
+
+      return {
+        ...docData,
+        id: doc.id,
+      };
+    });
 
     const collabsWithBrandNames = data.map((collab) => ({
       ...collab,
-      brandName: brandsMap[collab.brandId].name || "Unknown Brand",
+      brandName: brandsMap[collab.brandId]?.name || "Unknown Brand",
       paymentVerified:
         brandsMap[collab.brandId]?.paymentMethodVerified || false,
     }));
@@ -117,16 +126,6 @@ const Collaboration = () => {
       job.budget.max &&
       job.budget.max <= salaryRange[1]
     );
-  });
-
-  filteredList.sort((a, b) => {
-    //on the basis of timestamp
-
-    if (a.timeStamp < b.timeStamp) {
-      return 1;
-    } else {
-      return -1;
-    }
   });
 
   const styles = stylesFn(theme);
