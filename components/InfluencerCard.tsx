@@ -150,7 +150,7 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
       return (
         <Video
           source={{
-            uri: "https://d2x6j6vtsfyq7w.cloudfront.net/outputs/file_1731326743_1731326740581.m3u8",
+            uri: Platform.OS === "ios" ? item.appleUrl : item.playUrl,
           }}
           style={styles.media}
           resizeMode={ResizeMode.COVER}
