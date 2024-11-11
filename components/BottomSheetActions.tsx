@@ -11,11 +11,11 @@ import { useAuthContext } from "@/contexts";
 
 interface BottomSheetActionsProps {
   cardType:
-  | "collaboration"
-  | "proposal"
-  | "invitation"
-  | "details"
-  | "pre-signin";
+    | "collaboration"
+    | "proposal"
+    | "invitation"
+    | "details"
+    | "pre-signin";
   cardId?: string;
   isVisible: boolean;
   snapPointsRange: [string, string];
@@ -49,7 +49,7 @@ const BottomSheetActions = ({
     const { signIn } = useAuthContext();
 
     const handleEmailSignIn = () => {
-      signIn(DUMMY_USER_CREDENTIALS.email, DUMMY_USER_CREDENTIALS.password);
+      router.navigate("/login");
     };
 
     const handleInstagramSignIn = () => {

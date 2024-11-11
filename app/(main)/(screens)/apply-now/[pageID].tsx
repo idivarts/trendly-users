@@ -1,20 +1,22 @@
 import BackButton from "@/components/ui/back-button/BackButton";
 import Colors from "@/constants/Colors";
 import AppLayout from "@/layouts/app-layout";
-import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { stylesFn } from "@/styles/ApplyNow.styles";
 import { AuthApp } from "@/utils/auth";
-import { StorageApp } from "@/utils/firebase-storage";
-import { FirestoreDB } from "@/utils/firestore";
 import { useTheme } from "@react-navigation/native";
 import axios from "axios";
-import * as DocumentPicker from "expo-document-picker";
 import { router, useLocalSearchParams } from "expo-router";
-import { addDoc, collection } from "firebase/firestore";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import * as FileSystem from "expo-file-system";
+import * as MediaLibrary from "expo-media-library";
 import React, { useEffect, useState } from "react";
-import { ScrollView, View, ActivityIndicator, Image, Text } from "react-native";
+import {
+  ScrollView,
+  View,
+  ActivityIndicator,
+  Image,
+  Text,
+  Platform,
+} from "react-native";
 import {
   Appbar,
   Button,
@@ -51,6 +53,80 @@ const ApplyScreen = () => {
     } catch (e) {
       console.error(e);
       setErrorMessage("Error uploading file");
+    }
+  };
+
+  const getFileUrlFromPhotoUri = async (uri: string): Promise<string> => {
+    if (Platform.OS !== "ios") return uri;
+
+    if (uri.startsWith("ph://")) {
+      try {
+        // Extract asset ID from ph:// URI
+        const assetId = uri.replace("ph://", "");
+        const asset = await MediaLibrary.getAssetInfoAsync(assetId);
+
+        if (!asset?.localUri) {
+          throw new Error("Could not get local URI for video");
+        }
+
+        return asset.localUri;
+      } catch (error) {
+        console.error("Error converting ph:// URI:", error);
+        throw new Error("Failed to access video file");
+      }
+    }
+
+    return uri;
+  };
+
+  const uploadVideo = async (fileUri: string): Promise<any> => {
+    try {
+      const date = new Date().getTime();
+      const preSignedUrl = await axios.post(
+        `https://be.trendly.pro/s3/v1/videos?filename=${date}.mp4`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${AuthApp.currentUser?.uid}`,
+          },
+        }
+      );
+
+      const uploadURL = preSignedUrl.data.uploadUrl;
+
+      // Convert ph:// URI to file:// URI if needed
+      const actualFileUri = await getFileUrlFromPhotoUri(fileUri);
+
+      // Get file info using the converted URI
+      const videoInfo = await FileSystem.getInfoAsync(actualFileUri);
+      if (!videoInfo.exists) {
+        throw new Error("Video file does not exist");
+      }
+
+      // Upload file using the converted URI
+      const response = await fetch(actualFileUri);
+      const blob = await response.blob();
+
+      const result = await fetch(uploadURL, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "video/mp4",
+        },
+        body: blob,
+      });
+
+      if (!result.ok) {
+        throw new Error("Failed to upload video");
+      }
+
+      return {
+        appleUrl: preSignedUrl.data.appleUrl,
+        type: "video",
+        playUrl: preSignedUrl.data.playUrl,
+      };
+    } catch (error) {
+      console.error("Video upload error:", error);
+      throw new Error("Failed to upload video");
     }
   };
 
@@ -94,42 +170,8 @@ const ApplyScreen = () => {
             console.error("Failed to upload file");
           }
         } else {
-          const date = new Date().getTime();
-          const preSignedUrl = await axios.post(
-            `https://be.trendly.pro/s3/v1/videos?filename=${date}.mp4`,
-            {},
-            {
-              headers: {
-                Authorization: `Bearer ${AuthApp.currentUser?.uid}`,
-              },
-            }
-          );
-
-          const uploadURL = preSignedUrl.data.uploadUrl;
-          const dateAt = new Date().getTime();
-          const localUri = FileSystem.cacheDirectory + `${dateAt}.mp4`;
-          await FileSystem.copyAsync({ from: fileUri.id, to: localUri });
-
-          const response = await fetch(localUri);
-          const blob = await response.blob();
-
-          const result = await fetch(uploadURL, {
-            method: "PUT",
-            headers: {
-              "Content-Type": "video/mp4",
-            },
-            body: blob,
-          });
-
-          if (result.ok) {
-            uploadedAttachments.push({
-              appleUrl: preSignedUrl.data.appleUrl,
-              type: "video",
-              playUrl: preSignedUrl.data.playUrl,
-            });
-          } else {
-            console.error("Failed to upload file");
-          }
+          const videoResult = await uploadVideo(fileUri.id);
+          uploadedAttachments.push(videoResult);
         }
       });
 

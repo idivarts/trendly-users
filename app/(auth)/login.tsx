@@ -1,31 +1,89 @@
-import { Text, View } from "react-native";
 import { useAuthContext } from "@/contexts";
-import { Button } from "react-native";
-import { DUMMY_USER_CREDENTIALS } from "@/constants/User";
+import * as React from "react";
+import { View, StyleSheet, Image, Text } from "react-native";
+import { TextInput, Button } from "react-native-paper";
+import { useRouter } from "expo-router";
+import { useTheme } from "@react-navigation/native";
+import fnStyles from "@/styles/login.styles";
+import Toast from "react-native-toast-message";
+import Colors from "@/constants/Colors";
 
-const Login = () => {
+const LoginScreen = () => {
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [error, setError] = React.useState("");
+  const router = useRouter();
   const { signIn } = useAuthContext();
+  const theme = useTheme();
+  const styles = fnStyles(theme);
 
   const handleSignIn = () => {
-    signIn(
-      DUMMY_USER_CREDENTIALS.email,
-      DUMMY_USER_CREDENTIALS.password
-    );
+    signIn(email, password);
   };
 
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        gap: 20,
-      }}
-    >
-      <Text>Login</Text>
-      <Button title="Login" onPress={handleSignIn} />
+    <View style={styles.container}>
+      <Toast />
+      {/* Logo Section */}
+      <Image
+        source={require("../../assets/images/logo.png")} // Replace with your actual logo path
+        style={styles.logo}
+        resizeMode="contain"
+      />
+
+      {/* Title */}
+      <Text style={styles.title}>Login</Text>
+      <Text style={styles.subTitle}>Welcome to Trendly Creators</Text>
+
+      {/* Email Input Field */}
+      <TextInput
+        label="Email"
+        value={email}
+        onChangeText={setEmail}
+        mode="outlined"
+        style={styles.input}
+        theme={{ colors: { primary: Colors(theme).text } }}
+      />
+
+      {/* Password Input Field */}
+      <TextInput
+        label="Password"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry
+        mode="outlined"
+        style={styles.input}
+        theme={{ colors: { primary: Colors(theme).text } }}
+      />
+
+      {/* Login Button */}
+      <Button
+        mode="contained"
+        onPress={() => handleSignIn()}
+        style={styles.button}
+        labelStyle={styles.buttonText}
+      >
+        Login
+      </Button>
+
+      {/* Sign Up and Forgot Password Links */}
+      <View style={styles.footer}>
+        <Text style={styles.footerText}>
+          Don't have an account?{" "}
+          <Text
+            style={styles.footerLink}
+            onPress={() =>
+              router.navigate({
+                pathname: "/signup",
+              })
+            }
+          >
+            Sign Up
+          </Text>
+        </Text>
+      </View>
     </View>
   );
 };
 
-export default Login;
+export default LoginScreen;

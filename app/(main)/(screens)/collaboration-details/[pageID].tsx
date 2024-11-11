@@ -56,25 +56,25 @@ const CollaborationDetailsScreen = () => {
     }
   };
 
-  const fetchSpecificCollaboration = async () => {
-    try {
-      // Create a query for the "applications" collection group with specific conditions
-      const applicationsQuery = query(
-        collectionGroup(FirestoreDB, "applications"),
-        where("userId", "==", AuthApp.currentUser?.uid)
-      );
+  // const fetchSpecificCollaboration = async () => {
+  //   try {
+  //     // Create a query for the "applications" collection group with specific conditions
+  //     const applicationsQuery = query(
+  //       collectionGroup(FirestoreDB, "applications"),
+  //       where("userId", "==", AuthApp.currentUser?.uid)
+  //     );
 
-      // Execute the query and get the documents
-      const querySnapshot = await getDocs(applicationsQuery);
-      const applications = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      return applications;
-    } catch (error) {
-      console.error("Error fetching applications:", error);
-    }
-  };
+  //     // Execute the query and get the documents
+  //     const querySnapshot = await getDocs(applicationsQuery);
+  //     const applications = querySnapshot.docs.map((doc) => ({
+  //       id: doc.id,
+  //       ...doc.data(),
+  //     }));
+  //     return applications;
+  //   } catch (error) {
+  //     console.error("Error fetching applications:", error);
+  //   }
+  // };
 
   // Fetch Specific Invitation Data
   const fetchSpecificInvitation = async () => {
@@ -108,7 +108,8 @@ const CollaborationDetailsScreen = () => {
       fetchSpecificInvitation();
     }
     if (cardType === "collaboration") {
-      fetchSpecificCollaboration();
+      // fetchSpecificCollaboration();
+      console.log("fetchSpecificCollaboration");
     }
   }, [cardType, collaborationID, cardId]);
 
