@@ -28,6 +28,9 @@ import {
   Paragraph,
   TextInput,
 } from "react-native-paper";
+import Toaster from "@/shared-uis/components/toaster/Toaster";
+import Toast from "react-native-toast-message";
+import { FILE_SIZE } from "@/constants/FileSize";
 
 const ApplyScreen = () => {
   const params = useLocalSearchParams();
@@ -106,6 +109,11 @@ const ApplyScreen = () => {
       // Upload file using the converted URI
       const response = await fetch(actualFileUri);
       const blob = await response.blob();
+
+      if (blob.size > FILE_SIZE) {
+        Toaster.error("File size exceeds 10MB limit");
+        return;
+      }
 
       const result = await fetch(uploadURL, {
         method: "PUT",
@@ -215,6 +223,7 @@ const ApplyScreen = () => {
         <BackButton />
         <Appbar.Content title="Apply Now" color={Colors(theme).text} />
       </Appbar.Header>
+      <Toast />
       <ScrollView style={styles.container}>
         <Card style={styles.card} onPress={handleCvUpload}>
           <Card.Content style={styles.cardContent}>
