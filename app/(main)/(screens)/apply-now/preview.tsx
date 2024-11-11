@@ -74,15 +74,6 @@ const Preview = () => {
         return;
       }
 
-      console.log("Submitting application with data:", {
-        userId: user?.uid,
-        collaborationId: pageID,
-        status: "pending",
-        timeStamp: Date.now(),
-        message: note,
-        attachments: processedAttachments,
-      });
-
       const applicantData: IApplications = {
         userId: user?.uid,
         collaborationId: pageID,
