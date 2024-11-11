@@ -39,7 +39,7 @@ const Invitations = () => {
   const user = AuthApp.currentUser;
 
   const [isLoading, setIsLoading] = useState(true);
-
+  console.log("user", user?.uid);
   const fetchInvitations = async () => {
     try {
       const collaborationCol = collection(FirestoreDB, "collaborations");
@@ -85,6 +85,8 @@ const Invitations = () => {
               }));
             }
           );
+
+          console.log("applicationData", applicationData);
 
           const userApplications = applicationData.filter(
             (application) => application.userId === user?.uid
@@ -138,6 +140,8 @@ const Invitations = () => {
       }),
     [invitations]
   );
+
+  console.log("pendingInvitations", invitations);
 
   if (isLoading) {
     return (

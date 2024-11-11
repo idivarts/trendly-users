@@ -16,13 +16,13 @@ import { populateContracts } from "./contracts";
 import { dummyContracts } from "./dummy-data/contracts";
 
 const firebaseConfig = {
-  apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY!,
-  authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN!,
-  projectId: process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID!,
-  storageBucket: process.env.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET!,
-  messagingSenderId: process.env.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID!,
-  appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID!,
-  measurementId: process.env.EXPO_PUBLIC_FIREBASE_MEASUREMENT_ID!,
+  apiKey: "AIzaSyDHQpInl2OP37roYCByI4thwNpMJrYCFWE",
+  authDomain: "trendly-9ab99.firebaseapp.com",
+  projectId: "trendly-9ab99",
+  storageBucket: "trendly-9ab99.appspot.com",
+  messagingSenderId: "799278694891",
+  appId: "1:799278694891:web:33c9053ae2c1c6a95ad9ae",
+  measurementId: "G-7HR6HKN407",
 };
 
 const app = initializeApp(firebaseConfig);
@@ -32,22 +32,19 @@ const db = getFirestore(app);
 const auth = getAuth();
 
 const populateFirestore = async () => {
+  await signInAnonymously(auth);
   // await populateManagers(db, dummyManagers);
   // await populateUsers(db, dummyUsers);
   // await populateBrands(db, dummyBrands, "zJOdLfzEj5wtmHGZ6tO8");
   // await populateGroups(db, dummyGroups);
   // await populateCollaborations(db);
-  // await populateApplications(
-  //   db,
-  //   //@ts-ignore
-  //   dummyInvitations,
-  //   "09cNbHT14AYyy1t2joVL3aMeRMm1"
-  // );
-  // await populateContracts(
-  //   db,
-  //   dummyContracts,
-  //   "09cNbHT14AYyy1t2joVL3aMeRMm1"
-  // );
+  await populateApplications(
+    db,
+    //@ts-ignore
+    dummyInvitations,
+    "wN2N7q7TfTZTMU0VeEk3NSyuc2G3"
+  );
+  await populateContracts(db, dummyContracts, "wN2N7q7TfTZTMU0VeEk3NSyuc2G3");
 };
 
 populateFirestore()

@@ -119,6 +119,16 @@ const Collaboration = () => {
     );
   });
 
+  filteredList.sort((a, b) => {
+    //on the basis of timestamp
+
+    if (a.timeStamp < b.timeStamp) {
+      return 1;
+    } else {
+      return -1;
+    }
+  });
+
   const styles = stylesFn(theme);
 
   if (loading) {
