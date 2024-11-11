@@ -131,7 +131,6 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
 
   const renderMediaItem = ({ item, index }: any) => {
     if (item.type === "image") {
-      console.log(item.url);
       return (
         <TapGestureHandler
           onHandlerStateChange={({ nativeEvent }) => {
@@ -146,7 +145,6 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
         </TapGestureHandler>
       );
     } else {
-      console.log(item);
       return (
         <Video
           source={{

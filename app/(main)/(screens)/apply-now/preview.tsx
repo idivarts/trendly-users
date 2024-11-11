@@ -24,8 +24,6 @@ const Preview = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [processedAttachments, setProcessedAttachments] = useState([]);
 
-  console.log(processedAttachments);
-
   useEffect(() => {
     try {
       if (params.attachments) {
