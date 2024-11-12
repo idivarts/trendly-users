@@ -6,7 +6,7 @@ const appHeaderStyles = (theme: Theme) => StyleSheet.create({
   appbarHeader: {
     paddingVertical: 10,
     gap: 10,
-    backgroundColor: Colors(theme).white,
+    backgroundColor: Colors(theme).background,
   },
   backButtonContainer: {
     backgroundColor: "transparent",
@@ -14,7 +14,7 @@ const appHeaderStyles = (theme: Theme) => StyleSheet.create({
   appbarContent: {
   },
   appbarTitle: {
-    color: Colors(theme).black,
+    color: Colors(theme).text,
   },
 });
 
