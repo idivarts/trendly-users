@@ -87,7 +87,7 @@ const PreSignIn = () => {
   };
 
   const handleEmailSignIn = () => {
-    signIn(DUMMY_USER_CREDENTIALS.email, DUMMY_USER_CREDENTIALS.password);
+    router.navigate("/login");
   };
 
   const handleInstagramSignIn = () => {

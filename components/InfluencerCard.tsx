@@ -1,5 +1,5 @@
 import { router } from "expo-router";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   Text,
@@ -10,7 +10,13 @@ import {
   Modal,
   Platform,
 } from "react-native";
-import { Card, Avatar, IconButton, Chip } from "react-native-paper";
+import {
+  Card,
+  Avatar,
+  IconButton,
+  Chip,
+  ActivityIndicator,
+} from "react-native-paper";
 import Carousel from "react-native-reanimated-carousel";
 import { ResizeMode, Video } from "expo-av";
 import { stylesFn } from "@/styles/InfluencerCard.styles";
@@ -29,6 +35,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
+import * as FileSystem from "expo-file-system";
 
 const { width } = Dimensions.get("window");
 
@@ -62,6 +69,7 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
   const [isZoomed, setIsZoomed] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isSwiping, setIsSwiping] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   // Animation values for zoom
   const scale = useSharedValue(1);
@@ -137,41 +145,37 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
         </TapGestureHandler>
       );
     } else {
-      console.log("Video item:", item.appleUrl);
       return (
-        <TouchableOpacity
-          onPress={() => {
-            if (!isSwiping) {
-              setMuted(!muted);
-              if (index === currentIndex) {
-                setIsPlaying(!isPlaying);
-              }
-            }
+        <Video
+          source={{
+            uri: Platform.OS === "ios" ? item.appleUrl : item.playUrl,
           }}
-        >
-          <Video
-            ref={(ref) => {
-              if (ref) {
-                videoRefs.current[index] = ref;
-              }
-            }}
-            source={{
-              uri: Platform.OS === "ios" ? item.appleUrl : item.playUrl,
-            }}
-            style={styles.media}
-            resizeMode={ResizeMode.COVER}
-            useNativeControls
-            isLooping
-            isMuted={muted}
-            shouldPlay={isPlaying && currentIndex === index}
-            onError={(error) => console.log("Video Error:", error)}
-          />
-        </TouchableOpacity>
+          style={styles.media}
+          resizeMode={ResizeMode.COVER}
+          useNativeControls
+          onError={(error) => console.log("Video Error:", error)}
+        />
       );
     }
   };
 
-  // Rest of the component remains the same...
+  useEffect(() => {
+    // we need to set a timer before loading the media
+    // to prevent the carousel from crashing
+
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, []);
+
+  if (loading) {
+    return <ActivityIndicator />;
+  }
+
   return (
     <>
       <Card style={styles.card}>

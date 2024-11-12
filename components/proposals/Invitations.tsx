@@ -39,7 +39,6 @@ const Invitations = () => {
   const user = AuthApp.currentUser;
 
   const [isLoading, setIsLoading] = useState(true);
-
   const fetchInvitations = async () => {
     try {
       const collaborationCol = collection(FirestoreDB, "collaborations");
