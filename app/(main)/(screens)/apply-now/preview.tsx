@@ -7,17 +7,13 @@ import Colors from "@/constants/Colors";
 import { useTheme } from "@react-navigation/native";
 import BackButton from "@/components/ui/back-button/BackButton";
 import { AuthApp } from "@/utils/auth";
-import { StorageApp } from "@/utils/firebase-storage";
 import { FirestoreDB } from "@/utils/firestore";
 import { collection, addDoc } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const Preview = () => {
   const params = useLocalSearchParams();
-  //@ts-ignore
-  const parsedAttachments = JSON.parse(params.attachments);
   const theme = useTheme();
   const user = AuthApp.currentUser;
   const pageID = Array.isArray(params.pageID)
@@ -26,6 +22,32 @@ const Preview = () => {
   const note = Array.isArray(params.note) ? params.note[0] : params.note;
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [processedAttachments, setProcessedAttachments] = useState([]);
+
+  useEffect(() => {
+    try {
+      if (params.attachments) {
+        const rawAttachments = JSON.parse(params.attachments as string);
+        // Process the attachments to match the format expected by InfluencerCard
+        const processed = rawAttachments.map((attachment: any) => ({
+          type: attachment.type,
+          // For videos, include both URLs
+          ...(attachment.type === "video" && {
+            appleUrl: attachment.appleUrl,
+            playUrl: attachment.playUrl,
+          }),
+          // For images, include the URL
+          ...(attachment.type === "image" && {
+            url: attachment.url,
+          }),
+        }));
+        setProcessedAttachments(processed);
+      }
+    } catch (error) {
+      console.error("Error processing attachments:", error);
+      setErrorMessage("Error processing attachments");
+    }
+  }, [params.attachments]);
 
   const handleSubmit = async () => {
     setLoading(true);
@@ -36,7 +58,7 @@ const Preview = () => {
         return;
       }
 
-      if (!parsedAttachments.length) {
+      if (!processedAttachments.length) {
         setErrorMessage("File is required");
         return;
       }
@@ -45,10 +67,6 @@ const Preview = () => {
         setErrorMessage("Invalid page ID");
         return;
       }
-
-      //fetch current logged in user
-
-      const user = AuthApp.currentUser;
 
       if (!user) {
         setErrorMessage("User not found");
@@ -62,7 +80,7 @@ const Preview = () => {
         status: "pending",
         timeStamp: Date.now(),
         message: note,
-        attachments: parsedAttachments,
+        attachments: processedAttachments, // Using the processed attachments
       };
 
       const applicantDocRef = collection(
@@ -71,10 +89,14 @@ const Preview = () => {
         pageID,
         "applications"
       );
+
       const docset = await addDoc(applicantDocRef, applicantData);
 
       if (docset) {
         setErrorMessage("Application submitted successfully");
+        setTimeout(() => {
+          router.push("/collaborations");
+        }, 1000); // Give user time to see success message
       } else {
         setErrorMessage("Failed to submit application");
       }
@@ -83,7 +105,6 @@ const Preview = () => {
       setErrorMessage("Error submitting application");
     } finally {
       setLoading(false);
-      router.push("/collaborations");
     }
   };
 
@@ -106,14 +127,15 @@ const Preview = () => {
               ToggleModal={() => {}}
               type="influencer"
               influencer={{
-                bio: "I am a cool",
+                bio: "",
                 followers: 100,
                 name: user?.displayName || "John Doe",
-                profilePic: "https://randomuser.me/api/portraits",
-                handle: "john_doe",
+                profilePic:
+                  user?.photoURL || "https://randomuser.me/api/portraits",
+                handle: user?.email?.split("@")[0] || "john_doe",
                 jobsCompleted: 10,
                 rating: 5,
-                media: parsedAttachments,
+                media: processedAttachments, // Using processed attachments
                 reach: 1000,
                 successRate: 100,
               }}
@@ -122,12 +144,21 @@ const Preview = () => {
         }}
         ListFooterComponent={
           <View style={{ padding: 16 }}>
-            <Text style={{ color: "red" }}>{errorMessage}</Text>
+            <Text
+              style={{
+                color: errorMessage.includes("successfully") ? "green" : "red",
+                marginBottom: 8,
+                textAlign: "center",
+              }}
+            >
+              {errorMessage}
+            </Text>
             <Button
               mode="contained"
               onPress={handleSubmit}
               loading={loading}
               disabled={loading}
+              style={{ marginTop: 8 }}
             >
               Submit Application
             </Button>

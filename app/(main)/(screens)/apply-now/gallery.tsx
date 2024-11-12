@@ -48,6 +48,8 @@ const GalleryScreen = () => {
   const fetchPhotos = async () => {
     const album = await MediaLibrary.getAssetsAsync({
       mediaType: ["photo", "video"],
+      sortBy: ["creationTime"],
+      first: 250,
     });
     setPhotos(album.assets);
   };

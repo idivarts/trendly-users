@@ -15,9 +15,7 @@ interface BasicProfileProps {
   user: User;
 }
 
-const BasicProfile: React.FC<BasicProfileProps> = ({
-  user,
-}) => {
+const BasicProfile: React.FC<BasicProfileProps> = ({ user }) => {
   const [name, setName] = useState(user.name || "");
   const [email, setEmail] = useState(user.email || "");
   const [phoneNumber, setPhoneNumber] = useState(user.phoneNumber || "");
@@ -28,16 +26,10 @@ const BasicProfile: React.FC<BasicProfileProps> = ({
   const theme = useTheme();
   const styles = stylesFn(theme);
 
-  const {
-    lg,
-  } = useBreakpoints();
+  const { lg } = useBreakpoints();
 
-  const {
-    uploadImage,
-  } = useFirebaseStorageContext();
-  const {
-    updateUser,
-  } = useAuthContext();
+  const { uploadImage } = useFirebaseStorageContext();
+  const { updateUser } = useAuthContext();
 
   const handleSave = async () => {
     if (!name) {
@@ -51,26 +43,23 @@ const BasicProfile: React.FC<BasicProfileProps> = ({
     if (capturedImage) {
       uploadedImage = await uploadImage(
         capturedImage,
-        `users/${user.id}-profile-image`,
+        `users/${user.id}-profile-image`
       );
     }
 
-    await updateUser(
-      user.id,
-      {
-        name,
-        email,
-        phoneNumber,
-        profileImage: uploadedImage || user.profileImage,
-      },
-    );
+    await updateUser(user.id, {
+      name,
+      email,
+      phoneNumber,
+      profileImage: uploadedImage || user.profileImage,
+    });
 
     setIsSaving(false);
-  }
+  };
 
   const onImageUpload = (image: string) => {
     setCapturedImage(image);
-  }
+  };
 
   return (
     <View
@@ -78,32 +67,20 @@ const BasicProfile: React.FC<BasicProfileProps> = ({
         styles.container,
         {
           marginHorizontal: lg ? "auto" : 0,
-        }
+        },
       ]}
     >
-      <View
-        style={styles.avatarSection}
-      >
-        <View
-          style={styles.avatarRow}
-        >
-          <View
-            style={styles.avatarContainer}
-          >
+      <View style={styles.avatarSection}>
+        <View style={styles.avatarRow}>
+          <View style={styles.avatarContainer}>
             <Avatar.Image
               source={{
                 uri: capturedImage || user.profileImage || DUMMY_IMAGE,
               }}
               size={56}
             />
-            <Pressable
-              onPress={() => setIsModalVisible(true)}
-            >
-              <Text
-                style={styles.editButton}
-              >
-                Edit
-              </Text>
+            <Pressable onPress={() => setIsModalVisible(true)}>
+              <Text style={styles.editButton}>Edit</Text>
             </Pressable>
           </View>
           <View
@@ -112,15 +89,11 @@ const BasicProfile: React.FC<BasicProfileProps> = ({
               marginTop: lg ? 20 : 10,
             }}
           >
-            <Text>
-              Enter your name and add an optional profile picture
-            </Text>
+            <Text>Enter your name and add an optional profile picture</Text>
           </View>
         </View>
       </View>
-      <View
-        style={styles.textInputContainer}
-      >
+      <View style={styles.textInputContainer}>
         <TextInput
           style={{
             backgroundColor: Colors(theme).background,
@@ -158,19 +131,9 @@ const BasicProfile: React.FC<BasicProfileProps> = ({
           value={phoneNumber}
         />
       </View>
-      <View
-        style={styles.buttonContainer}
-      >
-        <Button
-          mode="contained"
-          style={styles.saveButton}
-          onPress={handleSave}
-        >
-          {
-            isSaving
-              ? "Saving..."
-              : "Save"
-          }
+      <View style={styles.buttonContainer}>
+        <Button mode="contained" style={styles.saveButton} onPress={handleSave}>
+          {isSaving ? "Saving..." : "Save"}
         </Button>
       </View>
       <ImageUploadModal
