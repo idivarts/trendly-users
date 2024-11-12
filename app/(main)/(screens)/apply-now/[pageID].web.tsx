@@ -86,7 +86,7 @@ const ApplyScreenWeb = () => {
       } else {
         return {
           type: "image",
-          url: preSignedUrl.data.url,
+          url: preSignedUrl.data.imageUrl,
         };
       }
     } catch (error) {
