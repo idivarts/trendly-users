@@ -5,6 +5,7 @@ import {
   ThemeProvider,
   useTheme,
 } from "@react-navigation/native";
+import { Provider } from "react-native-paper";
 import { useFonts } from "expo-font";
 import { Href, Stack, usePathname, useRouter, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -19,6 +20,7 @@ import {
   NotificationContextProvider,
   useAuthContext,
 } from "@/contexts";
+import CustomPaperTheme from "@/constants/Theme";
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
@@ -70,6 +72,7 @@ const RootLayout = () => {
 
 const RootLayoutStack = () => {
   const colorScheme = useColorScheme();
+  const theme = useTheme();
   const router = useRouter();
   const pathname = usePathname();
   const segments = useSegments();
@@ -101,22 +104,26 @@ const RootLayoutStack = () => {
 
   return (
     <ThemeProvider value={appTheme === "dark" ? DarkTheme : ExpoDefaultTheme}>
-      <Stack
-        screenOptions={{
-          animation: "ios",
-          headerShown: false,
-        }}
+      <Provider
+        theme={CustomPaperTheme(theme)}
       >
-        <Stack.Screen name="(public)" options={{ headerShown: false }} />
-        {!session ? (
-          <Stack.Screen name="(main)" options={{ headerShown: false }} />
-        ) : (
-          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-        )}
-        <Stack.Screen name="index" />
-        <Stack.Screen name="modal" options={{ presentation: "modal" }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
+        <Stack
+          screenOptions={{
+            animation: "ios",
+            headerShown: false,
+          }}
+        >
+          <Stack.Screen name="(public)" options={{ headerShown: false }} />
+          {!session ? (
+            <Stack.Screen name="(main)" options={{ headerShown: false }} />
+          ) : (
+            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+          )}
+          <Stack.Screen name="index" />
+          <Stack.Screen name="modal" options={{ presentation: "modal" }} />
+          <Stack.Screen name="+not-found" />
+        </Stack>
+      </Provider>
       {/* <Toast /> */}
     </ThemeProvider>
   );
