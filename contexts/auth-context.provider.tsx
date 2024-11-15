@@ -120,6 +120,11 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
           question2: "",
           question3: "",
         },
+        pushNotificationToken: {
+          ios: [],
+          android: [],
+          web: [],
+        },
         profileImage: "",
         settings: {
           emailNotifications: true,
