@@ -1,7 +1,7 @@
 import AppLayout from "@/layouts/app-layout";
 import { Stack } from "expo-router";
 
-const ScreensLayout = () => {
+const ApplyNowScreensLayout = () => {
   return (
     <AppLayout>
       <Stack
@@ -11,15 +11,21 @@ const ScreensLayout = () => {
         }}
       >
         <Stack.Screen
-          name="questions"
+          name="apply-now"
           options={{
             headerShown: false,
           }}
         />
         <Stack.Screen
-          name="notifications"
+          name="apply-now/gallery"
           options={{
-            presentation: "modal",
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="apply-now/preview"
+          options={{
+            headerShown: false,
           }}
         />
       </Stack>
@@ -27,4 +33,4 @@ const ScreensLayout = () => {
   );
 };
 
-export default ScreensLayout;
+export default ApplyNowScreensLayout;

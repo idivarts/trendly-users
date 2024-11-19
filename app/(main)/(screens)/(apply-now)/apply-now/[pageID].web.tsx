@@ -8,7 +8,7 @@ import { AuthApp } from "@/utils/auth";
 import { useTheme } from "@react-navigation/native";
 import axios from "axios";
 import { router, useLocalSearchParams } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { ScrollView, View, ActivityIndicator, Image, Text } from "react-native";
 import {
   Appbar,
@@ -46,8 +46,7 @@ const ApplyScreenWeb = () => {
     try {
       const date = new Date().getTime();
       const preSignedUrl = await axios.post(
-        `https://be.trendly.pro/s3/v1/${
-          file.type.includes("video") ? "videos" : "images"
+        `https://be.trendly.pro/s3/v1/${file.type.includes("video") ? "videos" : "images"
         }?filename=${date}.${file.type.split("/")[1]}`,
         {},
         {

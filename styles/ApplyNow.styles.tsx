@@ -9,6 +9,9 @@ export const stylesFn = (theme: Theme) =>
       padding: 20,
       backgroundColor: Colors(theme).background,
     },
+    contentContainerStyle: {
+      paddingBottom: 40,
+    },
     title: {
       fontSize: 26,
       fontWeight: "bold",

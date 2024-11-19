@@ -87,7 +87,9 @@ const CollaborationFilter = ({
         backgroundColor: Colors(theme).text,
       }}
     >
-      <BottomSheetView style={styles.container}>
+      <BottomSheetView
+        style={styles.container}
+      >
         <View style={styles.header}>
           <Text style={styles.title}>Filter</Text>
           <TouchableOpacity onPress={onClose}>

@@ -16,8 +16,7 @@ import {
 import { router, useLocalSearchParams } from "expo-router";
 import { stylesFn } from "@/styles/apply-now/gallery.styles";
 import { useTheme } from "@react-navigation/native";
-import BackButton from "@/components/ui/back-button/BackButton";
-import Colors from "@/constants/Colors";
+import ScreenHeader from "@/components/ui/screen-header";
 
 const GalleryScreen = () => {
   const { pageID } = useLocalSearchParams();
@@ -72,7 +71,7 @@ const GalleryScreen = () => {
   const handleSelectionComplete = () => {
     try {
       router.push({
-        pathname: "/apply-now/[pageID]",
+        pathname: '/apply-now',
         params: {
           note: note,
           selectedFiles: JSON.stringify(selectedItems),
@@ -163,12 +162,9 @@ const GalleryScreen = () => {
   return (
     <View style={styles.container}>
       {/* Header */}
-      <Appbar.Header
-        statusBarHeight={0}
-      >
-        <BackButton />
-        <Appbar.Content title="Barter Collab" color={Colors(theme).text} />
-      </Appbar.Header>
+      <ScreenHeader
+        title="Barter Collab"
+      />
 
       {/* Action Buttons */}
       <View style={styles.actionButtons}>

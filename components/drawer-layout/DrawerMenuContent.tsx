@@ -5,28 +5,43 @@ import { APP_NAME } from "@/constants/App";
 import Colors from "@/constants/Colors";
 import { useTheme } from "@react-navigation/native";
 import { Text, View } from "../theme/Themed";
+import {
+  faHandshake,
+  faComment,
+  faStar,
+  faUser,
+} from "@fortawesome/free-regular-svg-icons";
+import {
+  faFileSignature,
+} from "@fortawesome/free-solid-svg-icons";
+import DrawerMenuItem from "./DrawerMenuItem";
 
 interface DrawerMenuContentProps { }
 
 const DRAWER_MENU_CONTENT_ITEMS = [
   {
     href: "/proposals",
+    icon: faHandshake,
     label: "Proposals",
   },
   {
     href: "/messages",
+    icon: faComment,
     label: "Messages",
   },
   {
     href: "/collaborations",
+    icon: faStar,
     label: "Collaborations",
   },
   {
     href: "/contracts",
+    icon: faFileSignature,
     label: "Contracts",
   },
   {
     href: "/profile",
+    icon: faUser,
     label: "Profile",
   },
 ];
@@ -64,31 +79,10 @@ const DrawerMenuContent: React.FC<DrawerMenuContentProps> = () => {
           </View>
           <View>
             {DRAWER_MENU_CONTENT_ITEMS.map((tab, index) => (
-              <Pressable key={index} onPress={() => router.push(tab.href as Href)}>
-                <View
-                  style={{
-                    backgroundColor: tab.href.includes(pathname)
-                      ? Colors(theme).primary
-                      : Colors(theme).background,
-                    borderBottomWidth: StyleSheet.hairlineWidth,
-                    borderBottomColor: Colors(theme).aliceBlue,
-                    paddingHorizontal: 24,
-                    paddingVertical: 14,
-                  }}
-                >
-                  <Text
-                    style={{
-                      color: tab.href.includes(pathname)
-                        ? Colors(theme).white
-                        : Colors(theme).text,
-                      textAlign: "center",
-                      fontSize: 16,
-                    }}
-                  >
-                    {tab.label}
-                  </Text>
-                </View>
-              </Pressable>
+              <DrawerMenuItem
+                key={index}
+                tab={tab}
+              />
             ))}
           </View>
         </View>
