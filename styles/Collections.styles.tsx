@@ -7,7 +7,7 @@ export const stylesFn = (theme: Theme) =>
     container: {
       flex: 1,
       backgroundColor: Colors(theme).background,
-      padding: 16,
+      padding: 20,
     },
     searchContainer: {
       flexDirection: "row",

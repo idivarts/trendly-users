@@ -43,7 +43,7 @@ const ChannelListNative = () => {
     <>
       <View
         style={{
-          padding: 16,
+          padding: 20,
           paddingBottom: 15,
         }}
       >
