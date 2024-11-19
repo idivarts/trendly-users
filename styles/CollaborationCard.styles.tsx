@@ -20,7 +20,7 @@ export const stylesFn = (theme: Theme) =>
     header: {
       flexDirection: "row",
       justifyContent: "space-between",
-      alignItems: "center",
+      alignItems: "flex-start",
     },
     bookmarkIcon: {
       marginLeft: "auto",
@@ -28,7 +28,6 @@ export const stylesFn = (theme: Theme) =>
     collabName: {
       fontSize: 18,
       fontWeight: "bold",
-      marginTop: 10,
       maxWidth: "80%",
       color: Colors(theme).text,
     },
@@ -55,14 +54,9 @@ export const stylesFn = (theme: Theme) =>
     chipRow: {
       flexDirection: "row",
       flexWrap: "wrap",
-      marginVertical: 8,
-    },
-    chip: {
-      marginHorizontal: 4,
+      marginTop: 12,
       marginBottom: 4,
-    },
-    divider: {
-      marginVertical: 10,
+      gap: 6,
     },
     actionRow: {
       flexDirection: "row",

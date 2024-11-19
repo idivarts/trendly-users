@@ -4,22 +4,20 @@ import {
   FlatList,
   Image,
   TouchableOpacity,
-  StyleSheet,
-  Dimensions,
   Modal,
 } from "react-native";
 import * as MediaLibrary from "expo-media-library";
 import { Appbar, Button, Surface, Text, Checkbox } from "react-native-paper";
 import {
   CameraView,
-  CameraType,
   useCameraPermissions,
-  CameraPictureOptions,
   Camera,
 } from "expo-camera";
 import { router, useLocalSearchParams } from "expo-router";
 import { stylesFn } from "@/styles/apply-now/gallery.styles";
 import { useTheme } from "@react-navigation/native";
+import BackButton from "@/components/ui/back-button/BackButton";
+import Colors from "@/constants/Colors";
 
 const GalleryScreen = () => {
   const { pageID } = useLocalSearchParams();
@@ -165,9 +163,11 @@ const GalleryScreen = () => {
   return (
     <View style={styles.container}>
       {/* Header */}
-      <Appbar.Header>
-        <Appbar.BackAction onPress={() => router.back()} />
-        <Appbar.Content title="Barter Collab" />
+      <Appbar.Header
+        statusBarHeight={0}
+      >
+        <BackButton />
+        <Appbar.Content title="Barter Collab" color={Colors(theme).text} />
       </Appbar.Header>
 
       {/* Action Buttons */}

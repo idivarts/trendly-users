@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     borderRadius: 25,
-
+    gap: 10,
     width: "100%",
   },
   searchInput: {

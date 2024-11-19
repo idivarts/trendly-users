@@ -11,12 +11,13 @@ export const stylesFn = (theme: Theme) =>
       alignItems: "center",
       backgroundColor: Colors(theme).card,
       marginBottom: 16,
-      paddingHorizontal: 16,
       borderRadius: 10,
     },
     profileImage: {
-      height: 100,
-      marginVertical: 5,
+      height: 160,
+      marginBottom: 10,
+      borderTopRightRadius: 10,
+      borderTopLeftRadius: 10,
     },
     profileContent: {
       alignItems: "center",
@@ -49,21 +50,17 @@ export const stylesFn = (theme: Theme) =>
     },
     applyButton: {
       marginVertical: 16,
-      borderRadius: 25,
+    },
+    statChipText: {
+      color: Colors(theme).primary,
     },
     statChip: {
-      marginHorizontal: 8,
-      backgroundColor: Colors(theme).lightgray,
+      backgroundColor: Colors(theme).platinum,
     },
     infoCard: {
       marginBottom: 16,
       backgroundColor: Colors(theme).card,
       borderRadius: 10,
-      shadowColor: Colors(theme).black,
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.2,
-      shadowRadius: 5,
-      elevation: 3,
     },
     cardName: {
       fontSize: 16,

@@ -24,6 +24,7 @@ const BackButton: React.FC<BackButtonProps> = ({
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          marginLeft: 8,
         }}
       >
         <Pressable

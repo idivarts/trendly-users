@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, TouchableOpacity } from "react-native";
-import { Text, Card, Divider, Chip } from "react-native-paper";
+import { Text, Card, Chip } from "react-native-paper";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useTheme } from "@react-navigation/native";
 import { stylesFn } from "@/styles/CollaborationCard.styles";
@@ -60,9 +60,6 @@ const JobCard = (props: CollaborationAdCardProps) => {
               onPress={() => {
                 props.onOpenBottomSheet(props.id);
               }}
-              style={{
-                padding: 10,
-              }}
             >
               <Ionicons
                 name="ellipsis-horizontal"
@@ -92,7 +89,6 @@ const JobCard = (props: CollaborationAdCardProps) => {
           {props.cardType === "collaboration" && (
             <Chip
               style={[
-                styles.chip,
                 {
                   backgroundColor: props.paymentVerified
                     ? "#d4edda"
@@ -109,9 +105,9 @@ const JobCard = (props: CollaborationAdCardProps) => {
                 : "Payment Unverified"}
             </Chip>
           )}
-          <Chip style={styles.chip}>{props.promotionType}</Chip>
-          <Chip style={styles.chip}>{props.platform}</Chip>
-          <Chip style={styles.chip}>{props.collaborationType}</Chip>
+          <Chip>{props.promotionType}</Chip>
+          <Chip>{props.platform}</Chip>
+          <Chip>{props.collaborationType}</Chip>
         </View>
 
         {/* Influencers Needed, Applied Count, AI Success Rate, Brand Hire Rate */}

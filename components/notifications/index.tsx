@@ -18,26 +18,34 @@ const Notifications: React.FC<NotificationsProps> = ({
   const styles = stylesFn(theme);
 
   return (
-    <ScrollView style={styles.container}>
-      {notifications.length === 0 ? (
-        <EmptyState
-          actionLabel="Go back"
-          title="No notifications found"
-        />
-      ) : notifications.map((item) => (
-        <NotificationCard
-          avatar="https://cdn.iconscout.com/icon/free/png-256/avatar-370-456322.png"
-          collaborationId={item.data?.collaborationId || ""}
-          description={item.description}
-          groupId={item.data?.groupId || ""}
-          isRead={item.isRead}
-          key={item.id}
-          onMarkAsRead={() => onMarkAsRead(item.id)}
-          time={item.timeStamp}
-          title={item.title}
-        />
-      ))}
-    </ScrollView>
+    <>
+      {
+        notifications.length === 0 ? (
+          <EmptyState
+            hideAction
+            image={require("@/assets/images/illustration2.png")}
+            subtitle="We have no notifications for you today!"
+            title="You are all caught up! "
+          />
+        ) : notifications.map((item) => (
+          <ScrollView
+            style={styles.container}
+          >
+            <NotificationCard
+              avatar="https://cdn.iconscout.com/icon/free/png-256/avatar-370-456322.png"
+              collaborationId={item.data?.collaborationId || ""}
+              description={item.description}
+              groupId={item.data?.groupId || ""}
+              isRead={item.isRead}
+              key={item.id}
+              onMarkAsRead={() => onMarkAsRead(item.id)}
+              time={item.timeStamp}
+              title={item.title}
+            />
+          </ScrollView>
+        ))
+      }
+    </>
   );
 };
 

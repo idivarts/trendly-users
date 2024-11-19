@@ -132,7 +132,10 @@ const BasicProfile: React.FC<BasicProfileProps> = ({ user }) => {
         />
       </View>
       <View style={styles.buttonContainer}>
-        <Button mode="contained" style={styles.saveButton} onPress={handleSave}>
+        <Button
+          mode="contained"
+          onPress={handleSave}
+        >
           {isSaving ? "Saving..." : "Save"}
         </Button>
       </View>

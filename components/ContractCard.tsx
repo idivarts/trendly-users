@@ -67,10 +67,10 @@ const ContractCard = (props: CollaborationAdCardProps) => {
 
         {/* Payment Verified, Promotion and Collaboration Type */}
         <View style={styles.chipRow}>
-          <Chip style={styles.chip}>
+          <Chip>
             Active: {props.status.active.toString()}
           </Chip>
-          <Chip style={styles.chip}>
+          <Chip>
             Approval: {props.status.approvalPending ? "Pending" : "Approved"}
           </Chip>
         </View>

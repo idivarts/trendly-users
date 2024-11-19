@@ -208,13 +208,25 @@ const CollaborationPage = (props: any) => {
                 </View>
               )}
             <View style={styles.statsContainer}>
-              <Chip icon="checkbox-marked-circle" style={styles.statChip}>
+              <Chip
+                icon="checkbox-marked-circle"
+                style={styles.statChip}
+                textStyle={styles.statChipText}
+              >
                 {props.collaborationDetail.appliedCount} Applied
               </Chip>
-              <Chip icon="eye" style={styles.statChip}>
+              <Chip
+                icon="eye"
+                style={styles.statChip}
+                textStyle={styles.statChipText}
+              >
                 {props.collaborationDetail.brandViewed} Reviewed
               </Chip>
-              <Chip icon="map-marker" style={styles.statChip}>
+              <Chip
+                icon="map-marker"
+                style={styles.statChip}
+                textStyle={styles.statChipText}
+              >
                 {props.collaborationDetail.location.name}
               </Chip>
             </View>
@@ -230,7 +242,11 @@ const CollaborationPage = (props: any) => {
             </Text>
           </View>
           <Card.Content>
-            <Paragraph> {props.collaborationDetail.description}</Paragraph>
+            <Paragraph
+              style={styles.paragraph}
+            >
+              {props.collaborationDetail.description}
+            </Paragraph>
           </Card.Content>
         </Card>
 
@@ -243,7 +259,11 @@ const CollaborationPage = (props: any) => {
             </Text>
           </View>
           <Card.Content>
-            <Paragraph>{props.collaborationDetail.description}</Paragraph>
+            <Paragraph
+              style={styles.paragraph}
+            >
+              {props.collaborationDetail.description}
+            </Paragraph>
           </Card.Content>
         </Card>
 
@@ -269,8 +289,16 @@ const CollaborationPage = (props: any) => {
             </Text>
           </View>
           <Card.Content>
-            <Paragraph>Cost: {props.collaborationDetail.budget.min}</Paragraph>
-            <Paragraph>Payment Verified: True</Paragraph>
+            <Paragraph
+              style={styles.paragraph}
+            >
+              Cost: {props.collaborationDetail.budget.min}
+            </Paragraph>
+            <Paragraph
+              style={styles.paragraph}
+            >
+              Payment Verified: True
+            </Paragraph>
           </Card.Content>
         </Card>
       </ScrollView>

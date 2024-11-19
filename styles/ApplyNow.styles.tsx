@@ -69,10 +69,10 @@ export const stylesFn = (theme: Theme) =>
     },
     submitButton: {
       marginTop: 20,
-      borderRadius: 8,
+      borderRadius: 36,
     },
     buttonContent: {
-      paddingVertical: 8,
+      paddingVertical: 4,
     },
     errorText: {
       marginBottom: 12,

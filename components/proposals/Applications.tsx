@@ -20,6 +20,7 @@ import { AuthApp } from "@/utils/auth";
 import { RefreshControl } from "react-native";
 import { stylesFn } from "@/styles/Proposal.styles";
 import { Button } from "react-native-paper";
+import EmptyState from "../ui/empty-state";
 
 const Applications = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -150,50 +151,17 @@ const Applications = () => {
     <View
       style={{
         width: "100%",
+        flex: 1,
       }}
     >
       {proposals.length === 0 && notPendingProposals === 0 ? (
-        <View
-          style={{
-            justifyContent: "center",
-            alignItems: "center",
-            gap: 50,
-          }}
-        >
-          <Image
-            source={{ uri: "https://via.placeholder.com/150" }}
-            width={150}
-            height={150}
-            style={{
-              borderRadius: 10,
-            }}
-          />
-          <View
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              gap: 10,
-            }}
-          >
-            <Text style={styles.title}>No Applications found</Text>
-            <Text style={styles.subtitle}>
-              Go to the Collaborations page to start applying for new
-              collaborations
-            </Text>
-          </View>
-          <Button
-            onPress={() => router.push("/collaborations")}
-            style={{
-              backgroundColor: Colors(theme).platinum,
-              padding: 5,
-              borderRadius: 5,
-            }}
-            textColor={Colors(theme).text}
-          >
-            New Collaborations
-          </Button>
-        </View>
+        <EmptyState
+          image={require("@/assets/images/illustration6.png")}
+          subtitle="Start Applying today and get exclusive collabs"
+          title="No Applications yet"
+          action={() => router.push("/collaborations")}
+          actionLabel="Explore Collaborations"
+        />
       ) : pendingProposals.length !== 0 ? (
         <FlatList
           data={pendingProposals}
@@ -351,18 +319,21 @@ const Applications = () => {
             </View>
           )}
         </>
-      )}
-      {isVisible && (
-        <BottomSheetActions
-          cardId={selectedCollabId || ""}
-          cardType="proposal"
-          isVisible={isVisible}
-          onClose={closeBottomSheet}
-          snapPointsRange={["20%", "50%"]}
-          key={selectedCollabId}
-        />
-      )}
-    </View>
+      )
+      }
+      {
+        isVisible && (
+          <BottomSheetActions
+            cardId={selectedCollabId || ""}
+            cardType="proposal"
+            isVisible={isVisible}
+            onClose={closeBottomSheet}
+            snapPointsRange={["20%", "50%"]}
+            key={selectedCollabId}
+          />
+        )
+      }
+    </View >
   );
 };
 

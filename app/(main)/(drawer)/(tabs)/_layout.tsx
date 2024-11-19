@@ -8,12 +8,21 @@ import { useClientOnlyValue } from "@/components/useClientOnlyValue";
 import { useBreakpoints } from "@/hooks";
 import { useTheme } from "@react-navigation/native";
 import NotificationIcon from "@/components/notifications/notification-icon";
+import { FontAwesome6 } from "@expo/vector-icons";
 
 const TabBarIcon = (props: {
-  name: React.ComponentProps<typeof FontAwesome>["name"];
+  name: React.ComponentProps<typeof FontAwesome6>["name"];
   color: string;
 }) => {
-  return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
+  return (
+    <FontAwesome6
+      size={28}
+      style={{
+        marginBottom: -3,
+      }}
+      {...props}
+    />
+  );
 };
 
 const TabLayout = () => {
@@ -45,7 +54,7 @@ const TabLayout = () => {
           title: "Proposals",
           tabBarLabel: "Proposals",
           tabBarIcon: ({ color }) => (
-            <TabBarIcon name="handshake-o" color={color} />
+            <TabBarIcon name="handshake-simple" color={color} />
           ),
           headerRight: () => <NotificationIcon />,
         }}
@@ -56,7 +65,7 @@ const TabLayout = () => {
           title: "Messages",
           tabBarLabel: "Messages",
           tabBarIcon: ({ color }) => (
-            <TabBarIcon name="comments" color={color} />
+            <TabBarIcon name="comment" color={color} />
           ),
           headerRight: () => <NotificationIcon />,
         }}
@@ -67,14 +76,14 @@ const TabLayout = () => {
           title: "Collaborations",
           tabBarLabel: "Collaborations",
           headerRight: () => <NotificationIcon />,
-          tabBarIcon: ({ color }) => <TabBarIcon name="group" color={color} />,
+          tabBarIcon: ({ color }) => <TabBarIcon name="star" color={color} />,
         }}
       />
       <Tabs.Screen
         name="contracts"
         options={{
           tabBarIcon: ({ color }) => (
-            <TabBarIcon name="file-text-o" color={color} />
+            <TabBarIcon name="file-signature" color={color} />
           ),
           title: "Contracts",
           tabBarLabel: "Contracts",
@@ -88,7 +97,7 @@ const TabLayout = () => {
           title: "Profile",
           tabBarLabel: "Profile",
           tabBarIcon: ({ color }) => (
-            <TabBarIcon name="user-circle-o" color={color} />
+            <TabBarIcon name="user" color={color} />
           ),
         }}
       />
