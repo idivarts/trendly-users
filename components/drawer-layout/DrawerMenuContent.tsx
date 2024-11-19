@@ -1,8 +1,6 @@
-import { Pressable, StyleSheet } from "react-native";
 import { DrawerContentScrollView } from "@react-navigation/drawer";
-import { Href, usePathname, useRouter } from "expo-router";
+import { usePathname, useRouter } from "expo-router";
 import { APP_NAME } from "@/constants/App";
-import Colors from "@/constants/Colors";
 import { useTheme } from "@react-navigation/native";
 import { Text, View } from "../theme/Themed";
 import {
