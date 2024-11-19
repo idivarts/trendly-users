@@ -36,9 +36,12 @@ const Notifications: React.FC<NotificationsProps> = ({
               notifications.map((item) => (
                 <NotificationCard
                   avatar="https://cdn.iconscout.com/icon/free/png-256/avatar-370-456322.png"
-                  collaborationId={item.data?.collaborationId || ""}
+                  data={{
+                    collaborationId: item.data?.collaborationId,
+                    groupId: item.data?.groupId,
+                    userId: item.data?.userId,
+                  }}
                   description={item.description}
-                  groupId={item.data?.groupId || ""}
                   isRead={item.isRead}
                   key={item.id}
                   onMarkAsRead={() => onMarkAsRead(item.id)}
