@@ -93,10 +93,8 @@ const SignUpScreen = () => {
           <Button
             mode="contained"
             onPress={() => signUp(name, email, password)}
-            style={styles.button}
-            labelStyle={styles.buttonText}
           >
-            SIGN UP
+            Signup
           </Button>
         </View>
         {/* Login Prompt */}

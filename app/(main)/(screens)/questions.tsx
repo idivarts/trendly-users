@@ -7,12 +7,10 @@ import { SURVEY_DATA } from "@/constants/SurveyData";
 import {
   handleNextQuestion,
   handlePreviousQuestion,
-  handleSkipQuestion,
   submitSurvey,
 } from "@/components/surverHandlers";
 import { stylesFn } from "@/styles/Questions.styles";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useAuthContext } from "@/contexts";
 import Colors from "@/constants/Colors";
 
 const Questions = () => {
@@ -88,7 +86,7 @@ const Questions = () => {
               ...styles.optionItem,
               backgroundColor:
                 selectedOption === option
-                  ? Colors(theme).eerieBlack
+                  ? Colors(theme).secondary
                   : Colors(theme).whiteSmoke,
             }}
             labelStyle={

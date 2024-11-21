@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
-import { View, Text, Image, TouchableOpacity, Platform } from "react-native";
+import { View, Text, Image, TouchableOpacity, Platform, Pressable } from "react-native";
 import Swiper from "react-native-swiper";
-import { Title, Paragraph } from "react-native-paper";
+import { Title, Paragraph, Button } from "react-native-paper";
 import { Ionicons } from "@expo/vector-icons";
 import stylesFn from "@/styles/tab1.styles";
 import { useTheme } from "@react-navigation/native";
@@ -13,10 +13,6 @@ import { FacebookAuthProvider, signInWithCredential } from "firebase/auth";
 import { AuthApp as auth } from "@/utils/auth";
 import { useRouter } from "expo-router";
 import { useAuthContext } from "@/contexts";
-import {
-  DUMMY_USER_CREDENTIALS,
-  DUMMY_USER_CREDENTIALS2,
-} from "@/constants/User";
 import Colors from "@/constants/Colors";
 import { LoginManager, Settings } from "react-native-fbsdk-next";
 import { FirestoreDB } from "@/utils/firestore";
@@ -24,6 +20,8 @@ import { collection, doc, getDoc, setDoc } from "firebase/firestore";
 import { AccessToken } from "react-native-fbsdk-next";
 import { requestTrackingPermissionsAsync } from "expo-tracking-transparency";
 import BottomSheetActions from "@/components/BottomSheetActions";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -168,42 +166,29 @@ const PreSignIn = () => {
         {slides.map((slide, index) => (
           <View style={styles.slide} key={slide.key}>
             {slide.key !== "connect" && (
-              <TouchableOpacity
+              <Button
+                mode="contained"
                 style={styles.skipButton}
                 onPress={skipToConnect} // Navigate to "connect" slide
               >
-                <Text style={styles.skipButtonText}>Skip</Text>
-              </TouchableOpacity>
+                Skip
+              </Button>
             )}
             {slide.key === "connect" && (
-              <View
+              <Pressable
                 style={[
                   styles.skipButton,
-                  {
-                    backgroundColor: Colors(theme).white,
-                    paddingHorizontal: 10,
-                  },
                 ]}
+                onPress={() => {
+                  setVisible(true);
+                }}
               >
-                {/* {renderSocialButton(
-                  "mail-outline",
-                  "Login with Email",
-                  handleEmailSignIn
-                )}
-                {renderSocialButton(
-                  "logo-instagram",
-                  "Login with Instagram",
-                  handleInstagramSignIn
-                )} */}
-                <Ionicons
-                  name="ellipsis-horizontal"
+                <FontAwesomeIcon
+                  icon={faEllipsis}
                   size={24}
                   color={Colors(theme).gray100}
-                  onPress={() => {
-                    setVisible(true);
-                  }}
                 />
-              </View>
+              </Pressable>
             )}
             <View style={styles.imageContainer}>
               <Image
@@ -211,8 +196,8 @@ const PreSignIn = () => {
                   slide.key === "manage"
                     ? require("../../assets/images/design3.png")
                     : slide.key === "share"
-                    ? require("../../assets/images/design2.png")
-                    : require("../../assets/images/design1.png")
+                      ? require("../../assets/images/design2.png")
+                      : require("../../assets/images/design1.png")
                 }
                 style={styles.image}
               />

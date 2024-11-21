@@ -17,10 +17,6 @@ const styles = (theme: Theme) =>
       position: "absolute",
       top: 10,
       right: 20,
-      backgroundColor: Colors(theme).black,
-      paddingHorizontal: 20,
-      paddingVertical: 5,
-      borderRadius: 10,
     },
     skipButtonText: {
       color: Colors(theme).white,

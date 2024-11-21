@@ -58,8 +58,6 @@ const LoginScreen = () => {
       <Button
         mode="contained"
         onPress={() => handleSignIn()}
-        style={styles.button}
-        labelStyle={styles.buttonText}
       >
         Login
       </Button>
