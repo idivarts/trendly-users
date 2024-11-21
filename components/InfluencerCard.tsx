@@ -7,8 +7,9 @@ import {
   Dimensions,
   Modal,
   ActivityIndicator,
+  Pressable,
 } from "react-native";
-import { Card, Avatar, IconButton, Chip } from "react-native-paper";
+import { Card, Avatar } from "react-native-paper";
 import { stylesFn } from "@/styles/InfluencerCard.styles";
 import { useTheme } from "@react-navigation/native";
 import {
@@ -21,9 +22,13 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import CarouselNative from "./ui/carousel/carousel";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faStar } from "@fortawesome/free-regular-svg-icons";
+import { convertToKUnits } from "@/utils/conversion";
+import { faBullseye, faEllipsis, faMessage, faUsers } from "@fortawesome/free-solid-svg-icons";
+import Tag from "./ui/tag";
 
 const { width } = Dimensions.get("window");
 
@@ -125,9 +130,9 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
           </View>
           {props.type === "invitation" &&
             (props.alreadyInvited ? (
-              <Chip icon="check">Invited</Chip>
+              <Tag icon="check">Invited</Tag>
             ) : (
-              <Chip
+              <Tag
                 icon="plus"
                 onPress={() => {
                   if (props.ToggleMessageModal) {
@@ -136,14 +141,19 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
                 }}
               >
                 Invite
-              </Chip>
+              </Tag>
             ))}
-          <IconButton
-            icon="dots-horizontal"
+          <Pressable
             onPress={() => {
               props.ToggleModal();
             }}
-          />
+          >
+            <FontAwesomeIcon
+              icon={faEllipsis}
+              size={24}
+              color={Colors(theme).text}
+            />
+          </Pressable>
         </View>
 
         <CarouselNative
@@ -151,47 +161,57 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
           onImagePress={onImagePress}
         />
 
-        <View style={styles.stats}>
-          <View style={styles.statItem}>
-            <MaterialCommunityIcons
-              name="account-group"
-              size={20}
-              color={theme.colors.primary}
-            />
-            <Text style={styles.statsText}>
-              {influencer.followers} Followers
-            </Text>
-          </View>
-          <View style={styles.statItem}>
-            <MaterialCommunityIcons
-              name="radar"
-              size={20}
-              color={theme.colors.primary}
-            />
-            <Text style={styles.statsText}>{influencer.reach} Reach</Text>
-          </View>
-          <View style={styles.statItem}>
-            <MaterialCommunityIcons
-              name="star"
-              size={20}
-              color={theme.colors.primary}
-            />
-            <Text style={styles.statsText}>{influencer.rating} Rating</Text>
-          </View>
-          <View style={styles.statItem}>
-            <MaterialCommunityIcons
-              name="message"
-              size={28}
-              color={Colors(theme).primary}
-            />
-          </View>
-        </View>
-
         <TouchableOpacity onPress={() => setBioExpanded(!bioExpanded)}>
           <Text numberOfLines={bioExpanded ? undefined : 2} style={styles.bio}>
             {influencer.bio}
           </Text>
         </TouchableOpacity>
+
+        <View
+          style={styles.content}
+        >
+          <View style={styles.stats}>
+            <View style={styles.statsContainer}>
+              <View style={styles.statItem}>
+                <FontAwesomeIcon
+                  icon={faUsers}
+                  color={Colors(theme).primary}
+                  size={20}
+                />
+                <Text style={styles.statsText}>
+                  {convertToKUnits(Number(influencer.followers))}
+                </Text>
+              </View>
+              <View style={styles.statItem}>
+                <FontAwesomeIcon
+                  icon={faBullseye}
+                  color={Colors(theme).primary}
+                  size={20}
+                />
+                <Text style={styles.statsText}>
+                  {convertToKUnits(Number(influencer.reach))}
+                </Text>
+              </View>
+              <View style={styles.statItem}>
+                <FontAwesomeIcon
+                  icon={faStar}
+                  color={Colors(theme).primary}
+                  size={20}
+                />
+                <Text style={styles.statsText}>
+                  {influencer.rating}
+                </Text>
+              </View>
+            </View>
+            <View style={styles.statItem}>
+              <FontAwesomeIcon
+                icon={faMessage}
+                color={Colors(theme).primary}
+                size={18}
+              />
+            </View>
+          </View>
+        </View>
 
         <TouchableOpacity
           onPress={() => {

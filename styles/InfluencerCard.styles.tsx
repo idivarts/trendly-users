@@ -7,7 +7,7 @@ export const stylesFn = (theme: Theme) =>
     card: {
       marginVertical: 10,
       flex: 1,
-      padding: 10,
+      padding: 16,
       backgroundColor: Colors(theme).card,
     },
     header: {
@@ -15,14 +15,18 @@ export const stylesFn = (theme: Theme) =>
       alignItems: "center",
       justifyContent: "space-between",
     },
+    content: {
+      paddingTop: 8,
+    },
     statItem: {
-      flexDirection: "column",
       alignItems: "center",
+      flexDirection: "row",
+      gap: 2,
     },
     statsText: {
-      marginLeft: 5, // Adds spacing between the icon and the text
+      marginLeft: 5,
       color: Colors(theme).text,
-      fontSize: 16,
+      fontSize: 12,
     },
 
     nameContainer: {
@@ -63,10 +67,14 @@ export const stylesFn = (theme: Theme) =>
       alignSelf: "center",
     },
     stats: {
-      flexDirection: "row",
-      justifyContent: "space-around",
       marginVertical: 10,
-      gap: 10,
+      flexDirection: "row",
+      justifyContent: "space-between",
+    },
+    statsContainer: {
+      gap: 20,
+      flexDirection: "row",
+      justifyContent: "space-between",
     },
     bio: {
       fontSize: 14,
