@@ -2,7 +2,6 @@ import React from "react";
 import { View, Image, ScrollView } from "react-native";
 import {
   Text,
-  Chip,
   Card,
   Paragraph,
   Button,
@@ -14,6 +13,7 @@ import { FirestoreDB } from "@/utils/firestore";
 import { doc, updateDoc } from "firebase/firestore";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { useAuthContext, useNotificationContext } from "@/contexts";
+import Tag from "@/components/ui/tag";
 
 interface CollaborationAdCardProps {
   pageID: string;
@@ -174,27 +174,21 @@ const CollborationDetailsContent = (props: any) => {
               </View>
             )}
           <View style={styles.statsContainer}>
-            <Chip
+            <Tag
               icon="checkbox-marked-circle"
-              style={styles.statChip}
-              textStyle={styles.statChipText}
             >
               {props.collaborationDetail.appliedCount} Applied
-            </Chip>
-            <Chip
+            </Tag>
+            <Tag
               icon="eye"
-              style={styles.statChip}
-              textStyle={styles.statChipText}
             >
               {props.collaborationDetail.brandViewed} Reviewed
-            </Chip>
-            <Chip
+            </Tag>
+            <Tag
               icon="map-marker"
-              style={styles.statChip}
-              textStyle={styles.statChipText}
             >
               {props.collaborationDetail.location.name}
-            </Chip>
+            </Tag>
           </View>
         </Card.Content>
       </Card>

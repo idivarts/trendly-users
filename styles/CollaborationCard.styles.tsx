@@ -5,12 +5,10 @@ import { StyleSheet } from "react-native";
 export const stylesFn = (theme: Theme) =>
   StyleSheet.create({
     card: {
-      borderRadius: 16,
+      borderRadius: 10,
       padding: 10,
-      marginVertical: 8,
-      marginHorizontal: 5,
       backgroundColor: Colors(theme).card,
-      elevation: 2,
+      shadowColor: Colors(theme).transparent,
     },
     bottomSheetContent: {
       position: "absolute",

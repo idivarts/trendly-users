@@ -254,33 +254,15 @@ const Applications = () => {
                 gap: 50,
               }}
             >
-              <Image
-                source={{ uri: "https://via.placeholder.com/150" }}
-                width={150}
-                height={150}
-                style={{
-                  borderRadius: 10,
-                }}
+              <EmptyState
+                image={require("@/assets/images/illustration6.png")}
+                subtitle="No Applications Found"
+                hideAction
               />
-              <View
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  gap: 10,
-                }}
-              >
-                <Text style={styles.title}>No Applications found</Text>
-              </View>
 
               <Button
+                mode="contained"
                 onPress={() => router.push("/collaborations")}
-                style={{
-                  backgroundColor: Colors(theme).platinum,
-                  padding: 5,
-                  borderRadius: 5,
-                }}
-                textColor={Colors(theme).text}
               >
                 New Collaborations
               </Button>

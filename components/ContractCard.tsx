@@ -1,11 +1,12 @@
-import React, { useState } from "react";
-import { View, StyleSheet, TouchableOpacity } from "react-native";
-import { Text, Card, Button, Divider, Chip } from "react-native-paper";
-import { Link, useRouter } from "expo-router";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import Colors from "@/constants/Colors";
+import React from "react";
+import { View, TouchableOpacity } from "react-native";
+import { Text, Card, Chip } from "react-native-paper";
+import { useRouter } from "expo-router";
 import { useTheme } from "@react-navigation/native";
 import { stylesFn } from "@/styles/CollaborationCard.styles";
+import Colors from "@/constants/Colors";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
 
 interface CollaborationAdCardProps {
   collaborationName: string;
@@ -25,7 +26,6 @@ interface CollaborationAdCardProps {
 }
 
 const ContractCard = (props: CollaborationAdCardProps) => {
-  const [bookmarked, setBookmarked] = useState(false);
   const router = useRouter();
   const theme = useTheme();
   const styles = stylesFn(theme);
@@ -55,7 +55,11 @@ const ContractCard = (props: CollaborationAdCardProps) => {
                 props.onOpenBottomSheet(props.id);
               }}
             >
-              <Ionicons name="ellipsis-horizontal" size={24} color="#555" />
+              <FontAwesomeIcon
+                icon={faEllipsis}
+                size={24}
+                color={Colors(theme).text}
+              />
             </TouchableOpacity>
           </View>
         </View>

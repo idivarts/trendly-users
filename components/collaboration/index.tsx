@@ -177,8 +177,14 @@ const Collaboration = () => {
                 />
               )}
               keyExtractor={(item) => item.id}
+              style={{
+                flexGrow: 1,
+                paddingTop: 8,
+                paddingHorizontal: 16,
+              }}
               contentContainerStyle={{
-                paddingBottom: 100,
+                gap: 16,
+                paddingBottom: 24,
               }}
             />
           )

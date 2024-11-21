@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import { View, TouchableOpacity } from "react-native";
 import { Text, Card, Chip } from "react-native-paper";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import { useTheme } from "@react-navigation/native";
 import { stylesFn } from "@/styles/CollaborationCard.styles";
 import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { router } from "expo-router";
 import { formatDistanceToNow } from "date-fns";
 import Colors from "@/constants/Colors";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
 
 export interface CollaborationAdCardProps extends ICollaboration {
   name: string;
@@ -46,7 +47,11 @@ const JobCard = (props: CollaborationAdCardProps) => {
       <Card.Content>
         {/* Header */}
         <View style={styles.header}>
-          <View>
+          <View
+            style={{
+              flex: 1,
+            }}
+          >
             <Text style={styles.collabName}>{props.name}</Text>
             <Text style={styles.brandName}>{props.brandName}</Text>
           </View>
@@ -61,10 +66,10 @@ const JobCard = (props: CollaborationAdCardProps) => {
                 props.onOpenBottomSheet(props.id);
               }}
             >
-              <Ionicons
-                name="ellipsis-horizontal"
-                size={30}
-                color={Colors(theme).gray100}
+              <FontAwesomeIcon
+                icon={faEllipsis}
+                size={24}
+                color={Colors(theme).text}
               />
             </TouchableOpacity>
           </View>

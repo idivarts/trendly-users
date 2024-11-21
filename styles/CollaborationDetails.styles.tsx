@@ -6,12 +6,13 @@ export const stylesFn = (theme: Theme) =>
   StyleSheet.create({
     scrollContainer: {
       padding: 16,
+      gap: 16,
     },
     profileCard: {
       alignItems: "center",
       backgroundColor: Colors(theme).card,
-      marginBottom: 16,
       borderRadius: 10,
+      shadowColor: Colors(theme).transparent,
     },
     profileImage: {
       height: 160,
@@ -51,16 +52,10 @@ export const stylesFn = (theme: Theme) =>
     applyButton: {
       marginVertical: 16,
     },
-    statChipText: {
-      color: Colors(theme).primary,
-    },
-    statChip: {
-      backgroundColor: Colors(theme).platinum,
-    },
     infoCard: {
-      marginBottom: 16,
       backgroundColor: Colors(theme).card,
       borderRadius: 10,
+      shadowColor: Colors(theme).transparent,
     },
     cardName: {
       fontSize: 16,

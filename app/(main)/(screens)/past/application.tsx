@@ -3,7 +3,6 @@ import { View, FlatList } from "react-native";
 import { Appbar } from "react-native-paper";
 import AppLayout from "@/layouts/app-layout";
 import { useTheme } from "@react-navigation/native";
-import { stylesFn } from "@/styles/CollaborationDetails.styles";
 import BackButton from "@/components/ui/back-button/BackButton";
 import JobCard from "@/components/collaboration/CollaborationCard";
 import Colors from "@/constants/Colors";
@@ -21,7 +20,6 @@ import BottomSheetActions from "@/components/BottomSheetActions";
 
 const PastApplicationPage = (props: any) => {
   const theme = useTheme();
-  const styles = stylesFn(theme);
   const [isVisible, setIsVisible] = React.useState(false);
   const [proposals, setProposals] = React.useState<any>();
   const [isLoading, setIsLoading] = React.useState(true);
