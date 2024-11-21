@@ -20,7 +20,6 @@ import {
   HelperText,
   List,
 } from "react-native-paper";
-import Toast from "react-native-toast-message";
 
 const ApplyScreenWeb = () => {
   const [note, setNote] = useState<string>("");
@@ -135,7 +134,6 @@ const ApplyScreenWeb = () => {
         <BackButton />
         <Appbar.Content title="Apply Now" color={Colors(theme).text} />
       </Appbar.Header>
-      <Toast />
       <ScrollView style={styles.container}>
         {/* File Upload */}
         <Card style={styles.card}>

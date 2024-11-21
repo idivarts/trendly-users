@@ -124,7 +124,6 @@ const RootLayoutStack = () => {
           <Stack.Screen name="+not-found" />
         </Stack>
       </Provider>
-      {/* <Toast /> */}
     </ThemeProvider>
   );
 };

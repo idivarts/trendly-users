@@ -28,7 +28,6 @@ import {
   TextInput,
 } from "react-native-paper";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
-import Toast from "react-native-toast-message";
 import { FILE_SIZE } from "@/constants/FileSize";
 
 const ApplyScreen = () => {
@@ -222,7 +221,6 @@ const ApplyScreen = () => {
         <BackButton />
         <Appbar.Content title="Apply Now" color={Colors(theme).text} />
       </Appbar.Header>
-      <Toast />
       <ScrollView style={styles.container}>
         <Card style={styles.card} onPress={handleCvUpload}>
           <Card.Content style={styles.cardContent}>
