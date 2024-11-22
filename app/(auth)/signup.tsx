@@ -14,7 +14,6 @@ import { TextInput, Button } from "react-native-paper";
 import fnStyles from "@/styles/signup.styles";
 import { useTheme } from "@react-navigation/native";
 import { useAuthContext } from "@/contexts";
-import Toast from "react-native-toast-message";
 import Colors from "@/constants/Colors";
 
 const SignUpScreen = () => {
@@ -43,7 +42,6 @@ const SignUpScreen = () => {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        <Toast />
         {/* Logo Section */}
         <Image
           source={require("../../assets/images/logo.png")}
@@ -95,10 +93,8 @@ const SignUpScreen = () => {
           <Button
             mode="contained"
             onPress={() => signUp(name, email, password)}
-            style={styles.button}
-            labelStyle={styles.buttonText}
           >
-            SIGN UP
+            Signup
           </Button>
         </View>
         {/* Login Prompt */}

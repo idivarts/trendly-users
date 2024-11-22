@@ -4,7 +4,7 @@ import { Text, View } from "@/components/theme/Themed";
 import Colors from "@/constants/Colors";
 import AppLayout from "@/layouts/app-layout";
 import { useTheme } from "@react-navigation/native";
-import { Link, router } from "expo-router";
+import { Link } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import {
   collection,
@@ -14,12 +14,11 @@ import {
   doc as firebaseDoc,
   getDoc,
 } from "firebase/firestore";
-import { ActivityIndicator, FlatList, Image } from "react-native";
+import { ActivityIndicator, FlatList, RefreshControl } from "react-native";
 import { FirestoreDB } from "@/utils/firestore";
 import { AuthApp } from "@/utils/auth";
-import { RefreshControl } from "react-native";
 import { stylesFn } from "@/styles/Proposal.styles";
-import { Button } from "react-native-paper";
+import EmptyState from "../ui/empty-state";
 
 const Invitations = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -152,53 +151,16 @@ const Invitations = () => {
     <View
       style={{
         width: "100%",
+        flex: 1,
       }}
     >
       {pendingInvitations.length === 0 && notPendingInvitations === 0 ? (
-        <View
-          style={{
-            justifyContent: "center",
-            alignItems: "center",
-            gap: 50,
-          }}
-        >
-          <Image
-            source={{ uri: "https://via.placeholder.com/150" }}
-            width={150}
-            height={150}
-            style={{
-              borderRadius: 10,
-            }}
-          />
-          <View
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              gap: 10,
-            }}
-          >
-            <Text style={styles.title}>No Invitations found</Text>
-            <Text style={styles.subtitle}>
-              Go to the Collaborations page to start applying for new
-              collaborations
-            </Text>
-          </View>
-          {/* <TouchableOpacity onPress={() => router.push("/collaborations")}>
-                          <Text style={styles.title}>New Collaborations</Text>
-                        </TouchableOpacity> */}
-          <Button
-            onPress={() => router.push("/collaborations")}
-            style={{
-              backgroundColor: Colors(theme).platinum,
-              padding: 5,
-              borderRadius: 5,
-            }}
-            textColor={Colors(theme).text}
-          >
-            New Collaborations
-          </Button>
-        </View>
+        <EmptyState
+          hideAction
+          image={require("@/assets/images/illustration5.png")}
+          subtitle="Start building your profile today to have better reach. If any brand invites you to collaborate we woudl show it here"
+          title="No Invitations yet"
+        />
       ) : pendingInvitations.length !== 0 ? (
         <FlatList
           data={pendingInvitations}
@@ -229,7 +191,6 @@ const Invitations = () => {
             />
           )}
           keyExtractor={(item, index) => index.toString()}
-          style={{ height: "100%", width: "100%" }}
           ListFooterComponent={
             <View
               style={{
@@ -268,6 +229,10 @@ const Invitations = () => {
               )}
             </View>
           }
+          contentContainerStyle={{
+            padding: 16,
+            gap: 16,
+          }}
           refreshControl={
             <RefreshControl
               refreshing={refreshing}

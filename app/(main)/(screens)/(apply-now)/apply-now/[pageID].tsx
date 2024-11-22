@@ -1,5 +1,3 @@
-import BackButton from "@/components/ui/back-button/BackButton";
-import Colors from "@/constants/Colors";
 import AppLayout from "@/layouts/app-layout";
 import { stylesFn } from "@/styles/ApplyNow.styles";
 import { AuthApp } from "@/utils/auth";
@@ -12,16 +10,11 @@ import React, { useEffect, useState } from "react";
 import {
   ScrollView,
   View,
-  ActivityIndicator,
-  Image,
-  Text,
   Platform,
 } from "react-native";
 import {
-  Appbar,
   Button,
   Card,
-  Chip,
   HelperText,
   IconButton,
   List,
@@ -29,9 +22,11 @@ import {
   TextInput,
 } from "react-native-paper";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
-import Toast from "react-native-toast-message";
 import { FILE_SIZE } from "@/constants/FileSize";
+import ScreenHeader from "@/components/ui/screen-header";
+import CarouselNative from "@/components/ui/carousel/carousel";
 
+// TODO: Refactor this component
 const ApplyScreen = () => {
   const params = useLocalSearchParams();
   const pageID = Array.isArray(params.pageID)
@@ -214,17 +209,11 @@ const ApplyScreen = () => {
 
   return (
     <AppLayout>
-      <Appbar.Header
-        statusBarHeight={0}
-        style={{
-          backgroundColor: Colors(theme).background,
-        }}
+      <ScreenHeader title="Apply Now" />
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.contentContainerStyle}
       >
-        <BackButton />
-        <Appbar.Content title="Apply Now" color={Colors(theme).text} />
-      </Appbar.Header>
-      <Toast />
-      <ScrollView style={styles.container}>
         <Card style={styles.card} onPress={handleCvUpload}>
           <Card.Content style={styles.cardContent}>
             <IconButton icon="camera" size={40} style={styles.uploadIcon} />
@@ -233,89 +222,92 @@ const ApplyScreen = () => {
             </Paragraph>
           </Card.Content>
         </Card>
-        {/* Note Input */}
-        <TextInput
-          label="Add a short note"
-          value={note}
-          onChangeText={(text) => setNote(text)}
-          mode="outlined"
-          style={styles.input}
-          outlineStyle={{
-            borderRadius: 8,
-            borderWidth: 0,
-            borderBottomWidth: 1,
-            borderColor: Colors(theme).gray100,
-            backgroundColor: Colors(theme).background,
-          }}
-          multiline
-          theme={{ colors: { primary: Colors(theme).primary } }}
-        />
-        <HelperText type="info" style={styles.helperText}>
-          Write a short note to the brand about why you are interested in this
-        </HelperText>
-        {/* CV Upload */}
-        {/* Uploaded Files */}
-        {files.length > 0 && (
-          <>
-            <Text>Attachments</Text>
-            <ScrollView horizontal style={styles.previewContainer}>
-              {files.map((fileUri: any, index) => {
-                return (
-                  <View key={index} style={styles.previewItem}>
-                    <Image
-                      source={{ uri: fileUri.id }}
-                      style={styles.previewImage}
-                      resizeMode="cover"
-                    />
-                  </View>
-                );
+
+        {
+          files.length > 0 && (
+            <CarouselNative
+              data={files.map((file: any) => {
+                return {
+                  type: file.type,
+                  url: file.id,
+                };
               })}
-            </ScrollView>
-          </>
-        )}
-        {/* Error Message */}
-        <List.Section>
-          <List.Item
-            title="Your Quote"
-            left={() => <List.Icon icon="format-quote-close" />}
-            onPress={() => console.log("Quote")}
-          />
-          <List.Item
-            title="Attachments"
-            left={() => <List.Icon icon="attachment" />}
-            onPress={() => console.log("Attachments")}
-          />
-          <List.Item
-            title="Add relevant Links"
-            left={() => <List.Icon icon="link" />}
-            onPress={() => console.log("Links")}
-          />
-          <List.Item
-            title="Add location"
-            left={() => <List.Icon icon="map-marker" />}
-            onPress={() => console.log("Location")}
-          />
-        </List.Section>
-        {errorMessage ? (
-          <HelperText type="error" style={styles.errorText}>
-            {errorMessage}
-          </HelperText>
-        ) : null}
-        {/* Submit Button */}
-        <Button
-          mode="contained"
-          onPress={async () => {
-            await handleUploadImage();
+              onImagePress={(index) => {
+                console.log("Image Pressed", index);
+              }}
+            />
+          )
+        }
+
+        <View
+          style={{
+            paddingHorizontal: 16,
+            paddingTop: 16,
           }}
-          style={styles.submitButton}
-          contentStyle={styles.buttonContent}
         >
-          {loading ? (
-            <ActivityIndicator size="small" color={Colors(theme).background} />
-          ) : (
-            "Preview Application"
-          )}
-        </Button>
+          <TextInput
+            label="Add a short note"
+            mode="outlined"
+            multiline
+            onChangeText={(text) => setNote(text)}
+            style={styles.input}
+            value={note}
+          />
+          <HelperText type="info" style={styles.helperText}>
+            Write a short note to the brand about why you are interested in this
+          </HelperText>
+
+          <List.Section>
+            <List.Item
+              title="Your Quote"
+              left={() => <List.Icon icon="format-quote-close" />}
+              onPress={() => console.log("Quote")}
+            />
+            <List.Item
+              title="Attachments"
+              left={() => <List.Icon icon="attachment" />}
+              onPress={() => console.log("Attachments")}
+            />
+            <List.Item
+              title="Add relevant Links"
+              left={() => <List.Icon icon="link" />}
+              onPress={() => console.log("Links")}
+            />
+            <List.Item
+              title="Add location"
+              left={() => <List.Icon icon="map-marker" />}
+              onPress={() => console.log("Location")}
+            />
+          </List.Section>
+
+          {
+            errorMessage ? (
+              <HelperText type="error" style={styles.errorText}>
+                {errorMessage}
+              </HelperText>
+            ) : null
+          }
+
+          <Button
+            mode="contained"
+            onPress={async () => {
+              if (!note || note.length === 0) {
+                Toaster.error("Please add a note");
+                return;
+              }
+
+              if (files.length === 0) {
+                Toaster.error("Please upload a asset");
+                return;
+              }
+
+              await handleUploadImage();
+            }}
+            loading={loading}
+          >
+            Preview Application
+          </Button>
+        </View>
       </ScrollView>
     </AppLayout>
   );

@@ -1,19 +1,15 @@
-import CollaborationPage from "@/components/collaboration/CollaborationDetails";
 import { useEffect, useState } from "react";
+import { ActivityIndicator } from "react-native";
+
 import {
-  collectionGroup,
   doc,
   getDoc,
-  getDocs,
-  query,
-  where,
 } from "firebase/firestore";
-import { useLocalSearchParams } from "expo-router";
+
 import { FirestoreDB } from "@/utils/firestore";
-import AppLayout from "@/layouts/app-layout";
-import { ActivityIndicator } from "react-native-paper";
+import CollaborationDetailsContent from "./CollaborationDetailsContent";
 import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
-import { AuthApp } from "@/utils/auth";
+import { View } from "@/components/theme/Themed";
 
 interface Collaboration extends ICollaboration {
   brandName: string;
@@ -21,14 +17,24 @@ interface Collaboration extends ICollaboration {
   brandDescription: string;
 }
 
-const CollaborationDetailsScreen = () => {
-  const { pageID, cardType, collaborationID, cardId } = useLocalSearchParams();
+interface CollaborationDetailsProps {
+  pageID: string;
+  cardType: string;
+  collaborationID: string;
+  cardId: string;
+}
+
+const CollaborationDetails: React.FC<CollaborationDetailsProps> = ({
+  pageID,
+  cardType,
+  collaborationID,
+  cardId,
+}) => {
   const [collaboration, setCollaboration] = useState<Collaboration | undefined>(
     undefined
   );
   const [loading, setLoading] = useState(true);
   const [invitation, setInvitation] = useState<any>();
-  const [application, setApplication] = useState();
 
   // Fetch Collaboration Data
   const fetchCollaboration = async () => {
@@ -89,23 +95,31 @@ const CollaborationDetailsScreen = () => {
     }
   }, [cardType, collaborationID, cardId]);
 
-  if (loading)
+  if (loading) {
     return (
-      <AppLayout>
-        <ActivityIndicator />
-      </AppLayout>
-    );
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <ActivityIndicator size="large" />
+      </View>
+    )
+  }
 
   if (!collaboration) return null;
 
   return (
-    <CollaborationPage
+    <CollaborationDetailsContent
+      cardType={cardType as string}
       collaborationDetail={collaboration}
-      pageID={pageID}
-      cardType={cardType}
-      invitationData={invitation} // Pass invitation data if needed
+      invitationData={invitation}
+      pageID={pageID as string}
     />
   );
 };
 
-export default CollaborationDetailsScreen;
+export default CollaborationDetails;
+

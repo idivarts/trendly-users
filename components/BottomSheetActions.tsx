@@ -1,21 +1,20 @@
 import React from "react";
-import { Modal, Pressable, StyleSheet, View, Dimensions } from "react-native";
+import { Modal, Pressable, StyleSheet, View } from "react-native";
 import { List } from "react-native-paper";
 import { Href, useRouter } from "expo-router";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import {
-  DUMMY_USER_CREDENTIALS,
   DUMMY_USER_CREDENTIALS2,
 } from "@/constants/User";
 import { useAuthContext } from "@/contexts";
 
 interface BottomSheetActionsProps {
   cardType:
-    | "collaboration"
-    | "proposal"
-    | "invitation"
-    | "details"
-    | "pre-signin";
+  | "collaboration"
+  | "proposal"
+  | "invitation"
+  | "details"
+  | "pre-signin";
   cardId?: string;
   isVisible: boolean;
   snapPointsRange: [string, string];
@@ -59,7 +58,7 @@ const BottomSheetActions = ({
     switch (cardType) {
       case "collaboration":
         return (
-          <View style={{ padding: 20 }}>
+          <List.Section style={{ paddingBottom: 28 }}>
             <List.Item
               title="View"
               onPress={() => {
@@ -81,11 +80,11 @@ const BottomSheetActions = ({
                 handleClose();
               }}
             />
-          </View>
+          </List.Section>
         );
       case "proposal":
         return (
-          <>
+          <List.Section style={{ paddingBottom: 28 }}>
             <List.Item
               title="Reject"
               onPress={() => {
@@ -100,11 +99,11 @@ const BottomSheetActions = ({
                 handleClose();
               }}
             />
-          </>
+          </List.Section>
         );
       case "details":
         return (
-          <>
+          <List.Section style={{ paddingBottom: 28 }}>
             <List.Item
               title="Apply Now"
               onPress={() => {
@@ -119,11 +118,11 @@ const BottomSheetActions = ({
                 handleClose();
               }}
             />
-          </>
+          </List.Section>
         );
       case "invitation":
         return (
-          <>
+          <List.Section style={{ paddingBottom: 28 }}>
             <List.Item
               title="Withdraw"
               onPress={() => {
@@ -138,11 +137,11 @@ const BottomSheetActions = ({
                 handleClose();
               }}
             />
-          </>
+          </List.Section>
         );
       case "pre-signin":
         return (
-          <>
+          <List.Section style={{ paddingBottom: 28 }}>
             <List.Item
               title="Login With Email"
               onPress={() => {
@@ -157,7 +156,7 @@ const BottomSheetActions = ({
                 handleClose();
               }}
             />
-          </>
+          </List.Section>
         );
       default:
         return null;

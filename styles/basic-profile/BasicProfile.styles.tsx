@@ -36,10 +36,6 @@ const styles = (theme: Theme) => StyleSheet.create({
     flex: 1,
     justifyContent: "flex-end",
   },
-  saveButton: {
-    borderRadius: 4,
-    backgroundColor: Colors(theme).primary,
-  },
 });
 
 export default styles;

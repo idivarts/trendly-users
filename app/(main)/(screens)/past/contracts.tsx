@@ -3,18 +3,10 @@ import { View, FlatList } from "react-native";
 import { Appbar } from "react-native-paper";
 import AppLayout from "@/layouts/app-layout";
 import { useTheme } from "@react-navigation/native";
-import { stylesFn } from "@/styles/CollaborationDetails.styles";
 import BackButton from "@/components/ui/back-button/BackButton";
-import JobCard from "@/components/collaboration/CollaborationCard";
 import Colors from "@/constants/Colors";
-import { CollaborationType } from "@/shared-libs/firestore/trendly-pro/constants/collaboration-type";
-import { SocialPlatform } from "@/shared-libs/firestore/trendly-pro/constants/social-platform";
-import { PromotionType } from "@/shared-libs/firestore/trendly-pro/constants/promotion-type";
 import {
   collection,
-  query,
-  where,
-  doc as firebaseDoc,
   getDoc,
   doc,
 } from "firebase/firestore";
@@ -26,10 +18,8 @@ import ContractCard from "@/components/ContractCard";
 
 const PastApplicationPage = (props: any) => {
   const theme = useTheme();
-  const styles = stylesFn(theme);
   const [isVisible, setIsVisible] = React.useState(false);
   const [proposals, setProposals] = React.useState<any>();
-  const [isLoading, setIsLoading] = React.useState(true);
   const [selectedCollabId, setSelectedCollabId] = React.useState<string | null>(
     null
   );

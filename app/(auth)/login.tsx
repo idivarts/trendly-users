@@ -1,11 +1,10 @@
 import { useAuthContext } from "@/contexts";
 import * as React from "react";
-import { View, StyleSheet, Image, Text } from "react-native";
+import { View, Image, Text } from "react-native";
 import { TextInput, Button } from "react-native-paper";
 import { useRouter } from "expo-router";
 import { useTheme } from "@react-navigation/native";
 import fnStyles from "@/styles/login.styles";
-import Toast from "react-native-toast-message";
 import Colors from "@/constants/Colors";
 
 const LoginScreen = () => {
@@ -23,7 +22,6 @@ const LoginScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Toast />
       {/* Logo Section */}
       <Image
         source={require("../../assets/images/logo.png")} // Replace with your actual logo path
@@ -60,8 +58,6 @@ const LoginScreen = () => {
       <Button
         mode="contained"
         onPress={() => handleSignIn()}
-        style={styles.button}
-        labelStyle={styles.buttonText}
       >
         Login
       </Button>

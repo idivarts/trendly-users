@@ -7,9 +7,12 @@ import { Href, useRouter } from "expo-router";
 
 interface NotificationCardProps {
   avatar: string;
-  collaborationId: string;
+  data: {
+    collaborationId?: string;
+    groupId?: string;
+    userId?: string;
+  };
   description: string;
-  groupId: string;
   isRead: boolean;
   onMarkAsRead: () => void;
   time: number;
@@ -18,9 +21,8 @@ interface NotificationCardProps {
 
 export const NotificationCard: React.FC<NotificationCardProps> = ({
   avatar,
-  collaborationId,
+  data,
   description,
-  groupId,
   isRead,
   onMarkAsRead,
   time,
@@ -32,10 +34,10 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({
 
   let action: string | undefined;
 
-  if (collaborationId) {
-    action = `/collaboration-details/${collaborationId}`;
-  } else if (groupId) {
-    action = `/channel/${groupId}`; // TODO: Save the groupId or cid in the database
+  if (data.collaborationId) {
+    action = `/collaboration-details/${data.collaborationId}`;
+  } else if (data.groupId) {
+    action = `/channel/${data.groupId}`; // TODO: Save the groupId or cid in the database
   }
 
   return (
@@ -89,7 +91,6 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({
           <Button
             mode="outlined"
             onPress={onMarkAsRead}
-            style={styles.markAsReadButton}
           >
             Mark as Read
           </Button>

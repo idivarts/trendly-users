@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, ScrollView, StyleSheet } from "react-native";
+import { ScrollView } from "react-native";
 import {
   TextInput,
   Button,
@@ -51,7 +51,10 @@ const ApplyScreen = () => {
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.contentContainerStyle}
+    >
       <Title style={styles.title}>Apply Now</Title>
 
       {/* Collaboration Type Selection */}

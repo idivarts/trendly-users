@@ -1,20 +1,21 @@
 import React from "react";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Link, Tabs } from "expo-router";
-import { Pressable } from "react-native";
+import { Tabs } from "expo-router";
 
 import Colors from "@/constants/Colors";
 import { useClientOnlyValue } from "@/components/useClientOnlyValue";
 import { useBreakpoints } from "@/hooks";
 import { useTheme } from "@react-navigation/native";
 import NotificationIcon from "@/components/notifications/notification-icon";
-
-const TabBarIcon = (props: {
-  name: React.ComponentProps<typeof FontAwesome>["name"];
-  color: string;
-}) => {
-  return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
-};
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import {
+  faHandshake,
+  faComment,
+  faStar,
+  faUser,
+} from "@fortawesome/free-regular-svg-icons";
+import {
+  faFileSignature,
+} from "@fortawesome/free-solid-svg-icons";
 
 const TabLayout = () => {
   const { xl } = useBreakpoints();
@@ -45,7 +46,11 @@ const TabLayout = () => {
           title: "Proposals",
           tabBarLabel: "Proposals",
           tabBarIcon: ({ color }) => (
-            <TabBarIcon name="handshake-o" color={color} />
+            <FontAwesomeIcon
+              color={color}
+              icon={faHandshake}
+              size={28}
+            />
           ),
           headerRight: () => <NotificationIcon />,
         }}
@@ -56,7 +61,11 @@ const TabLayout = () => {
           title: "Messages",
           tabBarLabel: "Messages",
           tabBarIcon: ({ color }) => (
-            <TabBarIcon name="comments" color={color} />
+            <FontAwesomeIcon
+              color={color}
+              icon={faComment}
+              size={24}
+            />
           ),
           headerRight: () => <NotificationIcon />,
         }}
@@ -67,14 +76,24 @@ const TabLayout = () => {
           title: "Collaborations",
           tabBarLabel: "Collaborations",
           headerRight: () => <NotificationIcon />,
-          tabBarIcon: ({ color }) => <TabBarIcon name="group" color={color} />,
+          tabBarIcon: ({ color }) => (
+            <FontAwesomeIcon
+              color={color}
+              icon={faStar}
+              size={24}
+            />
+          ),
         }}
       />
       <Tabs.Screen
         name="contracts"
         options={{
           tabBarIcon: ({ color }) => (
-            <TabBarIcon name="file-text-o" color={color} />
+            <FontAwesomeIcon
+              color={color}
+              icon={faFileSignature}
+              size={24}
+            />
           ),
           title: "Contracts",
           tabBarLabel: "Contracts",
@@ -88,7 +107,11 @@ const TabLayout = () => {
           title: "Profile",
           tabBarLabel: "Profile",
           tabBarIcon: ({ color }) => (
-            <TabBarIcon name="user-circle-o" color={color} />
+            <FontAwesomeIcon
+              color={color}
+              icon={faUser}
+              size={24}
+            />
           ),
         }}
       />

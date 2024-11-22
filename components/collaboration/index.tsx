@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, FlatList, Modal } from "react-native";
+import { View, FlatList, RefreshControl } from "react-native";
 import SearchComponent from "@/components/SearchComponent";
 import JobCard from "./CollaborationCard";
 import CollaborationFilter from "@/components/FilterModal";
@@ -8,13 +8,12 @@ import { useTheme } from "@react-navigation/native";
 import { stylesFn } from "@/styles/Collections.styles";
 import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import { FirestoreDB } from "@/utils/firestore";
-import { AuthApp } from "@/utils/auth";
 import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
-import { Searchbar } from "react-native-paper";
 import { ActivityIndicator } from "react-native-paper";
 import Colors from "@/constants/Colors";
 import BottomSheetActions from "../BottomSheetActions";
+import EmptyState from "../ui/empty-state";
 
 interface ICollaborationAddCardProps extends ICollaboration {
   name: string;
@@ -46,16 +45,23 @@ const Collaboration = () => {
   const closeBottomSheet = () => setIsVisible(false);
 
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const fetchData = async () => {
+    const fetchedBrands = await fetchBrands(); // Fetch brands and store in a variable
+    await fetchCollabs(fetchedBrands); // Pass the fetched brands to fetchCollabs
+    setLoading(false);
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      const fetchedBrands = await fetchBrands(); // Fetch brands and store in a variable
-      await fetchCollabs(fetchedBrands); // Pass the fetched brands to fetchCollabs
-      setLoading(false);
-    };
-
     fetchData();
   }, []);
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await fetchData();
+    setRefreshing(false);
+  };
 
   const fetchBrands = async () => {
     const brandRef = collection(FirestoreDB, "brands");
@@ -159,18 +165,58 @@ const Collaboration = () => {
             setSearchQuery={setSearchQuery}
           />
         </View>
-        <FlatList
-          data={filteredList}
-          renderItem={({ item }) => (
-            <JobCard
-              {...item}
-              cardType={"collaboration"}
-              onOpenBottomSheet={openBottomSheet}
+        {
+          filteredList.length === 0 ? (
+            <EmptyState
+              hideAction
+              image={require("@/assets/images/illustration1.png")}
+              subtitle="We are working hard to bring more brands and collaborations for you on Trendly. Thanks for your patience."
+              title="Oops! No Collaborations!"
             />
-          )}
-          keyExtractor={(item) => item.id}
-        />
-        {filterVisible && (
+          ) : (
+            <FlatList
+              data={filteredList}
+              renderItem={({ item }) => (
+                <JobCard
+                  {...item}
+                  cardType={"collaboration"}
+                  onOpenBottomSheet={openBottomSheet}
+                />
+              )}
+              keyExtractor={(item) => item.id}
+              style={{
+                flexGrow: 1,
+                paddingTop: 8,
+                paddingHorizontal: 16,
+              }}
+              contentContainerStyle={{
+                gap: 16,
+                paddingBottom: 24,
+              }}
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={handleRefresh}
+                />
+              }
+            />
+          )
+        }
+      </View>
+      {
+        isVisible && (
+          <BottomSheetActions
+            cardId={selectedCollabId || ""} // Pass the selected collab id
+            cardType="collaboration"
+            snapPointsRange={["25%", "50%"]}
+            isVisible={isVisible}
+            onClose={closeBottomSheet}
+            key={selectedCollabId} // Ensure the BottomSheetActions re-renders with new id
+          />
+        )
+      }
+      {
+        filterVisible && (
           <CollaborationFilter
             categories={getUniqueValues(collabs, "promotionType")}
             jobTypes={getUniqueValues(collabs, "collaborationType")}
@@ -183,18 +229,8 @@ const Collaboration = () => {
             setSalaryRange={setSalaryRange}
             onClose={toggleFilterModal}
           />
-        )}
-      </View>
-      {isVisible && (
-        <BottomSheetActions
-          cardId={selectedCollabId || ""} // Pass the selected collab id
-          cardType="collaboration"
-          snapPointsRange={["25%", "50%"]}
-          isVisible={isVisible}
-          onClose={closeBottomSheet}
-          key={selectedCollabId} // Ensure the BottomSheetActions re-renders with new id
-        />
-      )}
+        )
+      }
     </AppLayout>
   );
 };
