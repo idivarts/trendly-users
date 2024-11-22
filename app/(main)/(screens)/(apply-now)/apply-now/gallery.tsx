@@ -3,11 +3,11 @@ import {
   View,
   FlatList,
   Image,
-  TouchableOpacity,
   Modal,
+  Pressable,
 } from "react-native";
 import * as MediaLibrary from "expo-media-library";
-import { Appbar, Button, Surface, Text, Checkbox } from "react-native-paper";
+import { Button, Surface, Text, Checkbox } from "react-native-paper";
 import {
   CameraView,
   useCameraPermissions,
@@ -71,7 +71,7 @@ const GalleryScreen = () => {
   const handleSelectionComplete = () => {
     try {
       router.push({
-        pathname: '/apply-now',
+        pathname: '/apply-now/[pageID]',
         params: {
           note: note,
           selectedFiles: JSON.stringify(selectedItems),
@@ -123,9 +123,10 @@ const GalleryScreen = () => {
       cameraRef.current.stopRecording();
     }
   };
-  //@ts-ignore
+
+  // @ts-ignore
   const renderItem = ({ item }) => (
-    <TouchableOpacity
+    <Pressable
       onPress={() => handleSelectItem(item.uri, item.mediaType)}
       style={styles.itemWrapper}
     >
@@ -139,8 +140,7 @@ const GalleryScreen = () => {
           <Checkbox
             status={
               selectedItems
-                .map((selectedItem: any) => selectedItem.id)
-                .includes(item.uri)
+                .find((selectedItem: any) => item.uri === selectedItem.id)
                 ? "checked"
                 : "unchecked"
             }
@@ -148,7 +148,7 @@ const GalleryScreen = () => {
           />
         </View>
       </Surface>
-    </TouchableOpacity>
+    </Pressable>
   );
 
   if (!permissionGranted) {
@@ -161,9 +161,8 @@ const GalleryScreen = () => {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
       <ScreenHeader
-        title="Barter Collab"
+        title="Select Photos and Videos"
       />
 
       {/* Action Buttons */}
@@ -171,7 +170,6 @@ const GalleryScreen = () => {
         <Button
           mode="contained"
           icon="camera"
-          style={styles.button}
           onPress={openCamera}
         >
           Take a Photo
@@ -179,7 +177,6 @@ const GalleryScreen = () => {
         <Button
           mode="contained"
           icon="video"
-          style={styles.button}
           onPress={() => setIsCameraVisible(true)}
         >
           Take Video
@@ -214,7 +211,10 @@ const GalleryScreen = () => {
             >
               {isRecording ? "Stop Recording" : "Start Recording"}
             </Button>
-            <Button mode="text" onPress={() => setIsCameraVisible(false)}>
+            <Button
+              mode="contained"
+              onPress={() => setIsCameraVisible(false)}
+            >
               Close
             </Button>
           </View>
@@ -230,11 +230,8 @@ const GalleryScreen = () => {
         contentContainerStyle={styles.galleryContainer}
       />
 
-      {/* Bottom Buttons */}
-      <View style={styles.bottomButtons}>
-        <Button mode="outlined" onPress={() => router.back()}>
-          Go Back
-        </Button>
+      {/* Footer */}
+      <View style={styles.footer}>
         <Button mode="contained" onPress={handleSelectionComplete}>
           Done
         </Button>

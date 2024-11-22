@@ -6,7 +6,6 @@ export const stylesFn = (theme: Theme) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      padding: 20,
       backgroundColor: Colors(theme).background,
     },
     contentContainerStyle: {
@@ -49,15 +48,13 @@ export const stylesFn = (theme: Theme) =>
       color: Colors(theme).gray100,
     },
     input: {
-      marginBottom: 16,
-      backgroundColor: Colors(theme).white,
+      marginBottom: 12,
     },
     helperText: {
-      marginBottom: 12,
+      paddingHorizontal: 2,
       color: Colors(theme).gray100,
     },
     card: {
-      marginVertical: 16,
       marginHorizontal: "auto",
       borderRadius: 8,
       elevation: 3,

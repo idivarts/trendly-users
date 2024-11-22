@@ -5,18 +5,22 @@ import { StyleSheet } from "react-native";
 export const stylesFn = (theme: Theme) =>
   StyleSheet.create({
     card: {
-      marginVertical: 10,
-      flex: 1,
-      padding: 16,
       backgroundColor: Colors(theme).card,
+      shadowColor: Colors(theme).white,
+      borderRadius: 0,
+      paddingVertical: 16,
     },
     header: {
+      paddingBottom: 16,
+      paddingHorizontal: 16,
+      gap: 10,
       flexDirection: "row",
       alignItems: "center",
       justifyContent: "space-between",
     },
     content: {
       paddingTop: 8,
+      paddingHorizontal: 16,
     },
     statItem: {
       alignItems: "center",
@@ -31,7 +35,6 @@ export const stylesFn = (theme: Theme) =>
 
     nameContainer: {
       flex: 1,
-      marginLeft: 10,
     },
     name: {
       fontSize: 16,
@@ -42,10 +45,11 @@ export const stylesFn = (theme: Theme) =>
       color: "gray",
     },
     carouselContainer: {
-      marginVertical: 10,
+      backgroundColor: Colors(theme).card,
       width: "100%",
     },
     indicatorContainer: {
+      backgroundColor: Colors(theme).card,
       flexDirection: "row",
       justifyContent: "center",
       alignItems: "center",
@@ -63,7 +67,6 @@ export const stylesFn = (theme: Theme) =>
       backgroundColor: "#333333",
     },
     media: {
-      borderRadius: 10,
       alignSelf: "center",
     },
     stats: {
@@ -83,6 +86,5 @@ export const stylesFn = (theme: Theme) =>
     jobHistory: {
       color: Colors(theme).primary,
       textDecorationLine: "underline",
-      marginTop: 10,
     },
   });

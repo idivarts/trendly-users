@@ -18,10 +18,6 @@ export const stylesFn = (theme: Theme) =>
       justifyContent: "space-around",
       padding: 16,
     },
-    button: {
-      flex: 1,
-      marginHorizontal: 8,
-    },
     galleryContainer: {
       padding: SPACING,
     },
@@ -43,13 +39,13 @@ export const stylesFn = (theme: Theme) =>
       position: "absolute",
       bottom: 0,
       right: 0,
-      backgroundColor: Colors(theme).primary,
+      backgroundColor: Colors(theme).white,
       borderTopLeftRadius: 8,
-      padding: 2,
+      borderBottomRightRadius: 8,
     },
-    bottomButtons: {
+    footer: {
       flexDirection: "row",
-      justifyContent: "space-between",
+      justifyContent: "flex-end",
       padding: 16,
     },
     permissionContainer: {
@@ -66,6 +62,8 @@ export const stylesFn = (theme: Theme) =>
       bottom: 30,
       width: "100%",
       flexDirection: "row",
+      flexWrap: "wrap",
+      gap: 16,
       justifyContent: "space-around",
       paddingHorizontal: 16,
     },

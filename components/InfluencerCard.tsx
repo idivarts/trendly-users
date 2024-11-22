@@ -121,14 +121,17 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
 
   return (
     <>
-      <Card style={styles.card}>
+      <Card
+        style={styles.card}
+      >
         <View style={styles.header}>
           <Avatar.Image size={50} source={{ uri: influencer.profilePic }} />
           <View style={styles.nameContainer}>
             <Text style={styles.name}>{influencer.name}</Text>
             <Text style={styles.handle}>{influencer.handle}</Text>
           </View>
-          {props.type === "invitation" &&
+          {
+            props.type === "invitation" &&
             (props.alreadyInvited ? (
               <Tag icon="check">Invited</Tag>
             ) : (
@@ -142,7 +145,8 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
               >
                 Invite
               </Tag>
-            ))}
+            ))
+          }
           <Pressable
             onPress={() => {
               props.ToggleModal();
@@ -213,16 +217,18 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
           </View>
         </View>
 
-        <TouchableOpacity
-          onPress={() => {
-            console.log("View job history");
-          }}
-        >
-          <Text style={styles.jobHistory}>
-            {influencer.jobsCompleted} Jobs completed ({influencer.successRate}{" "}
-            success rate)
-          </Text>
-        </TouchableOpacity>
+        <View style={styles.content}>
+          <TouchableOpacity
+            onPress={() => {
+              console.log("View job history");
+            }}
+          >
+            <Text style={styles.jobHistory}>
+              {influencer.jobsCompleted} Jobs completed ({influencer.successRate}{" "}
+              success rate)
+            </Text>
+          </TouchableOpacity>
+        </View>
       </Card>
 
       <Modal visible={isZoomed} transparent={true} animationType="fade">
