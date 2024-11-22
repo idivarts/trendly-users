@@ -7,11 +7,12 @@ export const stylesFn = (theme: Theme) =>
     container: {
       flex: 1,
       backgroundColor: Colors(theme).background,
-      padding: 20,
     },
     searchContainer: {
       flexDirection: "row",
       alignItems: "center",
+      paddingTop: 16,
+      paddingHorizontal: 16,
       marginBottom: 10,
     },
     modalContainer: {

@@ -2,19 +2,16 @@ import AppLayout from "@/layouts/app-layout";
 import { View, Text, FlatList } from "react-native";
 import InfluencerCard from "@/components/InfluencerCard";
 import { router, useLocalSearchParams } from "expo-router";
-import { Appbar, Button } from "react-native-paper";
-import Colors from "@/constants/Colors";
-import { useTheme } from "@react-navigation/native";
-import BackButton from "@/components/ui/back-button/BackButton";
+import { Button } from "react-native-paper";
 import { AuthApp } from "@/utils/auth";
 import { FirestoreDB } from "@/utils/firestore";
 import { collection, addDoc } from "firebase/firestore";
 import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { useState, useEffect } from "react";
+import ScreenHeader from "@/components/ui/screen-header";
 
 const Preview = () => {
   const params = useLocalSearchParams();
-  const theme = useTheme();
   const user = AuthApp.currentUser;
   const pageID = Array.isArray(params.pageID)
     ? params.pageID[0]
@@ -110,21 +107,15 @@ const Preview = () => {
 
   return (
     <AppLayout>
-      <Appbar.Header
-        statusBarHeight={0}
-        style={{
-          backgroundColor: Colors(theme).background,
-        }}
-      >
-        <BackButton />
-        <Appbar.Content title="Preview" color={Colors(theme).text} />
-      </Appbar.Header>
+      <ScreenHeader
+        title="Preview"
+      />
       <FlatList
         data={[1]}
         renderItem={() => {
           return (
             <InfluencerCard
-              ToggleModal={() => {}}
+              ToggleModal={() => { }}
               type="influencer"
               influencer={{
                 bio: "",
@@ -165,7 +156,7 @@ const Preview = () => {
           </View>
         }
         contentContainerStyle={{
-          padding: 16,
+          paddingVertical: 16,
         }}
       />
     </AppLayout>

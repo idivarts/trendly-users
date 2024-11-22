@@ -1,4 +1,4 @@
-import { ActivityIndicator, FlatList, Image } from "react-native";
+import { ActivityIndicator, FlatList } from "react-native";
 import { Text, View } from "@/components/theme/Themed";
 import AppLayout from "@/layouts/app-layout";
 import { Link, router } from "expo-router";
@@ -11,7 +11,7 @@ import BottomSheetActions from "@/components/BottomSheetActions";
 import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 import { FirestoreDB } from "@/utils/firestore";
 import { AuthApp } from "@/utils/auth";
-import { Button } from "react-native-paper";
+import EmptyState from "@/components/ui/empty-state";
 
 const ContractScreen = () => {
   const theme = useTheme();
@@ -138,43 +138,13 @@ const ContractScreen = () => {
     <AppLayout>
       <View style={styles.container}>
         {contracts.length === 0 ? (
-          <View
-            style={{
-              justifyContent: "center",
-              alignItems: "center",
-              gap: 50,
-            }}
-          >
-            <Image
-              source={{ uri: "https://via.placeholder.com/150" }}
-              width={150}
-              height={150}
-              style={{
-                borderRadius: 10,
-              }}
-            />
-            <View
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                gap: 10,
-              }}
-            >
-              <Text style={styles.title}>No Contracts found</Text>
-            </View>
-            <Button
-              onPress={() => router.push("/collaborations")}
-              style={{
-                backgroundColor: Colors(theme).platinum,
-                padding: 5,
-                borderRadius: 5,
-              }}
-              textColor={Colors(theme).text}
-            >
-              New Collaborations
-            </Button>
-          </View>
+          <EmptyState
+            action={() => router.push("/collaborations")}
+            actionLabel="Start Applying"
+            image={require("@/assets/images/illustration4.png")}
+            subtitle="Opps! No Contracts has been created yet. Start applying to collaboration to get contracts."
+            title="No Contracts"
+          />
         ) : (
           <FlatList
             data={contracts}

@@ -29,7 +29,7 @@ export const stylesFn = (theme: Theme) =>
     },
     selectedOption: {
       fontWeight: "bold",
-      color: Colors(theme).text,
+      color: Colors(theme).white,
     },
     bottomNavigation: {
       flexDirection: "row",

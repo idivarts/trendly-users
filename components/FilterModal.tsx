@@ -1,6 +1,6 @@
 import React, { useState, useRef, useMemo } from "react";
-import { View, TouchableOpacity } from "react-native";
-import { Text, Chip, Button } from "react-native-paper";
+import { TouchableOpacity } from "react-native";
+import { Chip, Button } from "react-native-paper";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Slider from "@react-native-community/slider";
 import BottomSheet, {
@@ -10,6 +10,7 @@ import BottomSheet, {
 import { stylesFn } from "@/styles/FilterModal.styles";
 import { useTheme } from "@react-navigation/native";
 import Colors from "@/constants/Colors";
+import { Text, View } from "./theme/Themed";
 
 interface CollaborationFilterProps {
   onClose: () => void;
@@ -79,8 +80,16 @@ const CollaborationFilter = ({
         />
       )}
       onClose={onClose}
+      handleStyle={{
+        backgroundColor: Colors(theme).background,
+      }}
+      handleIndicatorStyle={{
+        backgroundColor: Colors(theme).text,
+      }}
     >
-      <BottomSheetView style={styles.container}>
+      <BottomSheetView
+        style={styles.container}
+      >
         <View style={styles.header}>
           <Text style={styles.title}>Filter</Text>
           <TouchableOpacity onPress={onClose}>
