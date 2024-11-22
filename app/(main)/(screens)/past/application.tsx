@@ -1,11 +1,7 @@
 import React, { useEffect } from "react";
 import { View, FlatList } from "react-native";
-import { Appbar } from "react-native-paper";
 import AppLayout from "@/layouts/app-layout";
-import { useTheme } from "@react-navigation/native";
-import BackButton from "@/components/ui/back-button/BackButton";
 import JobCard from "@/components/collaboration/CollaborationCard";
-import Colors from "@/constants/Colors";
 import {
   collection,
   getDoc,
@@ -17,9 +13,9 @@ import {
 import { FirestoreDB } from "@/utils/firestore";
 import { AuthApp } from "@/utils/auth";
 import BottomSheetActions from "@/components/BottomSheetActions";
+import ScreenHeader from "@/components/ui/screen-header";
 
 const PastApplicationPage = (props: any) => {
-  const theme = useTheme();
   const [isVisible, setIsVisible] = React.useState(false);
   const [proposals, setProposals] = React.useState<any>();
   const [isLoading, setIsLoading] = React.useState(true);
@@ -120,20 +116,12 @@ const PastApplicationPage = (props: any) => {
 
   return (
     <AppLayout>
-      <Appbar.Header
-        statusBarHeight={0}
-        style={{
-          backgroundColor: Colors(theme).background,
-        }}
-      >
-        <BackButton />
-        <Appbar.Content title="Past Applications" color={Colors(theme).text} />
-      </Appbar.Header>
+      <ScreenHeader
+        title="Past Applications"
+      />
       <View
         style={{
           flex: 1,
-          backgroundColor: Colors(theme).background,
-          padding: 10,
         }}
       >
         <FlatList
@@ -164,7 +152,10 @@ const PastApplicationPage = (props: any) => {
               invitations={undefined}
             />
           )}
-          style={{ height: "100%", width: "100%" }}
+          contentContainerStyle={{
+            padding: 16,
+            gap: 16,
+          }}
           keyExtractor={(item) => item.id}
         />
       </View>

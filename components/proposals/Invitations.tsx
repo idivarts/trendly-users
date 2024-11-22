@@ -14,10 +14,9 @@ import {
   doc as firebaseDoc,
   getDoc,
 } from "firebase/firestore";
-import { ActivityIndicator, FlatList } from "react-native";
+import { ActivityIndicator, FlatList, RefreshControl } from "react-native";
 import { FirestoreDB } from "@/utils/firestore";
 import { AuthApp } from "@/utils/auth";
-import { RefreshControl } from "react-native";
 import { stylesFn } from "@/styles/Proposal.styles";
 import EmptyState from "../ui/empty-state";
 
@@ -192,7 +191,6 @@ const Invitations = () => {
             />
           )}
           keyExtractor={(item, index) => index.toString()}
-          style={{ height: "100%", width: "100%" }}
           ListFooterComponent={
             <View
               style={{
@@ -231,6 +229,10 @@ const Invitations = () => {
               )}
             </View>
           }
+          contentContainerStyle={{
+            padding: 16,
+            gap: 16,
+          }}
           refreshControl={
             <RefreshControl
               refreshing={refreshing}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, FlatList } from "react-native";
+import { View, FlatList, RefreshControl } from "react-native";
 import SearchComponent from "@/components/SearchComponent";
 import JobCard from "./CollaborationCard";
 import CollaborationFilter from "@/components/FilterModal";
@@ -45,16 +45,23 @@ const Collaboration = () => {
   const closeBottomSheet = () => setIsVisible(false);
 
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const fetchData = async () => {
+    const fetchedBrands = await fetchBrands(); // Fetch brands and store in a variable
+    await fetchCollabs(fetchedBrands); // Pass the fetched brands to fetchCollabs
+    setLoading(false);
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      const fetchedBrands = await fetchBrands(); // Fetch brands and store in a variable
-      await fetchCollabs(fetchedBrands); // Pass the fetched brands to fetchCollabs
-      setLoading(false);
-    };
-
     fetchData();
   }, []);
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await fetchData();
+    setRefreshing(false);
+  };
 
   const fetchBrands = async () => {
     const brandRef = collection(FirestoreDB, "brands");
@@ -186,6 +193,12 @@ const Collaboration = () => {
                 gap: 16,
                 paddingBottom: 24,
               }}
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={handleRefresh}
+                />
+              }
             />
           )
         }
