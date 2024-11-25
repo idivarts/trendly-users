@@ -8,6 +8,8 @@ import { useAuthContext } from "@/contexts";
 import { View } from "@/components/theme/Themed";
 import Colors from "@/constants/Colors";
 import { useTheme } from "@react-navigation/native";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 
 const ChannelListNative = () => {
   const [searchInput, setSearchInput] = useState("");
@@ -48,6 +50,13 @@ const ChannelListNative = () => {
         }}
       >
         <Searchbar
+          icon={() => (
+            <FontAwesomeIcon
+              color={Colors(theme).gray100}
+              icon={faMagnifyingGlass}
+              size={22}
+            />
+          )}
           onChangeText={handleSearchChange}
           placeholder="Search"
           placeholderTextColor={Colors(theme).gray100}

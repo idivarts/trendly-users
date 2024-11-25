@@ -16,6 +16,9 @@ import { useAuthContext, useNotificationContext } from "@/contexts";
 import Tag from "@/components/ui/tag";
 import { CollaborationDetail } from ".";
 import { Invitation } from "@/types/Collaboration";
+import { faBolt, faEye, faLocationDot } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import Colors from "@/constants/Colors";
 
 interface CollaborationDetailsContentProps {
   pageID: string;
@@ -164,7 +167,13 @@ const CollborationDetailsContent = (props: CollaborationDetailsContentProps) => 
             {
               props.collaborationDetail.promotionType && (
                 <Tag
-                  icon="checkbox-marked-circle"
+                  icon={() => (
+                    <FontAwesomeIcon
+                      color={Colors(theme).primary}
+                      icon={faBolt}
+                      size={14}
+                    />
+                  )}
                 >
                   {props.collaborationDetail.promotionType}
                 </Tag>
@@ -173,14 +182,26 @@ const CollborationDetailsContent = (props: CollaborationDetailsContentProps) => 
             {
               props.collaborationDetail.collaborationType && (
                 <Tag
-                  icon="eye"
+                  icon={() => (
+                    <FontAwesomeIcon
+                      color={Colors(theme).primary}
+                      icon={faEye}
+                      size={14}
+                    />
+                  )}
                 >
                   {props.collaborationDetail.collaborationType}
                 </Tag>
               )
             }
             <Tag
-              icon="map-marker"
+              icon={() => (
+                <FontAwesomeIcon
+                  color={Colors(theme).primary}
+                  icon={faLocationDot}
+                  size={14}
+                />
+              )}
             >
               {
                 props.collaborationDetail.location.type === "Remote"

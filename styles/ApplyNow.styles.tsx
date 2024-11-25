@@ -56,6 +56,7 @@ export const stylesFn = (theme: Theme) =>
     },
     card: {
       marginHorizontal: "auto",
+      marginTop: 16,
       borderRadius: 8,
       elevation: 3,
       width: "80%",

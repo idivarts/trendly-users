@@ -1,7 +1,6 @@
 import React, { useState, useRef, useMemo } from "react";
 import { TouchableOpacity } from "react-native";
 import { Chip, Button } from "react-native-paper";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import Slider from "@react-native-community/slider";
 import BottomSheet, {
   BottomSheetView,
@@ -11,6 +10,8 @@ import { stylesFn } from "@/styles/FilterModal.styles";
 import { useTheme } from "@react-navigation/native";
 import Colors from "@/constants/Colors";
 import { Text, View } from "./theme/Themed";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faCheckDouble, faClose } from "@fortawesome/free-solid-svg-icons";
 
 interface CollaborationFilterProps {
   onClose: () => void;
@@ -93,7 +94,11 @@ const CollaborationFilter = ({
         <View style={styles.header}>
           <Text style={styles.title}>Filter</Text>
           <TouchableOpacity onPress={onClose}>
-            <Ionicons name="close" size={24} color={Colors(theme).text} />
+            <FontAwesomeIcon
+              icon={faClose}
+              size={24}
+              color={Colors(theme).text}
+            />
           </TouchableOpacity>
         </View>
 
@@ -102,6 +107,13 @@ const CollaborationFilter = ({
         <View style={styles.chipContainer}>
           {categories.map((category) => (
             <Chip
+              icon={localSelectedCategory === category ? () => (
+                <FontAwesomeIcon
+                  icon={faCheckDouble}
+                  size={16}
+                  color={Colors(theme).white}
+                />
+              ) : undefined}
               key={category}
               selected={localSelectedCategory === category}
               onPress={() => setLocalSelectedCategory(category)}
@@ -153,6 +165,13 @@ const CollaborationFilter = ({
               selected={localSelectedJobType === jobType}
               onPress={() => setLocalSelectedJobType(jobType)}
               style={styles.chip}
+              icon={localSelectedJobType === jobType ? () => (
+                <FontAwesomeIcon
+                  icon={faCheckDouble}
+                  size={16}
+                  color={Colors(theme).white}
+                />
+              ) : undefined}
             >
               {jobType}
             </Chip>

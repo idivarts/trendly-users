@@ -27,7 +27,7 @@ import CarouselNative from "./ui/carousel/carousel";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faStar } from "@fortawesome/free-regular-svg-icons";
 import { convertToKUnits } from "@/utils/conversion";
-import { faBullseye, faEllipsis, faMessage, faUsers } from "@fortawesome/free-solid-svg-icons";
+import { faArrowTrendUp, faEllipsis, faMessage, faPeopleGroup } from "@fortawesome/free-solid-svg-icons";
 import Tag from "./ui/tag";
 
 const { width } = Dimensions.get("window");
@@ -178,7 +178,7 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
             <View style={styles.statsContainer}>
               <View style={styles.statItem}>
                 <FontAwesomeIcon
-                  icon={faUsers}
+                  icon={faPeopleGroup}
                   color={Colors(theme).primary}
                   size={20}
                 />
@@ -188,7 +188,7 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
               </View>
               <View style={styles.statItem}>
                 <FontAwesomeIcon
-                  icon={faBullseye}
+                  icon={faArrowTrendUp}
                   color={Colors(theme).primary}
                   size={20}
                 />

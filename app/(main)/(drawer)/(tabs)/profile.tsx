@@ -9,6 +9,7 @@ import ProfileCard from '@/components/profile/ProfileCard';
 import { useRouter } from 'expo-router';
 import ConfirmationModal from '@/components/ui/modal/ConfirmationModal';
 import { useState } from 'react';
+import { faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 
 const ProfileScreen = () => {
   const router = useRouter();
@@ -52,7 +53,7 @@ const ProfileScreen = () => {
           item={{
             id: "7",
             title: "Logout",
-            icon: "logout",
+            icon: faRightFromBracket,
           }}
         />
       </View>

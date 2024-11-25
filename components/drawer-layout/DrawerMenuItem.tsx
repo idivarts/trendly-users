@@ -45,7 +45,7 @@ const DrawerMenuItem: React.FC<DrawerMenuItemProps> = ({ tab }) => {
           color={
             tab.href.includes(pathname)
               ? Colors(theme).white
-              : Colors(theme).gray100
+              : Colors(theme).text
           }
           size={28}
         />
