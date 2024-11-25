@@ -9,7 +9,6 @@ export const stylesFn = (theme: Theme) =>
       gap: 16,
     },
     profileCard: {
-      alignItems: "center",
       backgroundColor: Colors(theme).card,
       borderRadius: 10,
       shadowColor: Colors(theme).transparent,
@@ -26,7 +25,6 @@ export const stylesFn = (theme: Theme) =>
     },
     name: {
       fontWeight: "bold",
-      width: "100%",
       fontSize: 20,
       color: Colors(theme).text,
       lineHeight: 20,

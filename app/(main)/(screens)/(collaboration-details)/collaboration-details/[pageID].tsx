@@ -14,10 +14,10 @@ const CollaborationDetailsScreen = () => {
   const theme = useTheme();
 
   const {
-    pageID,
+    cardId,
     cardType,
     collaborationID,
-    cardId,
+    pageID,
   } = useLocalSearchParams();
 
   return (
