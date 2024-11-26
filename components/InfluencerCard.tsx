@@ -38,8 +38,9 @@ interface InfluencerCardPropsType {
     handle: string;
     profilePic: string;
     media: {
+      id: string;
       type: string;
-      uri: string;
+      url: string;
     }[];
     followers: number | string;
     reach: number | string;

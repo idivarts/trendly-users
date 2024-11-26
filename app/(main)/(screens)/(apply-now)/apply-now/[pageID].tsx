@@ -106,12 +106,13 @@ const ApplyScreen = () => {
             <CarouselNative
               data={files.map((file: any) => {
                 return {
+                  id: file.id,
                   type: file.type,
                   url: file.id,
                 };
               })}
-              onImagePress={(index) => {
-                console.log("Image Pressed", index);
+              onImagePress={(file) => {
+                console.log("Image Pressed", file);
               }}
             />
           )

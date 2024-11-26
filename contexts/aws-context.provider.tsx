@@ -126,8 +126,8 @@ export const AWSContextProvider: React.FC<PropsWithChildren> = ({
       };
     } else {
       return {
+        imageUrl: preUploadUrl.imageUrl,
         type: "image",
-        url: preUploadUrl.imageUrl,
       };
     }
   }
@@ -193,8 +193,8 @@ export const AWSContextProvider: React.FC<PropsWithChildren> = ({
         };
       } else {
         return {
+          imageUrl: preUploadUrl.imageUrl,
           type: "image",
-          url: preUploadUrl.imageUrl,
         };
       }
     } catch (error) {

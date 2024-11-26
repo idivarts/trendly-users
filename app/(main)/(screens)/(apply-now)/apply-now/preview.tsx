@@ -1,5 +1,5 @@
 import AppLayout from "@/layouts/app-layout";
-import { View, Text, FlatList } from "react-native";
+import { View, Text, FlatList, Platform } from "react-native";
 import InfluencerCard from "@/components/InfluencerCard";
 import { router, useLocalSearchParams } from "expo-router";
 import { Button } from "react-native-paper";
@@ -9,6 +9,7 @@ import { collection, addDoc } from "firebase/firestore";
 import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { useState, useEffect } from "react";
 import ScreenHeader from "@/components/ui/screen-header";
+import { MediaItem } from "@/components/ui/carousel/render-media-item";
 
 const Preview = () => {
   const params = useLocalSearchParams();
@@ -21,23 +22,37 @@ const Preview = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [processedAttachments, setProcessedAttachments] = useState([]);
 
+  const formatProcessedAttachment = (attachment: any): MediaItem => {
+    if (attachment.type.includes("video")) {
+      if (Platform.OS === "ios") {
+        return {
+          id: attachment.appleUrl,
+          type: attachment.type,
+          url: attachment.appleUrl,
+        }
+      } else {
+        return {
+          id: attachment.playUrl,
+          type: attachment.type,
+          url: attachment.playUrl,
+        }
+      }
+    } else {
+      return {
+        id: attachment.imageUrl,
+        type: attachment.type,
+        url: attachment.imageUrl,
+      }
+    }
+  }
+
   useEffect(() => {
     try {
       if (params.attachments) {
         const rawAttachments = JSON.parse(params.attachments as string);
-        // Process the attachments to match the format expected by InfluencerCard
-        const processed = rawAttachments.map((attachment: any) => ({
-          type: attachment.type,
-          // For videos, include both URLs
-          ...(attachment.type === "video" && {
-            appleUrl: attachment.appleUrl,
-            playUrl: attachment.playUrl,
-          }),
-          // For images, include the URL
-          ...(attachment.type === "image" && {
-            url: attachment.url,
-          }),
-        }));
+
+        const processed = rawAttachments.map((attachment: any) => formatProcessedAttachment(attachment));
+
         setProcessedAttachments(processed);
       }
     } catch (error) {

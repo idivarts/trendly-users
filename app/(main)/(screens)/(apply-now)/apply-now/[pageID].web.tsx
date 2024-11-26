@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Platform, ScrollView, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import { ScrollView, View } from "react-native";
 import {
   Button,
   Card,
@@ -21,6 +21,7 @@ import { useAWSContext } from "@/contexts/aws-context.provider";
 import AppLayout from "@/layouts/app-layout";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { stylesFn } from "@/styles/ApplyNow.styles";
+import { MediaItem } from "@/components/ui/carousel/render-media-item";
 
 const ApplyScreenWeb = () => {
   const params = useLocalSearchParams();
@@ -33,6 +34,7 @@ const ApplyScreenWeb = () => {
   const [loading, setLoading] = useState(false);
 
   const [files, setFiles] = useState<File[]>([]);
+  const [previewUrls, setPreviewUrls] = useState<MediaItem[]>([]);
   const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
 
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -82,6 +84,21 @@ const ApplyScreenWeb = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const urls = files.map(file => ({
+      id: file.name,
+      type: file.type,
+      url: URL.createObjectURL(file),
+    }));
+    setPreviewUrls(urls);
+
+    return () => {
+      urls.forEach((url) => {
+        URL.revokeObjectURL(url.url);
+      });
+    };
+  }, [files]);
 
   const removeFile = (file: File) => {
     setFiles(files.filter((f) => f.name !== file.name));
@@ -169,21 +186,9 @@ const ApplyScreenWeb = () => {
         {
           files.length > 0 && (
             <CarouselNative
-              data={files.map((file: any) => {
-                if (Platform.OS === 'web') {
-                  return {
-                    type: file.type,
-                    url: file.id,
-                  }
-                }
-
-                return {
-                  type: file.type,
-                  url: file.id,
-                };
-              })}
-              onImagePress={(index) => {
-                console.log("Image Pressed", index);
+              data={previewUrls}
+              onImagePress={(file) => {
+                console.log("Image Pressed", file);
               }}
             />
           )
