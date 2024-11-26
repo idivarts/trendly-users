@@ -10,31 +10,32 @@ import { FirestoreDB } from "@/utils/firestore";
 import CollaborationDetailsContent from "./CollaborationDetailsContent";
 import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { View } from "@/components/theme/Themed";
+import { Invitation } from "@/types/Collaboration";
 
-interface Collaboration extends ICollaboration {
+export interface CollaborationDetail extends ICollaboration {
+  brandDescription: string;
   brandName: string;
   paymentVerified: boolean;
-  brandDescription: string;
 }
 
 interface CollaborationDetailsProps {
-  pageID: string;
-  cardType: string;
-  collaborationID: string;
   cardId: string;
+  cardType: string; // "collaboration" | "invitation"
+  collaborationID: string;
+  pageID: string;
 }
 
 const CollaborationDetails: React.FC<CollaborationDetailsProps> = ({
-  pageID,
+  cardId,
   cardType,
   collaborationID,
-  cardId,
+  pageID,
 }) => {
-  const [collaboration, setCollaboration] = useState<Collaboration | undefined>(
+  const [collaboration, setCollaboration] = useState<CollaborationDetail | undefined>(
     undefined
   );
   const [loading, setLoading] = useState(true);
-  const [invitation, setInvitation] = useState<any>();
+  const [invitation, setInvitation] = useState<Invitation>();
 
   // Fetch Collaboration Data
   const fetchCollaboration = async () => {
@@ -51,9 +52,9 @@ const CollaborationDetails: React.FC<CollaborationDetailsProps> = ({
 
       setCollaboration({
         ...data,
+        brandDescription: brandData?.description || "",
         brandName: brandData?.name || "Unknown Brand",
         paymentVerified: brandData?.paymentMethodVerified || false,
-        brandDescription: brandData?.description || "",
       });
     } catch (e) {
       console.error(e);
@@ -67,7 +68,6 @@ const CollaborationDetails: React.FC<CollaborationDetailsProps> = ({
     if (!collaborationID || !cardId) return;
     try {
       const invitationRef = doc(
-        // @ts-ignore
         FirestoreDB,
         "collaborations",
         collaborationID,
@@ -75,11 +75,10 @@ const CollaborationDetails: React.FC<CollaborationDetailsProps> = ({
         cardId
       );
       const invitationSnapshot = await getDoc(invitationRef);
-      const invitationData = {
+      setInvitation({
         id: invitationSnapshot.id,
         ...invitationSnapshot.data(),
-      };
-      setInvitation(invitationData);
+      } as Invitation);
     } catch (e) {
       console.error(e);
     }
@@ -113,13 +112,12 @@ const CollaborationDetails: React.FC<CollaborationDetailsProps> = ({
 
   return (
     <CollaborationDetailsContent
-      cardType={cardType as string}
+      cardType={cardType}
       collaborationDetail={collaboration}
       invitationData={invitation}
-      pageID={pageID as string}
+      pageID={pageID}
     />
   );
 };
 
 export default CollaborationDetails;
-

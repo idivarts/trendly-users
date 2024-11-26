@@ -1,11 +1,12 @@
 import Colors from "@/constants/Colors";
 import { useNotificationContext } from "@/contexts";
-import { FontAwesome } from "@expo/vector-icons";
 import { useTheme } from "@react-navigation/native";
 import { Link } from "expo-router";
 import { Pressable } from "react-native";
 import { Badge } from "react-native-paper";
 import { View } from "../theme/Themed";
+import { faBell } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 
 const NotificationIcon: React.FC = () => {
   const theme = useTheme();
@@ -38,8 +39,8 @@ const NotificationIcon: React.FC = () => {
             >
               {unreadNotifications}
             </Badge>
-            <FontAwesome
-              name="bell"
+            <FontAwesomeIcon
+              icon={faBell}
               size={25}
               color={Colors(theme).text}
               style={{

@@ -14,36 +14,21 @@ import { doc, updateDoc } from "firebase/firestore";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { useAuthContext, useNotificationContext } from "@/contexts";
 import Tag from "@/components/ui/tag";
+import { CollaborationDetail } from ".";
+import { Invitation } from "@/types/Collaboration";
+import { faBolt, faEye, faLocationDot } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import Colors from "@/constants/Colors";
 
-interface CollaborationAdCardProps {
+interface CollaborationDetailsContentProps {
   pageID: string;
-  cardType: "collaboration" | "invitation";
-  collaborationDetail: {
-    name: string;
-    brandName: string;
-    description: string;
-    appliedCount: number;
-    brandViewed: number;
-    location: {
-      name: string;
-    };
-    budget: {
-      min: number;
-      max: number;
-    };
-  };
+  cardType: string; // "collaboration" | "invitation"
+  collaborationDetail: CollaborationDetail;
   logo?: string;
-  invitationData?: {
-    collaborationId: string;
-    managerId: string;
-    message: string;
-    status: string;
-    timeStamp: number;
-    userId: string;
-  };
+  invitationData?: Invitation;
 }
 
-const CollborationDetailsContent = (props: any) => {
+const CollborationDetailsContent = (props: CollaborationDetailsContentProps) => {
   const theme = useTheme();
   const styles = stylesFn(theme);
   const [status, setStatus] = React.useState("pending");
@@ -53,6 +38,8 @@ const CollborationDetailsContent = (props: any) => {
   const { user } = useAuthContext();
 
   const acceptInvitation = async () => {
+    if (!props.invitationData) return;
+
     const invitationRef = doc(
       FirestoreDB,
       "collaborations",
@@ -60,15 +47,16 @@ const CollborationDetailsContent = (props: any) => {
       "invitations",
       props.invitationData.id
     );
+
     await updateDoc(invitationRef, {
       status: "accepted",
     }).then(() => {
       createNotification(
-        props.invitationData.managerId,
+        props?.invitationData?.managerId || "",
         {
           data: {
             userId: user?.id,
-            collaborationId: props.invitationData.collaborationId,
+            collaborationId: props.invitationData?.collaborationId,
           },
           description: `${user?.name} with email id ${user?.email} accepted invitation to collaborate for ${props.collaborationDetail.name}`,
           isRead: false,
@@ -91,6 +79,8 @@ const CollborationDetailsContent = (props: any) => {
   };
 
   const rejectInvitation = () => {
+    if (!props.invitationData) return;
+
     const invitationRef = doc(
       FirestoreDB,
       "collaborations",
@@ -174,20 +164,50 @@ const CollborationDetailsContent = (props: any) => {
               </View>
             )}
           <View style={styles.statsContainer}>
+            {
+              props.collaborationDetail.promotionType && (
+                <Tag
+                  icon={() => (
+                    <FontAwesomeIcon
+                      color={Colors(theme).primary}
+                      icon={faBolt}
+                      size={14}
+                    />
+                  )}
+                >
+                  {props.collaborationDetail.promotionType}
+                </Tag>
+              )
+            }
+            {
+              props.collaborationDetail.collaborationType && (
+                <Tag
+                  icon={() => (
+                    <FontAwesomeIcon
+                      color={Colors(theme).primary}
+                      icon={faEye}
+                      size={14}
+                    />
+                  )}
+                >
+                  {props.collaborationDetail.collaborationType}
+                </Tag>
+              )
+            }
             <Tag
-              icon="checkbox-marked-circle"
+              icon={() => (
+                <FontAwesomeIcon
+                  color={Colors(theme).primary}
+                  icon={faLocationDot}
+                  size={14}
+                />
+              )}
             >
-              {props.collaborationDetail.appliedCount} Applied
-            </Tag>
-            <Tag
-              icon="eye"
-            >
-              {props.collaborationDetail.brandViewed} Reviewed
-            </Tag>
-            <Tag
-              icon="map-marker"
-            >
-              {props.collaborationDetail.location.name}
+              {
+                props.collaborationDetail.location.type === "Remote"
+                  ? "Remote"
+                  : props.collaborationDetail.location.name
+              }
             </Tag>
           </View>
         </Card.Content>
@@ -212,7 +232,6 @@ const CollborationDetailsContent = (props: any) => {
 
       {/* About Brand Section */}
       <Card style={styles.infoCard}>
-        {/* <Card.Title title="About Brand" /> */}
         <View>
           <Text variant="headlineSmall" style={styles.cardName}>
             About Brand
@@ -229,7 +248,6 @@ const CollborationDetailsContent = (props: any) => {
 
       {/* Platform Section */}
       <Card style={styles.infoCard}>
-        {/* <Card.Title title="Platform" /> */}
         <View>
           <Text variant="headlineSmall" style={styles.cardName}>
             Platform
@@ -242,7 +260,6 @@ const CollborationDetailsContent = (props: any) => {
 
       {/* Payment Details Section */}
       <Card style={styles.infoCard}>
-        {/* <Card.Title title="Payment Details" /> */}
         <View>
           <Text variant="headlineSmall" style={styles.cardName}>
             Payment Details

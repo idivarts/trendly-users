@@ -8,13 +8,18 @@ import { useTheme } from "@react-navigation/native";
 import NotificationIcon from "@/components/notifications/notification-icon";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
-  faHandshake,
   faComment,
+  faFileLines,
+  faHandshake,
   faStar,
   faUser,
 } from "@fortawesome/free-regular-svg-icons";
 import {
-  faFileSignature,
+  faComment as faCommentSolid,
+  faFileLines as faFileLinesSolid,
+  faHandshake as faHandshakeSolid,
+  faStar as faStarSolid,
+  faUser as faUserSolid,
 } from "@fortawesome/free-solid-svg-icons";
 
 const TabLayout = () => {
@@ -25,6 +30,7 @@ const TabLayout = () => {
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors(theme).primary,
+        tabBarInactiveTintColor: Colors(theme).text,
         // Disable the static render of the header on web
         // to prevent a hydration error in React Navigation v6.
         headerShown: useClientOnlyValue(false, true),
@@ -45,10 +51,10 @@ const TabLayout = () => {
         options={{
           title: "Proposals",
           tabBarLabel: "Proposals",
-          tabBarIcon: ({ color }) => (
+          tabBarIcon: ({ color, focused }) => (
             <FontAwesomeIcon
               color={color}
-              icon={faHandshake}
+              icon={focused ? faHandshakeSolid : faHandshake}
               size={28}
             />
           ),
@@ -60,10 +66,10 @@ const TabLayout = () => {
         options={{
           title: "Messages",
           tabBarLabel: "Messages",
-          tabBarIcon: ({ color }) => (
+          tabBarIcon: ({ color, focused }) => (
             <FontAwesomeIcon
               color={color}
-              icon={faComment}
+              icon={focused ? faCommentSolid : faComment}
               size={24}
             />
           ),
@@ -76,10 +82,10 @@ const TabLayout = () => {
           title: "Collaborations",
           tabBarLabel: "Collaborations",
           headerRight: () => <NotificationIcon />,
-          tabBarIcon: ({ color }) => (
+          tabBarIcon: ({ color, focused }) => (
             <FontAwesomeIcon
               color={color}
-              icon={faStar}
+              icon={focused ? faStarSolid : faStar}
               size={24}
             />
           ),
@@ -88,10 +94,10 @@ const TabLayout = () => {
       <Tabs.Screen
         name="contracts"
         options={{
-          tabBarIcon: ({ color }) => (
+          tabBarIcon: ({ color, focused }) => (
             <FontAwesomeIcon
               color={color}
-              icon={faFileSignature}
+              icon={focused ? faFileLinesSolid : faFileLines}
               size={24}
             />
           ),
@@ -106,10 +112,10 @@ const TabLayout = () => {
         options={{
           title: "Profile",
           tabBarLabel: "Profile",
-          tabBarIcon: ({ color }) => (
+          tabBarIcon: ({ color, focused }) => (
             <FontAwesomeIcon
               color={color}
-              icon={faUser}
+              icon={focused ? faUserSolid : faUser}
               size={24}
             />
           ),

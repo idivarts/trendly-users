@@ -1,9 +1,7 @@
 import React, { useEffect } from "react";
 import { View, FlatList } from "react-native";
-import { Appbar } from "react-native-paper";
 import AppLayout from "@/layouts/app-layout";
 import { useTheme } from "@react-navigation/native";
-import BackButton from "@/components/ui/back-button/BackButton";
 import Colors from "@/constants/Colors";
 import {
   collection,
@@ -15,6 +13,7 @@ import { getDocs } from "firebase/firestore";
 import { AuthApp } from "@/utils/auth";
 import BottomSheetActions from "@/components/BottomSheetActions";
 import ContractCard from "@/components/ContractCard";
+import ScreenHeader from "@/components/ui/screen-header";
 
 const PastApplicationPage = (props: any) => {
   const theme = useTheme();
@@ -112,15 +111,9 @@ const PastApplicationPage = (props: any) => {
 
   return (
     <AppLayout>
-      <Appbar.Header
-        statusBarHeight={0}
-        style={{
-          backgroundColor: Colors(theme).background,
-        }}
-      >
-        <BackButton />
-        <Appbar.Content title="Past Contracts" color={Colors(theme).text} />
-      </Appbar.Header>
+      <ScreenHeader
+        title="Past Contracts"
+      />
       <View
         style={{
           flex: 1,

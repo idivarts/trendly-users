@@ -12,7 +12,6 @@ const styles = (theme: Theme) => StyleSheet.create({
   avatar: {
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors(theme).primary,
   },
   textContainer: {
     flex: 1,

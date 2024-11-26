@@ -1,45 +1,40 @@
 import { useState } from "react";
-import { Appbar, IconButton } from "react-native-paper";
+import { IconButton } from "react-native-paper";
 import { useLocalSearchParams } from "expo-router";
-import { useTheme } from "@react-navigation/native";
 
 import AppLayout from "@/layouts/app-layout";
-import Colors from "@/constants/Colors";
-import BackButton from "@/components/ui/back-button/BackButton";
 import BottomSheetActions from "@/components/BottomSheetActions";
 import CollaborationDetails from "@/components/collaboration/collaboration-details";
+import ScreenHeader from "@/components/ui/screen-header";
+import Colors from "@/constants/Colors";
+import { useTheme } from "@react-navigation/native";
 
 const CollaborationDetailsScreen = () => {
-  const [isVisible, setIsVisible] = useState(false);
   const theme = useTheme();
+  const [isVisible, setIsVisible] = useState(false);
 
   const {
-    pageID,
+    cardId,
     cardType,
     collaborationID,
-    cardId,
+    pageID,
   } = useLocalSearchParams();
 
   return (
     <AppLayout>
-      <Appbar.Header
-        statusBarHeight={0}
-        style={{
-          backgroundColor: Colors(theme).background,
-        }}
-      >
-        <BackButton />
-        <Appbar.Content
-          color={Colors(theme).text}
-          title="Collaboration Details"
-        />
-        <IconButton
-          icon="dots-vertical"
-          onPress={() => {
-            setIsVisible(true);
-          }}
-        />
-      </Appbar.Header>
+      <ScreenHeader
+        title="Collaboration Details"
+        rightAction
+        rightActionButton={
+          <IconButton
+            icon="dots-vertical"
+            onPress={() => {
+              setIsVisible(true);
+            }}
+            iconColor={Colors(theme).text}
+          />
+        }
+      />
       <CollaborationDetails
         cardId={cardId as string}
         cardType={cardType as string}
