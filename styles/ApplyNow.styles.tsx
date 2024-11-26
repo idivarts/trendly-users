@@ -52,7 +52,7 @@ export const stylesFn = (theme: Theme) =>
     },
     helperText: {
       paddingHorizontal: 2,
-      color: Colors(theme).gray100,
+      color: Colors(theme).text,
     },
     card: {
       backgroundColor: Colors(theme).card,

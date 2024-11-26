@@ -165,11 +165,6 @@ export const AWSContextProvider: React.FC<PropsWithChildren> = ({
 
   const uploadFile = async (file: File): Promise<any> => {
     try {
-      // if (file.size > FILE_SIZE) {
-      //   Toaster.error("File size limit exceeded");
-      //   return;
-      // }
-
       const preUploadUrlResponse = await fetch(
         preUploadRequestUrl(file),
         {

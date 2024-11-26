@@ -22,6 +22,13 @@ import AppLayout from "@/layouts/app-layout";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { stylesFn } from "@/styles/ApplyNow.styles";
 import { MediaItem } from "@/components/ui/carousel/render-media-item";
+import {
+  faLink,
+  faLocationDot,
+  faPaperclip,
+  faQuoteLeft,
+} from "@fortawesome/free-solid-svg-icons";
+import ListItem from "@/components/ui/list-item/ListItem";
 
 const ApplyScreenWeb = () => {
   const params = useLocalSearchParams();
@@ -200,11 +207,16 @@ const ApplyScreenWeb = () => {
           }}
         >
           <TextInput
+            style={{
+              backgroundColor: Colors(theme).background,
+            }}
+            activeOutlineColor={Colors(theme).primary}
             label="Add a short note"
             mode="outlined"
             multiline
             onChangeText={(text) => setNote(text)}
-            style={styles.input}
+            placeholderTextColor={Colors(theme).text}
+            textColor={Colors(theme).text}
             value={note}
           />
           <HelperText type="info" style={styles.helperText}>
@@ -212,24 +224,24 @@ const ApplyScreenWeb = () => {
           </HelperText>
 
           <List.Section>
-            <List.Item
+            <ListItem
               title="Your Quote"
-              left={() => <List.Icon icon="format-quote-close" />}
+              leftIcon={faQuoteLeft}
               onPress={() => console.log("Quote")}
             />
-            <List.Item
+            <ListItem
               title="Attachments"
-              left={() => <List.Icon icon="attachment" />}
+              leftIcon={faPaperclip}
               onPress={() => console.log("Attachments")}
             />
-            <List.Item
+            <ListItem
               title="Add relevant Links"
-              left={() => <List.Icon icon="link" />}
+              leftIcon={faLink}
               onPress={() => console.log("Links")}
             />
-            <List.Item
+            <ListItem
               title="Add location"
-              left={() => <List.Icon icon="map-marker" />}
+              leftIcon={faLocationDot}
               onPress={() => console.log("Location")}
             />
           </List.Section>

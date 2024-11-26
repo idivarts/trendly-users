@@ -1,54 +1,63 @@
 import { DrawerContentScrollView } from "@react-navigation/drawer";
-import { usePathname, useRouter } from "expo-router";
 import { APP_NAME } from "@/constants/App";
-import { useTheme } from "@react-navigation/native";
 import { Text, View } from "../theme/Themed";
 import {
-  faHandshake,
   faComment,
+  faFileLines,
+  faHandshake,
   faStar,
   faUser,
 } from "@fortawesome/free-regular-svg-icons";
 import {
-  faFileSignature,
+  faComment as faCommentSolid,
+  faFileLines as faFileLinesSolid,
+  faHandshake as faHandshakeSolid,
+  faStar as faStarSolid,
+  faUser as faUserSolid,
 } from "@fortawesome/free-solid-svg-icons";
-import DrawerMenuItem from "./DrawerMenuItem";
+import DrawerMenuItem, { IconPropFn } from "./DrawerMenuItem";
 
 interface DrawerMenuContentProps { }
 
 const DRAWER_MENU_CONTENT_ITEMS = [
   {
     href: "/proposals",
-    icon: faHandshake,
+    icon: ({
+      focused,
+    }: IconPropFn) => focused ? faHandshakeSolid : faHandshake,
     label: "Proposals",
   },
   {
     href: "/messages",
-    icon: faComment,
+    icon: ({
+      focused,
+    }: IconPropFn) => focused ? faCommentSolid : faComment,
     label: "Messages",
   },
   {
     href: "/collaborations",
-    icon: faStar,
+    icon: ({
+      focused,
+    }: IconPropFn) => focused ? faStarSolid : faStar,
     label: "Collaborations",
   },
   {
     href: "/contracts",
-    icon: faFileSignature,
+    icon: ({
+      focused,
+    }: IconPropFn) => focused ? faFileLinesSolid : faFileLines,
     label: "Contracts",
   },
   {
     href: "/profile",
-    icon: faUser,
+    icon: ({
+      focused,
+    }: IconPropFn) => focused ? faUserSolid : faUser,
     label: "Profile",
   },
 ];
 
 const DrawerMenuContent: React.FC<DrawerMenuContentProps> = () => {
-  const router = useRouter();
-  const pathname = usePathname();
-  const theme = useTheme();
-
   return (
     <View
       style={{
