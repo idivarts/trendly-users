@@ -10,10 +10,10 @@ import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collab
 import { useState, useEffect } from "react";
 import ScreenHeader from "@/components/ui/screen-header";
 import { processRawAttachment } from "@/utils/attachments";
+import { useAuthContext } from "@/contexts";
 
 const Preview = () => {
   const params = useLocalSearchParams();
-  const user = AuthApp.currentUser;
   const pageID = Array.isArray(params.pageID)
     ? params.pageID[0]
     : params.pageID;
@@ -22,6 +22,10 @@ const Preview = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [processedAttachments, setProcessedAttachments] = useState([]);
   const [rawAttachments, setRawAttachments] = useState([]);
+
+  const {
+    user
+  } = useAuthContext();
 
   useEffect(() => {
     try {
@@ -65,7 +69,7 @@ const Preview = () => {
       }
 
       const applicantData: IApplications = {
-        userId: user?.uid,
+        userId: user?.id,
         collaborationId: pageID,
         status: "pending",
         timeStamp: Date.now(),
@@ -113,9 +117,9 @@ const Preview = () => {
               influencer={{
                 bio: "",
                 followers: 100,
-                name: user?.displayName || "John Doe",
+                name: user?.name || "John Doe",
                 profilePic:
-                  user?.photoURL || "https://randomuser.me/api/portraits",
+                  user?.profileImage || "https://randomuser.me/api/portraits",
                 handle: user?.email?.split("@")[0] || "john_doe",
                 jobsCompleted: 10,
                 rating: 5,
