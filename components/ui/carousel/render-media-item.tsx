@@ -13,7 +13,6 @@ import { useTheme } from "@react-navigation/native";
 import { imageUrl } from "@/utils/url";
 
 export interface MediaItem {
-  id: string;
   type: string;
   url: string;
 }

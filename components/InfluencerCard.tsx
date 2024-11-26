@@ -29,6 +29,7 @@ import { faStar } from "@fortawesome/free-regular-svg-icons";
 import { convertToKUnits } from "@/utils/conversion";
 import { faArrowTrendUp, faEllipsis, faMessage, faPeopleGroup } from "@fortawesome/free-solid-svg-icons";
 import Tag from "./ui/tag";
+import { MediaItem } from "./ui/carousel/render-media-item";
 
 const { width } = Dimensions.get("window");
 
@@ -37,11 +38,7 @@ interface InfluencerCardPropsType {
     name: string;
     handle: string;
     profilePic: string;
-    media: {
-      id: string;
-      type: string;
-      url: string;
-    }[];
+    media: MediaItem[];
     followers: number | string;
     reach: number | string;
     rating: number | string;
@@ -98,8 +95,8 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
     };
   });
 
-  const onImagePress = (data: any) => {
-    setSelectedImage(data); // TODO: data -> uri
+  const onImagePress = (data: MediaItem) => {
+    setSelectedImage(data.url);
     setIsZoomed(true);
   }
 

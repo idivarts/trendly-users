@@ -48,7 +48,7 @@ const CarouselWeb: React.FC<CarouselWebProps> = ({
           height={560}
           index={index}
           item={item}
-          key={item.id || index}
+          key={item.url || index}
           videoRefs={videoRefs}
         />
       ))}

@@ -94,7 +94,6 @@ const ApplyScreenWeb = () => {
 
   useEffect(() => {
     const urls = files.map(file => ({
-      id: file.name,
       type: file.type,
       url: URL.createObjectURL(file),
     }));
