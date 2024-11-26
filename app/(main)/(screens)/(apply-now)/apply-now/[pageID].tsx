@@ -1,16 +1,11 @@
 import AppLayout from "@/layouts/app-layout";
 import { stylesFn } from "@/styles/ApplyNow.styles";
-import { AuthApp } from "@/utils/auth";
 import { useTheme } from "@react-navigation/native";
-import axios from "axios";
 import { router, useLocalSearchParams } from "expo-router";
-import * as FileSystem from "expo-file-system";
-import * as MediaLibrary from "expo-media-library";
 import React, { useEffect, useState } from "react";
 import {
   ScrollView,
   View,
-  Platform,
 } from "react-native";
 import {
   Button,
@@ -22,11 +17,10 @@ import {
   TextInput,
 } from "react-native-paper";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
-import { FILE_SIZE } from "@/constants/FileSize";
 import ScreenHeader from "@/components/ui/screen-header";
 import CarouselNative from "@/components/ui/carousel/carousel";
+import { useAWSContext } from "@/contexts/aws-context.provider";
 
-// TODO: Refactor this component
 const ApplyScreen = () => {
   const params = useLocalSearchParams();
   const pageID = Array.isArray(params.pageID)
@@ -35,12 +29,19 @@ const ApplyScreen = () => {
   const [note, setNote] = useState<string>(
     Array.isArray(params.note) ? params.note[0] : params.note
   );
-  const [files, setFiles] = useState<string[]>([]);
+
   const [errorMessage, setErrorMessage] = useState("");
-  const [attachments, setAttachments] = useState<any>([]);
   const [loading, setLoading] = useState(false);
+
+  const [files, setFiles] = useState<string[]>([]);
+  const [uploadedFiles, setUploadedFiles] = useState<any>([]);
+
   const theme = useTheme();
   const styles = stylesFn(theme);
+
+  const {
+    uploadFileUris,
+  } = useAWSContext();
 
   const handleCvUpload = async () => {
     try {
@@ -54,148 +55,25 @@ const ApplyScreen = () => {
     }
   };
 
-  const getFileUrlFromPhotoUri = async (uri: string): Promise<string> => {
-    if (Platform.OS !== "ios") return uri;
-
-    if (uri.startsWith("ph://")) {
-      try {
-        // Extract asset ID from ph:// URI
-        const assetId = uri.replace("ph://", "");
-        const asset = await MediaLibrary.getAssetInfoAsync(assetId);
-
-        if (!asset?.localUri) {
-          throw new Error("Could not get local URI for video");
-        }
-
-        return asset.localUri;
-      } catch (error) {
-        console.error("Error converting ph:// URI:", error);
-        throw new Error("Failed to access video file");
-      }
-    }
-
-    return uri;
-  };
-
-  const uploadVideo = async (fileUri: string): Promise<any> => {
+  const handleUploadFiles = async () => {
+    setLoading(true);
     try {
-      const date = new Date().getTime();
-      const preSignedUrl = await axios.post(
-        `https://be.trendly.pro/s3/v1/videos?filename=${date}.mp4`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${AuthApp.currentUser?.uid}`,
-          },
-        }
-      );
+      const uploadedFileUrisResponse = await uploadFileUris(files);
 
-      const uploadURL = preSignedUrl.data.uploadUrl;
+      setUploadedFiles(uploadedFileUrisResponse);
 
-      // Convert ph:// URI to file:// URI if needed
-      const actualFileUri = await getFileUrlFromPhotoUri(fileUri);
-
-      // Get file info using the converted URI
-      const videoInfo = await FileSystem.getInfoAsync(actualFileUri);
-      if (!videoInfo.exists) {
-        throw new Error("Video file does not exist");
-      }
-
-      // Upload file using the converted URI
-      const response = await fetch(actualFileUri);
-      const blob = await response.blob();
-
-      if (blob.size > FILE_SIZE) {
-        Toaster.error("File size exceeds 10MB limit");
-        return;
-      }
-
-      const result = await fetch(uploadURL, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "video/mp4",
-        },
-        body: blob,
-      });
-
-      if (!result.ok) {
-        throw new Error("Failed to upload video");
-      }
-
-      return {
-        appleUrl: preSignedUrl.data.appleUrl,
-        type: "video",
-        playUrl: preSignedUrl.data.playUrl,
-      };
-    } catch (error) {
-      console.error("Video upload error:", error);
-      throw new Error("Failed to upload video");
-    }
-  };
-
-  const handleUploadImage = async () => {
-    setLoading(true); // Show loading indicator
-    const uploadedAttachments: any = []; // Local array to hold attachments during upload
-
-    try {
-      // Map over files and upload each one
-      const uploadPromises = files.map(async (fileUri: any) => {
-        if (fileUri.type === "image") {
-          const date = new Date().getTime();
-          const preSignedUrl = await axios.post(
-            `https://be.trendly.pro/s3/v1/images?filename=${date}.jpg`,
-            {},
-            {
-              headers: {
-                Authorization: `Bearer ${AuthApp.currentUser?.uid}`,
-              },
-            }
-          );
-          const uploadURL = preSignedUrl.data.uploadUrl;
-
-          const response = await fetch(fileUri.id);
-          const blob = await response.blob();
-
-          const result = await fetch(uploadURL, {
-            method: "PUT",
-            headers: {
-              "Content-Type": "image/jpeg",
-            },
-            body: blob,
-          });
-
-          if (result.ok) {
-            uploadedAttachments.push({
-              url: preSignedUrl.data.imageUrl,
-              type: "image",
-            });
-          } else {
-            console.error("Failed to upload file");
-          }
-        } else {
-          const videoResult = await uploadVideo(fileUri.id);
-          uploadedAttachments.push(videoResult);
-        }
-      });
-
-      // Wait until all uploads finish
-      await Promise.all(uploadPromises);
-
-      setAttachments(uploadedAttachments);
-
-      // Navigate after attachments state is updated
       router.push({
         pathname: "/apply-now/preview",
         params: {
           pageID,
           note,
-          attachments: JSON.stringify(uploadedAttachments),
+          attachments: JSON.stringify(uploadedFileUrisResponse),
         },
       });
     } catch (error) {
       console.error(error);
     } finally {
-      setLoading(false); // Hide loading indicator
+      setLoading(false);
     }
   };
 
@@ -301,7 +179,7 @@ const ApplyScreen = () => {
                 return;
               }
 
-              await handleUploadImage();
+              await handleUploadFiles();
             }}
             loading={loading}
           >

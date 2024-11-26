@@ -1,12 +1,10 @@
 import CarouselNative from "@/components/ui/carousel/carousel";
 import ScreenHeader from "@/components/ui/screen-header";
-import { FILE_SIZE } from "@/constants/FileSize";
+import { useAWSContext } from "@/contexts/aws-context.provider";
 import AppLayout from "@/layouts/app-layout";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { stylesFn } from "@/styles/ApplyNow.styles";
-import { AuthApp } from "@/utils/auth";
 import { useTheme } from "@react-navigation/native";
-import axios from "axios";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
 import { ScrollView, View } from "react-native";
@@ -21,17 +19,24 @@ import {
 } from "react-native-paper";
 
 const ApplyScreenWeb = () => {
-  const [note, setNote] = useState<string>("");
-  const [files, setFiles] = useState<File[]>([]);
-  const [attachments, setAttachments] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const theme = useTheme();
-  const styles = stylesFn(theme);
   const params = useLocalSearchParams();
   const pageID = Array.isArray(params.pageID)
     ? params.pageID[0]
     : params.pageID;
+  const [note, setNote] = useState<string>("");
+
+  const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const [files, setFiles] = useState<File[]>([]);
+  const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
+
+  const theme = useTheme();
+  const styles = stylesFn(theme);
+
+  const {
+    uploadFiles,
+  } = useAWSContext();
 
   const handleFileSelection = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = event.target.files;
@@ -40,83 +45,24 @@ const ApplyScreenWeb = () => {
     }
   };
 
-  const uploadFile = async (file: File): Promise<any> => {
-    try {
-      const date = new Date().getTime();
-      const preSignedUrl = await axios.post(
-        `https://be.trendly.pro/s3/v1/${file.type.includes("video") ? "videos" : "images"
-        }?filename=${date}.${file.type.split("/")[1]}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${AuthApp.currentUser?.uid}`,
-          },
-        }
-      );
-
-      const uploadURL = preSignedUrl.data.uploadUrl;
-
-      // File size limit check (10 MB for example)
-      if (file.size > FILE_SIZE) {
-        Toaster.error("File size limit exceeded");
-        return;
-      }
-
-      const response = await fetch(uploadURL, {
-        method: "PUT",
-        headers: {
-          "Content-Type": file.type,
-        },
-        body: file,
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to upload file");
-      }
-
-      if (file.type.includes("video")) {
-        return {
-          type: "video",
-          appleUrl: preSignedUrl.data.appleUrl,
-          playUrl: preSignedUrl.data.playUrl,
-        };
-      } else {
-        return {
-          type: "image",
-          url: preSignedUrl.data.imageUrl,
-        };
-      }
-    } catch (error) {
-      console.error("File upload error:", error);
-      throw new Error("Failed to upload file");
-    }
-  };
-
   const handleUploadFiles = async () => {
     setLoading(true);
-    const uploadedAttachments: any[] = [];
-
     try {
-      const uploadPromises = files.map(async (file) => {
-        const result = await uploadFile(file);
-        uploadedAttachments.push(result);
-      });
+      const uploadedFilesResponse = await uploadFiles(files);
 
-      await Promise.all(uploadPromises);
-
-      setAttachments(uploadedAttachments);
+      setUploadedFiles(uploadedFilesResponse);
 
       router.navigate({
         pathname: "/apply-now/preview",
         params: {
           pageID,
           note,
-          attachments: JSON.stringify(uploadedAttachments),
+          attachments: JSON.stringify(uploadedFilesResponse),
         },
       });
     } catch (error) {
-      setErrorMessage("Error uploading files");
       console.error(error);
+      setErrorMessage("Error uploading files");
     } finally {
       setLoading(false);
     }

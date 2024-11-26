@@ -12,9 +12,11 @@ import {
   useNotificationContext,
 } from "./notification-context.provider";
 import { ChatContextProvider, useChatContext } from "./chat-context.provider";
+import { AWSContextProvider } from "./aws-context.provider";
 
 export {
   AuthContextProvider,
+  AWSContextProvider,
   ChatContextProvider,
   CloudMessagingContextProvider,
   FirebaseStorageContextProvider,
