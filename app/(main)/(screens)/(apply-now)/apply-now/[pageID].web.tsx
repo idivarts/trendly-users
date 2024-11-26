@@ -1,22 +1,26 @@
-import CarouselNative from "@/components/ui/carousel/carousel";
-import ScreenHeader from "@/components/ui/screen-header";
-import { useAWSContext } from "@/contexts/aws-context.provider";
-import AppLayout from "@/layouts/app-layout";
-import Toaster from "@/shared-uis/components/toaster/Toaster";
-import { stylesFn } from "@/styles/ApplyNow.styles";
-import { useTheme } from "@react-navigation/native";
-import { router, useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
-import { ScrollView, View } from "react-native";
+import { Platform, ScrollView, View } from "react-native";
 import {
   Button,
   Card,
   IconButton,
-  Paragraph,
   TextInput,
   HelperText,
   List,
 } from "react-native-paper";
+import { router, useLocalSearchParams } from "expo-router";
+import { useTheme } from "@react-navigation/native";
+import { faTrash, faUpload } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+
+import { Text } from "@/components/theme/Themed";
+import CarouselNative from "@/components/ui/carousel/carousel";
+import ScreenHeader from "@/components/ui/screen-header";
+import Colors from "@/constants/Colors";
+import { useAWSContext } from "@/contexts/aws-context.provider";
+import AppLayout from "@/layouts/app-layout";
+import Toaster from "@/shared-uis/components/toaster/Toaster";
+import { stylesFn } from "@/styles/ApplyNow.styles";
 
 const ApplyScreenWeb = () => {
   const params = useLocalSearchParams();
@@ -31,17 +35,24 @@ const ApplyScreenWeb = () => {
   const [files, setFiles] = useState<File[]>([]);
   const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
 
+  const inputRef = React.useRef<HTMLInputElement>(null);
   const theme = useTheme();
   const styles = stylesFn(theme);
 
   const {
+    // getBlob,
+    processMessage,
+    processPercentage,
+    setProcessMessage,
+    setProcessPercentage,
     uploadFiles,
   } = useAWSContext();
 
   const handleFileSelection = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = event.target.files;
+
     if (selectedFiles) {
-      setFiles(Array.from(selectedFiles));
+      setFiles([...files, ...Array.from(selectedFiles)]);
     }
   };
 
@@ -52,21 +63,29 @@ const ApplyScreenWeb = () => {
 
       setUploadedFiles(uploadedFilesResponse);
 
-      router.navigate({
-        pathname: "/apply-now/preview",
-        params: {
-          pageID,
-          note,
-          attachments: JSON.stringify(uploadedFilesResponse),
-        },
-      });
+      setTimeout(() => {
+        setLoading(false);
+        setProcessMessage("");
+        setProcessPercentage(0);
+        router.navigate({
+          pathname: "/apply-now/preview",
+          params: {
+            pageID,
+            note,
+            attachments: JSON.stringify(uploadedFilesResponse),
+          },
+        });
+      }, 5000);
     } catch (error) {
       console.error(error);
       setErrorMessage("Error uploading files");
-    } finally {
       setLoading(false);
     }
   };
+
+  const removeFile = (file: File) => {
+    setFiles(files.filter((f) => f.name !== file.name));
+  }
 
   return (
     <AppLayout>
@@ -75,29 +94,89 @@ const ApplyScreenWeb = () => {
         style={styles.container}
         contentContainerStyle={styles.contentContainerStyle}
       >
-        <Card style={styles.card}>
-          <Card.Content>
-            <Paragraph>Upload files</Paragraph>
-            <View style={styles.cardContent}>
-              <input
-                type="file"
-                multiple
-                onChange={handleFileSelection}
-                accept="image/*, video/*"
-              />
-              <IconButton
-                icon="upload"
-                size={20}
-                onPress={() => document.querySelector("input")?.click()}
-              />
-            </View>
+        <Card
+          style={[
+            styles.card,
+            {
+              position: 'relative',
+            }
+          ]}
+          onPress={() => inputRef.current?.click()}
+        >
+          <Card.Content
+            style={styles.cardContent}
+          >
+            <IconButton
+              icon={
+                () => (
+                  <FontAwesomeIcon
+                    icon={faUpload}
+                    size={20}
+                    color={Colors(theme).text}
+                  />
+                )
+              }
+              onPress={() => inputRef.current?.click()}
+            />
           </Card.Content>
+          <input
+            ref={inputRef}
+            type="file"
+            style={{
+              backgroundColor: 'transparent',
+              visibility: 'hidden',
+            }}
+            multiple
+            onChange={handleFileSelection}
+            accept="image/*, video/*"
+          />
+          {
+            files.length > 0 && (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  flexWrap: 'wrap'
+                }}
+              >
+                {
+                  files.map((file) => (
+                    <View
+                      key={file.name}
+                      style={{
+                        flexDirection: 'row',
+                        gap: 2,
+                        alignItems: 'center',
+                      }}
+                    >
+                      <Text>{file.name}</Text>
+                      <IconButton
+                        icon={() => (
+                          <FontAwesomeIcon
+                            icon={faTrash}
+                            size={12}
+                          />
+                        )}
+                        size={12}
+                        onPress={() => removeFile(file)}
+                      />
+                    </View>
+                  ))
+                }
+              </View>
+            )
+          }
         </Card>
-
         {
           files.length > 0 && (
             <CarouselNative
               data={files.map((file: any) => {
+                if (Platform.OS === 'web') {
+                  return {
+                    type: file.type,
+                    url: file.id,
+                  }
+                }
+
                 return {
                   type: file.type,
                   url: file.id,
@@ -151,11 +230,19 @@ const ApplyScreenWeb = () => {
           </List.Section>
 
           {
-            errorMessage ? (
+            errorMessage && (
               <HelperText type="error" style={styles.errorText}>
                 {errorMessage}
               </HelperText>
-            ) : null
+            )
+          }
+
+          {
+            processMessage && (
+              <HelperText type="info" style={styles.processText}>
+                {processMessage} - {processPercentage}% done
+              </HelperText>
+            )
           }
 
           <Button
@@ -175,7 +262,9 @@ const ApplyScreenWeb = () => {
             }}
             loading={loading}
           >
-            Preview Application
+            {
+              processMessage ? "Uploading Assets" : "Preview Application"
+            }
           </Button>
         </View>
       </ScrollView>
