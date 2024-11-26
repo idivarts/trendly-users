@@ -35,7 +35,13 @@ export const AWSContextProvider: React.FC<PropsWithChildren> = ({
     const date = new Date().getTime();
     const baseUrl = 'https://be.trendly.pro/s3/v1/';
     const type = file.type.includes("video") ? "videos" : "images";
-    const filename = `${date}.${file.type.split("/")[1]}`;
+    let filename: string = '';
+
+    if (Platform.OS === "web") {
+      filename = `${date}.${file.type.split("/")[1]}`;
+    } else {
+      filename = `${date}.${type === 'videos' ? 'mp4' : 'jpg'}`;
+    }
 
     return `${baseUrl}${type}?filename=${filename}`;
   }
@@ -73,14 +79,9 @@ export const AWSContextProvider: React.FC<PropsWithChildren> = ({
       }
 
       const response = await fetch(actualFileUri);
-      const blog = await response.blob();
+      const blob = await response.blob();
 
-      // if (blog.size > FILE_SIZE) {
-      //   Toaster.error("File size exceeds 10MB limit");
-      //   return;
-      // }
-
-      return blog;
+      return blob;
     } else {
       const response = await fetch(fileUri.id);
       const blob = await response.blob();
@@ -102,17 +103,20 @@ export const AWSContextProvider: React.FC<PropsWithChildren> = ({
 
     const preUploadUrl = await preUploadUrlResponse.json();
 
-    const uploadURL = preUploadUrl.uploadUrl;
+    const uploadUrl = preUploadUrl.uploadUrl;
 
     const blob = await getBlob(fileUri);
 
-    const response = await fetch(uploadURL, {
-      method: "PUT",
-      headers: {
-        "Content-Type": fileUri.type, // "image/jpeg" or "video/mp4"
+    const response = await fetch(
+      uploadUrl,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": fileUri.type, // "image/jpeg" or "video/mp4"
+        },
+        body: blob,
       },
-      body: blob,
-    });
+    );
 
     if (!response.ok) {
       throw new Error("Failed to upload file");
@@ -132,13 +136,18 @@ export const AWSContextProvider: React.FC<PropsWithChildren> = ({
     }
   }
 
-  const uploadFileUris = async (fileUris: any[]): Promise<any[]> => {
+  const uploadFileUris = async (
+    fileUris: {
+      id: string,
+      type: string,
+    }[],
+  ): Promise<any[]> => {
     try {
       const uploadedFiles: any[] = [];
       const totalProgress = 100 / fileUris.length;
 
-      for (const fileUri of fileUris) {
-        setProcessMessage(`Uploading ${fileUri}`);
+      for (const [index, fileUri] of fileUris.entries()) {
+        setProcessMessage(`Uploading asset ${index + 1}`);
         const result = await uploadFileUri(fileUri);
         setProcessPercentage((prev) => Math.ceil(Math.round((prev + totalProgress))));
         uploadedFiles.push(result);
@@ -173,13 +182,16 @@ export const AWSContextProvider: React.FC<PropsWithChildren> = ({
 
       const preUploadUrl = await preUploadUrlResponse.json();
 
-      const response = await fetch(preUploadUrl.uploadUrl, {
-        method: "PUT",
-        headers: {
-          "Content-Type": file.type,
+      const response = await fetch(
+        preUploadUrl.uploadUrl,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": file.type,
+          },
+          body: file,
         },
-        body: file,
-      });
+      );
 
       if (!response.ok) {
         throw new Error("Failed to upload file");

@@ -40,6 +40,10 @@ const ApplyScreen = () => {
   const styles = stylesFn(theme);
 
   const {
+    processMessage,
+    processPercentage,
+    setProcessMessage,
+    setProcessPercentage,
     uploadFileUris,
   } = useAWSContext();
 
@@ -62,17 +66,22 @@ const ApplyScreen = () => {
 
       setUploadedFiles(uploadedFileUrisResponse);
 
-      router.push({
-        pathname: "/apply-now/preview",
-        params: {
-          pageID,
-          note,
-          attachments: JSON.stringify(uploadedFileUrisResponse),
-        },
-      });
+      setTimeout(() => {
+        setLoading(false);
+        setProcessMessage("");
+        setProcessPercentage(0);
+        router.push({
+          pathname: "/apply-now/preview",
+          params: {
+            pageID,
+            note,
+            attachments: JSON.stringify(uploadedFileUrisResponse),
+          },
+        });
+        setLoading(false);
+      }, 5000);
     } catch (error) {
       console.error(error);
-    } finally {
       setLoading(false);
     }
   };
@@ -167,6 +176,14 @@ const ApplyScreen = () => {
             ) : null
           }
 
+          {
+            processMessage && (
+              <HelperText type="info" style={styles.processText}>
+                {processMessage} - {processPercentage}% done
+              </HelperText>
+            )
+          }
+
           <Button
             mode="contained"
             onPress={async () => {
@@ -184,7 +201,9 @@ const ApplyScreen = () => {
             }}
             loading={loading}
           >
-            Preview Application
+            {
+              processMessage ? "Uploading Assets" : "Preview Application"
+            }
           </Button>
         </View>
       </ScrollView>
