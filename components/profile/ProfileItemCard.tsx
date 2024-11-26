@@ -1,10 +1,10 @@
 import { Pressable } from "react-native";
 import { Text, View } from "../theme/Themed";
-import { Ionicons } from "@expo/vector-icons";
-import { Avatar } from "react-native-paper";
 import Colors from "@/constants/Colors";
 import stylesFn from "@/styles/profile/ProfileItemCard.styles";
 import { useTheme } from "@react-navigation/native";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 
 interface ProfileItemCardProps {
   item: any;
@@ -21,9 +21,10 @@ const ProfileItemCard: React.FC<ProfileItemCardProps> = ({
   return (
     <Pressable onPress={onPress}>
       <View style={styles.container}>
-        <Avatar.Icon
+        <FontAwesomeIcon
+          color={Colors(theme).text}
           icon={item.icon}
-          size={36}
+          size={26}
           style={styles.avatar}
         />
         <View style={styles.textContainer}>
@@ -31,10 +32,10 @@ const ProfileItemCard: React.FC<ProfileItemCardProps> = ({
             {item.title}
           </Text>
         </View>
-        <Ionicons
-          color={Colors(theme).primary}
-          name="chevron-forward"
-          size={16}
+        <FontAwesomeIcon
+          icon={faChevronRight}
+          size={14}
+          color={Colors(theme).text}
           style={styles.icon}
         />
       </View>

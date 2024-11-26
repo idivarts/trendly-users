@@ -33,7 +33,7 @@ export default (theme: Theme) => ({
   unicornSilver: "#e8e8e8",
   eerieBlack: "#1b1b1b",
   whiteSmoke: "#f5f5f5",
-  success: "#d4edda",
+  success: "#02ca30",
   successForeground: "#28a745",
   pink: "#f8d7da",
   pinkForeground: "#dc3545",

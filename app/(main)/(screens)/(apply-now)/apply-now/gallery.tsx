@@ -22,10 +22,12 @@ const GalleryScreen = () => {
   const { pageID } = useLocalSearchParams();
   const [photos, setPhotos] = useState<any>([]);
   const [selectedItems, setSelectedItems] = useState<any>([]);
+
   const [permissionGranted, setPermissionGranted] = useState(false);
   const [cameraPermission, setCameraPermission] = useCameraPermissions();
   const [isCameraVisible, setIsCameraVisible] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
+
   const cameraRef = useRef<CameraView>(null);
   const note = useLocalSearchParams().note;
   const theme = useTheme();
@@ -48,6 +50,7 @@ const GalleryScreen = () => {
       sortBy: ["creationTime"],
       first: 250,
     });
+
     setPhotos(album.assets);
   };
 

@@ -9,10 +9,11 @@ import { collection, addDoc } from "firebase/firestore";
 import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { useState, useEffect } from "react";
 import ScreenHeader from "@/components/ui/screen-header";
+import { processRawAttachment } from "@/utils/attachments";
+import { useAuthContext } from "@/contexts";
 
 const Preview = () => {
   const params = useLocalSearchParams();
-  const user = AuthApp.currentUser;
   const pageID = Array.isArray(params.pageID)
     ? params.pageID[0]
     : params.pageID;
@@ -20,24 +21,20 @@ const Preview = () => {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [processedAttachments, setProcessedAttachments] = useState([]);
+  const [rawAttachments, setRawAttachments] = useState([]);
+
+  const {
+    user
+  } = useAuthContext();
 
   useEffect(() => {
     try {
       if (params.attachments) {
         const rawAttachments = JSON.parse(params.attachments as string);
-        // Process the attachments to match the format expected by InfluencerCard
-        const processed = rawAttachments.map((attachment: any) => ({
-          type: attachment.type,
-          // For videos, include both URLs
-          ...(attachment.type === "video" && {
-            appleUrl: attachment.appleUrl,
-            playUrl: attachment.playUrl,
-          }),
-          // For images, include the URL
-          ...(attachment.type === "image" && {
-            url: attachment.url,
-          }),
-        }));
+        setRawAttachments(rawAttachments);
+
+        const processed = rawAttachments.map((attachment: any) => processRawAttachment(attachment));
+
         setProcessedAttachments(processed);
       }
     } catch (error) {
@@ -55,7 +52,7 @@ const Preview = () => {
         return;
       }
 
-      if (!processedAttachments.length) {
+      if (!rawAttachments.length) {
         setErrorMessage("File is required");
         return;
       }
@@ -72,12 +69,12 @@ const Preview = () => {
       }
 
       const applicantData: IApplications = {
-        userId: user?.uid,
+        userId: user?.id,
         collaborationId: pageID,
         status: "pending",
         timeStamp: Date.now(),
         message: note,
-        attachments: processedAttachments, // Using the processed attachments
+        attachments: rawAttachments,
       };
 
       const applicantDocRef = collection(
@@ -92,7 +89,7 @@ const Preview = () => {
       if (docset) {
         setErrorMessage("Application submitted successfully");
         setTimeout(() => {
-          router.push("/collaborations");
+          router.replace("/collaborations");
         }, 1000); // Give user time to see success message
       } else {
         setErrorMessage("Failed to submit application");
@@ -120,9 +117,9 @@ const Preview = () => {
               influencer={{
                 bio: "",
                 followers: 100,
-                name: user?.displayName || "John Doe",
+                name: user?.name || "John Doe",
                 profilePic:
-                  user?.photoURL || "https://randomuser.me/api/portraits",
+                  user?.profileImage || "https://randomuser.me/api/portraits",
                 handle: user?.email?.split("@")[0] || "john_doe",
                 jobsCompleted: 10,
                 rating: 5,

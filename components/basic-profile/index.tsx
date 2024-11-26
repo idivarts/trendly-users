@@ -28,7 +28,7 @@ const BasicProfile: React.FC<BasicProfileProps> = ({ user }) => {
 
   const { lg } = useBreakpoints();
 
-  const { uploadImage } = useFirebaseStorageContext();
+  const { uploadImageBytes } = useFirebaseStorageContext();
   const { updateUser } = useAuthContext();
 
   const handleSave = async () => {
@@ -41,8 +41,9 @@ const BasicProfile: React.FC<BasicProfileProps> = ({ user }) => {
     let uploadedImage: string | null = null;
 
     if (capturedImage) {
-      uploadedImage = await uploadImage(
-        capturedImage,
+      const blob = await fetch(capturedImage).then((r) => r.blob());
+      uploadedImage = await uploadImageBytes(
+        blob,
         `users/${user.id}-profile-image`
       );
     }

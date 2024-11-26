@@ -52,11 +52,14 @@ export const stylesFn = (theme: Theme) =>
     },
     helperText: {
       paddingHorizontal: 2,
-      color: Colors(theme).gray100,
+      color: Colors(theme).text,
     },
     card: {
+      backgroundColor: Colors(theme).card,
       marginHorizontal: "auto",
+      marginVertical: 16,
       borderRadius: 8,
+      padding: 16,
       elevation: 3,
       width: "80%",
     },
@@ -76,6 +79,11 @@ export const stylesFn = (theme: Theme) =>
     },
     errorText: {
       marginBottom: 12,
+      textAlign: "center",
+    },
+    processText: {
+      marginBottom: 12,
+      color: Colors(theme).success,
       textAlign: "center",
     },
     uploadedFilesContainer: {

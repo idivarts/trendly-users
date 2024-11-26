@@ -1,126 +1,114 @@
-import CarouselNative from "@/components/ui/carousel/carousel";
-import ScreenHeader from "@/components/ui/screen-header";
-import { FILE_SIZE } from "@/constants/FileSize";
-import AppLayout from "@/layouts/app-layout";
-import Toaster from "@/shared-uis/components/toaster/Toaster";
-import { stylesFn } from "@/styles/ApplyNow.styles";
-import { AuthApp } from "@/utils/auth";
-import { useTheme } from "@react-navigation/native";
-import axios from "axios";
-import { router, useLocalSearchParams } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollView, View } from "react-native";
 import {
   Button,
   Card,
   IconButton,
-  Paragraph,
   TextInput,
   HelperText,
   List,
 } from "react-native-paper";
+import { router, useLocalSearchParams } from "expo-router";
+import { useTheme } from "@react-navigation/native";
+import { faTrash, faUpload } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+
+import { Text } from "@/components/theme/Themed";
+import CarouselNative from "@/components/ui/carousel/carousel";
+import ScreenHeader from "@/components/ui/screen-header";
+import Colors from "@/constants/Colors";
+import { useAWSContext } from "@/contexts/aws-context.provider";
+import AppLayout from "@/layouts/app-layout";
+import Toaster from "@/shared-uis/components/toaster/Toaster";
+import { stylesFn } from "@/styles/ApplyNow.styles";
+import { MediaItem } from "@/components/ui/carousel/render-media-item";
+import {
+  faLink,
+  faLocationDot,
+  faPaperclip,
+  faQuoteLeft,
+} from "@fortawesome/free-solid-svg-icons";
+import ListItem from "@/components/ui/list-item/ListItem";
 
 const ApplyScreenWeb = () => {
-  const [note, setNote] = useState<string>("");
-  const [files, setFiles] = useState<File[]>([]);
-  const [attachments, setAttachments] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const theme = useTheme();
-  const styles = stylesFn(theme);
   const params = useLocalSearchParams();
   const pageID = Array.isArray(params.pageID)
     ? params.pageID[0]
     : params.pageID;
+  const [note, setNote] = useState<string>("");
+
+  const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const [files, setFiles] = useState<File[]>([]);
+  const [previewUrls, setPreviewUrls] = useState<MediaItem[]>([]);
+  const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
+
+  const inputRef = React.useRef<HTMLInputElement>(null);
+  const theme = useTheme();
+  const styles = stylesFn(theme);
+
+  const {
+    // getBlob,
+    processMessage,
+    processPercentage,
+    setProcessMessage,
+    setProcessPercentage,
+    uploadFiles,
+  } = useAWSContext();
 
   const handleFileSelection = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = event.target.files;
+
     if (selectedFiles) {
-      setFiles(Array.from(selectedFiles));
-    }
-  };
-
-  const uploadFile = async (file: File): Promise<any> => {
-    try {
-      const date = new Date().getTime();
-      const preSignedUrl = await axios.post(
-        `https://be.trendly.pro/s3/v1/${file.type.includes("video") ? "videos" : "images"
-        }?filename=${date}.${file.type.split("/")[1]}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${AuthApp.currentUser?.uid}`,
-          },
-        }
-      );
-
-      const uploadURL = preSignedUrl.data.uploadUrl;
-
-      // File size limit check (10 MB for example)
-      if (file.size > FILE_SIZE) {
-        Toaster.error("File size limit exceeded");
-        return;
-      }
-
-      const response = await fetch(uploadURL, {
-        method: "PUT",
-        headers: {
-          "Content-Type": file.type,
-        },
-        body: file,
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to upload file");
-      }
-
-      if (file.type.includes("video")) {
-        return {
-          type: "video",
-          appleUrl: preSignedUrl.data.appleUrl,
-          playUrl: preSignedUrl.data.playUrl,
-        };
-      } else {
-        return {
-          type: "image",
-          url: preSignedUrl.data.imageUrl,
-        };
-      }
-    } catch (error) {
-      console.error("File upload error:", error);
-      throw new Error("Failed to upload file");
+      setFiles([...files, ...Array.from(selectedFiles)]);
     }
   };
 
   const handleUploadFiles = async () => {
     setLoading(true);
-    const uploadedAttachments: any[] = [];
-
     try {
-      const uploadPromises = files.map(async (file) => {
-        const result = await uploadFile(file);
-        uploadedAttachments.push(result);
-      });
+      const uploadedFilesResponse = await uploadFiles(files);
 
-      await Promise.all(uploadPromises);
+      setUploadedFiles(uploadedFilesResponse);
 
-      setAttachments(uploadedAttachments);
-
-      router.navigate({
-        pathname: "/apply-now/preview",
-        params: {
-          pageID,
-          note,
-          attachments: JSON.stringify(uploadedAttachments),
-        },
-      });
+      setTimeout(() => {
+        setLoading(false);
+        setProcessMessage("");
+        setProcessPercentage(0);
+        router.navigate({
+          pathname: "/apply-now/preview",
+          params: {
+            pageID,
+            note,
+            attachments: JSON.stringify(uploadedFilesResponse),
+          },
+        });
+      }, 5000);
     } catch (error) {
-      setErrorMessage("Error uploading files");
       console.error(error);
-    } finally {
+      setErrorMessage("Error uploading files");
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const urls = files.map(file => ({
+      type: file.type,
+      url: URL.createObjectURL(file),
+    }));
+    setPreviewUrls(urls);
+
+    return () => {
+      urls.forEach((url) => {
+        URL.revokeObjectURL(url.url);
+      });
+    };
+  }, [files]);
+
+  const removeFile = (file: File) => {
+    setFiles(files.filter((f) => f.name !== file.name));
+  }
 
   return (
     <AppLayout>
@@ -129,36 +117,84 @@ const ApplyScreenWeb = () => {
         style={styles.container}
         contentContainerStyle={styles.contentContainerStyle}
       >
-        <Card style={styles.card}>
-          <Card.Content>
-            <Paragraph>Upload files</Paragraph>
-            <View style={styles.cardContent}>
-              <input
-                type="file"
-                multiple
-                onChange={handleFileSelection}
-                accept="image/*, video/*"
-              />
-              <IconButton
-                icon="upload"
-                size={20}
-                onPress={() => document.querySelector("input")?.click()}
-              />
-            </View>
+        <Card
+          style={[
+            styles.card,
+            {
+              position: 'relative',
+            }
+          ]}
+          onPress={() => inputRef.current?.click()}
+        >
+          <Card.Content
+            style={styles.cardContent}
+          >
+            <IconButton
+              icon={
+                () => (
+                  <FontAwesomeIcon
+                    icon={faUpload}
+                    size={20}
+                    color={Colors(theme).text}
+                  />
+                )
+              }
+              onPress={() => inputRef.current?.click()}
+            />
           </Card.Content>
+          <input
+            ref={inputRef}
+            type="file"
+            style={{
+              backgroundColor: 'transparent',
+              visibility: 'hidden',
+            }}
+            multiple
+            onChange={handleFileSelection}
+            accept="image/*, video/*"
+          />
+          {
+            files.length > 0 && (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  flexWrap: 'wrap'
+                }}
+              >
+                {
+                  files.map((file) => (
+                    <View
+                      key={file.name}
+                      style={{
+                        flexDirection: 'row',
+                        gap: 2,
+                        alignItems: 'center',
+                      }}
+                    >
+                      <Text>{file.name}</Text>
+                      <IconButton
+                        icon={() => (
+                          <FontAwesomeIcon
+                            icon={faTrash}
+                            size={12}
+                          />
+                        )}
+                        size={12}
+                        onPress={() => removeFile(file)}
+                      />
+                    </View>
+                  ))
+                }
+              </View>
+            )
+          }
         </Card>
-
         {
           files.length > 0 && (
             <CarouselNative
-              data={files.map((file: any) => {
-                return {
-                  type: file.type,
-                  url: file.id,
-                };
-              })}
-              onImagePress={(index) => {
-                console.log("Image Pressed", index);
+              data={previewUrls}
+              onImagePress={(file) => {
+                console.log("Image Pressed", file);
               }}
             />
           )
@@ -170,11 +206,16 @@ const ApplyScreenWeb = () => {
           }}
         >
           <TextInput
+            style={{
+              backgroundColor: Colors(theme).background,
+            }}
+            activeOutlineColor={Colors(theme).primary}
             label="Add a short note"
             mode="outlined"
             multiline
             onChangeText={(text) => setNote(text)}
-            style={styles.input}
+            placeholderTextColor={Colors(theme).text}
+            textColor={Colors(theme).text}
             value={note}
           />
           <HelperText type="info" style={styles.helperText}>
@@ -182,34 +223,42 @@ const ApplyScreenWeb = () => {
           </HelperText>
 
           <List.Section>
-            <List.Item
+            <ListItem
               title="Your Quote"
-              left={() => <List.Icon icon="format-quote-close" />}
+              leftIcon={faQuoteLeft}
               onPress={() => console.log("Quote")}
             />
-            <List.Item
+            <ListItem
               title="Attachments"
-              left={() => <List.Icon icon="attachment" />}
+              leftIcon={faPaperclip}
               onPress={() => console.log("Attachments")}
             />
-            <List.Item
+            <ListItem
               title="Add relevant Links"
-              left={() => <List.Icon icon="link" />}
+              leftIcon={faLink}
               onPress={() => console.log("Links")}
             />
-            <List.Item
+            <ListItem
               title="Add location"
-              left={() => <List.Icon icon="map-marker" />}
+              leftIcon={faLocationDot}
               onPress={() => console.log("Location")}
             />
           </List.Section>
 
           {
-            errorMessage ? (
+            errorMessage && (
               <HelperText type="error" style={styles.errorText}>
                 {errorMessage}
               </HelperText>
-            ) : null
+            )
+          }
+
+          {
+            processMessage && (
+              <HelperText type="info" style={styles.processText}>
+                {processMessage} - {processPercentage}% done
+              </HelperText>
+            )
           }
 
           <Button
@@ -229,7 +278,9 @@ const ApplyScreenWeb = () => {
             }}
             loading={loading}
           >
-            Preview Application
+            {
+              processMessage ? "Uploading Assets" : "Preview Application"
+            }
           </Button>
         </View>
       </ScrollView>

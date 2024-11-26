@@ -27,8 +27,9 @@ import CarouselNative from "./ui/carousel/carousel";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faStar } from "@fortawesome/free-regular-svg-icons";
 import { convertToKUnits } from "@/utils/conversion";
-import { faBullseye, faEllipsis, faMessage, faUsers } from "@fortawesome/free-solid-svg-icons";
+import { faArrowTrendUp, faEllipsis, faMessage, faPeopleGroup } from "@fortawesome/free-solid-svg-icons";
 import Tag from "./ui/tag";
+import { MediaItem } from "./ui/carousel/render-media-item";
 
 const { width } = Dimensions.get("window");
 
@@ -37,10 +38,7 @@ interface InfluencerCardPropsType {
     name: string;
     handle: string;
     profilePic: string;
-    media: {
-      type: string;
-      uri: string;
-    }[];
+    media: MediaItem[];
     followers: number | string;
     reach: number | string;
     rating: number | string;
@@ -97,8 +95,8 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
     };
   });
 
-  const onImagePress = (data: any) => {
-    setSelectedImage(data); // TODO: data -> uri
+  const onImagePress = (data: MediaItem) => {
+    setSelectedImage(data.url);
     setIsZoomed(true);
   }
 
@@ -178,7 +176,7 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
             <View style={styles.statsContainer}>
               <View style={styles.statItem}>
                 <FontAwesomeIcon
-                  icon={faUsers}
+                  icon={faPeopleGroup}
                   color={Colors(theme).primary}
                   size={20}
                 />
@@ -188,7 +186,7 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
               </View>
               <View style={styles.statItem}>
                 <FontAwesomeIcon
-                  icon={faBullseye}
+                  icon={faArrowTrendUp}
                   color={Colors(theme).primary}
                   size={20}
                 />

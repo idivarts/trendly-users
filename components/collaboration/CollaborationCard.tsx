@@ -8,7 +8,7 @@ import { router } from "expo-router";
 import { formatDistanceToNow } from "date-fns";
 import Colors from "@/constants/Colors";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
+import { faCircleExclamation, faEllipsis } from "@fortawesome/free-solid-svg-icons";
 
 export interface CollaborationAdCardProps extends ICollaboration {
   name: string;
@@ -101,7 +101,19 @@ const JobCard = (props: CollaborationAdCardProps) => {
                   borderColor: props.paymentVerified ? "#c3e6cb" : "#f5c6cb",
                 },
               ]}
-              icon={props.paymentVerified ? "check-circle" : "alert-circle"}
+              icon={props.paymentVerified ? () => (
+                <FontAwesomeIcon
+                  color="#28a745"
+                  icon={faCircleExclamation}
+                  size={16}
+                />
+              ) : () => (
+                <FontAwesomeIcon
+                  color="#dc3545"
+                  icon={faCircleExclamation}
+                  size={16}
+                />
+              )}
               mode={props.paymentVerified ? "outlined" : "flat"}
               selectedColor={props.paymentVerified ? "#28a745" : "#dc3545"}
             >

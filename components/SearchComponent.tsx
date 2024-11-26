@@ -4,7 +4,7 @@ import { Searchbar } from "react-native-paper";
 import Colors from "@/constants/Colors";
 import { Theme, useTheme } from "@react-navigation/native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faSliders } from "@fortawesome/free-solid-svg-icons";
+import { faMagnifyingGlass, faSliders } from "@fortawesome/free-solid-svg-icons";
 
 interface SearchComponentProps {
   ToggleModal?: (show: boolean) => void;
@@ -38,6 +38,13 @@ const SearchComponent: React.FC<SearchComponentProps> = ({
         onChangeText={handleChangeText}
         style={styles.searchInput}
         iconColor={Colors(theme).gray100}
+        icon={() => (
+          <FontAwesomeIcon
+            color={Colors(theme).gray100}
+            icon={faMagnifyingGlass}
+            size={22}
+          />
+        )}
       />
       <Pressable
         onPress={() => {
