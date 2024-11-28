@@ -8,6 +8,7 @@ import {
 import { Platform } from "react-native";
 import * as FileSystem from "expo-file-system";
 import * as MediaLibrary from "expo-media-library";
+import { AssetItem } from "@/types/Asset";
 
 interface AWSContextProps {
   getBlob: (fileUri: any) => Promise<Blob>;
@@ -17,8 +18,8 @@ interface AWSContextProps {
   setProcessPercentage: (percentage: number) => void;
   uploadFile: (file: File) => Promise<any>;
   uploadFiles: (files: File[]) => Promise<any[]>;
-  uploadFileUri: (fileUri: any) => Promise<any>;
-  uploadFileUris: (fileUris: any[]) => Promise<any[]>;
+  uploadFileUri: (fileUri: AssetItem) => Promise<any>;
+  uploadFileUris: (fileUris: AssetItem[]) => Promise<any[]>;
 }
 
 const AWSContext = createContext<AWSContextProps>(null!);
@@ -31,7 +32,7 @@ export const AWSContextProvider: React.FC<PropsWithChildren> = ({
   const [processMessage, setProcessMessage] = useState<string>("");
   const [processPercentage, setProcessPercentage] = useState<number>(0);
 
-  const preUploadRequestUrl = (file: File): string => {
+  const preUploadRequestUrl = (file: File | AssetItem): string => {
     const date = new Date().getTime();
     const baseUrl = 'https://be.trendly.pro/s3/v1/';
     const type = file.type.includes("video") ? "videos" : "images";
@@ -69,28 +70,26 @@ export const AWSContextProvider: React.FC<PropsWithChildren> = ({
     return uri;
   };
 
-  const getBlob = async (fileUri: any): Promise<Blob> => {
+  const getBlob = async (fileUri: AssetItem): Promise<Blob> => {
     if (fileUri.type === "video") {
-      const actualFileUri = await getFileUrlFromPhotoUri(fileUri.id);
-
-      const videoInfo = await FileSystem.getInfoAsync(actualFileUri);
+      const videoInfo = await FileSystem.getInfoAsync(fileUri.localUri);
       if (!videoInfo.exists) {
         throw new Error("Video file does not exist");
       }
 
-      const response = await fetch(actualFileUri);
+      const response = await fetch(fileUri.localUri);
       const blob = await response.blob();
 
       return blob;
     } else {
-      const response = await fetch(fileUri.id);
+      const response = await fetch(fileUri.uri);
       const blob = await response.blob();
 
       return blob;
     }
   }
 
-  const uploadFileUri = async (fileUri: any): Promise<any> => {
+  const uploadFileUri = async (fileUri: AssetItem): Promise<any> => {
     const preUploadUrlResponse = await fetch(
       preUploadRequestUrl(fileUri),
       {
@@ -137,10 +136,7 @@ export const AWSContextProvider: React.FC<PropsWithChildren> = ({
   }
 
   const uploadFileUris = async (
-    fileUris: {
-      id: string,
-      type: string,
-    }[],
+    fileUris: AssetItem[],
   ): Promise<any[]> => {
     try {
       const uploadedFiles: any[] = [];

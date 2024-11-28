@@ -33,6 +33,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { imageUrl } from "@/utils/url";
 import { Video } from "expo-av";
 import * as MediaLibrary from "expo-media-library";
+import { AssetItem } from "@/types/Asset";
 
 const ApplyScreen = () => {
   const params = useLocalSearchParams();
@@ -46,12 +47,7 @@ const ApplyScreen = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const [files, setFiles] = useState<{
-    id: string;
-    localUri: string;
-    uri: string;
-    type: string;
-  }[]>([]);
+  const [files, setFiles] = useState<AssetItem[]>([]);
   const [uploadedFiles, setUploadedFiles] = useState<any>([]);
 
   const theme = useTheme();
@@ -109,25 +105,20 @@ const ApplyScreen = () => {
   };
 
   const getAssetData = async (id: string) => {
-    const asset = await MediaLibrary.getAssetInfoAsync(id)
+    const asset = await MediaLibrary.getAssetInfoAsync(id);
 
     return asset;
   }
 
   const getAssetsData = async (
-    newFiles: {
-      id: string;
-      localUri: string;
-      uri: string;
-      mediaType: string;
-    }[]
+    newFiles: AssetItem[]
   ) => {
     for (const file of newFiles) {
       const asset = await getAssetData(file.id);
       setFiles((prevFiles) => [
         ...prevFiles,
         {
-          id: asset.uri,
+          id: asset.id,
           localUri: asset.localUri || '',
           uri: asset.uri,
           type: asset.mediaType === 'video' ? 'video' : 'image',
@@ -140,12 +131,7 @@ const ApplyScreen = () => {
     if (params.selectedFiles) {
       setFiles([]);
       //@ts-ignore
-      const newFiles = JSON.parse(params.selectedFiles) as {
-        id: string;
-        localUri: string;
-        uri: string;
-        mediaType: string;
-      }[];
+      const newFiles = JSON.parse(params.selectedFiles) as AssetItem[];
 
       getAssetsData(newFiles);
     }

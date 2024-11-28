@@ -20,11 +20,12 @@ import ScreenHeader from "@/components/ui/screen-header";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faCamera, faVideo } from "@fortawesome/free-solid-svg-icons";
 import Colors from "@/constants/Colors";
+import { AssetItem } from "@/types/Asset";
 
 const GalleryScreen = () => {
   const { pageID } = useLocalSearchParams();
   const [assets, setAssets] = useState<any>([]);
-  const [selectedItems, setSelectedItems] = useState<MediaLibrary.AssetInfo[]>([]);
+  const [selectedItems, setSelectedItems] = useState<AssetItem[]>([]);
 
   const [permissionGranted, setPermissionGranted] = useState(false);
   const [cameraPermission, setCameraPermission] = useCameraPermissions();
@@ -64,14 +65,19 @@ const GalleryScreen = () => {
     const itemExists = selectedItems.find((i) => i.id === item.id);
 
     if (itemExists) {
-      setSelectedItems((prev: MediaLibrary.AssetInfo[]) => {
+      setSelectedItems((prev: AssetItem[]) => {
         return prev.filter((i) => i.id !== item.id);
       });
     } else {
-      setSelectedItems((prev: MediaLibrary.AssetInfo[]) => {
+      setSelectedItems((prev: AssetItem[]) => {
         return [
           ...prev,
-          item,
+          {
+            id: item.id,
+            localUri: item.localUri || "",
+            type: item.mediaType === "video" ? "video" : "image",
+            uri: item.uri,
+          },
         ];
       });
     }
@@ -136,7 +142,7 @@ const GalleryScreen = () => {
   useEffect(() => {
     if (selectedFiles) {
       //@ts-ignore
-      const newFiles = JSON.parse(selectedFiles) as MediaLibrary.AssetInfo[];
+      const newFiles = JSON.parse(selectedFiles) as AssetItem[];
       setSelectedItems(newFiles);
     }
   }, [selectedFiles]);
@@ -160,7 +166,7 @@ const GalleryScreen = () => {
           <Checkbox
             status={
               selectedItems
-                .find((selectedItem: MediaLibrary.AssetInfo) => item.id === selectedItem.id)
+                .find((selectedItem: AssetItem) => item.id === selectedItem.id)
                 ? "checked"
                 : "unchecked"
             }
