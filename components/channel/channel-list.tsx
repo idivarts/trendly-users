@@ -10,10 +10,12 @@ import Colors from "@/constants/Colors";
 import { useTheme } from "@react-navigation/native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+import stylesFn from "@/styles/searchbar/Searchbar.styles";
 
 const ChannelListNative = () => {
   const [searchInput, setSearchInput] = useState("");
   const theme = useTheme();
+  const styles = stylesFn(theme);
 
   const {
     user,
@@ -47,6 +49,7 @@ const ChannelListNative = () => {
         style={{
           padding: 16,
           paddingTop: 16,
+          flexDirection: "row",
         }}
       >
         <Searchbar
@@ -54,19 +57,16 @@ const ChannelListNative = () => {
             <FontAwesomeIcon
               color={Colors(theme).gray100}
               icon={faMagnifyingGlass}
-              size={22}
+              size={18}
             />
           )}
+          iconColor={Colors(theme).gray100}
+          inputStyle={styles.searchbarInput}
           onChangeText={handleSearchChange}
           placeholder="Search"
           placeholderTextColor={Colors(theme).gray100}
+          style={styles.searchbar}
           value={searchInput}
-          style={[
-            {
-              borderRadius: 15,
-              backgroundColor: Colors(theme).aliceBlue
-            },
-          ]}
         />
       </View>
       <ChannelList

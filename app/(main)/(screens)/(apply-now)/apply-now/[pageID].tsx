@@ -21,6 +21,7 @@ import ScreenHeader from "@/components/ui/screen-header";
 import CarouselNative from "@/components/ui/carousel/carousel";
 import { useAWSContext } from "@/contexts/aws-context.provider";
 import {
+  faCamera,
   faLink,
   faLocationDot,
   faPaperclip,
@@ -28,6 +29,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import ListItem from "@/components/ui/list-item/ListItem";
 import Colors from "@/constants/Colors";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 
 const ApplyScreen = () => {
   const params = useLocalSearchParams();
@@ -111,8 +113,18 @@ const ApplyScreen = () => {
       >
         <Card style={styles.card} onPress={handleCvUpload}>
           <Card.Content style={styles.cardContent}>
-            <IconButton icon="camera" size={40} style={styles.uploadIcon} />
-            <Paragraph>
+            <IconButton
+              icon={() => (
+                <FontAwesomeIcon
+                  color={theme.dark ? Colors(theme).text : Colors(theme).primary}
+                  icon={faCamera}
+                  size={36}
+                />
+              )}
+              size={40}
+              style={styles.uploadIcon}
+            />
+            <Paragraph style={styles.cardParagraph}>
               Record a video or add a photo carousel that best describes you
             </Paragraph>
           </Card.Content>

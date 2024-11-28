@@ -66,6 +66,10 @@ export const stylesFn = (theme: Theme) =>
     cardContent: {
       alignItems: "center",
     },
+    cardParagraph: {
+      textAlign: "center",
+      color: Colors(theme).text,
+    },
     uploadIcon: {
       alignSelf: "center",
       color: Colors(theme).eerieBlack,

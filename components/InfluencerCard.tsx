@@ -27,7 +27,7 @@ import CarouselNative from "./ui/carousel/carousel";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faStar } from "@fortawesome/free-regular-svg-icons";
 import { convertToKUnits } from "@/utils/conversion";
-import { faArrowTrendUp, faEllipsis, faMessage, faPeopleGroup } from "@fortawesome/free-solid-svg-icons";
+import { faArrowTrendUp, faCheck, faEllipsis, faMessage, faPeopleGroup } from "@fortawesome/free-solid-svg-icons";
 import Tag from "./ui/tag";
 import { MediaItem } from "./ui/carousel/render-media-item";
 
@@ -131,7 +131,17 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
           {
             props.type === "invitation" &&
             (props.alreadyInvited ? (
-              <Tag icon="check">Invited</Tag>
+              <Tag
+                icon={() => (
+                  <FontAwesomeIcon
+                    icon={faCheck}
+                    size={10}
+                    color={Colors(theme).text}
+                  />
+                )}
+              >
+                Invited
+              </Tag>
             ) : (
               <Tag
                 icon="plus"

@@ -42,6 +42,7 @@ export default function NotificationsScreen() {
               <FontAwesomeIcon
                 icon={faCheck}
                 size={20}
+                color={Colors(theme).text}
               />
             )}
             onPress={() => {

@@ -7,6 +7,7 @@ export default (theme: Theme) => ({
   ...theme.colors,
   ...(theme.dark
     ? {
+        card: "#1E1E1E",
         text: "#fff",
         background: "#000",
         tint: tintColorDark,
@@ -18,6 +19,7 @@ export default (theme: Theme) => ({
         tagForeground: "#f1f3f4",
       }
     : {
+        card: "#fff",
         text: "#000",
         background: "#fff",
         tint: tintColorLight,
