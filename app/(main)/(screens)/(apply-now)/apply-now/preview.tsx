@@ -3,7 +3,6 @@ import { View, Text, FlatList } from "react-native";
 import InfluencerCard from "@/components/InfluencerCard";
 import { router, useLocalSearchParams } from "expo-router";
 import { Button } from "react-native-paper";
-import { AuthApp } from "@/utils/auth";
 import { FirestoreDB } from "@/utils/firestore";
 import { collection, addDoc } from "firebase/firestore";
 import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";

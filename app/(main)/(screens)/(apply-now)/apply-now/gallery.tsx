@@ -17,6 +17,9 @@ import { router, useLocalSearchParams } from "expo-router";
 import { stylesFn } from "@/styles/apply-now/gallery.styles";
 import { useTheme } from "@react-navigation/native";
 import ScreenHeader from "@/components/ui/screen-header";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faCamera, faVideo } from "@fortawesome/free-solid-svg-icons";
+import Colors from "@/constants/Colors";
 
 const GalleryScreen = () => {
   const { pageID } = useLocalSearchParams();
@@ -73,7 +76,7 @@ const GalleryScreen = () => {
 
   const handleSelectionComplete = () => {
     try {
-      router.push({
+      router.navigate({
         pathname: '/apply-now/[pageID]',
         params: {
           note: note,
@@ -172,14 +175,26 @@ const GalleryScreen = () => {
       <View style={styles.actionButtons}>
         <Button
           mode="contained"
-          icon="camera"
+          icon={() => (
+            <FontAwesomeIcon
+              icon={faCamera}
+              size={16}
+              color={Colors(theme).white}
+            />
+          )}
           onPress={openCamera}
         >
           Take a Photo
         </Button>
         <Button
           mode="contained"
-          icon="video"
+          icon={() => (
+            <FontAwesomeIcon
+              icon={faVideo}
+              size={16}
+              color={Colors(theme).white}
+            />
+          )}
           onPress={() => setIsCameraVisible(true)}
         >
           Take Video
@@ -199,7 +214,13 @@ const GalleryScreen = () => {
           <View style={styles.cameraButtons}>
             <Button
               mode="contained"
-              icon="camera"
+              icon={() => (
+                <FontAwesomeIcon
+                  icon={faCamera}
+                  size={16}
+                  color={Colors(theme).white}
+                />
+              )}
               onPress={async () => {
                 await takePhoto();
               }}
@@ -209,7 +230,13 @@ const GalleryScreen = () => {
             </Button>
             <Button
               mode="contained"
-              icon="video"
+              icon={() => (
+                <FontAwesomeIcon
+                  icon={faVideo}
+                  size={16}
+                  color={Colors(theme).white}
+                />
+              )}
               onPress={isRecording ? stopRecording : startRecording}
             >
               {isRecording ? "Stop Recording" : "Start Recording"}
