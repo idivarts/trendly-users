@@ -23,8 +23,8 @@ import Colors from "@/constants/Colors";
 
 const GalleryScreen = () => {
   const { pageID } = useLocalSearchParams();
-  const [photos, setPhotos] = useState<any>([]);
-  const [selectedItems, setSelectedItems] = useState<any>([]);
+  const [assets, setAssets] = useState<any>([]);
+  const [selectedItems, setSelectedItems] = useState<MediaLibrary.AssetInfo[]>([]);
 
   const [permissionGranted, setPermissionGranted] = useState(false);
   const [cameraPermission, setCameraPermission] = useCameraPermissions();
@@ -32,7 +32,10 @@ const GalleryScreen = () => {
   const [isRecording, setIsRecording] = useState(false);
 
   const cameraRef = useRef<CameraView>(null);
-  const note = useLocalSearchParams().note;
+  const {
+    note,
+    selectedFiles,
+  } = useLocalSearchParams();
   const theme = useTheme();
   const styles = stylesFn(theme);
 
@@ -42,41 +45,41 @@ const GalleryScreen = () => {
       setPermissionGranted(status === "granted");
 
       if (status === "granted") {
-        fetchPhotos();
+        fetchAssets();
       }
     })();
   }, []);
 
-  const fetchPhotos = async () => {
+  const fetchAssets = async () => {
     const album = await MediaLibrary.getAssetsAsync({
       mediaType: ["photo", "video"],
       sortBy: ["creationTime"],
       first: 250,
     });
 
-    setPhotos(album.assets);
+    setAssets(album.assets);
   };
 
-  const handleSelectItem = (id: string, mediaType: string) => {
-    setSelectedItems((prev: any) => {
-      // Check if the item with the specified id is already in selectedItems
-      const exists = prev.some((item: any) => item.id === id);
-      if (exists) {
-        // If it exists, remove it
-        return prev.filter((item: any) => item.id !== id);
-      } else {
-        // If it doesn't exist, add it
+  const handleSelectItem = (item: MediaLibrary.AssetInfo) => {
+    const itemExists = selectedItems.find((i) => i.id === item.id);
+
+    if (itemExists) {
+      setSelectedItems((prev: MediaLibrary.AssetInfo[]) => {
+        return prev.filter((i) => i.id !== item.id);
+      });
+    } else {
+      setSelectedItems((prev: MediaLibrary.AssetInfo[]) => {
         return [
           ...prev,
-          { id: id, type: mediaType === "video" ? "video" : "image" },
+          item,
         ];
-      }
-    });
+      });
+    }
   };
 
   const handleSelectionComplete = () => {
     try {
-      router.navigate({
+      router.replace({
         pathname: '/apply-now/[pageID]',
         params: {
           note: note,
@@ -108,7 +111,7 @@ const GalleryScreen = () => {
       const photo = await cameraRef.current.takePictureAsync();
       if (photo && photo.uri) {
         await MediaLibrary.createAssetAsync(photo.uri);
-        fetchPhotos();
+        fetchAssets();
         setIsCameraVisible(false);
       } else {
         console.error("Failed to take photo");
@@ -130,10 +133,21 @@ const GalleryScreen = () => {
     }
   };
 
-  // @ts-ignore
-  const renderItem = ({ item }) => (
+  useEffect(() => {
+    if (selectedFiles) {
+      //@ts-ignore
+      const newFiles = JSON.parse(selectedFiles) as MediaLibrary.AssetInfo[];
+      setSelectedItems(newFiles);
+    }
+  }, [selectedFiles]);
+
+  const renderItem = ({
+    item,
+  }: {
+    item: MediaLibrary.AssetInfo;
+  }) => (
     <Pressable
-      onPress={() => handleSelectItem(item.uri, item.mediaType)}
+      onPress={() => handleSelectItem(item)}
       style={styles.itemWrapper}
     >
       <Surface style={styles.itemContainer}>
@@ -146,11 +160,11 @@ const GalleryScreen = () => {
           <Checkbox
             status={
               selectedItems
-                .find((selectedItem: any) => item.uri === selectedItem.id)
+                .find((selectedItem: MediaLibrary.AssetInfo) => item.id === selectedItem.id)
                 ? "checked"
                 : "unchecked"
             }
-            onPress={() => handleSelectItem(item.uri, item.mediaType)}
+            onPress={() => handleSelectItem(item)}
           />
         </View>
       </Surface>
@@ -253,8 +267,8 @@ const GalleryScreen = () => {
 
       {/* Gallery */}
       <FlatList
-        data={photos}
-        keyExtractor={(item) => item.id}
+        data={assets}
+        keyExtractor={(item) => item.id + item.filename}
         renderItem={renderItem}
         numColumns={3}
         contentContainerStyle={styles.galleryContainer}
@@ -269,4 +283,5 @@ const GalleryScreen = () => {
     </View>
   );
 };
+
 export default GalleryScreen;
