@@ -5,7 +5,6 @@ import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   ScrollView,
-  Image,
   View,
 } from "react-native";
 import {
@@ -21,19 +20,18 @@ import Toaster from "@/shared-uis/components/toaster/Toaster";
 import ScreenHeader from "@/components/ui/screen-header";
 import { useAWSContext } from "@/contexts/aws-context.provider";
 import {
-  faCamera,
   faLink,
   faLocationDot,
   faPaperclip,
+  faPhotoFilm,
   faQuoteLeft,
 } from "@fortawesome/free-solid-svg-icons";
 import ListItem from "@/components/ui/list-item/ListItem";
 import Colors from "@/constants/Colors";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { imageUrl } from "@/utils/url";
-import { Video } from "expo-av";
 import * as MediaLibrary from "expo-media-library";
 import { AssetItem } from "@/types/Asset";
+import AssetsPreview from "@/components/ui/assets-preview";
 
 const ApplyScreen = () => {
   const params = useLocalSearchParams();
@@ -152,7 +150,7 @@ const ApplyScreen = () => {
                   icon={() => (
                     <FontAwesomeIcon
                       color={theme.dark ? Colors(theme).text : Colors(theme).primary}
-                      icon={faCamera}
+                      icon={faPhotoFilm}
                       size={36}
                     />
                   )}
@@ -169,82 +167,14 @@ const ApplyScreen = () => {
 
         {
           files.length > 0 && (
-            <View
-              style={{
-                position: "relative",
-              }}
-            >
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                style={{
-                  paddingHorizontal: 16,
-                }}
-                contentContainerStyle={{
-                  gap: 16,
-                  paddingRight: 32,
-                }}
-              >
-                {
-                  files.map((file: {
-                    id: string;
-                    localUri: string;
-                    uri: string;
-                    type: string;
-                  }, index) => (
-                    <View
-                      key={file.id + file.uri + index}
-                      style={{
-                        width: 250,
-                        height: 250,
-                        borderRadius: 10,
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      {
-                        file.type === 'video' ? (
-                          <Video
-                            source={{
-                              uri: file.localUri || file.uri,
-                            }}
-                            style={{
-                              height: 250,
-                              width: "100%",
-                              borderRadius: 10,
-                              overflow: 'hidden',
-                            }}
-                            useNativeControls
-                          />
-                        ) : (
-                          <Image
-                            source={imageUrl(file.uri)}
-                            style={{
-                              height: 250,
-                              width: "100%",
-                              borderRadius: 10,
-                              overflow: 'hidden',
-                            }}
-                          />
-                        )
-                      }
-                    </View>
-                  ))
-                }
-              </ScrollView>
-              <Button
-                mode="contained"
-                onPress={handleAssetUpload}
-                style={{
-                  zIndex: 1,
-                  position: "absolute",
-                  bottom: 16,
-                  left: 32,
-                }}
-              >
-                Edit
-              </Button>
-            </View>
+            <AssetsPreview
+              files={files.map((file) => ({
+                id: file.id,
+                type: file.type,
+                url: file.type.includes('video') ? file.localUri || file.uri : file.uri,
+              }))}
+              handleAssetUpload={handleAssetUpload}
+            />
           )
         }
 

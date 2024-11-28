@@ -10,18 +10,15 @@ import {
 } from "react-native-paper";
 import { router, useLocalSearchParams } from "expo-router";
 import { useTheme } from "@react-navigation/native";
-import { faTrash, faUpload } from "@fortawesome/free-solid-svg-icons";
+import { faUpload } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 
-import { Text } from "@/components/theme/Themed";
-import CarouselNative from "@/components/ui/carousel/carousel";
 import ScreenHeader from "@/components/ui/screen-header";
 import Colors from "@/constants/Colors";
 import { useAWSContext } from "@/contexts/aws-context.provider";
 import AppLayout from "@/layouts/app-layout";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { stylesFn } from "@/styles/ApplyNow.styles";
-import { MediaItem } from "@/components/ui/carousel/render-media-item";
 import {
   faLink,
   faLocationDot,
@@ -29,6 +26,7 @@ import {
   faQuoteLeft,
 } from "@fortawesome/free-solid-svg-icons";
 import ListItem from "@/components/ui/list-item/ListItem";
+import AssetsPreview from "@/components/ui/assets-preview";
 
 const ApplyScreenWeb = () => {
   const params = useLocalSearchParams();
@@ -41,7 +39,11 @@ const ApplyScreenWeb = () => {
   const [loading, setLoading] = useState(false);
 
   const [files, setFiles] = useState<File[]>([]);
-  const [previewUrls, setPreviewUrls] = useState<MediaItem[]>([]);
+  const [previewUrls, setPreviewUrls] = useState<{
+    id: string;
+    type: string;
+    url: string;
+  }[]>([]);
   const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
 
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -49,7 +51,6 @@ const ApplyScreenWeb = () => {
   const styles = stylesFn(theme);
 
   const {
-    // getBlob,
     processMessage,
     processPercentage,
     setProcessMessage,
@@ -59,6 +60,15 @@ const ApplyScreenWeb = () => {
 
   const handleFileSelection = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = event.target.files;
+
+    const assetExists = files.find((file) => {
+      return Array.from(selectedFiles as FileList).find((f) => f.name === file.name);
+    });
+
+    if (assetExists) {
+      Toaster.error("File with name already exists");
+      return;
+    }
 
     if (selectedFiles) {
       setFiles([...files, ...Array.from(selectedFiles)]);
@@ -94,6 +104,7 @@ const ApplyScreenWeb = () => {
 
   useEffect(() => {
     const urls = files.map(file => ({
+      id: file.name,
       type: file.type,
       url: URL.createObjectURL(file),
     }));
@@ -106,8 +117,8 @@ const ApplyScreenWeb = () => {
     };
   }, [files]);
 
-  const removeFile = (file: File) => {
-    setFiles(files.filter((f) => f.name !== file.name));
+  const removeFile = (id: string) => {
+    setFiles(files.filter((f) => f.name !== id));
   }
 
   return (
@@ -118,12 +129,7 @@ const ApplyScreenWeb = () => {
         contentContainerStyle={styles.contentContainerStyle}
       >
         <Card
-          style={[
-            styles.card,
-            {
-              position: 'relative',
-            }
-          ]}
+          style={styles.card}
           onPress={() => inputRef.current?.click()}
         >
           <Card.Content
@@ -153,49 +159,17 @@ const ApplyScreenWeb = () => {
             onChange={handleFileSelection}
             accept="image/*, video/*"
           />
-          {
-            files.length > 0 && (
-              <View
-                style={{
-                  flexDirection: 'row',
-                  flexWrap: 'wrap'
-                }}
-              >
-                {
-                  files.map((file) => (
-                    <View
-                      key={file.name}
-                      style={{
-                        flexDirection: 'row',
-                        gap: 2,
-                        alignItems: 'center',
-                      }}
-                    >
-                      <Text>{file.name}</Text>
-                      <IconButton
-                        icon={() => (
-                          <FontAwesomeIcon
-                            icon={faTrash}
-                            size={12}
-                          />
-                        )}
-                        size={12}
-                        onPress={() => removeFile(file)}
-                      />
-                    </View>
-                  ))
-                }
-              </View>
-            )
-          }
         </Card>
         {
           files.length > 0 && (
-            <CarouselNative
-              data={previewUrls}
-              onImagePress={(file) => {
-                console.log("Image Pressed", file);
-              }}
+            <AssetsPreview
+              files={previewUrls.map((file) => ({
+                id: file.id,
+                type: file.type,
+                url: file.url,
+              }))}
+              handleAssetUpload={() => inputRef.current?.click()}
+              onRemove={removeFile}
             />
           )
         }
