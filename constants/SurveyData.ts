@@ -10,6 +10,7 @@ export const SURVEY_DATA = [
       "Beauty / Spa",
       "Others",
     ],
+    multiselect: true,
   },
   {
     id: 2,
@@ -23,6 +24,7 @@ export const SURVEY_DATA = [
       "Tech",
       "Others",
     ],
+    multiselect: true,
   },
   {
     id: 3,
@@ -33,10 +35,12 @@ export const SURVEY_DATA = [
       "Less than 1M",
       "More than 1M",
     ],
+    multiselect: false,
   },
   {
     id: 4,
     question: "Which social platforms do you actively work on?",
     options: ["Instagram", "Facebook", "YouTube", "Threads", "Others"],
+    multiselect: true,
   },
 ];
