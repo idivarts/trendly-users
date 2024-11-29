@@ -41,7 +41,7 @@ const styles = (theme: Theme) =>
       fontSize: 16,
       textAlign: "center",
       paddingHorizontal: 20,
-      color: Colors(theme).gray100,
+      color: Colors(theme).text,
     },
     socialContainer: {
       flexDirection: "column",

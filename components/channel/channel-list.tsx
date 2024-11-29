@@ -11,6 +11,7 @@ import { useTheme } from "@react-navigation/native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import stylesFn from "@/styles/searchbar/Searchbar.styles";
+import EmptyState from "../ui/empty-state";
 
 const ChannelListNative = () => {
   const [searchInput, setSearchInput] = useState("");
@@ -70,6 +71,23 @@ const ChannelListNative = () => {
         />
       </View>
       <ChannelList
+        EmptyStateIndicator={() => (
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <EmptyState
+              action={() => router.push("/collaborations")}
+              actionLabel="Explore Collaborations"
+              image={require("@/assets/images/illustration3.png")}
+              subtitle="Start applying to collaborations to interact with your dream brands."
+              title="No Messages"
+            />
+          </View>
+        )}
         channelRenderFilterFn={customChannelFilterFunction}
         filters={{
           members: { $in: [user?.id as string] },
