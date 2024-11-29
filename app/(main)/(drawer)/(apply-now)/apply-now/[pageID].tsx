@@ -14,6 +14,7 @@ import {
   IconButton,
   List,
   Paragraph,
+  ProgressBar,
   TextInput,
 } from "react-native-paper";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
@@ -239,6 +240,12 @@ const ApplyScreen = () => {
               </HelperText>
             )
           }
+
+          <ProgressBar
+            progress={processPercentage / 100}
+            color={Colors(theme).primary}
+            style={styles.progressBar}
+          />
 
           <Button
             mode="contained"

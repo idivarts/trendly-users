@@ -7,6 +7,7 @@ import {
   TextInput,
   HelperText,
   List,
+  ProgressBar,
 } from "react-native-paper";
 import { router, useLocalSearchParams } from "expo-router";
 import { useTheme } from "@react-navigation/native";
@@ -27,6 +28,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import ListItem from "@/components/ui/list-item/ListItem";
 import AssetsPreview from "@/components/ui/assets-preview";
+import { useBreakpoints } from "@/hooks";
 
 const ApplyScreenWeb = () => {
   const params = useLocalSearchParams();
@@ -49,6 +51,10 @@ const ApplyScreenWeb = () => {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const theme = useTheme();
   const styles = stylesFn(theme);
+
+  const {
+    xl,
+  } = useBreakpoints();
 
   const {
     processMessage,
@@ -234,6 +240,12 @@ const ApplyScreenWeb = () => {
               </HelperText>
             )
           }
+
+          <ProgressBar
+            progress={processPercentage / 100}
+            color={Colors(theme).primary}
+            style={styles.progressBar}
+          />
 
           <Button
             mode="contained"

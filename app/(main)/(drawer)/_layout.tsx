@@ -25,13 +25,6 @@ const DrawerLayout = () => {
           headerShown: false,
         }}
       />
-      <Drawer.Screen
-        name="main-screen-1"
-        options={{
-          headerShown: true,
-          title: 'Main Screen 1',
-        }}
-      />
     </Drawer>
   );
 };

@@ -10,6 +10,7 @@ import { useState, useEffect } from "react";
 import ScreenHeader from "@/components/ui/screen-header";
 import { processRawAttachment } from "@/utils/attachments";
 import { useAuthContext } from "@/contexts";
+import { useBreakpoints } from "@/hooks";
 
 const Preview = () => {
   const params = useLocalSearchParams();
@@ -21,6 +22,10 @@ const Preview = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [processedAttachments, setProcessedAttachments] = useState([]);
   const [rawAttachments, setRawAttachments] = useState([]);
+
+  const {
+    xl,
+  } = useBreakpoints();
 
   const {
     user
@@ -151,6 +156,10 @@ const Preview = () => {
             </Button>
           </View>
         }
+        style={{
+          width: xl ? 768 : '100%',
+          marginHorizontal: "auto",
+        }}
         contentContainerStyle={{
           paddingVertical: 16,
         }}
