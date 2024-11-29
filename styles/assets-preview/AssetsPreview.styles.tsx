@@ -12,9 +12,9 @@ const stylesFn = (theme: Theme) => StyleSheet.create({
   scrollViewContent: {
     gap: 16,
     paddingRight: 32,
-    paddingBottom: Platform.OS === "web" ? 72 : 0,
   },
   fileContainer: {
+    backgroundColor: theme.dark ? Colors(theme).card : Colors(theme).aliceBlue,
     width: 250,
     height: 250,
     borderRadius: 10,
@@ -31,7 +31,6 @@ const stylesFn = (theme: Theme) => StyleSheet.create({
     }),
   },
   image: {
-    backgroundColor: theme.dark ? Colors(theme).card : Colors(theme).aliceBlue,
     borderRadius: 10,
     height: 250,
     overflow: "hidden",

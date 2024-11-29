@@ -85,7 +85,12 @@ const AssetsPreview: React.FC<AssetsPreviewProps> = ({
       <Button
         mode="contained"
         onPress={handleAssetUpload}
-        style={styles.editButton}
+        style={[
+          styles.editButton,
+          {
+            display: Platform.OS === "web" ? 'none' : 'flex',
+          }
+        ]}
       >
         Edit
       </Button>

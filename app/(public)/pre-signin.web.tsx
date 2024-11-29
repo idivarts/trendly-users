@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, Image, TouchableOpacity, Platform } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { View, Text, Image, Pressable, Platform } from "react-native";
 import Swiper from "react-native-swiper";
 import { Title, Paragraph } from "react-native-paper";
-import { Ionicons } from "@expo/vector-icons";
 import stylesFn from "@/styles/tab1.styles";
 import { useTheme } from "@react-navigation/native";
 import AppLayout from "@/layouts/app-layout";
@@ -20,6 +19,12 @@ import {
 import Colors from "@/constants/Colors";
 import { FirestoreDB } from "@/utils/firestore";
 import { collection, doc, getDoc, setDoc } from "firebase/firestore";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faEllipsis, faEnvelope } from "@fortawesome/free-solid-svg-icons";
+import Button from "@/components/ui/button";
+import SocialButton from "@/components/ui/button/social-button";
+import { faFacebook, faInstagram } from "@fortawesome/free-brands-svg-icons";
+import { imageUrl } from "@/utils/url";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -30,6 +35,8 @@ const PreSignIn = () => {
   const styles = stylesFn(theme);
   const [error, setError] = useState<string | null>(null);
   const { firebaseSignIn, firebaseSignUp, signIn, signUp } = useAuthContext();
+  const swiperRef = useRef<Swiper>(null);
+  const [visible, setVisible] = useState(false);
 
   const [request, response, promptAsync] = AuthSession.useAuthRequest(
     {
@@ -98,25 +105,19 @@ const PreSignIn = () => {
     await promptAsync();
   };
 
-  const renderSocialButton = (
-    iconName: string,
-    label: string,
-    onPress: () => void
-  ) => (
-    <TouchableOpacity style={styles.socialButton} onPress={onPress}>
-      <Ionicons
-        name={iconName as any}
-        size={24}
-        color={Colors(theme).text}
-        style={styles.icon}
-      />
-      <Text style={styles.socialButtonText}>{label}</Text>
-    </TouchableOpacity>
-  );
+  const skipToConnect = () => {
+    const connectSlideIndex = slides.findIndex(
+      (slide) => slide.key === "connect"
+    );
+    if (connectSlideIndex !== -1) {
+      swiperRef.current?.scrollBy(connectSlideIndex);
+    }
+  };
 
   return (
     <AppLayout>
       <Swiper
+        ref={swiperRef}
         style={styles.wrapper}
         dotStyle={styles.dotStyle}
         loop={false}
@@ -126,37 +127,69 @@ const PreSignIn = () => {
         ]}
         paginationStyle={styles.pagination}
       >
-        {slides.map((slide) => (
-          <View style={styles.slide} key={slide.key}>
-            <View style={styles.imageContainer}>
-              <Image source={{ uri: slide.image }} style={styles.image} />
-            </View>
-            <Title style={[styles.title, { color: Colors(theme).primary }]}>
-              {slide.title}
-            </Title>
-            <Paragraph style={styles.paragraph}>{slide.text}</Paragraph>
-            {slide.key === "connect" && (
-              <View style={styles.socialContainer}>
-                {renderSocialButton(
-                  "logo-facebook",
-                  "Login with Facebook",
-                  // () => promptAsync({}),
-                  () => handleFacebookSignIn()
-                )}
-                {renderSocialButton(
-                  "mail-outline",
-                  "Login with Email",
-                  handleEmailSignIn
-                )}
-                {renderSocialButton(
-                  "logo-instagram",
-                  "Login with Instagram",
-                  handleInstagramSignIn
-                )}
+        {
+          slides.map((slide) => (
+            <View style={styles.slide} key={slide.key}>
+              {
+                slide.key !== "connect" && (
+                  <Button
+                    mode="outlined"
+                    style={styles.skipButton}
+                    onPress={skipToConnect}
+                  >
+                    Skip
+                  </Button>
+                )
+              }
+              {
+                slide.key === "connect" && Platform.OS !== "web" && (
+                  <Pressable
+                    style={[
+                      styles.skipButton,
+                    ]}
+                    onPress={() => {
+                      setVisible(true);
+                    }}
+                  >
+                    <FontAwesomeIcon
+                      icon={faEllipsis}
+                      size={24}
+                      color={Colors(theme).gray100}
+                    />
+                  </Pressable>
+                )
+              }
+              <View style={styles.imageContainer}>
+                <Image source={imageUrl(slide.image)} style={styles.image} />
               </View>
-            )}
-          </View>
-        ))}
+              <Title style={[styles.title, { color: Colors(theme).primary }]}>
+                {slide.title}
+              </Title>
+              <Paragraph style={styles.paragraph}>{slide.text}</Paragraph>
+              {
+                slide.key === "connect" && (
+                  <View style={styles.socialContainer}>
+                    <SocialButton
+                      icon={faFacebook}
+                      label="Login with Facebook"
+                      onPress={handleFacebookSignIn}
+                    />
+                    <SocialButton
+                      icon={faEnvelope}
+                      label="Login with Email"
+                      onPress={handleEmailSignIn}
+                    />
+                    <SocialButton
+                      icon={faInstagram}
+                      label="Login with Instagram"
+                      onPress={handleInstagramSignIn}
+                    />
+                  </View>
+                )
+              }
+            </View>
+          ))
+        }
       </Swiper>
 
       {error && <Text style={{ color: "red" }}>Error: {error}</Text>}

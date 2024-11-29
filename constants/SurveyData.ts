@@ -1,23 +1,42 @@
 export const SURVEY_DATA = [
   {
     id: 1,
-    question: "What is your life stage?",
-    options: ["Single", "Parent", "Other"],
+    question: "What are your brand industry preference?",
+    options: [
+      "Fashion",
+      "Beauty",
+      "Restaurant / Cafes",
+      "Holidays / Stays",
+      "Beauty / Spa",
+      "Others",
+    ],
   },
   {
     id: 2,
-    question: "What is your employment status?",
+    question: "What is your content category?",
     options: [
-      "Full-time employee",
-      "Self-employed",
-      "Business owner",
-      "Retired",
-      "Other",
+      "Fun",
+      "Lifestyle Vlogs",
+      "Roast",
+      "Meme",
+      "Fashion / Beauty",
+      "Tech",
+      "Others",
     ],
   },
   {
     id: 3,
-    question: "Do you own any of these?",
-    options: ["House", "Car", "Boat", "Other"],
+    question: "How many followers do you have?",
+    options: [
+      "Less than 10k",
+      "Less than 100k",
+      "Less than 1M",
+      "More than 1M",
+    ],
+  },
+  {
+    id: 4,
+    question: "Which social platforms do you actively work on?",
+    options: ["Instagram", "Facebook", "YouTube", "Threads", "Others"],
   },
 ];

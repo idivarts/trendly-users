@@ -56,12 +56,10 @@ export const stylesFn = (theme: Theme) =>
     },
     card: {
       backgroundColor: Colors(theme).card,
-      marginHorizontal: "auto",
-      marginVertical: 16,
+      margin: 16,
       borderRadius: 8,
       padding: 16,
       elevation: 3,
-      width: "80%",
     },
     cardContent: {
       alignItems: "center",
@@ -89,6 +87,10 @@ export const stylesFn = (theme: Theme) =>
       marginBottom: 12,
       color: Colors(theme).success,
       textAlign: "center",
+    },
+    progressBar: {
+      marginBottom: 12,
+      backgroundColor: Colors(theme).transparent,
     },
     uploadedFilesContainer: {
       marginBottom: 16,
