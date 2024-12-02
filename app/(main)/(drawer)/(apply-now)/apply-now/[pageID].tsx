@@ -14,20 +14,25 @@ import {
   IconButton,
   List,
   Paragraph,
+  ProgressBar,
   TextInput,
 } from "react-native-paper";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import ScreenHeader from "@/components/ui/screen-header";
-import CarouselNative from "@/components/ui/carousel/carousel";
 import { useAWSContext } from "@/contexts/aws-context.provider";
 import {
   faLink,
   faLocationDot,
   faPaperclip,
+  faPhotoFilm,
   faQuoteLeft,
 } from "@fortawesome/free-solid-svg-icons";
 import ListItem from "@/components/ui/list-item/ListItem";
 import Colors from "@/constants/Colors";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import * as MediaLibrary from "expo-media-library";
+import { AssetItem } from "@/types/Asset";
+import AssetsPreview from "@/components/ui/assets-preview";
 
 const ApplyScreen = () => {
   const params = useLocalSearchParams();
@@ -41,7 +46,7 @@ const ApplyScreen = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const [files, setFiles] = useState<string[]>([]);
+  const [files, setFiles] = useState<AssetItem[]>([]);
   const [uploadedFiles, setUploadedFiles] = useState<any>([]);
 
   const theme = useTheme();
@@ -55,11 +60,15 @@ const ApplyScreen = () => {
     uploadFileUris,
   } = useAWSContext();
 
-  const handleCvUpload = async () => {
+  const handleAssetUpload = async () => {
     try {
-      router.navigate({
+      router.push({
         pathname: "/apply-now/gallery",
-        params: { pageID, note },
+        params: {
+          pageID,
+          note,
+          selectedFiles: JSON.stringify(files),
+        },
       });
     } catch (e) {
       console.error(e);
@@ -94,11 +103,36 @@ const ApplyScreen = () => {
     }
   };
 
+  const getAssetData = async (id: string) => {
+    const asset = await MediaLibrary.getAssetInfoAsync(id);
+
+    return asset;
+  }
+
+  const getAssetsData = async (
+    newFiles: AssetItem[]
+  ) => {
+    for (const file of newFiles) {
+      const asset = await getAssetData(file.id);
+      setFiles((prevFiles) => [
+        ...prevFiles,
+        {
+          id: asset.id,
+          localUri: asset.localUri || '',
+          uri: asset.uri,
+          type: asset.mediaType === 'video' ? 'video' : 'image',
+        },
+      ]);
+    }
+  }
+
   useEffect(() => {
     if (params.selectedFiles) {
+      setFiles([]);
       //@ts-ignore
-      const newFiles = JSON.parse(params.selectedFiles) as string[];
-      setFiles(newFiles);
+      const newFiles = JSON.parse(params.selectedFiles) as AssetItem[];
+
+      getAssetsData(newFiles);
     }
   }, [params.selectedFiles]);
 
@@ -109,28 +143,38 @@ const ApplyScreen = () => {
         style={styles.container}
         contentContainerStyle={styles.contentContainerStyle}
       >
-        <Card style={styles.card} onPress={handleCvUpload}>
-          <Card.Content style={styles.cardContent}>
-            <IconButton icon="camera" size={40} style={styles.uploadIcon} />
-            <Paragraph>
-              Record a video or add a photo carousel that best describes you
-            </Paragraph>
-          </Card.Content>
-        </Card>
+        {
+          files.length === 0 && (
+            <Card style={styles.card} onPress={handleAssetUpload}>
+              <Card.Content style={styles.cardContent}>
+                <IconButton
+                  icon={() => (
+                    <FontAwesomeIcon
+                      color={theme.dark ? Colors(theme).text : Colors(theme).primary}
+                      icon={faPhotoFilm}
+                      size={36}
+                    />
+                  )}
+                  size={40}
+                  style={styles.uploadIcon}
+                />
+                <Paragraph style={styles.cardParagraph}>
+                  Record a video or add a photo carousel that best describes you
+                </Paragraph>
+              </Card.Content>
+            </Card>
+          )
+        }
 
         {
           files.length > 0 && (
-            <CarouselNative
-              data={files.map((file: any) => {
-                return {
-                  id: file.id,
-                  type: file.type,
-                  url: file.id,
-                };
-              })}
-              onImagePress={(file) => {
-                console.log("Image Pressed", file);
-              }}
+            <AssetsPreview
+              files={files.map((file) => ({
+                id: file.id,
+                type: file.type,
+                url: file.type.includes('video') ? file.localUri || file.uri : file.uri,
+              }))}
+              handleAssetUpload={handleAssetUpload}
             />
           )
         }
@@ -196,6 +240,12 @@ const ApplyScreen = () => {
               </HelperText>
             )
           }
+
+          <ProgressBar
+            progress={processPercentage / 100}
+            color={Colors(theme).primary}
+            style={styles.progressBar}
+          />
 
           <Button
             mode="contained"

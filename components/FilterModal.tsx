@@ -1,5 +1,5 @@
 import React, { useState, useRef, useMemo } from "react";
-import { TouchableOpacity } from "react-native";
+import { Modal, TouchableOpacity } from "react-native";
 import { Chip, Button } from "react-native-paper";
 import Slider from "@react-native-community/slider";
 import BottomSheet, {
@@ -66,127 +66,133 @@ const CollaborationFilter = ({
   const snapPoints = useMemo(() => ["25%", "50%", "75%", "100%"], []);
 
   return (
-    <BottomSheet
-      ref={sheetRef}
-      index={isVisible ? 1 : -1} // Controls visibility of BottomSheet
-      snapPoints={snapPoints}
-      enablePanDownToClose
-      backdropComponent={(backdropProps) => (
-        <BottomSheetBackdrop
-          {...backdropProps}
-          disappearsOnIndex={-1}
-          appearsOnIndex={1}
-          pressBehavior="close"
-          style={styles.backdrop}
-        />
-      )}
-      onClose={onClose}
-      handleStyle={{
-        backgroundColor: Colors(theme).background,
-      }}
-      handleIndicatorStyle={{
-        backgroundColor: Colors(theme).text,
-      }}
+    <Modal
+      visible={isVisible}
+      transparent
+      animationType="fade"
     >
-      <BottomSheetView
-        style={styles.container}
+      <BottomSheet
+        ref={sheetRef}
+        index={isVisible ? 1 : -1} // Controls visibility of BottomSheet
+        snapPoints={snapPoints}
+        enablePanDownToClose
+        backdropComponent={(backdropProps) => (
+          <BottomSheetBackdrop
+            {...backdropProps}
+            disappearsOnIndex={-1}
+            appearsOnIndex={1}
+            pressBehavior="close"
+            style={styles.backdrop}
+          />
+        )}
+        onClose={onClose}
+        handleStyle={{
+          backgroundColor: Colors(theme).background,
+        }}
+        handleIndicatorStyle={{
+          backgroundColor: Colors(theme).text,
+        }}
       >
-        <View style={styles.header}>
-          <Text style={styles.title}>Filter</Text>
-          <TouchableOpacity onPress={onClose}>
-            <FontAwesomeIcon
-              icon={faClose}
-              size={24}
-              color={Colors(theme).text}
-            />
-          </TouchableOpacity>
-        </View>
-
-        {/* Categories Section */}
-        <Text style={styles.sectionTitle}>Categories</Text>
-        <View style={styles.chipContainer}>
-          {categories.map((category) => (
-            <Chip
-              icon={localSelectedCategory === category ? () => (
-                <FontAwesomeIcon
-                  icon={faCheckDouble}
-                  size={16}
-                  color={Colors(theme).white}
-                />
-              ) : undefined}
-              key={category}
-              selected={localSelectedCategory === category}
-              onPress={() => setLocalSelectedCategory(category)}
-              style={styles.chip}
-            >
-              {category}
-            </Chip>
-          ))}
-        </View>
-
-        {/* Salaries Section */}
-        <Text style={styles.sectionTitle}>Salaries</Text>
-        <View style={styles.salaryContainer}>
-          <Text style={styles.salaryLabel}>
-            Min Salary: ${localSalaryRange[0].toLocaleString() || "0"}
-          </Text>
-          <Slider
-            style={{ width: "100%", height: 40 }}
-            minimumValue={0}
-            maximumValue={localSalaryRange[1]}
-            step={1000}
-            value={localSalaryRange[0]}
-            onValueChange={(value) =>
-              setLocalSalaryRange([value, localSalaryRange[1]])
-            }
-          />
-        </View>
-        <View style={styles.salaryContainer}>
-          <Text style={styles.salaryLabel}>
-            Max Salary: ${localSalaryRange[1].toLocaleString() || "0"}
-          </Text>
-          <Slider
-            style={{ width: "100%", height: 40 }}
-            minimumValue={localSalaryRange[0]}
-            maximumValue={5000}
-            step={1000}
-            value={localSalaryRange[1]}
-            onValueChange={(value) =>
-              setLocalSalaryRange([localSalaryRange[0], value])
-            }
-          />
-        </View>
-
-        <Text style={styles.sectionTitle}>Job Types</Text>
-        <View style={styles.chipContainer}>
-          {jobTypes.map((jobType) => (
-            <Chip
-              key={jobType}
-              selected={localSelectedJobType === jobType}
-              onPress={() => setLocalSelectedJobType(jobType)}
-              style={styles.chip}
-              icon={localSelectedJobType === jobType ? () => (
-                <FontAwesomeIcon
-                  icon={faCheckDouble}
-                  size={16}
-                  color={Colors(theme).white}
-                />
-              ) : undefined}
-            >
-              {jobType}
-            </Chip>
-          ))}
-        </View>
-
-        <Button
-          mode="contained"
-          onPress={applyFilters}
-          style={styles.applyButton}
+        <BottomSheetView
+          style={styles.container}
         >
-          Apply Filters
-        </Button>
-      </BottomSheetView>
-    </BottomSheet>
+          <View style={styles.header}>
+            <Text style={styles.title}>Filter</Text>
+            <TouchableOpacity onPress={onClose}>
+              <FontAwesomeIcon
+                icon={faClose}
+                size={24}
+                color={Colors(theme).text}
+              />
+            </TouchableOpacity>
+          </View>
+
+          {/* Categories Section */}
+          <Text style={styles.sectionTitle}>Categories</Text>
+          <View style={styles.chipContainer}>
+            {categories.map((category) => (
+              <Chip
+                icon={localSelectedCategory === category ? () => (
+                  <FontAwesomeIcon
+                    icon={faCheckDouble}
+                    size={16}
+                    color={Colors(theme).white}
+                  />
+                ) : undefined}
+                key={category}
+                selected={localSelectedCategory === category}
+                onPress={() => setLocalSelectedCategory(category)}
+                style={styles.chip}
+              >
+                {category}
+              </Chip>
+            ))}
+          </View>
+
+          {/* Salaries Section */}
+          <Text style={styles.sectionTitle}>Salaries</Text>
+          <View style={styles.salaryContainer}>
+            <Text style={styles.salaryLabel}>
+              Min Salary: ${localSalaryRange[0].toLocaleString() || "0"}
+            </Text>
+            <Slider
+              style={{ width: "100%", height: 40 }}
+              minimumValue={0}
+              maximumValue={localSalaryRange[1]}
+              step={1000}
+              value={localSalaryRange[0]}
+              onValueChange={(value) =>
+                setLocalSalaryRange([value, localSalaryRange[1]])
+              }
+            />
+          </View>
+          <View style={styles.salaryContainer}>
+            <Text style={styles.salaryLabel}>
+              Max Salary: ${localSalaryRange[1].toLocaleString() || "0"}
+            </Text>
+            <Slider
+              style={{ width: "100%", height: 40 }}
+              minimumValue={localSalaryRange[0]}
+              maximumValue={5000}
+              step={1000}
+              value={localSalaryRange[1]}
+              onValueChange={(value) =>
+                setLocalSalaryRange([localSalaryRange[0], value])
+              }
+            />
+          </View>
+
+          <Text style={styles.sectionTitle}>Job Types</Text>
+          <View style={styles.chipContainer}>
+            {jobTypes.map((jobType) => (
+              <Chip
+                key={jobType}
+                selected={localSelectedJobType === jobType}
+                onPress={() => setLocalSelectedJobType(jobType)}
+                style={styles.chip}
+                icon={localSelectedJobType === jobType ? () => (
+                  <FontAwesomeIcon
+                    icon={faCheckDouble}
+                    size={16}
+                    color={Colors(theme).white}
+                  />
+                ) : undefined}
+              >
+                {jobType}
+              </Chip>
+            ))}
+          </View>
+
+          <Button
+            mode="contained"
+            onPress={applyFilters}
+            style={styles.applyButton}
+          >
+            Apply Filters
+          </Button>
+        </BottomSheetView>
+      </BottomSheet>
+    </Modal>
   );
 };
 
