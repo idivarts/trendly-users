@@ -8,7 +8,6 @@ export const stylesFn = (theme: Theme) =>
       flex: 1,
       padding: 20,
       justifyContent: "space-between",
-      backgroundColor: Colors(theme).background,
     },
     header: {
       flexDirection: "row",
@@ -20,16 +19,6 @@ export const stylesFn = (theme: Theme) =>
       fontWeight: "bold",
       textAlign: "center",
       flex: 1,
-      color: Colors(theme).text,
-    },
-    optionItem: {
-      borderRadius: 10,
-      marginBottom: 10,
-      backgroundColor: Colors(theme).card,
-    },
-    selectedOption: {
-      fontWeight: "bold",
-      color: Colors(theme).white,
     },
     bottomNavigation: {
       flexDirection: "row",
@@ -38,7 +27,12 @@ export const stylesFn = (theme: Theme) =>
       marginTop: 20,
     },
     nextButton: {
+      alignItems: "center",
       alignSelf: "flex-end",
+      backgroundColor: Colors(theme).amber,
+      borderRadius: 50,
+      justifyContent: "center",
+      padding: 10,
     },
     skipButton: {
       position: "absolute",

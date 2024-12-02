@@ -7,7 +7,7 @@ const styles = (theme: Theme) => StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 10,
-    gap: 10,
+    gap: 12,
   },
   avatar: {
     alignItems: 'center',

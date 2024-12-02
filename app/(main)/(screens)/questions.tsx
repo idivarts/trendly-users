@@ -1,39 +1,53 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
-import { RadioButton } from "react-native-paper";
-import Ionicons from "@expo/vector-icons/Ionicons";
+import { Pressable } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { SURVEY_DATA } from "@/constants/SurveyData";
 import {
-  handleNextQuestion,
-  handlePreviousQuestion,
   submitSurvey,
 } from "@/components/surverHandlers";
 import { stylesFn } from "@/styles/Questions.styles";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import Colors from "@/constants/Colors";
+import { SurveyAnswer } from "@/types/Survey";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faArrowRight, faChevronLeft } from "@fortawesome/free-solid-svg-icons";
+import Select from "@/components/ui/select";
+import { Text, View } from "@/components/theme/Themed";
 
 const Questions = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  const [answers, setAnswers] = useState<string[]>([]);
+  const [answers, setAnswers] = useState<SurveyAnswer>({
+    question1: [],
+    question2: [],
+    question3: [],
+    question4: [],
+  });
   const theme = useTheme();
   const styles = stylesFn(theme);
   const router = useRouter();
 
-  // const { user } = useLocalSearchParams();
-  const params = useLocalSearchParams();
-  const user = Array.isArray(params.user) ? params.user[0] : params.user;
-
   const currentQuestion = SURVEY_DATA[currentQuestionIndex];
 
+  const [selectedOptions, setSelectedOptions] = useState<{
+    label: string,
+    value: string,
+  }[]>([]);
+
+  const handleSelection = (selectedOptions: {
+    label: string;
+    value: string
+  }[]) => {
+    setSelectedOptions(selectedOptions);
+  }
+
   const handleNext = () => {
-    const updatedAnswers = [...answers];
-    updatedAnswers[currentQuestionIndex] = selectedOption || "";
+    const updatedAnswers = {
+      ...answers,
+      [`question${currentQuestionIndex + 1}`]: selectedOptions.map(option => option.value),
+    }
     setAnswers(updatedAnswers);
 
     if (currentQuestionIndex === SURVEY_DATA.length - 1) {
-      // Last question, submit survey and don't move to next
       submitSurvey(updatedAnswers)
         .then(() => {
           router.replace("/collaborations");
@@ -42,85 +56,79 @@ const Questions = () => {
           console.error("Error submitting survey:", error);
         });
     } else {
-      // Move to the next question
-      handleNextQuestion(
-        currentQuestionIndex,
-        setCurrentQuestionIndex,
-        setSelectedOption,
-        selectedOption
-      );
+      if (currentQuestionIndex < SURVEY_DATA.length - 1) {
+        setCurrentQuestionIndex(currentQuestionIndex + 1);
+        setSelectedOptions([]);
+      }
     }
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() =>
-            handlePreviousQuestion(
-              currentQuestionIndex,
-              setCurrentQuestionIndex,
-              setSelectedOption
-            )
-          }
+        <Pressable
+          onPress={() => {
+            if (currentQuestionIndex > 0) {
+              setCurrentQuestionIndex(currentQuestionIndex - 1);
+              setSelectedOptions([]);
+            }
+          }}
         >
-          <Ionicons
-            name="chevron-back-outline"
-            size={30}
-            color={Colors(theme).black}
+          <FontAwesomeIcon
+            icon={faChevronLeft}
+            size={24}
+            color={Colors(theme).text}
           />
-        </TouchableOpacity>
+        </Pressable>
         <Text style={styles.questionText}>{currentQuestion.question}</Text>
       </View>
 
-      <RadioButton.Group
-        onValueChange={(value) => setSelectedOption(value)}
-        value={selectedOption || ""}
-      >
-        {currentQuestion.options.map((option, index) => (
-          <RadioButton.Item
-            key={index}
-            label={option}
-            value={option}
-            style={{
-              ...styles.optionItem,
-              backgroundColor:
-                selectedOption === option
-                  ? Colors(theme).secondary
-                  : Colors(theme).whiteSmoke,
-            }}
-            labelStyle={
-              selectedOption === option ? styles.selectedOption : null
-            }
-          />
-        ))}
-      </RadioButton.Group>
+      <Select
+        style={{
+          gap: 12,
+        }}
+        direction="column"
+        items={currentQuestion.options.map((option) => ({
+          label: option,
+          value: option,
+        }))}
+        onSelect={handleSelection}
+        multiselect={currentQuestion.multiselect}
+        value={selectedOptions}
+        selectItemIcon
+        selectItemStyle={{
+          paddingHorizontal: 16,
+          paddingVertical: 16,
+        }}
+      />
 
       <View style={styles.bottomNavigation}>
-        {currentQuestionIndex === SURVEY_DATA.length - 1 ? (
-          <TouchableOpacity onPress={handleNext} style={styles.nextButton}>
-            <Ionicons
-              name="arrow-forward-circle"
-              size={60}
-              color={Colors(theme).amber}
-            />
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity onPress={handleNext} style={styles.nextButton}>
-            <Ionicons
-              name="arrow-forward-circle"
-              size={60}
-              color={Colors(theme).amber}
-            />
-          </TouchableOpacity>
-        )}
+        {
+          currentQuestionIndex === SURVEY_DATA.length - 1 ? (
+            <Pressable onPress={handleNext} style={styles.nextButton}>
+              <FontAwesomeIcon
+                icon={faArrowRight}
+                size={30}
+                color={Colors(theme).white}
+              />
+            </Pressable>
+          ) : (
+            <Pressable onPress={handleNext} style={styles.nextButton}>
+              <FontAwesomeIcon
+                icon={faArrowRight}
+                size={30}
+                color={Colors(theme).white}
+              />
+            </Pressable>
+          )
+        }
 
-        <TouchableOpacity
+        <Pressable
           onPress={() => router.replace("/collaborations")}
           style={styles.skipButton}
         >
           <Text style={styles.skipText}>Skip</Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     </View>
   );

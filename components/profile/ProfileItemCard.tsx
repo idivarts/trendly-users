@@ -22,9 +22,9 @@ const ProfileItemCard: React.FC<ProfileItemCardProps> = ({
     <Pressable onPress={onPress}>
       <View style={styles.container}>
         <FontAwesomeIcon
-          color={Colors(theme).text}
+          color={theme.dark ? Colors(theme).text : Colors(theme).primary}
           icon={item.icon}
-          size={26}
+          size={22}
           style={styles.avatar}
         />
         <View style={styles.textContainer}>
@@ -33,9 +33,9 @@ const ProfileItemCard: React.FC<ProfileItemCardProps> = ({
           </Text>
         </View>
         <FontAwesomeIcon
+          color={theme.dark ? Colors(theme).text : Colors(theme).primary}
           icon={faChevronRight}
           size={14}
-          color={Colors(theme).text}
           style={styles.icon}
         />
       </View>

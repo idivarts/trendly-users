@@ -36,6 +36,8 @@ const styles = (theme: Theme) => StyleSheet.create({
   modalButton: {
     backgroundColor: Colors(theme).lightgray,
     borderRadius: 100,
+    justifyContent: "center",
+    alignItems: "center",
     width: 50,
     height: 50,
   },

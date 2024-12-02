@@ -8,6 +8,8 @@ import CollaborationDetails from "@/components/collaboration/collaboration-detai
 import ScreenHeader from "@/components/ui/screen-header";
 import Colors from "@/constants/Colors";
 import { useTheme } from "@react-navigation/native";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 
 const CollaborationDetailsScreen = () => {
   const theme = useTheme();
@@ -27,7 +29,13 @@ const CollaborationDetailsScreen = () => {
         rightAction
         rightActionButton={
           <IconButton
-            icon="dots-vertical"
+            icon={() => (
+              <FontAwesomeIcon
+                icon={faEllipsisV}
+                size={20}
+                color={Colors(theme).text}
+              />
+            )}
             onPress={() => {
               setIsVisible(true);
             }}
