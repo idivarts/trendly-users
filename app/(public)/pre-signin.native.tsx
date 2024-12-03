@@ -8,7 +8,11 @@ import AppLayout from "@/layouts/app-layout";
 import { slides } from "@/constants/Slides";
 import * as AuthSession from "expo-auth-session";
 import * as WebBrowser from "expo-web-browser";
-import { FacebookAuthProvider, signInWithCredential } from "firebase/auth";
+import {
+  FacebookAuthProvider,
+  getAdditionalUserInfo,
+  signInWithCredential,
+} from "firebase/auth";
 import { AuthApp as auth } from "@/utils/auth";
 import { useRouter } from "expo-router";
 import { useAuthContext } from "@/contexts";
@@ -78,9 +82,14 @@ const PreSignIn = () => {
           return;
         }
 
+        const user = getAdditionalUserInfo(result);
+
         const userData = {
           accessToken,
           name: result.user.displayName,
+          email: result.user.email || '',
+          // @ts-ignore
+          profileImage: user?.profile?.picture?.data?.url || '',
           fbid,
         };
 
