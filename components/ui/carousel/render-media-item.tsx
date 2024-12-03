@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   Image,
 } from "react-native";
 import Animated from "react-native-reanimated";
@@ -11,6 +12,8 @@ import {
 import { stylesFn } from "@/styles/InfluencerCard.styles";
 import { useTheme } from "@react-navigation/native";
 import { imageUrl } from "@/utils/url";
+import { useState } from "react";
+import { View } from "@/components/theme/Themed";
 
 export interface MediaItem {
   type: string;
@@ -36,6 +39,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
 }) => {
   const theme = useTheme();
   const styles = stylesFn(theme);
+  const [isLoading, setIsLoading] = useState(false);
 
   if (item?.type.includes("image")) {
     return (
@@ -46,7 +50,21 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
           }
         }}
       >
-        <Animated.View>
+        <Animated.View
+          style={{
+            position: "relative",
+          }}
+        >
+          <View
+            style={[
+              styles.loadingIndicatorContainer,
+              {
+                display: isLoading ? "flex" : "none",
+              }
+            ]}
+          >
+            {isLoading && <ActivityIndicator />}
+          </View>
           <Image
             source={imageUrl(item.url)}
             style={[
@@ -57,6 +75,8 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
               }
             ]}
             resizeMode="stretch"
+            onLoadStart={() => setIsLoading(true)}
+            onLoad={() => setIsLoading(false)}
           />
         </Animated.View>
       </TapGestureHandler>
@@ -89,6 +109,8 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
       shouldPlay={false}
       useNativeControls
       onError={(error) => console.error("Video Error:", error)}
+      onLoadStart={() => setIsLoading(true)}
+      onLoad={() => setIsLoading(false)}
     />
   );
 };
