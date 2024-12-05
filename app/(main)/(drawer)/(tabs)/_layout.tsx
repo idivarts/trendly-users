@@ -1,5 +1,5 @@
 import React from "react";
-import { Tabs } from "expo-router";
+import { router, Tabs } from "expo-router";
 
 import Colors from "@/constants/Colors";
 import { useClientOnlyValue } from "@/components/useClientOnlyValue";
@@ -17,10 +17,12 @@ import {
 import {
   faComment as faCommentSolid,
   faFileLines as faFileLinesSolid,
+  faGear,
   faHandshake as faHandshakeSolid,
   faStar as faStarSolid,
   faUser as faUserSolid,
 } from "@fortawesome/free-solid-svg-icons";
+import { TouchableOpacity } from "react-native";
 
 const TabLayout = () => {
   const { xl } = useBreakpoints();
@@ -118,6 +120,19 @@ const TabLayout = () => {
               icon={focused ? faUserSolid : faUser}
               size={24}
             />
+          ),
+
+          headerRight: () => (
+            <TouchableOpacity
+              style={{
+                paddingRight: 20,
+              }}
+              onPress={() => {
+                router.push("/settings");
+              }}
+            >
+              <FontAwesomeIcon icon={faGear} size={24} />
+            </TouchableOpacity>
           ),
         }}
       />

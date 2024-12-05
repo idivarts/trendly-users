@@ -31,7 +31,7 @@ import { imageUrl } from "@/utils/url";
 
 WebBrowser.maybeCompleteAuthSession();
 
-const FB_APP_ID = "2223620811324637";
+const FB_APP_ID = "567254166026958";
 
 const PreSignIn = () => {
   const theme = useTheme();
@@ -87,9 +87,9 @@ const PreSignIn = () => {
         const userData = {
           accessToken,
           name: result.user.displayName,
-          email: result.user.email || '',
+          email: result.user.email || "",
           // @ts-ignore
-          profileImage: user?.profile?.picture?.data?.url || '',
+          profileImage: user?.profile?.picture?.data?.url || "",
           fbid,
         };
 
@@ -157,62 +157,49 @@ const PreSignIn = () => {
         ]}
         paginationStyle={styles.pagination}
       >
-        {
-          slides.map((slide) => (
-            <View style={styles.slide} key={slide.key}>
-              {
-                slide.key !== "connect" && (
-                  <Button
-                    mode="outlined"
-                    style={styles.skipButton}
-                    onPress={skipToConnect}
-                  >
-                    Skip
-                  </Button>
-                )
-              }
-              {
-                slide.key === "connect" && (
-                  <Pressable
-                    style={[
-                      styles.skipButton,
-                    ]}
-                    onPress={() => {
-                      setVisible(true);
-                    }}
-                  >
-                    <FontAwesomeIcon
-                      icon={faEllipsis}
-                      size={24}
-                      color={Colors(theme).gray100}
-                    />
-                  </Pressable>
-                )
-              }
-              <View style={styles.imageContainer}>
-                <Image
-                  source={imageUrl(slide.image)}
-                  style={styles.image}
+        {slides.map((slide) => (
+          <View style={styles.slide} key={slide.key}>
+            {slide.key !== "connect" && (
+              <Button
+                mode="outlined"
+                style={styles.skipButton}
+                onPress={skipToConnect}
+              >
+                Skip
+              </Button>
+            )}
+            {slide.key === "connect" && (
+              <Pressable
+                style={[styles.skipButton]}
+                onPress={() => {
+                  setVisible(true);
+                }}
+              >
+                <FontAwesomeIcon
+                  icon={faEllipsis}
+                  size={24}
+                  color={Colors(theme).gray100}
+                />
+              </Pressable>
+            )}
+            <View style={styles.imageContainer}>
+              <Image source={imageUrl(slide.image)} style={styles.image} />
+            </View>
+            <Title style={[styles.title, { color: Colors(theme).primary }]}>
+              {slide.title}
+            </Title>
+            <Paragraph style={styles.paragraph}>{slide.text}</Paragraph>
+            {slide.key === "connect" && Platform.OS !== "web" && (
+              <View style={styles.socialContainer}>
+                <SocialButton
+                  icon={faFacebook}
+                  label="Login with Facebook"
+                  onPress={handleFacebookSignIn}
                 />
               </View>
-              <Title style={[styles.title, { color: Colors(theme).primary }]}>
-                {slide.title}
-              </Title>
-              <Paragraph style={styles.paragraph}>{slide.text}</Paragraph>
-              {
-                slide.key === "connect" && Platform.OS !== "web" && (
-                  <View style={styles.socialContainer}>
-                    <SocialButton
-                      icon={faFacebook}
-                      label="Login with Facebook"
-                      onPress={handleFacebookSignIn}
-                    />
-                  </View>
-                )
-              }
-            </View>
-          ))
-        }
+            )}
+          </View>
+        ))}
       </Swiper>
 
       {error && <Text style={{ color: "red" }}>Error: {error}</Text>}

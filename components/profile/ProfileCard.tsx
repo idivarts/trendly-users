@@ -1,47 +1,124 @@
 import { Pressable } from "react-native";
 import { Text, View } from "../theme/Themed";
-import { Avatar } from "react-native-paper";
+import { Avatar, Button } from "react-native-paper";
 import stylesFn from "@/styles/profile/ProfileCard.styles";
 import { User } from "@/types/User";
 import { PLACEHOLDER_PERSON_IMAGE } from "@/constants/Placeholder";
 import { useTheme } from "@react-navigation/native";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faChevronRight, faPen } from "@fortawesome/free-solid-svg-icons";
+import Colors from "@/constants/Colors";
+import ImageUploadModal from "../ui/modal/ImageUploadModal";
+import { useAuthContext, useFirebaseStorageContext } from "@/contexts";
+import { useEffect, useState } from "react";
 
 interface ProfileCardProps {
   item: User;
   onPress: () => void;
 }
 
-const ProfileCard: React.FC<ProfileCardProps> = ({
-  item,
-  onPress,
-}) => {
+const ProfileCard: React.FC<ProfileCardProps> = ({ item, onPress }) => {
   const theme = useTheme();
   const styles = stylesFn(theme);
 
+  const { uploadImageBytes } = useFirebaseStorageContext();
+  const { updateUser } = useAuthContext();
+
+  const [isSaving, setIsSaving] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [capturedImage, setCapturedImage] = useState<string>();
+
+  const handleSave = async () => {
+    setIsSaving(true);
+
+    let uploadedImage: string | null = null;
+
+    if (capturedImage) {
+      const blob = await fetch(capturedImage).then((r) => r.blob());
+      uploadedImage = await uploadImageBytes(
+        blob,
+        `users/${item.id}-profile-image`
+      );
+    }
+
+    await updateUser(item.id, {
+      profileImage: uploadedImage || item.profileImage,
+    });
+
+    setIsSaving(false);
+  };
+
+  const onImageUpload = (image: string) => {
+    setCapturedImage(image);
+  };
+
+  useEffect(() => {
+    if (capturedImage) {
+      handleSave();
+    }
+  }, [capturedImage]);
+
   return (
-    <Pressable onPress={onPress}>
-      <View style={styles.container}>
+    <View style={styles.container}>
+      <View
+        style={{
+          position: "relative",
+        }}
+      >
         <Avatar.Image
           source={{
             uri: item.profileImage || PLACEHOLDER_PERSON_IMAGE,
           }}
-          size={56}
+          size={128}
           style={styles.avatar}
         />
-        <View style={styles.textContainer}>
-          <Text style={styles.titleText}>
-            {item.name}
-          </Text>
+        <Pressable
+          onPress={() => setIsModalVisible(true)}
+          style={{
+            position: "absolute",
+            top: 10,
+            right: 10,
+          }}
+        >
+          <FontAwesomeIcon icon={faPen} color={Colors(theme).text} size={22} />
+        </Pressable>
+        <View
+          style={{
+            backgroundColor: "#A69F5BD6",
+            alignItems: "center",
+            padding: 5,
+            borderRadius: 20,
+            position: "absolute",
+            bottom: 0,
+            right: 10,
+          }}
+        >
           <Text
             style={{
-              opacity: 0.8,
+              color: "#fff",
             }}
           >
-            {item.email}
+            {item.profile?.completionPercentage?.toString() || 0}% Complete
           </Text>
         </View>
       </View>
-    </Pressable>
+      <View style={styles.textContainer}>
+        <Text style={styles.titleText}>{item.name}</Text>
+        <FontAwesomeIcon icon={faChevronRight} size={20} />
+      </View>
+      <Button
+        onPress={onPress}
+        buttonColor={Colors(theme).primary}
+        textColor={Colors(theme).white}
+      >
+        Complete your Profile
+      </Button>
+      <ImageUploadModal
+        onImageUpload={onImageUpload}
+        setVisible={setIsModalVisible}
+        visible={isModalVisible}
+      />
+    </View>
   );
 };
 

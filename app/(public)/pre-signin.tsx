@@ -32,7 +32,7 @@ import { imageUrl } from "@/utils/url";
 
 WebBrowser.maybeCompleteAuthSession();
 
-const FB_APP_ID = "2223620811324637";
+const FB_APP_ID = "567254166026958";
 
 const PreSignIn = () => {
   const theme = useTheme();
@@ -86,9 +86,9 @@ const PreSignIn = () => {
         const userData = {
           accessToken,
           name: result.user.displayName,
-          email: result.user.email || '',
+          email: result.user.email || "",
           // @ts-ignore
-          profileImage: user?.profile?.picture?.data?.url || '',
+          profileImage: user?.profile?.picture?.data?.url || "",
           fbid,
         };
 
@@ -144,38 +144,31 @@ const PreSignIn = () => {
         ]}
         paginationStyle={styles.pagination}
       >
-        {
-          slides.map((slide) => (
-            <View style={styles.slide} key={slide.key}>
-              <View style={styles.imageContainer}>
-                <Image
-                  source={imageUrl(slide.image)}
-                  style={styles.image}
+        {slides.map((slide) => (
+          <View style={styles.slide} key={slide.key}>
+            <View style={styles.imageContainer}>
+              <Image source={imageUrl(slide.image)} style={styles.image} />
+            </View>
+            <Title style={[styles.title, { color: Colors(theme).primary }]}>
+              {slide.title}
+            </Title>
+            <Paragraph style={styles.paragraph}>{slide.text}</Paragraph>
+            {slide.key === "connect" && (
+              <View style={styles.socialContainer}>
+                <SocialButton
+                  icon={faEnvelope}
+                  label="Login with Email"
+                  onPress={handleEmailSignIn}
+                />
+                <SocialButton
+                  icon={faInstagram}
+                  label="Login with Instagram"
+                  onPress={handleInstagramSignIn}
                 />
               </View>
-              <Title style={[styles.title, { color: Colors(theme).primary }]}>
-                {slide.title}
-              </Title>
-              <Paragraph style={styles.paragraph}>{slide.text}</Paragraph>
-              {
-                slide.key === "connect" && (
-                  <View style={styles.socialContainer}>
-                    <SocialButton
-                      icon={faEnvelope}
-                      label="Login with Email"
-                      onPress={handleEmailSignIn}
-                    />
-                    <SocialButton
-                      icon={faInstagram}
-                      label="Login with Instagram"
-                      onPress={handleInstagramSignIn}
-                    />
-                  </View>
-                )
-              }
-            </View>
-          ))
-        }
+            )}
+          </View>
+        ))}
       </Swiper>
 
       {error && <Text style={{ color: "red" }}>Error: {error}</Text>}
