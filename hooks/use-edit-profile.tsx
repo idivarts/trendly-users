@@ -3,7 +3,6 @@ import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { useAWSContext } from "@/contexts/aws-context.provider";
 import { useAuthContext } from "@/contexts";
 import { calculateProfileCompletion } from "@/utils/profile";
-import { AssetItem } from "@/components/basic-profile/edit-profile/grid/native/DraggableItem";
 import { SelectItem } from "@/components/ui/select";
 import { Platform } from "react-native";
 import { NativeAssetItem, WebAssetItem } from "@/types/Asset";
@@ -19,7 +18,6 @@ const useEditProfile = () => {
     uploadFileUri,
   } = useAWSContext();
 
-  const [assets, setAssets] = useState<AssetItem[]>([]);
   const [attachments, setAttachments] = useState<any[]>([]);
   const [nativeAssets, setNativeAssets] = useState<NativeAssetItem[]>([]);
   const [webAssets, setWebAssets] = useState<WebAssetItem[]>([]);
@@ -120,7 +118,7 @@ const useEditProfile = () => {
           ));
 
           uploadedAssets.push(attachment);
-        } else if (typeof asset.url === typeof File) {
+        } else if (asset.url instanceof File) {
           const uploadAsset = await uploadFile(asset.url as File);
 
           uploadedAssets.push(uploadAsset);
@@ -172,7 +170,7 @@ const useEditProfile = () => {
     setProcessMessage('Saving profile attachments...');
     setProcessPercentage(20);
 
-    // Upload assets to aws s3 (Native)
+    // Upload assets to aws s3
     const uploadedAssets = await uploadNewAssets();
 
     setProcessMessage('Saved profile attachments...');

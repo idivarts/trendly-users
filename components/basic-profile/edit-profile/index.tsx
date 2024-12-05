@@ -1,19 +1,22 @@
 import { Text, View } from "@/components/theme/Themed";
 import TextInput from "@/components/ui/text-input";
 import { useEffect, useState } from "react";
-import { ScrollView, Keyboard, Platform, Animated } from "react-native";
+import { Keyboard, Platform, Animated } from "react-native";
 import ContentItem from "./ContentItem";
 import Select from "@/components/ui/select";
 import Button from "@/components/ui/button";
+import { processRawAttachment } from "@/utils/attachments";
 import { generateEmptyAssets, truncateText } from "@/utils/profile";
 import { useBreakpoints } from "@/hooks";
 import { useTheme } from "@react-navigation/native";
 import { stylesFn } from "@/styles/edit-profile/EditProfile.styles";
 import useEditProfile from "@/hooks/use-edit-profile";
 import DragAndDropNative from "./grid/native/DragAndDropNative";
+import DragAndDropWeb from "./grid/web/DragAndDropWeb";
 import { ProgressBar } from "react-native-paper";
 import Colors from "@/constants/Colors";
 import VerifiedIcon from "@/assets/icons/verified.svg";
+import Wrapper from "./grid/wrapper";
 
 const EditProfile: React.FC = () => {
   const [keyboardHeight] = useState(new Animated.Value(0));
@@ -96,20 +99,37 @@ const EditProfile: React.FC = () => {
         marginHorizontal: xl ? 'auto' : 0,
       }}
     >
-      <ScrollView
-        contentContainerStyle={styles.scrollContentContainerStyle}
-      >
-        <DragAndDropNative
-          items={
-            generateEmptyAssets(user?.profile?.attachments as any, items).map((item, index) => {
-              return {
-                ...item,
-                id: index,
+      <Wrapper>
+        {
+          Platform.OS === 'web' ? (
+            <DragAndDropWeb
+              items={user?.profile?.attachments?.map((attachment, index) => {
+                return {
+                  ...processRawAttachment(attachment),
+                  id: index.toString(),
+                }
+              }) || items.map((item, index) => {
+                return {
+                  ...item,
+                  id: index.toString(),
+                }
+              })}
+              onUploadAsset={handleAssetsUpdateWeb}
+            />
+          ) : (
+            <DragAndDropNative
+              items={
+                generateEmptyAssets(user?.profile?.attachments as any, items).map((item, index) => {
+                  return {
+                    ...item,
+                    id: index,
+                  }
+                })
               }
-            })
-          }
-          onItemsUpdate={handleAssetsUpdateNative}
-        />
+              onItemsUpdate={handleAssetsUpdateNative}
+            />
+          )
+        }
         <View
           style={styles.inputsContainer}
         >
@@ -198,11 +218,10 @@ const EditProfile: React.FC = () => {
             <Select
               items={[
                 { label: 'Fashion', value: 'Fashion' },
-                { label: 'Beauty', value: 'Beauty' },
-                { label: 'Fitness', value: 'Fitness' },
                 { label: 'Lifestyle', value: 'Lifestyle' },
-                { label: 'Travel', value: 'Travel' },
                 { label: 'Food', value: 'Food' },
+                { label: 'Travel', value: 'Travel' },
+                { label: 'Health', value: 'Health' },
               ]}
               selectItemIcon={true}
               value={niches}
@@ -229,7 +248,7 @@ const EditProfile: React.FC = () => {
             }
           </View>
         </View>
-      </ScrollView>
+      </Wrapper>
       <Animated.View style={[
         styles.saveButtonContainer,
         {
