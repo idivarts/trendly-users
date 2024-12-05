@@ -131,7 +131,11 @@ const TabLayout = () => {
                 router.push("/settings");
               }}
             >
-              <FontAwesomeIcon icon={faGear} size={24} />
+              <FontAwesomeIcon
+                icon={faGear}
+                size={24}
+                color={Colors(theme).text}
+              />
             </TouchableOpacity>
           ),
         }}
