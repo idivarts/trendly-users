@@ -65,8 +65,6 @@ const PreSignIn = () => {
   // Handle response from Facebook
   useEffect(() => {
     if (response?.type === "success") {
-      console.log("response", response);
-
       const { access_token } = response.params;
       handleFirebaseSignIn(access_token);
     } else if (response?.type === "error") {

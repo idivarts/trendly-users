@@ -46,7 +46,14 @@ const PreSignIn = () => {
         native: `fb${FB_APP_ID}://authorize`,
       }),
       responseType: AuthSession.ResponseType.Token,
-      scopes: ["public_profile"],
+      scopes: [
+        "public_profile",
+        "email",
+        "pages_show_list",
+        "pages_read_engagement",
+        "instagram_basic",
+        "instagram_manage_messages",
+      ],
     },
     { authorizationEndpoint: "https://www.facebook.com/v10.0/dialog/oauth" }
   );

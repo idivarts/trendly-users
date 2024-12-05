@@ -40,6 +40,8 @@ const PreSignIn = () => {
   const swiperRef = useRef<Swiper>(null); // Use ref for Swiper
   const [visible, setVisible] = useState(false);
 
+  const router = useRouter();
+
   const [request, response, promptAsync] = AuthSession.useAuthRequest(
     {
       clientId: FB_APP_ID,
@@ -47,12 +49,17 @@ const PreSignIn = () => {
         native: `fb${FB_APP_ID}://authorize`,
       }),
       responseType: AuthSession.ResponseType.Token,
-      scopes: ["public_profile"],
+      scopes: [
+        "public_profile",
+        "email",
+        "pages_show_list",
+        "pages_read_engagement",
+        "instagram_basic",
+        "instagram_manage_messages",
+      ],
     },
     { authorizationEndpoint: "https://www.facebook.com/v10.0/dialog/oauth" }
   );
-
-  const router = useRouter();
 
   // Handle response from Facebook
   useEffect(() => {
@@ -99,40 +106,6 @@ const PreSignIn = () => {
       setError(error.message);
     }
   };
-
-  const handleFacebookSignIn = async () => {
-    if (Platform.OS === "android" || Platform.OS === "ios") {
-      LoginManager.logInWithPermissions(["public_profile"]).then(
-        function (result) {
-          if (result.isCancelled) {
-          } else {
-            AccessToken.getCurrentAccessToken().then((data) => {
-              const token = data?.accessToken;
-              if (token) {
-                handleFirebaseSignIn(token);
-              }
-            });
-          }
-        },
-        function (error) {
-          console.log("==> Login fail with error: " + error);
-        }
-      );
-    }
-  };
-
-  useEffect(() => {
-    if (Platform.OS === "ios" || Platform.OS === "android") {
-      const requestTracking = async () => {
-        const { status } = await requestTrackingPermissionsAsync();
-        Settings.initializeSDK();
-        if (status === "granted") {
-          await Settings.setAdvertiserTrackingEnabled(true);
-        }
-      };
-      requestTracking();
-    }
-  }, []);
 
   const skipToConnect = () => {
     const connectSlideIndex = slides.findIndex(
@@ -193,7 +166,13 @@ const PreSignIn = () => {
                 <SocialButton
                   icon={faFacebook}
                   label="Login with Facebook"
-                  onPress={handleFacebookSignIn}
+                  onPress={
+                    request
+                      ? () => {
+                          promptAsync();
+                        }
+                      : () => {}
+                  }
                 />
               </View>
             )}
