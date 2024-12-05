@@ -29,10 +29,9 @@ import Button from "@/components/ui/button";
 import SocialButton from "@/components/ui/button/social-button";
 import { faFacebook, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import { imageUrl } from "@/utils/url";
+import { FB_APP_ID } from "@/constants/Facebook";
 
 WebBrowser.maybeCompleteAuthSession();
-
-const FB_APP_ID = "567254166026958";
 
 const PreSignIn = () => {
   const theme = useTheme();

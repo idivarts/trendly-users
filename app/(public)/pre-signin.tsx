@@ -28,11 +28,10 @@ import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import SocialButton from "@/components/ui/button/social-button";
 import { faInstagram } from "@fortawesome/free-brands-svg-icons";
 import { imageUrl } from "@/utils/url";
+import { FB_APP_ID } from "@/constants/Facebook";
 // import { AccessToken } from "react-native-fbsdk-next";
 
 WebBrowser.maybeCompleteAuthSession();
-
-const FB_APP_ID = "567254166026958";
 
 const PreSignIn = () => {
   const theme = useTheme();
