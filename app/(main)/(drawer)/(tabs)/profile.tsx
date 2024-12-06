@@ -36,7 +36,7 @@ const ProfileScreen = () => {
       {user && (
         <ProfileCard
           item={user}
-          onPress={() => router.push("/basic-profile")}
+          onPress={() => router.push("/edit-profile")}
         />
       )}
       <FlatList
@@ -63,7 +63,7 @@ const ProfileScreen = () => {
         }
         ListHeaderComponent={
           !user?.profile?.completionPercentage ||
-          user?.profile?.completionPercentage < COMPLETION_PERCENTAGE ? (
+            user?.profile?.completionPercentage < COMPLETION_PERCENTAGE ? (
             <View
               style={{
                 backgroundColor: "#E8B931",

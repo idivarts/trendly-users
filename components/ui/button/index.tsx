@@ -6,10 +6,12 @@ import {
 
 interface ButtonProps extends RNPButtonProps {
   customStyles?: Animated.WithAnimatedValue<StyleProp<ViewStyle>>;
+  size?: 'small' | 'medium' | 'large';
 }
 
 const Button: React.FC<ButtonProps> = ({
   customStyles,
+  size,
   ...props
 }) => {
   return (
@@ -17,6 +19,23 @@ const Button: React.FC<ButtonProps> = ({
       mode="contained"
       style={[
         customStyles,
+      ]}
+      contentStyle={[
+        size === 'small' && {
+          paddingVertical: 0,
+          paddingHorizontal: 0,
+        },
+      ]}
+      labelStyle={[
+        size === 'small' && {
+          fontSize: 12,
+        },
+        size === 'medium' && {
+          fontSize: 16,
+        },
+        size === 'large' && {
+          fontSize: 20,
+        },
       ]}
       {...props}
     />

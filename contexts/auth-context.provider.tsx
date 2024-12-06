@@ -14,6 +14,7 @@ import { User } from "@/types/User";
 import { AuthApp } from "@/utils/auth";
 import {
   createUserWithEmailAndPassword,
+  sendEmailVerification,
   signInWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
@@ -30,6 +31,7 @@ interface AuthContextProps {
   signUp: (name: string, email: string, password: string) => void;
   updateUser: (userId: string, user: Partial<User>) => Promise<void>;
   user: User | null;
+  verifyEmail: () => void;
 }
 
 const AuthContext = createContext<AuthContextProps>({
@@ -43,6 +45,7 @@ const AuthContext = createContext<AuthContextProps>({
   signUp: (name: string, email: string, password: string) => null,
   updateUser: () => Promise.resolve(),
   user: null,
+  verifyEmail: () => null,
 });
 
 export const useAuthContext = () => useContext(AuthContext);
@@ -157,6 +160,40 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
     Toaster.success("Signed Up Successfully!");
   };
 
+  const verifyEmail = async () => {
+    const userCredential = AuthApp.currentUser;
+
+    await userCredential?.reload();
+
+    if (userCredential?.emailVerified) {
+      Toaster.error("Email is already verified.");
+      if (!user?.emailVerified) {
+        await updateUser(user?.id as string, {
+          emailVerified: true,
+        });
+      }
+      return;
+    }
+
+    if (!userCredential) {
+      Toaster.error("User not found.");
+      return;
+    }
+
+    await sendEmailVerification(userCredential).then(() => {
+      Toaster.success("Verification email sent successfully.");
+    });
+  }
+
+  const verifyPhoneNumber = async (phoneNumber: string) => {
+    const userCredential = AuthApp.currentUser;
+
+    if (!userCredential) {
+      Toaster.error("User not found.");
+      return;
+    }
+  }
+
   const signOutUser = () => {
     signOut(AuthApp)
       .then(() => {
@@ -215,6 +252,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
         signUp,
         updateUser,
         user,
+        verifyEmail,
       }}
     >
       {children}

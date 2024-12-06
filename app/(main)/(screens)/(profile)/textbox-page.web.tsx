@@ -10,6 +10,9 @@ import { RichEditor, RichToolbar } from "react-native-pell-rich-editor";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { Platform } from "react-native";
+import { useAuthContext } from "@/contexts";
+import { User } from "@/types/User";
+import Toaster from "@/shared-uis/components/toaster/Toaster";
 
 const EditTextArea: React.FC = () => {
   const theme = useTheme();
@@ -17,7 +20,13 @@ const EditTextArea: React.FC = () => {
   const navigation = useRouter();
   const richText = useRef<RichEditor>(null);
 
-  const { title, value: initialValue, path } = useLocalSearchParams();
+  const {
+    userProfile,
+    key,
+    title,
+    value: initialValue,
+    path,
+  } = useLocalSearchParams();
 
   const [value, setValue] = useState(initialValue || "");
 
@@ -29,7 +38,37 @@ const EditTextArea: React.FC = () => {
     });
   };
 
+  const {
+    user,
+    updateUser,
+  } = useAuthContext();
+
+  const handleUpdateProfileContent = async () => {
+    if (!user) return;
+
+    const updatedContent: User = {
+      ...user,
+      profile: {
+        ...user.profile,
+        content: {
+          ...user?.profile?.content,
+          [key as string]: value,
+        },
+      },
+    };
+
+    await updateUser(user.id, updatedContent).then(() => {
+      navigation.replace("/edit-profile");
+      Toaster.success(`${title ? title : 'Profile'} updated successfully`);
+    });
+  }
+
   const handleSubmit = () => {
+    if (userProfile === 'true') {
+      handleUpdateProfileContent();
+      return;
+    }
+
     const valueToSubmit = {
       textbox: {
         title,
