@@ -7,6 +7,9 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import AppLayout from "@/layouts/app-layout";
 import Colors from "@/constants/Colors";
 import { RichEditor, RichToolbar } from "react-native-pell-rich-editor";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+import { Platform } from "react-native";
 
 const EditTextArea: React.FC = () => {
   const theme = useTheme();
@@ -63,27 +66,20 @@ const EditTextArea: React.FC = () => {
           }}
         >
           <Text>{title}</Text>
-          <RichEditor
-            ref={richText}
-            initialContentHTML={(value as string) || ""}
-            onChange={setValue}
-            placeholder="Start writing here..."
-            style={{
-              flexGrow: 1,
-              backgroundColor: Colors(theme).background,
-              minHeight: 200,
-              borderWidth: 0.2,
-            }}
-            editorStyle={{
-              backgroundColor: Colors(theme).background,
-            }}
-          />
-          <RichToolbar
-            editor={richText}
-            selectedIconTint={Colors(theme).primary}
-            disabledIconTint={Colors(theme).gray100}
-            style={{ backgroundColor: Colors(theme).card, marginTop: 10 }}
-          />
+          {Platform.OS === "web" && (
+            <ReactQuill
+              theme="snow"
+              value={value as string}
+              onChange={setValue}
+              placeholder="Start writing here..."
+              style={{
+                flexGrow: 1,
+                backgroundColor: Colors(theme).background,
+                height: 200,
+                marginTop: 10,
+              }}
+            />
+          )}
         </View>
 
         <View

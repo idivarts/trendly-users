@@ -29,10 +29,9 @@ import Button from "@/components/ui/button";
 import SocialButton from "@/components/ui/button/social-button";
 import { faFacebook, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import { imageUrl } from "@/utils/url";
+import { FB_APP_ID } from "@/constants/Facebook";
 
 WebBrowser.maybeCompleteAuthSession();
-
-const FB_APP_ID = "2223620811324637";
 
 const PreSignIn = () => {
   const theme = useTheme();
@@ -49,7 +48,14 @@ const PreSignIn = () => {
         native: `fb${FB_APP_ID}://authorize`,
       }),
       responseType: AuthSession.ResponseType.Token,
-      scopes: ["public_profile"],
+      scopes: [
+        "public_profile",
+        "email",
+        "pages_show_list",
+        "pages_read_engagement",
+        "instagram_basic",
+        "instagram_manage_messages",
+      ],
     },
     { authorizationEndpoint: "https://www.facebook.com/v10.0/dialog/oauth" }
   );
@@ -88,9 +94,9 @@ const PreSignIn = () => {
         const userData = {
           accessToken,
           name: result.user.displayName,
-          email: result.user.email || '',
+          email: result.user.email || "",
           // @ts-ignore
-          profileImage: user?.profile?.picture?.data?.url || '',
+          profileImage: user?.profile?.picture?.data?.url || "",
           fbid,
         };
 
@@ -136,69 +142,59 @@ const PreSignIn = () => {
         ]}
         paginationStyle={styles.pagination}
       >
-        {
-          slides.map((slide) => (
-            <View style={styles.slide} key={slide.key}>
-              {
-                slide.key !== "connect" && (
-                  <Button
-                    mode="outlined"
-                    style={styles.skipButton}
-                    onPress={skipToConnect}
-                  >
-                    Skip
-                  </Button>
-                )
-              }
-              {
-                slide.key === "connect" && Platform.OS !== "web" && (
-                  <Pressable
-                    style={[
-                      styles.skipButton,
-                    ]}
-                    onPress={() => {
-                      setVisible(true);
-                    }}
-                  >
-                    <FontAwesomeIcon
-                      icon={faEllipsis}
-                      size={24}
-                      color={Colors(theme).gray100}
-                    />
-                  </Pressable>
-                )
-              }
-              <View style={styles.imageContainer}>
-                <Image source={imageUrl(slide.image)} style={styles.image} />
-              </View>
-              <Title style={[styles.title, { color: Colors(theme).primary }]}>
-                {slide.title}
-              </Title>
-              <Paragraph style={styles.paragraph}>{slide.text}</Paragraph>
-              {
-                slide.key === "connect" && (
-                  <View style={styles.socialContainer}>
-                    <SocialButton
-                      icon={faFacebook}
-                      label="Login with Facebook"
-                      onPress={handleFacebookSignIn}
-                    />
-                    <SocialButton
-                      icon={faEnvelope}
-                      label="Login with Email"
-                      onPress={handleEmailSignIn}
-                    />
-                    <SocialButton
-                      icon={faInstagram}
-                      label="Login with Instagram"
-                      onPress={handleInstagramSignIn}
-                    />
-                  </View>
-                )
-              }
+        {slides.map((slide) => (
+          <View style={styles.slide} key={slide.key}>
+            {slide.key !== "connect" && (
+              <Button
+                mode="outlined"
+                style={styles.skipButton}
+                onPress={skipToConnect}
+              >
+                Skip
+              </Button>
+            )}
+            {slide.key === "connect" && Platform.OS !== "web" && (
+              <Pressable
+                style={[styles.skipButton]}
+                onPress={() => {
+                  setVisible(true);
+                }}
+              >
+                <FontAwesomeIcon
+                  icon={faEllipsis}
+                  size={24}
+                  color={Colors(theme).gray100}
+                />
+              </Pressable>
+            )}
+            <View style={styles.imageContainer}>
+              <Image source={imageUrl(slide.image)} style={styles.image} />
             </View>
-          ))
-        }
+            <Title style={[styles.title, { color: Colors(theme).primary }]}>
+              {slide.title}
+            </Title>
+            <Paragraph style={styles.paragraph}>{slide.text}</Paragraph>
+            {slide.key === "connect" && (
+              <View style={styles.socialContainer}>
+                <SocialButton
+                  icon={faFacebook}
+                  label="Login with Facebook"
+                  onPress={handleFacebookSignIn}
+                />
+                <SocialButton
+                  icon={faEnvelope}
+                  label="Login with Email"
+                  onPress={handleEmailSignIn}
+                />
+                <SocialButton
+                  icon={faInstagram}
+                  label="Login with Instagram"
+                  onPress={handleInstagramSignIn}
+                />
+              </View>
+            )}
+          </View>
+        ))}
       </Swiper>
 
       {error && <Text style={{ color: "red" }}>Error: {error}</Text>}

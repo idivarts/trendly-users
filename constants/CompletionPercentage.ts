@@ -1,0 +1,1 @@
+export const COMPLETION_PERCENTAGE = 60;
