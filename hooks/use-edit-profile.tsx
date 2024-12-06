@@ -100,13 +100,6 @@ const useEditProfile = () => {
     setNiches(niche);
   }
 
-  const handleContentChange = (key: string, value: string) => {
-    setContent({
-      ...content,
-      [key]: value,
-    });
-  }
-
   const uploadNewAssets = async () => {
     let uploadedAssets = [];
 
@@ -214,7 +207,6 @@ const useEditProfile = () => {
     email,
     handleAssetsUpdateNative,
     handleAssetsUpdateWeb,
-    handleContentChange,
     handleNicheSelect,
     handleSave,
     isProcessing,

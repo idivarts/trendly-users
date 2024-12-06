@@ -28,10 +28,9 @@ import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import SocialButton from "@/components/ui/button/social-button";
 import { faFacebook } from "@fortawesome/free-brands-svg-icons";
 import { imageUrl } from "@/utils/url";
+import { FB_APP_ID } from "@/constants/Facebook";
 
 WebBrowser.maybeCompleteAuthSession();
-
-const FB_APP_ID = "2223620811324637";
 
 const PreSignIn = () => {
   const theme = useTheme();
@@ -41,6 +40,8 @@ const PreSignIn = () => {
   const swiperRef = useRef<Swiper>(null); // Use ref for Swiper
   const [visible, setVisible] = useState(false);
 
+  const router = useRouter();
+
   const [request, response, promptAsync] = AuthSession.useAuthRequest(
     {
       clientId: FB_APP_ID,
@@ -48,12 +49,17 @@ const PreSignIn = () => {
         native: `fb${FB_APP_ID}://authorize`,
       }),
       responseType: AuthSession.ResponseType.Token,
-      scopes: ["public_profile"],
+      scopes: [
+        "public_profile",
+        "email",
+        "pages_show_list",
+        "pages_read_engagement",
+        "instagram_basic",
+        "instagram_manage_messages",
+      ],
     },
     { authorizationEndpoint: "https://www.facebook.com/v10.0/dialog/oauth" }
   );
-
-  const router = useRouter();
 
   // Handle response from Facebook
   useEffect(() => {
@@ -87,9 +93,9 @@ const PreSignIn = () => {
         const userData = {
           accessToken,
           name: result.user.displayName,
-          email: result.user.email || '',
+          email: result.user.email || "",
           // @ts-ignore
-          profileImage: user?.profile?.picture?.data?.url || '',
+          profileImage: user?.profile?.picture?.data?.url || "",
           fbid,
         };
 
@@ -100,40 +106,6 @@ const PreSignIn = () => {
       setError(error.message);
     }
   };
-
-  const handleFacebookSignIn = async () => {
-    if (Platform.OS === "android" || Platform.OS === "ios") {
-      LoginManager.logInWithPermissions(["public_profile"]).then(
-        function (result) {
-          if (result.isCancelled) {
-          } else {
-            AccessToken.getCurrentAccessToken().then((data) => {
-              const token = data?.accessToken;
-              if (token) {
-                handleFirebaseSignIn(token);
-              }
-            });
-          }
-        },
-        function (error) {
-          console.log("==> Login fail with error: " + error);
-        }
-      );
-    }
-  };
-
-  useEffect(() => {
-    if (Platform.OS === "ios" || Platform.OS === "android") {
-      const requestTracking = async () => {
-        const { status } = await requestTrackingPermissionsAsync();
-        Settings.initializeSDK();
-        if (status === "granted") {
-          await Settings.setAdvertiserTrackingEnabled(true);
-        }
-      };
-      requestTracking();
-    }
-  }, []);
 
   const skipToConnect = () => {
     const connectSlideIndex = slides.findIndex(
@@ -157,62 +129,55 @@ const PreSignIn = () => {
         ]}
         paginationStyle={styles.pagination}
       >
-        {
-          slides.map((slide) => (
-            <View style={styles.slide} key={slide.key}>
-              {
-                slide.key !== "connect" && (
-                  <Button
-                    mode="outlined"
-                    style={styles.skipButton}
-                    onPress={skipToConnect}
-                  >
-                    Skip
-                  </Button>
-                )
-              }
-              {
-                slide.key === "connect" && (
-                  <Pressable
-                    style={[
-                      styles.skipButton,
-                    ]}
-                    onPress={() => {
-                      setVisible(true);
-                    }}
-                  >
-                    <FontAwesomeIcon
-                      icon={faEllipsis}
-                      size={24}
-                      color={Colors(theme).gray100}
-                    />
-                  </Pressable>
-                )
-              }
-              <View style={styles.imageContainer}>
-                <Image
-                  source={imageUrl(slide.image)}
-                  style={styles.image}
+        {slides.map((slide) => (
+          <View style={styles.slide} key={slide.key}>
+            {slide.key !== "connect" && (
+              <Button
+                mode="outlined"
+                style={styles.skipButton}
+                onPress={skipToConnect}
+              >
+                Skip
+              </Button>
+            )}
+            {slide.key === "connect" && (
+              <Pressable
+                style={[styles.skipButton]}
+                onPress={() => {
+                  setVisible(true);
+                }}
+              >
+                <FontAwesomeIcon
+                  icon={faEllipsis}
+                  size={24}
+                  color={Colors(theme).gray100}
+                />
+              </Pressable>
+            )}
+            <View style={styles.imageContainer}>
+              <Image source={imageUrl(slide.image)} style={styles.image} />
+            </View>
+            <Title style={[styles.title, { color: Colors(theme).primary }]}>
+              {slide.title}
+            </Title>
+            <Paragraph style={styles.paragraph}>{slide.text}</Paragraph>
+            {slide.key === "connect" && Platform.OS !== "web" && (
+              <View style={styles.socialContainer}>
+                <SocialButton
+                  icon={faFacebook}
+                  label="Login with Facebook"
+                  onPress={
+                    request
+                      ? () => {
+                          promptAsync();
+                        }
+                      : () => {}
+                  }
                 />
               </View>
-              <Title style={[styles.title, { color: Colors(theme).primary }]}>
-                {slide.title}
-              </Title>
-              <Paragraph style={styles.paragraph}>{slide.text}</Paragraph>
-              {
-                slide.key === "connect" && Platform.OS !== "web" && (
-                  <View style={styles.socialContainer}>
-                    <SocialButton
-                      icon={faFacebook}
-                      label="Login with Facebook"
-                      onPress={handleFacebookSignIn}
-                    />
-                  </View>
-                )
-              }
-            </View>
-          ))
-        }
+            )}
+          </View>
+        ))}
       </Swiper>
 
       {error && <Text style={{ color: "red" }}>Error: {error}</Text>}

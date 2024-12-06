@@ -17,6 +17,7 @@ import { ProgressBar } from "react-native-paper";
 import Colors from "@/constants/Colors";
 import VerifiedIcon from "@/assets/icons/verified.svg";
 import Wrapper from "./grid/wrapper";
+import { useRouter } from "expo-router";
 
 const EditProfile: React.FC = () => {
   const [keyboardHeight] = useState(new Animated.Value(0));
@@ -24,6 +25,8 @@ const EditProfile: React.FC = () => {
 
   const theme = useTheme();
   const styles = stylesFn(theme);
+
+  const router = useRouter();
 
   const {
     xl,
@@ -43,7 +46,6 @@ const EditProfile: React.FC = () => {
     email,
     handleAssetsUpdateNative,
     handleAssetsUpdateWeb,
-    handleContentChange,
     handleNicheSelect,
     handleSave,
     isProcessing,
@@ -238,11 +240,20 @@ const EditProfile: React.FC = () => {
               contents.map((item) => (
                 <ContentItem
                   key={item.title}
+                  empty={!item.content}
                   title={item.title}
                   content={
                     item.content ? truncateText(item.content, 96) : item.defaultContent
                   }
-                  onContentChange={(content) => handleContentChange(item.key, content)}
+                  onAction={() => router.push({
+                    pathname: '/textbox-page',
+                    params: {
+                      userProfile: 'true',
+                      key: item.key,
+                      title: item.title,
+                      value: item.content,
+                    }
+                  })}
                 />
               ))
             }

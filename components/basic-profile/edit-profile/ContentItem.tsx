@@ -1,27 +1,35 @@
 import { Text, View } from "@/components/theme/Themed";
-import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import Colors from "@/constants/Colors";
+import { faChevronRight, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { useTheme } from "@react-navigation/native";
+import { Dimensions, Pressable } from "react-native";
 import { IconButton } from "react-native-paper";
+import RenderHTML from "react-native-render-html";
 
 interface ContentItemProps {
-  title: string;
   content: string;
-  onContentChange?: (content: string) => void;
+  empty?: boolean;
   onAction?: () => void;
+  title: string;
 }
 
 const ContentItem: React.FC<ContentItemProps> = ({
-  title,
   content,
-  onContentChange,
+  empty,
   onAction,
+  title,
 }) => {
+  const theme = useTheme();
+  const screenWidth = Dimensions.get("window").width;
+
   return (
-    <View
+    <Pressable
       style={{
         flexDirection: 'row',
         alignItems: 'center',
       }}
+      onPress={onAction}
     >
       <View
         style={{
@@ -37,18 +45,25 @@ const ContentItem: React.FC<ContentItemProps> = ({
         >
           {title}
         </Text>
-        <Text>{content}</Text>
+        <RenderHTML
+          contentWidth={screenWidth}
+          source={{
+            html: content,
+          }}
+          tagsStyles={{
+            p: { color: Colors(theme).text, fontSize: 16 },
+          }}
+        />
       </View>
       <IconButton
         icon={() => (
           <FontAwesomeIcon
-            icon={faChevronRight}
+            icon={empty ? faPlus : faChevronRight}
             size={18}
           />
         )}
-        onPress={() => console.log('Edit')}
       />
-    </View>
+    </Pressable>
   );
 };
 
