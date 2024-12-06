@@ -10,6 +10,7 @@ import { RichEditor, RichToolbar } from "react-native-pell-rich-editor";
 import { useAuthContext } from "@/contexts";
 import { User } from "@/types/User";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
+import { Keyboard, Platform } from "react-native";
 
 const EditTextArea: React.FC = () => {
   const theme = useTheme();
@@ -86,6 +87,10 @@ const EditTextArea: React.FC = () => {
     navigation.back();
   };
 
+  const handleKeyboardDismiss = () => {
+    Keyboard.dismiss();
+  };
+
   return (
     <AppLayout>
       <View
@@ -115,6 +120,24 @@ const EditTextArea: React.FC = () => {
             }}
             editorStyle={{
               backgroundColor: Colors(theme).background,
+            }}
+            onKeyUp={(event) => {
+              if (event.key === "Enter" || event.keyCode === 13) {
+                handleKeyboardDismiss();
+              }
+            }}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" || event.keyCode === 13) {
+                handleKeyboardDismiss();
+              }
+            }}
+            onBlur={() => {
+              handleKeyboardDismiss();
+            }}
+            onInput={() => {
+              if (Platform.OS !== "web") {
+                handleKeyboardDismiss();
+              }
             }}
           />
           <RichToolbar
