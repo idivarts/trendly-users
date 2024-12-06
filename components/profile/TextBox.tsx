@@ -1,13 +1,14 @@
+import React, { useEffect, useState } from "react";
 import { Text, View } from "../theme/Themed";
+import { Pressable, useWindowDimensions } from "react-native";
 import { Card } from "react-native-paper";
 import stylesFn from "@/styles/profile/ProfileCard.styles";
 import { useTheme } from "@react-navigation/native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import Colors from "@/constants/Colors";
-import { Pressable } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
+import RenderHTML from "react-native-render-html";
 
 interface TextBoxProfilePageProps {
   title: string;
@@ -20,6 +21,7 @@ const TextBoxProfilePage: React.FC<TextBoxProfilePageProps> = ({
 }) => {
   const theme = useTheme();
   const styles = stylesFn(theme);
+  const { width } = useWindowDimensions();
 
   const [content, setContent] = useState(initialContent);
 
@@ -74,14 +76,16 @@ const TextBoxProfilePage: React.FC<TextBoxProfilePageProps> = ({
           <FontAwesomeIcon icon={faChevronRight} />
         </Pressable>
       </View>
-      <Text
-        style={{
+      <RenderHTML
+        contentWidth={width}
+        source={{
+          html: content || "<p>No content available</p>",
+        }}
+        baseStyle={{
           color: Colors(theme).text,
           fontSize: 18,
         }}
-      >
-        {content}
-      </Text>
+      />
     </View>
   );
 };
