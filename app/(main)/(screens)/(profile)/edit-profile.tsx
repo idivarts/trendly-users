@@ -8,11 +8,22 @@ import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView } from "@g
 import { useTheme } from "@react-navigation/native";
 import { useMemo, useRef } from "react";
 import { Pressable } from "react-native";
+import { useSharedValue } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const EditProfileScreen: React.FC = () => {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-  const snapPoints = useMemo(() => ["25%", "50%", "90%"], []);
   const theme = useTheme();
+
+  const snapPoints = useMemo(() => ["25%", "50%", "90%"], []);
+  const insets = useSafeAreaInsets();
+  const containerOffset = useSharedValue({
+    top: insets.top,
+    bottom: insets.bottom,
+    left: insets.left,
+    right: insets.right,
+  });
+
   const handleSheetChanges = (index: number) => { };
 
   const {
@@ -53,6 +64,9 @@ const EditProfileScreen: React.FC = () => {
         onChange={handleSheetChanges}
         backdropComponent={renderBackdrop}
         enablePanDownToClose={true}
+        containerOffset={containerOffset}
+        topInset={insets.top}
+        bottomInset={insets.bottom}
       >
         <BottomSheetScrollView>
           <ProfileBottomSheet
