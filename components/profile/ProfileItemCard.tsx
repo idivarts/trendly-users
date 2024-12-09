@@ -34,7 +34,7 @@ const ProfileItemCard: React.FC<ProfileItemCardProps> = ({ item, onPress }) => {
               user.profile.completionPercentage < COMPLETION_PERCENTAGE) && (
               <View
                 style={{
-                  backgroundColor: Colors(theme).activeDot,
+                  backgroundColor: Colors(theme).yellow,
                   width: 20,
                   height: 20,
                   borderRadius: 40,
