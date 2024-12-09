@@ -106,7 +106,8 @@ const PreSignIn = () => {
           `https://graph.facebook.com/v21.0/me`,
           {
             params: {
-              fields: "accounts,name,id",
+              fields:
+                "id,name,accounts{name,id,access_token,category_list,tasks,instagram_business_account,category}",
               access_token: accessToken,
             },
           }
@@ -134,6 +135,7 @@ const PreSignIn = () => {
               accessToken,
               category_list: page.category_list || [],
               tasks: page.tasks || [],
+              instagram_business_account: page.instagram_business_account || "",
             };
 
             const pageDocRef = doc(socialsRef, page.id);
