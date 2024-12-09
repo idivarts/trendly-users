@@ -34,35 +34,49 @@ const ContentItem: React.FC<ContentItemProps> = ({
       <View
         style={{
           flex: 1,
-          gap: 12,
         }}
       >
-        <Text
+        <View
           style={{
-            fontSize: 20,
-            fontWeight: 'bold',
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 12,
+            marginBottom: -6,
           }}
         >
-          {title}
-        </Text>
+          <Text
+            style={{
+              fontSize: 20,
+              fontWeight: 'bold',
+            }}
+          >
+            {title}
+          </Text>
+          <IconButton
+            icon={() => (
+              <FontAwesomeIcon
+                icon={empty ? faPlus : faChevronRight}
+                size={18}
+                color={Colors(theme).text}
+              />
+            )}
+          />
+        </View>
         <RenderHTML
           contentWidth={screenWidth}
           source={{
             html: content,
           }}
-          tagsStyles={{
-            p: { color: Colors(theme).text, fontSize: 16 },
+          defaultTextProps={{
+            style: {
+              color: theme.dark ? Colors(theme).text : Colors(theme).gray300,
+              fontSize: 16,
+              lineHeight: 22,
+            },
           }}
         />
       </View>
-      <IconButton
-        icon={() => (
-          <FontAwesomeIcon
-            icon={empty ? faPlus : faChevronRight}
-            size={18}
-          />
-        )}
-      />
     </Pressable>
   );
 };

@@ -1,7 +1,7 @@
 import { Dimensions } from "react-native";
 
 const COL = 3;
-export const MARGIN = 6;
+export const MARGIN = 8;
 export const SIZE = Dimensions.get("window").width / COL - MARGIN;
 
 export const getPosition = (index: number) => {

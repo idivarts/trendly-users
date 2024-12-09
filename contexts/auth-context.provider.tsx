@@ -19,6 +19,7 @@ import {
   signOut,
 } from "firebase/auth";
 import { analyticsLogEvent } from "@/utils/analytics";
+import { INITIAL_USER_DATA } from "@/constants/User";
 
 interface AuthContextProps {
   firebaseSignIn: (token: string) => void;
@@ -116,24 +117,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
       await setDoc(doc(FirestoreDB, "users", userCredential.user.uid), {
         name,
         email,
-        location: "",
-        phoneNumber: "",
-        preferences: {
-          question1: "",
-          question2: "",
-          question3: "",
-        },
-        pushNotificationToken: {
-          ios: [],
-          android: [],
-          web: [],
-        },
-        profileImage: "",
-        settings: {
-          emailNotifications: true,
-          pushNotifications: true,
-          theme: "light",
-        },
+        ...INITIAL_USER_DATA,
       });
 
       setSession(userCredential.user.uid);

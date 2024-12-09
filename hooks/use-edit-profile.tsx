@@ -31,6 +31,10 @@ const useEditProfile = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [timeCommitment, setTimeCommitment] = useState({
+    label: 'Full Time',
+    value: 'Full Time',
+  });
   const [niches, setNiches] = useState<SelectItem[]>([]);
   const [processMessage, setProcessMessage] = useState('');
   const [processPercentage, setProcessPercentage] = useState(0);
@@ -85,6 +89,11 @@ const useEditProfile = () => {
       setContent(user?.profile?.content);
       // @ts-ignore
       setAttachments(user.profile?.attachments);
+
+      setTimeCommitment({
+        label: user.profile?.timeCommitment || 'Full Time',
+        value: user.profile?.timeCommitment || 'Full Time',
+      });
     }
   }, [user]);
 
@@ -189,6 +198,7 @@ const useEditProfile = () => {
         category: niches.map(niche => niche.value),
         content,
         attachments: uploadedAssets,
+        timeCommitment: timeCommitment.value,
         completionPercentage,
       },
     }).then(() => {
@@ -219,6 +229,8 @@ const useEditProfile = () => {
     setEmail,
     setName,
     setPhoneNumber,
+    setTimeCommitment,
+    timeCommitment,
     user,
     verifyEmail,
   }

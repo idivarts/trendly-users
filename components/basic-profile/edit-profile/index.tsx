@@ -18,6 +18,7 @@ import Colors from "@/constants/Colors";
 import VerifiedIcon from "@/assets/icons/verified.svg";
 import Wrapper from "./grid/wrapper";
 import { useRouter } from "expo-router";
+import SelectGroup from "@/components/ui/select/select-group";
 
 const EditProfile: React.FC = () => {
   const [keyboardHeight] = useState(new Animated.Value(0));
@@ -57,6 +58,8 @@ const EditProfile: React.FC = () => {
     setEmail,
     setName,
     setPhoneNumber,
+    setTimeCommitment,
+    timeCommitment,
     user,
     verifyEmail,
   } = useEditProfile();
@@ -215,6 +218,40 @@ const EditProfile: React.FC = () => {
                 fontWeight: 'bold',
               }}
             >
+              Time Commitment
+            </Text>
+            <SelectGroup
+              items={[
+                { label: 'Full Time', value: 'Full Time' },
+                { label: 'Part Time', value: 'Part Time' },
+                { label: 'Hobby', value: 'Hobby' },
+              ]}
+              selectedItem={timeCommitment}
+              onValueChange={(value) => setTimeCommitment(value)}
+            />
+            <Text
+              style={{
+                fontSize: 14,
+                color: theme.dark ? Colors(theme).text : Colors(theme).gray300,
+              }}
+            >
+              Type of influencer you are -{"\n"}
+              Full time - Your complete focus is as a influencer only{"\n"}
+              Part time - You are working somewhere else alongside content creation{"\n"}
+              Hobby - You do influencing just as a hobby.
+            </Text>
+          </View>
+          <View
+            style={{
+              gap: 12,
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 20,
+                fontWeight: 'bold',
+              }}
+            >
               Content Niche / Category
             </Text>
             <Select
@@ -230,6 +267,14 @@ const EditProfile: React.FC = () => {
               multiselect
               onSelect={handleNicheSelect}
             />
+            <Text
+              style={{
+                fontSize: 14,
+                color: theme.dark ? Colors(theme).text : Colors(theme).gray300,
+              }}
+            >
+              This would help us understand what type of content you create and also better match with brands
+            </Text>
           </View>
           <View
             style={{
@@ -243,7 +288,7 @@ const EditProfile: React.FC = () => {
                   empty={!item.content}
                   title={item.title}
                   content={
-                    item.content ? truncateText(item.content, 96) : item.defaultContent
+                    item.content ? item.content : item.defaultContent
                   }
                   onAction={() => router.push({
                     pathname: '/textbox-page',

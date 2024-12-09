@@ -8,15 +8,19 @@ import {
 interface TextInputProps extends RNTextInputProps { }
 
 const TextInput: React.FC<TextInputProps> = ({
+  style,
   ...props
 }) => {
   const theme = useTheme();
 
   return (
     <RNTextInput
-      style={{
-        backgroundColor: Colors(theme).background,
-      }}
+      style={[
+        {
+          backgroundColor: Colors(theme).background,
+        },
+        style,
+      ]}
       textColor={Colors(theme).text}
       placeholderTextColor={Colors(theme).text}
       activeOutlineColor={Colors(theme).primary}
