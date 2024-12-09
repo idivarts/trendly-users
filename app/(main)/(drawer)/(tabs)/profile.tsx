@@ -74,7 +74,7 @@ const ProfileScreen = () => {
             user?.profile?.completionPercentage < COMPLETION_PERCENTAGE ? (
               <View
                 style={{
-                  backgroundColor: "#E8B931",
+                  backgroundColor: Colors(theme).activeDot,
                   flexDirection: "row",
                   alignItems: "center",
                   padding: 10,

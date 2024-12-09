@@ -129,7 +129,7 @@ const TabLayout = () => {
                 user.profile.completionPercentage < COMPLETION_PERCENTAGE) && (
                 <View
                   style={{
-                    backgroundColor: "#E8B931",
+                    backgroundColor: Colors(theme).activeDot,
                     width: 15,
                     height: 15,
                     position: "absolute",

@@ -95,7 +95,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ item, onPress }) => {
         >
           <Text
             style={{
-              color: "#fff",
+              color: Colors(theme).white,
             }}
           >
             {item.profile?.completionPercentage?.toString() || 0}% Complete
