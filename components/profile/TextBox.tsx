@@ -13,17 +13,23 @@ import RenderHTML from "react-native-render-html";
 interface TextBoxProfilePageProps {
   title: string;
   initialContent: string;
+  placeholder: string;
+  defaultTextToShowIfEmpty: string;
 }
 
 const TextBoxProfilePage: React.FC<TextBoxProfilePageProps> = ({
   title,
   initialContent,
+  placeholder,
+  defaultTextToShowIfEmpty,
 }) => {
   const theme = useTheme();
   const styles = stylesFn(theme);
   const { width } = useWindowDimensions();
 
-  const [content, setContent] = useState(initialContent);
+  const [content, setContent] = useState(
+    initialContent === "" ? defaultTextToShowIfEmpty : initialContent
+  );
 
   const value = useLocalSearchParams().value;
 
@@ -67,8 +73,9 @@ const TextBoxProfilePage: React.FC<TextBoxProfilePageProps> = ({
               pathname: "/textbox-page",
               params: {
                 title,
-                value: content,
+                value: initialContent === "" ? "" : initialContent,
                 path: "/profile",
+                placeholder: placeholder,
               },
             });
           }}
