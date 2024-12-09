@@ -19,6 +19,7 @@ import { useAuthContext } from "@/contexts";
 import {
   DUMMY_USER_CREDENTIALS,
   DUMMY_USER_CREDENTIALS2,
+  INITIAL_USER_DATA,
 } from "@/constants/User";
 import Colors from "@/constants/Colors";
 // import { LoginManager } from "react-native-fbsdk-next";
@@ -90,6 +91,7 @@ const PreSignIn = () => {
         const user = getAdditionalUserInfo(result);
 
         const userData = {
+          ...INITIAL_USER_DATA,
           accessToken,
           name: result.user.displayName,
           email: result.user.email || "",

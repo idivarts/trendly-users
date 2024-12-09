@@ -42,7 +42,7 @@ const ContentItem: React.FC<ContentItemProps> = ({
             alignItems: 'center',
             justifyContent: 'space-between',
             gap: 12,
-            marginBottom: -6,
+            marginBottom: empty ? 6 : -6,
           }}
         >
           <Text
@@ -53,15 +53,37 @@ const ContentItem: React.FC<ContentItemProps> = ({
           >
             {title}
           </Text>
-          <IconButton
-            icon={() => (
-              <FontAwesomeIcon
-                icon={empty ? faPlus : faChevronRight}
-                size={18}
-                color={Colors(theme).text}
+          {
+            empty ? (
+              <View
+                style={{
+                  backgroundColor: Colors(theme).yellow,
+                  paddingVertical: 4,
+                  paddingHorizontal: 8,
+                  borderRadius: 50,
+                }}
+              >
+                <Text
+                  style={{
+                    color: Colors(theme).black,
+                    fontSize: 12,
+                  }}
+                >
+                  Add now
+                </Text>
+              </View>
+            ) : (
+              <IconButton
+                icon={() => (
+                  <FontAwesomeIcon
+                    icon={empty ? faPlus : faChevronRight}
+                    size={18}
+                    color={Colors(theme).text}
+                  />
+                )}
               />
-            )}
-          />
+            )
+          }
         </View>
         <RenderHTML
           contentWidth={screenWidth}

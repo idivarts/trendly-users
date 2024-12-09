@@ -29,6 +29,7 @@ import SocialButton from "@/components/ui/button/social-button";
 import { faFacebook } from "@fortawesome/free-brands-svg-icons";
 import { imageUrl } from "@/utils/url";
 import { FB_APP_ID } from "@/constants/Facebook";
+import { INITIAL_USER_DATA } from "@/constants/User";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -91,6 +92,7 @@ const PreSignIn = () => {
         const user = getAdditionalUserInfo(result);
 
         const userData = {
+          ...INITIAL_USER_DATA,
           accessToken,
           name: result.user.displayName,
           email: result.user.email || "",
@@ -169,9 +171,9 @@ const PreSignIn = () => {
                   onPress={
                     request
                       ? () => {
-                          promptAsync();
-                        }
-                      : () => {}
+                        promptAsync();
+                      }
+                      : () => { }
                   }
                 />
               </View>
