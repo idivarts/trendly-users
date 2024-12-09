@@ -14,10 +14,12 @@ import { User } from "@/types/User";
 import { AuthApp } from "@/utils/auth";
 import {
   createUserWithEmailAndPassword,
+  sendEmailVerification,
   signInWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
 import { analyticsLogEvent } from "@/utils/analytics";
+import { INITIAL_USER_DATA } from "@/constants/User";
 
 interface AuthContextProps {
   firebaseSignIn: (token: string) => void;
@@ -30,6 +32,7 @@ interface AuthContextProps {
   signUp: (name: string, email: string, password: string) => void;
   updateUser: (userId: string, user: Partial<User>) => Promise<void>;
   user: User | null;
+  verifyEmail: () => void;
 }
 
 const AuthContext = createContext<AuthContextProps>({
@@ -43,6 +46,7 @@ const AuthContext = createContext<AuthContextProps>({
   signUp: (name: string, email: string, password: string) => null,
   updateUser: () => Promise.resolve(),
   user: null,
+  verifyEmail: () => null,
 });
 
 export const useAuthContext = () => useContext(AuthContext);
@@ -113,24 +117,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
       await setDoc(doc(FirestoreDB, "users", userCredential.user.uid), {
         name,
         email,
-        location: "",
-        phoneNumber: "",
-        preferences: {
-          question1: "",
-          question2: "",
-          question3: "",
-        },
-        pushNotificationToken: {
-          ios: [],
-          android: [],
-          web: [],
-        },
-        profileImage: "",
-        settings: {
-          emailNotifications: true,
-          pushNotifications: true,
-          theme: "light",
-        },
+        ...INITIAL_USER_DATA,
       });
 
       setSession(userCredential.user.uid);
@@ -156,6 +143,40 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
     router.replace("/questions");
     Toaster.success("Signed Up Successfully!");
   };
+
+  const verifyEmail = async () => {
+    const userCredential = AuthApp.currentUser;
+
+    await userCredential?.reload();
+
+    if (userCredential?.emailVerified) {
+      Toaster.error("Email is already verified.");
+      if (!user?.emailVerified) {
+        await updateUser(user?.id as string, {
+          emailVerified: true,
+        });
+      }
+      return;
+    }
+
+    if (!userCredential) {
+      Toaster.error("User not found.");
+      return;
+    }
+
+    await sendEmailVerification(userCredential).then(() => {
+      Toaster.success("Verification email sent successfully.");
+    });
+  }
+
+  const verifyPhoneNumber = async (phoneNumber: string) => {
+    const userCredential = AuthApp.currentUser;
+
+    if (!userCredential) {
+      Toaster.error("User not found.");
+      return;
+    }
+  }
 
   const signOutUser = () => {
     signOut(AuthApp)
@@ -215,6 +236,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
         signUp,
         updateUser,
         user,
+        verifyEmail,
       }}
     >
       {children}
