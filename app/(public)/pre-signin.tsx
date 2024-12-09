@@ -1,7 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, Image, Platform } from "react-native";
+import React, { useEffect, useState, useRef } from "react";
+import {
+  View,
+  Text,
+  Image,
+  Platform,
+  Pressable,
+  ActivityIndicator,
+} from "react-native";
 import Swiper from "react-native-swiper";
-import { Title, Paragraph } from "react-native-paper";
+import { Title, Paragraph, Button, Portal } from "react-native-paper";
 import stylesFn from "@/styles/tab1.styles";
 import { useTheme } from "@react-navigation/native";
 import AppLayout from "@/layouts/app-layout";
@@ -16,20 +23,21 @@ import {
 import { AuthApp as auth } from "@/utils/auth";
 import { useRouter } from "expo-router";
 import { useAuthContext } from "@/contexts";
-import {
-  DUMMY_USER_CREDENTIALS,
-  DUMMY_USER_CREDENTIALS2,
-} from "@/constants/User";
 import Colors from "@/constants/Colors";
-// import { LoginManager } from "react-native-fbsdk-next";
+import { LoginManager, Settings } from "react-native-fbsdk-next";
 import { FirestoreDB } from "@/utils/firestore";
 import { collection, doc, getDoc, setDoc } from "firebase/firestore";
-import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
+import { AccessToken } from "react-native-fbsdk-next";
+import { requestTrackingPermissionsAsync } from "expo-tracking-transparency";
+import BottomSheetActions from "@/components/BottomSheetActions";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faEllipsis, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import SocialButton from "@/components/ui/button/social-button";
-import { faInstagram } from "@fortawesome/free-brands-svg-icons";
+import { faFacebook, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import { imageUrl } from "@/utils/url";
 import { FB_APP_ID } from "@/constants/Facebook";
-// import { AccessToken } from "react-native-fbsdk-next";
+import axios from "axios";
+import { DUMMY_USER_CREDENTIALS2 } from "@/constants/User";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -38,6 +46,11 @@ const PreSignIn = () => {
   const styles = stylesFn(theme);
   const [error, setError] = useState<string | null>(null);
   const { firebaseSignIn, firebaseSignUp, signIn, signUp } = useAuthContext();
+  const swiperRef = useRef<Swiper>(null); // Use ref for Swiper
+  const [visible, setVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const router = useRouter();
 
   const [request, response, promptAsync] = AuthSession.useAuthRequest(
     {
@@ -58,9 +71,10 @@ const PreSignIn = () => {
     { authorizationEndpoint: "https://www.facebook.com/v10.0/dialog/oauth" }
   );
 
-  const router = useRouter();
+  const handleFacebookSignIn = async () => {
+    await promptAsync();
+  };
 
-  // Handle response from Facebook
   useEffect(() => {
     if (response?.type === "success") {
       const { access_token } = response.params;
@@ -72,9 +86,8 @@ const PreSignIn = () => {
 
   const handleFirebaseSignIn = async (accessToken: string) => {
     try {
-      // Create Facebook credential with access token
+      setLoading(true);
       const credential = FacebookAuthProvider.credential(accessToken);
-      // Sign in with Firebase using the Facebook credential
       const result = await signInWithCredential(auth, credential);
       if (result.user) {
         const userCollection = collection(FirestoreDB, "users");
@@ -89,6 +102,17 @@ const PreSignIn = () => {
 
         const user = getAdditionalUserInfo(result);
 
+        const graphAPIResponse = await axios.get(
+          `https://graph.facebook.com/v21.0/me`,
+          {
+            params: {
+              fields:
+                "id,name,accounts{name,id,access_token,category_list,tasks,instagram_business_account,category}",
+              access_token: accessToken,
+            },
+          }
+        );
+
         const userData = {
           accessToken,
           name: result.user.displayName,
@@ -99,48 +123,56 @@ const PreSignIn = () => {
         };
 
         await setDoc(userDocRef, userData);
+
+        const socialsRef = collection(userDocRef, "socials");
+
+        graphAPIResponse.data.accounts &&
+          graphAPIResponse.data.accounts.data.forEach(async (page: any) => {
+            const pageData = {
+              name: page.name || "",
+              fbid: page.id || "",
+              category: page.category || "",
+              accessToken,
+              category_list: page.category_list || [],
+              tasks: page.tasks || [],
+              instagram_business_account: page.instagram_business_account || "",
+            };
+
+            const pageDocRef = doc(socialsRef, page.id);
+
+            await setDoc(pageDocRef, pageData);
+          });
+
         firebaseSignUp(result.user.uid);
       }
     } catch (error: any) {
       setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const skipToConnect = () => {
+    const connectSlideIndex = slides.findIndex(
+      (slide) => slide.key === "connect"
+    );
+    if (connectSlideIndex !== -1) {
+      swiperRef.current?.scrollBy(connectSlideIndex);
     }
   };
 
   const handleEmailSignIn = () => {
-    signIn(DUMMY_USER_CREDENTIALS.email, DUMMY_USER_CREDENTIALS.password);
+    router.navigate("/login");
   };
 
   const handleInstagramSignIn = () => {
     signIn(DUMMY_USER_CREDENTIALS2.email, DUMMY_USER_CREDENTIALS2.password);
   };
 
-  const handleFacebookSignIn = async () => {
-    if (Platform.OS === "web") {
-      await promptAsync();
-    }
-    // } else if (Platform.OS === "android" || Platform.OS === "ios") {
-    //   LoginManager.logInWithPermissions(["public_profile"]).then(
-    //     function (result) {
-    //       if (result.isCancelled) {
-    //       } else {
-    //         AccessToken.getCurrentAccessToken().then((data) => {
-    //           const token = data?.accessToken;
-    //           if (token) {
-    //             handleFirebaseSignIn(token);
-    //           }
-    //         });
-    //       }
-    //     },
-    //     function (error) {
-    //       console.log("==> Login fail with error: " + error);
-    //     }
-    //   );
-    // }
-  };
-
   return (
     <AppLayout>
       <Swiper
+        ref={swiperRef}
         style={styles.wrapper}
         dotStyle={styles.dotStyle}
         loop={false}
@@ -152,6 +184,29 @@ const PreSignIn = () => {
       >
         {slides.map((slide) => (
           <View style={styles.slide} key={slide.key}>
+            {slide.key !== "connect" && (
+              <Button
+                mode="outlined"
+                style={styles.skipButton}
+                onPress={skipToConnect}
+              >
+                Skip
+              </Button>
+            )}
+            {slide.key === "connect" && Platform.OS !== "web" && (
+              <Pressable
+                style={[styles.skipButton]}
+                onPress={() => {
+                  setVisible(true);
+                }}
+              >
+                <FontAwesomeIcon
+                  icon={faEllipsis}
+                  size={24}
+                  color={Colors(theme).gray100}
+                />
+              </Pressable>
+            )}
             <View style={styles.imageContainer}>
               <Image source={imageUrl(slide.image)} style={styles.image} />
             </View>
@@ -159,8 +214,28 @@ const PreSignIn = () => {
               {slide.title}
             </Title>
             <Paragraph style={styles.paragraph}>{slide.text}</Paragraph>
-            {slide.key === "connect" && (
+            {slide.key === "connect" && Platform.OS !== "web" && (
               <View style={styles.socialContainer}>
+                <SocialButton
+                  icon={faFacebook}
+                  label="Login with Facebook"
+                  onPress={
+                    request
+                      ? () => {
+                          promptAsync();
+                        }
+                      : () => {}
+                  }
+                />
+              </View>
+            )}
+            {slide.key === "connect" && Platform.OS === "web" && (
+              <View style={styles.socialContainer}>
+                <SocialButton
+                  icon={faFacebook}
+                  label="Login with Facebook"
+                  onPress={handleFacebookSignIn}
+                />
                 <SocialButton
                   icon={faEnvelope}
                   label="Login with Email"
@@ -173,11 +248,32 @@ const PreSignIn = () => {
                 />
               </View>
             )}
+            {slide.key === "connect" && loading && (
+              <Portal>
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    zIndex: 1000,
+                    backgroundColor: Colors(theme).backdrop,
+                  }}
+                >
+                  <ActivityIndicator size="large" color={Colors(theme).text} />
+                </View>
+              </Portal>
+            )}
           </View>
         ))}
       </Swiper>
 
       {error && <Text style={{ color: "red" }}>Error: {error}</Text>}
+      <BottomSheetActions
+        isVisible={visible}
+        cardType="pre-signin"
+        onClose={() => setVisible(false)}
+        snapPointsRange={["25%", "40%"]}
+      />
     </AppLayout>
   );
 };

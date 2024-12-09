@@ -69,15 +69,15 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ item, onPress }) => {
           source={{
             uri: item.profileImage || PLACEHOLDER_PERSON_IMAGE,
           }}
-          size={128}
+          size={200}
           style={styles.avatar}
         />
         <Pressable
           onPress={() => setIsModalVisible(true)}
           style={{
             position: "absolute",
-            top: 10,
-            right: 10,
+            top: 20,
+            right: 20,
           }}
         >
           <FontAwesomeIcon icon={faPen} color={Colors(theme).text} size={22} />
@@ -90,12 +90,12 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ item, onPress }) => {
             borderRadius: 20,
             position: "absolute",
             bottom: 0,
-            right: 10,
+            right: 45,
           }}
         >
           <Text
             style={{
-              color: "#fff",
+              color: Colors(theme).white,
             }}
           >
             {item.profile?.completionPercentage?.toString() || 0}% Complete
@@ -110,6 +110,9 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ item, onPress }) => {
         onPress={onPress}
         buttonColor={Colors(theme).primary}
         textColor={Colors(theme).white}
+        style={{
+          marginVertical: 10,
+        }}
       >
         Complete your Profile
       </Button>

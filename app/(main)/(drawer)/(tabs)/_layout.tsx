@@ -23,10 +23,14 @@ import {
   faUser as faUserSolid,
 } from "@fortawesome/free-solid-svg-icons";
 import { TouchableOpacity } from "react-native";
+import { useAuthContext } from "@/contexts";
+import { COMPLETION_PERCENTAGE } from "@/constants/CompletionPercentage";
+import { View } from "@/components/theme/Themed";
 
 const TabLayout = () => {
   const { xl } = useBreakpoints();
   const theme = useTheme();
+  const { user } = useAuthContext();
 
   return (
     <Tabs
@@ -115,11 +119,27 @@ const TabLayout = () => {
           title: "Profile",
           tabBarLabel: "Profile",
           tabBarIcon: ({ color, focused }) => (
-            <FontAwesomeIcon
-              color={color}
-              icon={focused ? faUserSolid : faUser}
-              size={24}
-            />
+            <>
+              <FontAwesomeIcon
+                color={color}
+                icon={focused ? faUserSolid : faUser}
+                size={24}
+              />
+              {(!user?.profile?.completionPercentage ||
+                user.profile.completionPercentage < COMPLETION_PERCENTAGE) && (
+                <View
+                  style={{
+                    backgroundColor: Colors(theme).yellow,
+                    width: 15,
+                    height: 15,
+                    position: "absolute",
+                    top: 5,
+                    right: 20,
+                    borderRadius: 40,
+                  }}
+                ></View>
+              )}
+            </>
           ),
 
           headerRight: () => (

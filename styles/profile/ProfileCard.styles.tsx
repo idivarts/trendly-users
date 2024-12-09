@@ -10,7 +10,8 @@ const styles = (theme: Theme) =>
       borderBottomColor: Colors(theme).aliceBlue,
       borderBottomWidth: 1,
       minHeight: 150,
-      paddingVertical: 20,
+      paddingTop: 40,
+      paddingBottom: 20,
     },
     avatar: {
       alignItems: "center",
