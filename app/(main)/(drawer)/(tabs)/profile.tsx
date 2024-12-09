@@ -2,16 +2,13 @@ import { FlatList, ScrollView, StyleSheet, Text } from "react-native";
 
 import { View } from "@/components/theme/Themed";
 import { useAuthContext } from "@/contexts";
-import Profile from "@/components/profile";
-import { PROFILE_BOTTOM_ITEMS, PROFILE_ITEMS } from "@/constants/Profile";
+import { PROFILE_ITEMS } from "@/constants/Profile";
 import ProfileItemCard from "@/components/profile/ProfileItemCard";
 import ProfileCard from "@/components/profile/ProfileCard";
 import { Href, useRouter } from "expo-router";
 import ConfirmationModal from "@/components/ui/modal/ConfirmationModal";
 import { useState } from "react";
 import {
-  faInfo,
-  faInfoCircle,
   faRightFromBracket,
   faWarning,
 } from "@fortawesome/free-solid-svg-icons";
@@ -33,7 +30,7 @@ const ProfileScreen = () => {
   };
 
   return (
-    <AppLayout>
+    < AppLayout >
       <ScrollView
         style={{
           ...styles.container,
@@ -44,7 +41,7 @@ const ProfileScreen = () => {
         {user && (
           <ProfileCard
             item={user}
-            onPress={() => router.push("/basic-profile")}
+            onPress={() => router.push("/edit-profile")}
           />
         )}
         <FlatList
@@ -71,7 +68,7 @@ const ProfileScreen = () => {
           }
           ListHeaderComponent={
             !user?.profile?.completionPercentage ||
-            user?.profile?.completionPercentage < COMPLETION_PERCENTAGE ? (
+              user?.profile?.completionPercentage < COMPLETION_PERCENTAGE ? (
               <View
                 style={{
                   backgroundColor: Colors(theme).yellow,

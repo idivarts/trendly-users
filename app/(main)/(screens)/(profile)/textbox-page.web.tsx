@@ -1,20 +1,22 @@
 import React, { useRef, useState } from "react";
 import { useTheme } from "@react-navigation/native";
 import { Text, View } from "@/components/theme/Themed";
-import { Appbar } from "react-native-paper";
+import { Button } from "react-native-paper";
+import { CreateCampaignstylesFn } from "@/styles/profile/TextBox.styles";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import AppLayout from "@/layouts/app-layout";
 import Colors from "@/constants/Colors";
 import { RichEditor, RichToolbar } from "react-native-pell-rich-editor";
-import Component from "@/components/textbox-rtf/TextBox";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+import { Platform } from "react-native";
 import { useAuthContext } from "@/contexts";
 import { User } from "@/types/User";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
-import Toast from "react-native-toast-message";
-import { Pressable } from "react-native";
 
 const EditTextArea: React.FC = () => {
   const theme = useTheme();
+  const styles = CreateCampaignstylesFn(theme);
   const navigation = useRouter();
   const richText = useRef<RichEditor>(null);
 
@@ -24,7 +26,6 @@ const EditTextArea: React.FC = () => {
     title,
     value: initialValue,
     path,
-    placeholder,
   } = useLocalSearchParams();
 
   const [value, setValue] = useState(initialValue || "");
@@ -68,11 +69,6 @@ const EditTextArea: React.FC = () => {
       return;
     }
 
-    if (!value) {
-      Toaster.error("Please enter a value");
-      return;
-    }
-
     const valueToSubmit = {
       textbox: {
         title,
@@ -95,24 +91,6 @@ const EditTextArea: React.FC = () => {
 
   return (
     <AppLayout>
-      <Appbar.Header
-        style={{ backgroundColor: Colors(theme).background }}
-        statusBarHeight={0}
-      >
-        <Appbar.BackAction onPress={handleGoBack} />
-        <Appbar.Content title={title} />
-        <Pressable
-          onPress={handleSubmit}
-          style={{
-            paddingRight: 20,
-          }}
-        >
-          <Text style={{ color: Colors(theme).primary, fontSize: 16 }}>
-            Done
-          </Text>
-        </Pressable>
-      </Appbar.Header>
-      <Toast />
       <View
         style={{
           padding: 20,
@@ -127,12 +105,40 @@ const EditTextArea: React.FC = () => {
           }}
         >
           <Text>{title}</Text>
-          <Component
-            value={value as string}
-            setValue={setValue}
-            richText={richText}
-            placeholder={placeholder}
-          />
+          {Platform.OS === "web" && (
+            <ReactQuill
+              theme="snow"
+              value={value as string}
+              onChange={setValue}
+              placeholder="Start writing here..."
+              style={{
+                flexGrow: 1,
+                backgroundColor: Colors(theme).background,
+                height: 200,
+                marginTop: 10,
+              }}
+            />
+          )}
+        </View>
+
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            marginTop: 20,
+          }}
+        >
+          <Button mode="outlined" onPress={handleGoBack} style={{ flex: 0.45 }}>
+            Go Back
+          </Button>
+
+          <Button
+            mode="contained"
+            onPress={handleSubmit}
+            style={{ flex: 0.45 }}
+          >
+            Submit
+          </Button>
         </View>
       </View>
     </AppLayout>

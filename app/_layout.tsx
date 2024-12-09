@@ -22,6 +22,7 @@ import {
   useAuthContext,
 } from "@/contexts";
 import CustomPaperTheme from "@/constants/Theme";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
@@ -59,15 +60,17 @@ const RootLayout = () => {
   return (
     <AuthContextProvider>
       <GestureHandlerRootView>
-        <AWSContextProvider>
-          <FirebaseStorageContextProvider>
-            <NotificationContextProvider>
-              <CloudMessagingContextProvider>
-                <RootLayoutStack />
-              </CloudMessagingContextProvider>
-            </NotificationContextProvider>
-          </FirebaseStorageContextProvider>
-        </AWSContextProvider>
+        <BottomSheetModalProvider>
+          <AWSContextProvider>
+            <FirebaseStorageContextProvider>
+              <NotificationContextProvider>
+                <CloudMessagingContextProvider>
+                  <RootLayoutStack />
+                </CloudMessagingContextProvider>
+              </NotificationContextProvider>
+            </FirebaseStorageContextProvider>
+          </AWSContextProvider>
+        </BottomSheetModalProvider>
       </GestureHandlerRootView>
     </AuthContextProvider>
   );

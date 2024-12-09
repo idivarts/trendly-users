@@ -50,6 +50,8 @@ export default (theme: Theme) => ({
   platinum: "#DBDBDB",
   red: "red",
   gray100: "#555",
+  gray200: "#f9f9f9",
+  gray300: "#757575",
   surface: "#ffffff",
   surfaceVariant: "#ffffff",
   white: "#ffffff",

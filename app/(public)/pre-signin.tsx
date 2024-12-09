@@ -23,12 +23,13 @@ import {
 import { AuthApp as auth } from "@/utils/auth";
 import { useRouter } from "expo-router";
 import { useAuthContext } from "@/contexts";
+import {
+  DUMMY_USER_CREDENTIALS2,
+  INITIAL_USER_DATA,
+} from "@/constants/User";
 import Colors from "@/constants/Colors";
-import { LoginManager, Settings } from "react-native-fbsdk-next";
 import { FirestoreDB } from "@/utils/firestore";
 import { collection, doc, getDoc, setDoc } from "firebase/firestore";
-import { AccessToken } from "react-native-fbsdk-next";
-import { requestTrackingPermissionsAsync } from "expo-tracking-transparency";
 import BottomSheetActions from "@/components/BottomSheetActions";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faEllipsis, faEnvelope } from "@fortawesome/free-solid-svg-icons";
@@ -37,7 +38,6 @@ import { faFacebook, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import { imageUrl } from "@/utils/url";
 import { FB_APP_ID } from "@/constants/Facebook";
 import axios from "axios";
-import { DUMMY_USER_CREDENTIALS2 } from "@/constants/User";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -114,6 +114,7 @@ const PreSignIn = () => {
         );
 
         const userData = {
+          ...INITIAL_USER_DATA,
           accessToken,
           name: result.user.displayName,
           email: result.user.email || "",
@@ -222,9 +223,9 @@ const PreSignIn = () => {
                   onPress={
                     request
                       ? () => {
-                          promptAsync();
-                        }
-                      : () => {}
+                        promptAsync();
+                      }
+                      : () => { }
                   }
                 />
               </View>
