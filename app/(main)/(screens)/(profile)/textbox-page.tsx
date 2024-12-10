@@ -12,6 +12,8 @@ import { User } from "@/types/User";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import Toast from "react-native-toast-message";
 import { Pressable } from "react-native";
+import { calculateProfileCompletion } from "@/utils/profile";
+import { Profile } from "@/types/Profile";
 
 const EditTextArea: React.FC = () => {
   const theme = useTheme();
@@ -37,18 +39,30 @@ const EditTextArea: React.FC = () => {
     });
   };
 
-  const {
-    user,
-    updateUser,
-  } = useAuthContext();
+  const { user, updateUser } = useAuthContext();
 
   const handleUpdateProfileContent = async () => {
-    if (!user) return;
+    if (!user || !user.profile) return;
+
+    const content = {
+      ...user.profile.content,
+      [key as string]: value,
+    };
+
+    const percentage = calculateProfileCompletion({
+      name: user.name,
+      emailVerified: user.emailVerified,
+      phoneVerified: user.phoneVerified,
+      category: user.profile.category || [],
+      content: content as Profile["content"],
+      attachments: user.profile.attachments as Profile["attachments"],
+    });
 
     const updatedContent: User = {
       ...user,
       profile: {
         ...user.profile,
+        completionPercentage: percentage,
         content: {
           ...user?.profile?.content,
           [key as string]: value,
@@ -60,10 +74,10 @@ const EditTextArea: React.FC = () => {
       navigation.navigate("/edit-profile");
       Toaster.success(`${title ? title : 'Profile'} updated successfully`);
     });
-  }
+  };
 
   const handleSubmit = () => {
-    if (userProfile === 'true') {
+    if (userProfile === "true") {
       handleUpdateProfileContent();
       return;
     }

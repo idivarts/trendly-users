@@ -30,7 +30,7 @@ const ProfileScreen = () => {
   };
 
   return (
-    < AppLayout >
+    <AppLayout>
       <ScrollView
         style={{
           ...styles.container,
@@ -68,13 +68,14 @@ const ProfileScreen = () => {
           }
           ListHeaderComponent={
             !user?.profile?.completionPercentage ||
-              user?.profile?.completionPercentage < COMPLETION_PERCENTAGE ? (
+            user?.profile?.completionPercentage < COMPLETION_PERCENTAGE ? (
               <View
                 style={{
                   backgroundColor: Colors(theme).yellow,
                   flexDirection: "row",
                   alignItems: "center",
                   padding: 10,
+                  paddingHorizontal: 16,
                   borderRadius: 10,
                 }}
               >
@@ -86,7 +87,7 @@ const ProfileScreen = () => {
                     padding: 16,
                   }}
                 >
-                  We only adverstize you to our brands if your profile is more
+                  We only advertise you to our brands if your profile is more
                   than {COMPLETION_PERCENTAGE}% complete
                 </Text>
               </View>
