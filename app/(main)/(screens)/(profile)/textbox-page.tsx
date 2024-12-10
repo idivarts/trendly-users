@@ -37,10 +37,7 @@ const EditTextArea: React.FC = () => {
     });
   };
 
-  const {
-    user,
-    updateUser,
-  } = useAuthContext();
+  const { user, updateUser } = useAuthContext();
 
   const handleUpdateProfileContent = async () => {
     if (!user) return;
@@ -58,12 +55,12 @@ const EditTextArea: React.FC = () => {
 
     await updateUser(user.id, updatedContent).then(() => {
       navigation.replace("/edit-profile");
-      Toaster.success(`${title ? title : 'Profile'} updated successfully`);
+      Toaster.success(`${title ? title : "Profile"} updated successfully`);
     });
-  }
+  };
 
   const handleSubmit = () => {
-    if (userProfile === 'true') {
+    if (userProfile === "true") {
       handleUpdateProfileContent();
       return;
     }
