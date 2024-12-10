@@ -1,13 +1,54 @@
 import { View } from "@/components/theme/Themed";
 import ScreenHeader from "@/components/ui/screen-header";
+import Colors from "@/constants/Colors";
+import AppLayout from "@/layouts/app-layout";
+import { useTheme } from "@react-navigation/native";
+import { useEffect, useState } from "react";
+import { Platform, ActivityIndicator } from "react-native";
+import { Portal } from "react-native-paper";
+import WebView from "react-native-webview";
 
-const HelpAndSupportScreen = () => {
+const HelpAndSupportScreen: React.FC = () => {
+  const [loading, setLoading] = useState(true);
+  const theme = useTheme();
+
+  useEffect(() => {
+    if (Platform.OS === "web") {
+      window.location.href = "https://trendly.pro/help-and-support/";
+    }
+  }, [,]);
+
   return (
-    <View style={{ flex: 1 }}>
-      <ScreenHeader
-        title="Help and Support"
-      />
-    </View>
+    <AppLayout style={{ flex: 1 }}>
+      <ScreenHeader title="Help and Support" />
+      {Platform.OS !== "web" && (
+        <>
+          {loading && (
+            <Portal>
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backgroundColor: Colors(theme).backdrop,
+                }}
+              >
+                <ActivityIndicator size="large" color={Colors(theme).text} />
+              </View>
+            </Portal>
+          )}
+          <WebView
+            onLoad={() => {
+              setLoading(false);
+            }}
+            source={{ uri: "https://trendly.pro/help-and-support/" }}
+            style={{
+              flex: 1,
+            }}
+          />
+        </>
+      )}
+    </AppLayout>
   );
 };
 
