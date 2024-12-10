@@ -39,6 +39,7 @@ export const stylesFn = (theme: Theme) =>
     },
     chip: {
       margin: 5,
+      padding: 2,
     },
     salaryContainer: {
       marginVertical: 10,
