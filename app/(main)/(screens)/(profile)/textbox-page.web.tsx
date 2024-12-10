@@ -1,24 +1,18 @@
-import React, { useRef, useState } from "react";
+import React from "react";
 import { useTheme } from "@react-navigation/native";
 import { Text, View } from "@/components/theme/Themed";
 import { Button } from "react-native-paper";
-import { CreateCampaignstylesFn } from "@/styles/profile/TextBox.styles";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import AppLayout from "@/layouts/app-layout";
-import Colors from "@/constants/Colors";
-import { RichEditor, RichToolbar } from "react-native-pell-rich-editor";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
-import { Platform } from "react-native";
+import { KeyboardAvoidingView, Platform } from "react-native";
 import { useAuthContext } from "@/contexts";
 import { User } from "@/types/User";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
+import { RichText, Toolbar, useEditorBridge } from "@10play/tentap-editor";
 
 const EditTextArea: React.FC = () => {
   const theme = useTheme();
-  const styles = CreateCampaignstylesFn(theme);
   const navigation = useRouter();
-  const richText = useRef<RichEditor>(null);
 
   const {
     userProfile,
@@ -28,23 +22,18 @@ const EditTextArea: React.FC = () => {
     path,
   } = useLocalSearchParams();
 
-  const [value, setValue] = useState(initialValue || "");
+  const editor = useEditorBridge({
+    autofocus: true,
+    avoidIosKeyboard: true,
+    initialContent: initialValue,
+  });
 
-  const handleNavigate = () => {
-    navigation.navigate({
-      //@ts-ignore
-      pathname: path as string,
-      params: { title, value: initialValue },
-    });
-  };
-
-  const {
-    user,
-    updateUser,
-  } = useAuthContext();
+  const { user, updateUser } = useAuthContext();
 
   const handleUpdateProfileContent = async () => {
     if (!user) return;
+
+    const updatedValue = await editor.getHTML();
 
     const updatedContent: User = {
       ...user,
@@ -52,27 +41,29 @@ const EditTextArea: React.FC = () => {
         ...user.profile,
         content: {
           ...user?.profile?.content,
-          [key as string]: value,
+          [key as string]: updatedValue,
         },
       },
     };
 
     await updateUser(user.id, updatedContent).then(() => {
       navigation.replace("/edit-profile");
-      Toaster.success(`${title ? title : 'Profile'} updated successfully`);
+      Toaster.success(`${title ? title : "Profile"} updated successfully`);
     });
-  }
+  };
 
-  const handleSubmit = () => {
-    if (userProfile === 'true') {
+  const handleSubmit = async () => {
+    if (userProfile === "true") {
       handleUpdateProfileContent();
       return;
     }
 
+    const updatedValue = await editor.getHTML();
+
     const valueToSubmit = {
       textbox: {
         title,
-        value,
+        value: updatedValue,
       },
     };
 
@@ -106,18 +97,14 @@ const EditTextArea: React.FC = () => {
         >
           <Text>{title}</Text>
           {Platform.OS === "web" && (
-            <ReactQuill
-              theme="snow"
-              value={value as string}
-              onChange={setValue}
-              placeholder="Start writing here..."
-              style={{
-                flexGrow: 1,
-                backgroundColor: Colors(theme).background,
-                height: 200,
-                marginTop: 10,
-              }}
-            />
+            <>
+              <RichText editor={editor} />
+              <KeyboardAvoidingView
+                behavior={Platform.OS === "web" ? "padding" : "height"}
+              >
+                <Toolbar editor={editor} />
+              </KeyboardAvoidingView>
+            </>
           )}
         </View>
 

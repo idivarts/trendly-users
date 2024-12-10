@@ -30,7 +30,7 @@ const ProfileScreen = () => {
   };
 
   return (
-    < AppLayout >
+    <AppLayout>
       <ScrollView
         style={{
           ...styles.container,
@@ -68,13 +68,14 @@ const ProfileScreen = () => {
           }
           ListHeaderComponent={
             !user?.profile?.completionPercentage ||
-              user?.profile?.completionPercentage < COMPLETION_PERCENTAGE ? (
+            user?.profile?.completionPercentage < COMPLETION_PERCENTAGE ? (
               <View
                 style={{
                   backgroundColor: Colors(theme).yellow,
                   flexDirection: "row",
                   alignItems: "center",
                   padding: 10,
+                  paddingHorizontal: 16,
                   borderRadius: 10,
                 }}
               >
