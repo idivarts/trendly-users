@@ -87,7 +87,7 @@ const ProfileScreen = () => {
                     padding: 16,
                   }}
                 >
-                  We only adverstize you to our brands if your profile is more
+                  We only advertise you to our brands if your profile is more
                   than {COMPLETION_PERCENTAGE}% complete
                 </Text>
               </View>
