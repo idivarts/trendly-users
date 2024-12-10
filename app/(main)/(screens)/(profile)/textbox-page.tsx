@@ -57,7 +57,7 @@ const EditTextArea: React.FC = () => {
     };
 
     await updateUser(user.id, updatedContent).then(() => {
-      navigation.replace("/edit-profile");
+      navigation.navigate("/edit-profile");
       Toaster.success(`${title ? title : 'Profile'} updated successfully`);
     });
   }
