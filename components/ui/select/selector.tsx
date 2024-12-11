@@ -66,12 +66,12 @@ const stylesFn = (theme: Theme) => StyleSheet.create({
     gap: 8,
   },
   selectedOption: {
-    backgroundColor: Colors(theme).aliceBlue,
+    backgroundColor: theme.dark ? Colors(theme).card : Colors(theme).aliceBlue,
     borderColor: Colors(theme).primary,
   },
   optionText: {
     fontSize: 14,
-    color: Colors(theme).gray300,
+    color: theme.dark ? Colors(theme).white : Colors(theme).gray300,
     marginTop: 4,
   },
 });
