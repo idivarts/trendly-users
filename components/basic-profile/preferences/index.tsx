@@ -6,13 +6,23 @@ import { MultiRangeSlider } from "@/components/ui/multislider";
 import { Selector } from "@/components/ui/select/selector";
 import { faDollarSign, faVideo } from "@fortawesome/free-solid-svg-icons";
 import ContentWrapper from "./content-wrapper";
+import { SearchAdd } from "@/shared-uis/components/search-add";
+import { useTheme } from "@react-navigation/native";
+import { BRAND_INDUSTRIES, LANGUAGES } from "@/constants/ItemsList";
+import { useAuthContext } from "@/contexts";
+import { includeSelectedItems } from "@/utils/items-list";
 
 const Preferences: React.FC = () => {
+  const {
+    user,
+  } = useAuthContext();
+
+  const theme = useTheme();
+
   const [preferredCollaborationType, setPreferredCollaborationType] = useState({
     label: 'Barter & Paid Both',
     value: 'Barter & Paid Both',
   });
-  const [preferredBrandIndustries, setPreferredBrandIndustries] = useState<SelectItem[]>([]);
   const [goal, setGoal] = useState({
     label: 'Long Term',
     value: 'Long Term',
@@ -25,6 +35,20 @@ const Preferences: React.FC = () => {
   const [budgetForPaidCollabs, setBudgetForPaidCollabs] = useState([0, 100]);
   const [maximumMonthlyCollabs, setMaximumMonthlyCollabs] = useState([0, 100]);
 
+  const [selectedLanguages, setSelectedLanguages] = useState<string[]>([
+    'English',
+    'Hindi',
+    'Marwadi',
+  ]);
+
+  const [selectedBrandIndustries, setSelectedBrandIndustries] = useState<string[]>([
+    'Fashion',
+    'Lifestyle',
+    'Food',
+    'Travel',
+    'Health',
+  ]);
+
   return (
     <ScrollView
       style={{
@@ -32,7 +56,7 @@ const Preferences: React.FC = () => {
         flex: 1,
       }}
       contentContainerStyle={{
-        paddingBottom: 24,
+        paddingBottom: 80,
         gap: 46,
       }}
     >
@@ -66,20 +90,12 @@ const Preferences: React.FC = () => {
         title="Preferred Brand Industry"
         description="Specifying the industry will help us match better with relevant brands."
       >
-        <Select
-          items={[
-            { label: 'Fashion', value: 'Fashion' },
-            { label: 'Lifestyle', value: 'Lifestyle' },
-            { label: 'Food', value: 'Food' },
-            { label: 'Travel', value: 'Travel' },
-            { label: 'Health', value: 'Health' },
-          ]}
-          selectItemIcon={true}
-          value={preferredBrandIndustries}
-          multiselect
-          onSelect={(item) => {
-            setPreferredBrandIndustries(item);
-          }}
+        <SearchAdd
+          buttonLabel="Add Brand Industry"
+          initialItemsList={includeSelectedItems(BRAND_INDUSTRIES, selectedBrandIndustries)}
+          onSelectedItemsChange={setSelectedBrandIndustries}
+          selectedItems={selectedBrandIndustries}
+          theme={theme}
         />
       </ContentWrapper>
       <ContentWrapper
@@ -167,6 +183,18 @@ const Preferences: React.FC = () => {
           onValueChange={(value) => {
             setPreferredVideoType(value);
           }}
+        />
+      </ContentWrapper>
+      <ContentWrapper
+        title="Language Used for content creation"
+        description="Which language do you create your content in? Is it local language or maybe mix og multiple languages"
+      >
+        <SearchAdd
+          buttonLabel="Add Language"
+          initialItemsList={includeSelectedItems(LANGUAGES, selectedLanguages)}
+          onSelectedItemsChange={setSelectedLanguages}
+          selectedItems={selectedLanguages}
+          theme={theme}
         />
       </ContentWrapper>
     </ScrollView>
