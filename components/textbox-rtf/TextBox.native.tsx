@@ -47,14 +47,7 @@ const EditTextAreaComponent: React.FC<EditTextAreaProps> = ({
             styles.toolbarWrapper,
             { backgroundColor: Colors(theme).card },
           ]}
-        >
-          <RichToolbar
-            editor={richText}
-            selectedIconTint={Colors(theme).primary}
-            disabledIconTint={Colors(theme).gray100}
-            style={styles.toolbar}
-          />
-        </View>
+        ></View>
         <ScrollView
           contentContainerStyle={styles.scrollView}
           keyboardShouldPersistTaps="handled"
@@ -74,6 +67,17 @@ const EditTextAreaComponent: React.FC<EditTextAreaProps> = ({
               }}
               initialFocus={true}
             />
+            <KeyboardAvoidingView
+              behavior={Platform.OS === "ios" ? "padding" : "height"}
+              style={{ position: "absolute", width: "100%", bottom: 0 }}
+            >
+              <RichToolbar
+                editor={richText}
+                selectedIconTint={Colors(theme).primary}
+                disabledIconTint={Colors(theme).gray100}
+                style={styles.toolbar}
+              />
+            </KeyboardAvoidingView>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
