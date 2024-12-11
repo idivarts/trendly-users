@@ -81,8 +81,7 @@
     "react-native-swiper": "^1.6.0",
     "react-native-toast-message": "^2.2.1",
     "react-native-web": "~0.19.10",
-    "react-native-webview": "13.8.6",
-    "react-quill": "^2.0.0",
+    "react-native-webview": "^13.12.5",
     "reanimated-bottom-sheet": "^1.0.0-alpha.22",
     "stream-chat-expo": "^5.41.2"
   },

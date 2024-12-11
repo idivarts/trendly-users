@@ -82,7 +82,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ item, onPress }) => {
         >
           <FontAwesomeIcon icon={faPen} color={Colors(theme).text} size={22} />
         </Pressable>
-        <View
+        <Pressable
           style={{
             backgroundColor: "#A69F5BD6",
             alignItems: "center",
@@ -92,6 +92,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ item, onPress }) => {
             bottom: 0,
             right: 45,
           }}
+          onPress={onPress}
         >
           <Text
             style={{
@@ -100,7 +101,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ item, onPress }) => {
           >
             {item.profile?.completionPercentage?.toString() || 0}% Complete
           </Text>
-        </View>
+        </Pressable>
       </View>
       <View style={styles.textContainer}>
         <Text style={styles.titleText}>{item.name}</Text>
