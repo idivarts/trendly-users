@@ -7,7 +7,15 @@ import { SelectItem } from "@/components/ui/select";
 import { Platform } from "react-native";
 import { NativeAssetItem, WebAssetItem } from "@/types/Asset";
 
-const useEditProfile = () => {
+interface UseEditProfileProps {
+  unsavedChanges?: boolean;
+  setUnsavedChanges?: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const useEditProfile = ({
+  unsavedChanges,
+  setUnsavedChanges,
+}: UseEditProfileProps) => {
   const {
     user,
     updateUser,
@@ -99,14 +107,17 @@ const useEditProfile = () => {
 
   const handleAssetsUpdateNative = (items: NativeAssetItem[]) => {
     setNativeAssets(items);
+    if (nativeAssets.length !== 0 && setUnsavedChanges) setUnsavedChanges(true);
   }
 
   const handleAssetsUpdateWeb = (items: WebAssetItem[]) => {
     setWebAssets(items);
+    setUnsavedChanges && setUnsavedChanges(true);
   }
 
   const handleNicheSelect = (niche: SelectItem[]) => {
     setNiches(niche);
+    setUnsavedChanges && setUnsavedChanges(true);
   }
 
   const uploadNewAssets = async () => {
@@ -202,6 +213,7 @@ const useEditProfile = () => {
         completionPercentage,
       },
     }).then(() => {
+      setUnsavedChanges && setUnsavedChanges(false);
       Toaster.success('Profile saved successfully');
     }).catch((error) => {
       Toaster.error('Failed to save profile');

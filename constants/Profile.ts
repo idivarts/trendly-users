@@ -11,7 +11,7 @@ export const PROFILE_ITEMS = [
     id: "1",
     title: "My Preferences",
     icon: faChartSimple,
-    route: "/basic-profile",
+    route: "/preferences",
     active: true,
   },
   {
