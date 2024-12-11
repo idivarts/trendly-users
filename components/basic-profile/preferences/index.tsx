@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ScrollView } from "react-native";
-import Select, { SelectItem } from "@/components/ui/select";
+import Select from "@/components/ui/select";
 import SelectGroup from "@/components/ui/select/select-group";
 import { MultiRangeSlider } from "@/components/ui/multislider";
 import { Selector } from "@/components/ui/select/selector";
@@ -9,45 +9,45 @@ import ContentWrapper from "./content-wrapper";
 import { SearchAdd } from "@/shared-uis/components/search-add";
 import { useTheme } from "@react-navigation/native";
 import { BRAND_INDUSTRIES, LANGUAGES } from "@/constants/ItemsList";
-import { useAuthContext } from "@/contexts";
 import { includeSelectedItems } from "@/utils/items-list";
+import { User } from "@/types/User";
 
-const Preferences: React.FC = () => {
-  const {
-    user,
-  } = useAuthContext();
+interface PreferencesProps {
+  user: User;
+  onSave: (user: any) => void;
+}
 
+const Preferences: React.FC<PreferencesProps> = ({
+  user,
+  onSave,
+}) => {
   const theme = useTheme();
 
-  const [preferredCollaborationType, setPreferredCollaborationType] = useState({
-    label: 'Barter & Paid Both',
-    value: 'Barter & Paid Both',
+  const [preferences, setPreferences] = useState({
+    preferredCollaborationType: 'Barter & Paid Both',
+    goal: 'Long Term',
+    contentWillingToPost: ['Post'],
+    preferredVideoType: 'Integrated Video',
+    budgetForPaidCollabs: [0, 100],
+    maximumMonthlyCollabs: [0, 100],
+    selectedLanguages: ['English', 'Hindi', 'Marwadi'],
+    selectedBrandIndustries: ['Fashion', 'Lifestyle', 'Food', 'Travel', 'Health'],
   });
-  const [goal, setGoal] = useState({
-    label: 'Long Term',
-    value: 'Long Term',
-  });
-  const [contentWillingToPost, setContentWillingToPost] = useState<SelectItem[]>([]);
-  const [preferredVideoType, setPreferredVideoType] = useState({
-    label: 'Integrated Video',
-    value: 'Integrated Video',
-  });
-  const [budgetForPaidCollabs, setBudgetForPaidCollabs] = useState([0, 100]);
-  const [maximumMonthlyCollabs, setMaximumMonthlyCollabs] = useState([0, 100]);
 
-  const [selectedLanguages, setSelectedLanguages] = useState<string[]>([
-    'English',
-    'Hindi',
-    'Marwadi',
-  ]);
+  const handleOnSave = () => {
+    const updatedUser = {
+      ...user,
+      preferences: {
+        ...user.preferences,
+        preferences,
+      },
+    };
+    onSave(updatedUser);
+  }
 
-  const [selectedBrandIndustries, setSelectedBrandIndustries] = useState<string[]>([
-    'Fashion',
-    'Lifestyle',
-    'Food',
-    'Travel',
-    'Health',
-  ]);
+  useEffect(() => {
+    handleOnSave();
+  }, [preferences]);
 
   return (
     <ScrollView
@@ -78,12 +78,12 @@ const Preferences: React.FC = () => {
             },
           ]}
           onSelect={(value) => {
-            setPreferredCollaborationType({
-              label: value,
-              value,
+            setPreferences({
+              ...preferences,
+              preferredCollaborationType: value,
             });
           }}
-          selectedValue={preferredCollaborationType.value}
+          selectedValue={preferences.preferredCollaborationType}
         />
       </ContentWrapper>
       <ContentWrapper
@@ -92,16 +92,21 @@ const Preferences: React.FC = () => {
       >
         <SearchAdd
           buttonLabel="Add Brand Industry"
-          initialItemsList={includeSelectedItems(BRAND_INDUSTRIES, selectedBrandIndustries)}
-          onSelectedItemsChange={setSelectedBrandIndustries}
-          selectedItems={selectedBrandIndustries}
+          initialItemsList={includeSelectedItems(BRAND_INDUSTRIES, preferences.selectedBrandIndustries)}
+          onSelectedItemsChange={(value) => {
+            setPreferences({
+              ...preferences,
+              selectedBrandIndustries: value.map((value) => value),
+            });
+          }}
+          selectedItems={preferences.selectedBrandIndustries}
           theme={theme}
         />
       </ContentWrapper>
       <ContentWrapper
         title="Budget for Paid Collabs"
         description="This budget would help us understand your need hence show better suggestions."
-        rightText={`$${budgetForPaidCollabs[0]}-${budgetForPaidCollabs[1]}`}
+        rightText={`$${preferences.budgetForPaidCollabs[0]}-${preferences.budgetForPaidCollabs[1]}`}
       >
         <MultiRangeSlider
           containerStyle={{
@@ -111,9 +116,12 @@ const Preferences: React.FC = () => {
           maxValue={100}
           minValue={0}
           onValuesChange={(values) => {
-            setBudgetForPaidCollabs(values);
+            setPreferences({
+              ...preferences,
+              budgetForPaidCollabs: values,
+            });
           }}
-          values={budgetForPaidCollabs}
+          values={preferences.budgetForPaidCollabs}
         />
       </ContentWrapper>
       <ContentWrapper
@@ -126,16 +134,22 @@ const Preferences: React.FC = () => {
             { label: 'Short Term', value: 'Short Term' },
             { label: 'One Time', value: 'One Time' },
           ]}
-          selectedItem={goal}
-          onValueChange={(value) => {
-            setGoal(value);
+          selectedItem={{
+            label: preferences.goal,
+            value: preferences.goal,
+          }}
+          onValueChange={(item) => {
+            setPreferences({
+              ...preferences,
+              goal: item.value,
+            });
           }}
         />
       </ContentWrapper>
       <ContentWrapper
         title="Maximum Monthly Collabs"
         description="Limit your monthly collab to have a good balance between your own content to campaign contents."
-        rightText={`${maximumMonthlyCollabs[0]}-${maximumMonthlyCollabs[1]}`}
+        rightText={`${preferences.maximumMonthlyCollabs[0]}-${preferences.maximumMonthlyCollabs[1]}`}
       >
         <MultiRangeSlider
           containerStyle={{
@@ -145,9 +159,12 @@ const Preferences: React.FC = () => {
           maxValue={100}
           minValue={0}
           onValuesChange={(values) => {
-            setMaximumMonthlyCollabs(values);
+            setPreferences({
+              ...preferences,
+              maximumMonthlyCollabs: values,
+            });
           }}
-          values={maximumMonthlyCollabs}
+          values={preferences.maximumMonthlyCollabs}
         />
       </ContentWrapper>
       <ContentWrapper
@@ -163,10 +180,16 @@ const Preferences: React.FC = () => {
             { label: 'Live', value: 'Live' },
           ]}
           selectItemIcon={true}
-          value={contentWillingToPost}
+          value={preferences.contentWillingToPost.map((item) => ({
+            label: item,
+            value: item,
+          }))}
           multiselect
           onSelect={(item) => {
-            setContentWillingToPost(item);
+            setPreferences({
+              ...preferences,
+              contentWillingToPost: item.map((item) => item.value),
+            });
           }}
         />
       </ContentWrapper>
@@ -179,9 +202,15 @@ const Preferences: React.FC = () => {
             { label: 'Integrated Video', value: 'Integrated Video' },
             { label: 'Dedicated Video', value: 'Dedicated Video' },
           ]}
-          selectedItem={preferredVideoType}
-          onValueChange={(value) => {
-            setPreferredVideoType(value);
+          selectedItem={{
+            label: preferences.preferredVideoType,
+            value: preferences.preferredVideoType,
+          }}
+          onValueChange={(item) => {
+            setPreferences({
+              ...preferences,
+              preferredVideoType: item.value,
+            });
           }}
         />
       </ContentWrapper>
@@ -191,9 +220,14 @@ const Preferences: React.FC = () => {
       >
         <SearchAdd
           buttonLabel="Add Language"
-          initialItemsList={includeSelectedItems(LANGUAGES, selectedLanguages)}
-          onSelectedItemsChange={setSelectedLanguages}
-          selectedItems={selectedLanguages}
+          initialItemsList={includeSelectedItems(LANGUAGES, preferences.selectedLanguages)}
+          onSelectedItemsChange={(value) => {
+            setPreferences({
+              ...preferences,
+              selectedLanguages: value.map((value) => value),
+            });
+          }}
+          selectedItems={preferences.selectedLanguages}
           theme={theme}
         />
       </ContentWrapper>
