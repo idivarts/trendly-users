@@ -7,30 +7,7 @@ import { FlatList } from "react-native";
 import { collection, getDocs } from "firebase/firestore";
 import { FirestoreDB } from "@/utils/firestore";
 import { AuthApp } from "@/utils/auth";
-
-const connectedAccounts = [
-  {
-    id: "1",
-    name: "Trendly",
-    handle: "Trendly.pro",
-    platform: SocialPlatform.INSTAGRAM,
-    primary: true,
-  },
-  {
-    id: "2",
-    name: "Trendly",
-    handle: "Trendly.pro",
-    platform: SocialPlatform.FACEBOOK,
-    primary: false,
-  },
-  {
-    id: "3",
-    name: "Crowdy Chat",
-    handle: "crowdy.chat",
-    platform: SocialPlatform.FACEBOOK,
-    primary: false,
-  },
-];
+import { connectedAccounts } from "@/constants/CoonectedSocials";
 
 const ConnectedSocials: React.FC = () => {
   const [socials, setSocials] = useState<any>();
@@ -72,6 +49,7 @@ const ConnectedSocials: React.FC = () => {
             name={item.name}
             platform={item.platform}
             primary={item.primary}
+            image={item.image}
           />
         )}
         keyExtractor={(item) => item.id}

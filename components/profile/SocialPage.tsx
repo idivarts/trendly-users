@@ -22,6 +22,7 @@ interface SocialPageProps {
   handle: string;
   platform: SocialPlatform;
   primary: boolean;
+  image: string;
 }
 
 const SocialPage: React.FC<SocialPageProps> = ({
@@ -29,6 +30,7 @@ const SocialPage: React.FC<SocialPageProps> = ({
   handle,
   platform,
   primary,
+  image,
 }) => {
   const [menuVisible, setMenuVisible] = useState(false);
 
@@ -50,7 +52,7 @@ const SocialPage: React.FC<SocialPageProps> = ({
           <View style={styles.leftSection}>
             <Image
               source={{
-                uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-C_UAhXq9GfuGO452EEzfbKnh1viQB9EDBQ&s",
+                uri: image,
               }}
               width={50}
               height={50}
