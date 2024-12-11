@@ -13,12 +13,28 @@ const DraggableItem: React.FC<DraggableItemProps> = ({
   attributes = {},
 }) => {
   return (
-    <div className="draggable-asset" {...listeners} {...attributes}>
+    <div
+      style={{
+        borderRadius: "10px",
+        height: "10rem",
+        maxWidth: "10rem",
+        minWidth: "10rem",
+        overflow: "hidden",
+        width: "10rem",
+      }}
+      {...listeners}
+      {...attributes}
+    >
       {
         asset.type === "video" ? (
           <video
             autoPlay={false}
-            className="video"
+            style={{
+              height: "10rem",
+              maxWidth: "10rem",
+              minWidth: "10rem",
+              objectFit: "cover",
+            }}
           >
             <source
               src={
@@ -30,6 +46,13 @@ const DraggableItem: React.FC<DraggableItemProps> = ({
         ) : (
           <img
             alt=""
+            style={{
+              borderRadius: "10px",
+              height: "10rem",
+              maxWidth: "10rem",
+              minWidth: "10rem",
+              objectFit: "cover",
+            }}
             src={
               typeof asset.url === "string" ? asset.url : URL.createObjectURL(asset.url)
             }
