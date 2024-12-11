@@ -18,7 +18,6 @@ import {
 } from '@dnd-kit/sortable';
 import SortableItem from './SortableItem';
 import DraggableItem from './DraggableItem';
-import './styles.css';
 import { WebAssetItem } from '@/types/Asset';
 
 interface DragAndDropWebProps {
@@ -95,7 +94,17 @@ const DragAndDropWeb: React.FC<DragAndDropWebProps> = ({
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <div className="gallery-container">
+      <div
+        style={{
+          display: 'grid',
+          gap: '20px',
+          gridTemplateColumns: 'repeat(3, 1fr)',
+          justifyItems: 'center',
+          margin: '0 auto',
+          maxWidth: '900px',
+          padding: '20px',
+        }}
+      >
         <SortableContext
           items={assets.map((asset) => asset.id as string)}
           strategy={rectSortingStrategy}
@@ -111,16 +120,50 @@ const DragAndDropWeb: React.FC<DragAndDropWebProps> = ({
           {Array.from({ length: 6 - assets.length }).map((_, index) => (
             <div
               key={`empty-${index}`}
-              className="upload-placeholder"
+              style={{
+                alignItems: 'center',
+                aspectRatio: '1',
+                backgroundColor: '#f5f5f5',
+                border: '2px solid #15293f',
+                borderRadius: '10px',
+                display: 'flex',
+                height: '10rem',
+                justifyContent: 'center',
+                maxWidth: '10rem',
+                minWidth: '10rem',
+                position: 'relative',
+              }}
             >
-              <label htmlFor={`file-upload-${index}`} className="upload-label">
-                <span className="plus-icon">+</span>
+              <label
+                htmlFor={`file-upload-${index}`}
+                style={{
+                  alignItems: 'center',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  height: '100%',
+                  justifyContent: 'center',
+                  width: '100%',
+                }}
+              >
+                <span
+                  style={{
+                    color: '#15293f',
+                    fontSize: '32px',
+                  }}
+                >
+                  +
+                </span>
                 <input
                   id={`file-upload-${index}`}
                   type="file"
                   accept="image/*, video/*"
                   onChange={handleAddAsset}
-                  className="file-input"
+                  style={{
+                    height: 0,
+                    opacity: 0,
+                    position: 'absolute',
+                    width: 0,
+                  }}
                 />
               </label>
             </div>

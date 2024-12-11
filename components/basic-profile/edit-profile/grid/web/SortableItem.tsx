@@ -30,9 +30,40 @@ const SortableItem: React.FC<SortableItemProps> = ({
   }
 
   return (
-    <div ref={setNodeRef} style={style} className="sortable-item">
+    <div
+      ref={setNodeRef}
+      style={{
+        position: 'relative',
+        minWidth: '10rem',
+        maxWidth: '10rem',
+        height: '10rem',
+        aspectRatio: '1',
+        borderRadius: '10px',
+        cursor: 'grab',
+        backgroundColor: '#f5f5f5',
+        ...style,
+      }}
+    >
       <DraggableItem id={id} asset={asset} listeners={listeners} attributes={attributes} />
-      <button onClick={onRemove} className="remove-button">
+      <button
+        onClick={onRemove}
+        style={{
+          position: 'absolute',
+          right: '8px',
+          bottom: '8px',
+          padding: '10px',
+          borderRadius: '50%',
+          backgroundColor: '#1e3a5f',
+          color: 'white',
+          border: 'none',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: '18px',
+          zIndex: 2,
+        }}
+      >
         <FontAwesomeIcon
           icon={faClose}
           color="white"
