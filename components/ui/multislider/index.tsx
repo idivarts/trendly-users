@@ -66,8 +66,8 @@ const stylesFn = (theme: Theme) => StyleSheet.create({
     height: 40,
   },
   track: {
-    height: 4,
-    marginTop: -2,
+    height: 6,
+    marginTop: -3,
     borderRadius: 2,
   },
   selectedTrack: {

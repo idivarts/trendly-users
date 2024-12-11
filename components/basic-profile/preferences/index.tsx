@@ -105,9 +105,9 @@ const Preferences: React.FC = () => {
       >
         <MultiRangeSlider
           containerStyle={{
-            paddingHorizontal: 16,
+            paddingHorizontal: 8,
           }}
-          sliderLength={336}
+          sliderLength={352}
           maxValue={100}
           minValue={0}
           onValuesChange={(values) => {
@@ -139,9 +139,9 @@ const Preferences: React.FC = () => {
       >
         <MultiRangeSlider
           containerStyle={{
-            paddingHorizontal: 16,
+            paddingHorizontal: 8,
           }}
-          sliderLength={336}
+          sliderLength={352}
           maxValue={100}
           minValue={0}
           onValuesChange={(values) => {
