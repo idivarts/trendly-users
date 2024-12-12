@@ -1,4 +1,4 @@
-import { FlatList, ScrollView, StyleSheet, Text } from "react-native";
+import { FlatList, Platform, ScrollView, StyleSheet, Text } from "react-native";
 
 import { View } from "@/components/theme/Themed";
 import { useAuthContext } from "@/contexts";
@@ -50,7 +50,19 @@ const ProfileScreen = () => {
           renderItem={({ item }) => (
             <ProfileItemCard
               item={item}
-              onPress={() => router.push(item.route as Href)}
+              onPress={() => {
+                if (
+                  item.title === "Help and Support" &&
+                  Platform.OS === "web"
+                ) {
+                  window.open(
+                    "https://trendly.pro/help-and-support/",
+                    "_blank"
+                  );
+                } else {
+                  router.push(item.route as Href);
+                }
+              }}
             />
           )}
           keyExtractor={(item) => item.id}
