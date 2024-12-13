@@ -6,6 +6,7 @@ export const connectedAccounts = [
     name: "Trendly",
     handle: "Trendly.pro",
     platform: SocialPlatform.INSTAGRAM,
+    isInstagram: true,
     image:
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-C_UAhXq9GfuGO452EEzfbKnh1viQB9EDBQ&s",
     primary: true,
@@ -14,6 +15,7 @@ export const connectedAccounts = [
     id: "2",
     name: "Trendly",
     handle: "Trendly.pro",
+    isInstagram: true,
     platform: SocialPlatform.FACEBOOK,
     image:
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS-C_UAhXq9GfuGO452EEzfbKnh1viQB9EDBQ&s",
@@ -23,6 +25,7 @@ export const connectedAccounts = [
   {
     id: "3",
     name: "Crowdy Chat",
+    isInstagram: true,
     handle: "crowdy.chat",
     platform: SocialPlatform.FACEBOOK,
     image:

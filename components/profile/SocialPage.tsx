@@ -23,6 +23,7 @@ interface SocialPageProps {
   platform: SocialPlatform;
   primary: boolean;
   image: string;
+  profile: any;
 }
 
 const SocialPage: React.FC<SocialPageProps> = ({
@@ -31,6 +32,7 @@ const SocialPage: React.FC<SocialPageProps> = ({
   platform,
   primary,
   image,
+  profile,
 }) => {
   const [menuVisible, setMenuVisible] = useState(false);
 
@@ -62,14 +64,18 @@ const SocialPage: React.FC<SocialPageProps> = ({
                 flexDirection: "column",
               }}
             >
-              <Text style={styles.title}>{name}</Text>
-              <Text style={styles.underline}>{handle ? "@" + handle : ""}</Text>
+              <Text style={styles.title}>{profile.name}</Text>
+              {handle && (
+                <Text style={styles.underline}>
+                  {handle ? "@" + handle : null}
+                </Text>
+              )}
             </View>
           </View>
 
           <View
             style={{
-              backgroundColor: Colors(theme).reverseBackground,
+              backgroundColor: Colors(theme).primary,
               padding: 5,
               borderRadius: 8,
               alignItems: "center",
@@ -80,13 +86,13 @@ const SocialPage: React.FC<SocialPageProps> = ({
                 platform === SocialPlatform.INSTAGRAM ? faInstagram : faFacebook
               }
               size={20}
-              color={Colors(theme).background}
+              color={Colors(theme).white}
             />
           </View>
           {primary && (
             <View
               style={{
-                backgroundColor: Colors(theme).reverseBackground,
+                backgroundColor: Colors(theme).primary,
                 padding: 5,
                 borderRadius: 8,
                 alignItems: "center",
@@ -97,11 +103,11 @@ const SocialPage: React.FC<SocialPageProps> = ({
               <FontAwesomeIcon
                 icon={faStar}
                 size={20}
-                color={Colors(theme).background}
+                color={Colors(theme).white}
               />
               <Text
                 style={{
-                  color: Colors(theme).background,
+                  color: Colors(theme).white,
                   fontSize: 12,
                   fontWeight: "bold",
                 }}
