@@ -2,79 +2,21 @@ import React from "react";
 import { Text, View } from "@/components/theme/Themed";
 import ScreenHeader from "@/components/ui/screen-header";
 import AppLayout from "@/layouts/app-layout";
-import { ScrollView, Dimensions } from "react-native";
+import { ScrollView, Dimensions, StyleSheet } from "react-native";
 import { Card } from "react-native-paper";
 import { BarChart, LineChart, PieChart } from "react-native-gifted-charts";
 import Colors from "@/constants/Colors";
-import { useTheme } from "@react-navigation/native";
+import { Theme, useTheme } from "@react-navigation/native";
 import { TopBrandCard } from "@/components/basic-profile/stats/TopBrand";
+import {
+  EARNING_TIMELINE_DATA as earningTimelineData,
+  PIE_CHART_DATA as pieChartData,
+} from "@/constants/Chart";
 
 const MyStatsScreen = () => {
   const screenWidth = Dimensions.get("window").width;
   const theme = useTheme();
-
-  const cardStyle = {
-    borderWidth: 0.2,
-    borderRadius: 10,
-    margin: 8,
-    flex: 1,
-    elevation: 3,
-    backgroundColor: "#ffffff",
-  };
-
-  const funnelData = [
-    { step: "Campaign Applied", value: 100 },
-    { step: "Application Accepted", value: 80 },
-    { step: "Contract Created", value: 50 },
-    { step: "Successful Completion", value: 30 },
-  ];
-
-  const earningTimelineData = [
-    { value: 1000, label: "Jan 1" },
-    { value: 1500, label: "Jan 2" },
-    { value: 2000, label: "Jan 3" },
-    { value: 2500, label: "Jan 4" },
-    { value: 3000, label: "Jan 5" },
-    { value: 3500, label: "Jan 6" },
-    { value: 4000, label: "Jan 7" },
-  ];
-
-  const pieChartData = [
-    { value: 20, text: "Photography", frontColor: "#4caf50" },
-    { value: 30, text: "Videography", frontColor: "#2196f3" },
-    { value: 10, text: "Content Writing", frontColor: "#ff9800" },
-    { value: 40, text: "Graphic Design", frontColor: "#e91e63" },
-  ];
-
-  const topBrandsData = [
-    { value: 25, label: "Brand A", frontColor: "#4caf50" },
-    { value: 18, label: "Brand B", frontColor: "#2196f3" },
-    { value: 15, label: "Brand C", frontColor: "#ff9800" },
-    { value: 10, label: "Brand D", frontColor: "#e91e63" },
-  ];
-
-  const renderLegend = (data: any) => {
-    return (
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <View
-          style={{
-            width: 10,
-            height: 10,
-            backgroundColor: data?.frontColor,
-            borderRadius: 5,
-            margin: 5,
-          }}
-        />
-        <Text style={{ fontSize: 10 }}>{data?.label}</Text>
-      </View>
-    );
-  };
+  const styles = cardStyle(theme);
 
   return (
     <AppLayout>
@@ -99,7 +41,7 @@ const MyStatsScreen = () => {
             marginVertical: 10,
           }}
         >
-          <Card style={cardStyle}>
+          <Card style={styles.cardStyle}>
             <Card.Content
               style={{
                 paddingHorizontal: 10,
@@ -123,7 +65,7 @@ const MyStatsScreen = () => {
             </Card.Content>
           </Card>
 
-          <Card style={cardStyle}>
+          <Card style={styles.cardStyle}>
             <Card.Content
               style={{
                 paddingHorizontal: 10,
@@ -187,7 +129,7 @@ const MyStatsScreen = () => {
           </Card.Content>
         </Card>
 
-        <Card style={{ ...cardStyle, marginVertical: 10 }}>
+        <Card style={{ ...styles.cardStyle, marginVertical: 10 }}>
           <Card.Title title="Earning Timeline" />
           <Card.Content>
             <LineChart
@@ -201,7 +143,7 @@ const MyStatsScreen = () => {
           </Card.Content>
         </Card>
 
-        <Card style={{ ...cardStyle, marginVertical: 10 }}>
+        <Card style={{ ...styles.cardStyle, marginVertical: 10 }}>
           <Card.Title title="Most Active Categories" />
           <Card.Content
             style={{
@@ -286,5 +228,17 @@ const MyStatsScreen = () => {
     </AppLayout>
   );
 };
+
+const cardStyle = (theme: Theme) =>
+  StyleSheet.create({
+    cardStyle: {
+      borderWidth: 0.2,
+      borderRadius: 10,
+      margin: 8,
+      flex: 1,
+      elevation: 3,
+      backgroundColor: Colors(theme).background,
+    },
+  });
 
 export default MyStatsScreen;
