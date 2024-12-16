@@ -16,21 +16,26 @@ import { SocialPlatform } from "@/shared-libs/firestore/trendly-pro/constants/so
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faFacebook, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import { faStar } from "@fortawesome/free-regular-svg-icons";
+import { AuthApp } from "@/utils/auth";
+import { FirestoreDB } from "@/utils/firestore";
+import { collection, doc, getDoc, updateDoc } from "firebase/firestore";
+import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
+import { useAuthContext } from "@/contexts";
 
 interface SocialPageProps {
   name: string;
   handle: string;
   platform: SocialPlatform;
-  primary: boolean;
   image: string;
   profile: any;
+  id: string;
 }
 
 const SocialPage: React.FC<SocialPageProps> = ({
   name,
   handle,
   platform,
-  primary,
+  id,
   image,
   profile,
 }) => {
@@ -41,10 +46,31 @@ const SocialPage: React.FC<SocialPageProps> = ({
 
   const toggleMenu = () => setMenuVisible(!menuVisible);
 
+  const { user } = useAuthContext();
+
   const handleExpandEvents = (page: any) => {
     if (page.userName) {
       Linking.openURL("https://www.instagram.com/" + page.userName);
     }
+  };
+
+  const makePrimary = async () => {
+    const userId = AuthApp.currentUser?.uid;
+    if (!userId) return;
+
+    const userDocRef = doc(FirestoreDB, "users", userId);
+    const userDoc = await getDoc(userDocRef);
+    const userData = userDoc.data() as IUsers;
+
+    userData.primarySocial = id;
+
+    await updateDoc(userDocRef, { primarySocial: userData.primarySocial })
+      .then(() => {
+        Toaster.success("Social marked as primary");
+      })
+      .catch((error) => {
+        Toaster.error("Error marking social as primary");
+      });
   };
 
   return (
@@ -89,7 +115,7 @@ const SocialPage: React.FC<SocialPageProps> = ({
               color={Colors(theme).white}
             />
           </View>
-          {primary && (
+          {user?.primarySocial === id && (
             <View
               style={{
                 backgroundColor: Colors(theme).primary,
@@ -135,7 +161,9 @@ const SocialPage: React.FC<SocialPageProps> = ({
           >
             <>
               <Menu.Item
-                onPress={() => {}}
+                onPress={() => {
+                  makePrimary();
+                }}
                 title="Mark as Primary"
                 style={styles.menuStyle}
                 titleStyle={styles.menuTitleStyle}

@@ -5,7 +5,11 @@ import ScreenHeader from "@/components/ui/screen-header";
 import { useAuthContext } from "@/contexts";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import ProfileBottomSheet from "@/shared-uis/components/ProfileModal/Profile-Modal";
-import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import {
+  BottomSheetBackdrop,
+  BottomSheetModal,
+  BottomSheetScrollView,
+} from "@gorhom/bottom-sheet";
 import { useTheme } from "@react-navigation/native";
 import { useMemo, useRef, useState } from "react";
 import { Pressable } from "react-native";
@@ -15,7 +19,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 const EditProfileScreen: React.FC = () => {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const [unsavedChanges, setUnsavedChanges] = useState(false);
-  const [confirmationModalVisible, setConfirmationModalVisible] = useState(false);
+  const [confirmationModalVisible, setConfirmationModalVisible] =
+    useState(false);
 
   const theme = useTheme();
 
@@ -28,11 +33,9 @@ const EditProfileScreen: React.FC = () => {
     right: insets.right,
   });
 
-  const handleSheetChanges = (index: number) => { };
+  const handleSheetChanges = (index: number) => {};
 
-  const {
-    user,
-  } = useAuthContext();
+  const { user } = useAuthContext();
 
   const renderBackdrop = (props: any) => {
     return (
@@ -57,7 +60,7 @@ const EditProfileScreen: React.FC = () => {
                 return;
               }
 
-              bottomSheetModalRef.current?.present()
+              bottomSheetModalRef.current?.present();
             }}
             style={{ padding: 10 }}
           >
@@ -80,7 +83,6 @@ const EditProfileScreen: React.FC = () => {
         enablePanDownToClose={true}
         containerOffset={containerOffset}
         topInset={insets.top}
-        bottomInset={insets.bottom}
       >
         <BottomSheetScrollView>
           <ProfileBottomSheet

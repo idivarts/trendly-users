@@ -3,7 +3,7 @@ import { Text, View } from "@/components/theme/Themed";
 import ScreenHeader from "@/components/ui/screen-header";
 import AppLayout from "@/layouts/app-layout";
 import { ScrollView, Dimensions, StyleSheet } from "react-native";
-import { Card } from "react-native-paper";
+import { Button, Card } from "react-native-paper";
 import { BarChart, LineChart, PieChart } from "react-native-gifted-charts";
 import Colors from "@/constants/Colors";
 import { Theme, useTheme } from "@react-navigation/native";
@@ -20,7 +20,22 @@ const MyStatsScreen = () => {
 
   return (
     <AppLayout>
-      <ScreenHeader title="My Stats" />
+      <ScreenHeader
+        title="My Stats"
+        rightAction
+        rightActionButton={
+          //export button
+          <Button
+            mode="contained"
+            onPress={() => {}}
+            style={{
+              backgroundColor: Colors(theme).primary,
+            }}
+          >
+            Export
+          </Button>
+        }
+      />
 
       <ScrollView
         style={{
