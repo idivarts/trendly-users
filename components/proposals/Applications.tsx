@@ -206,6 +206,7 @@ const Applications = () => {
                       styles.title,
                       {
                         marginBottom: 10,
+                        color: Colors(theme).text,
                       },
                     ]}
                   >
@@ -214,7 +215,6 @@ const Applications = () => {
                   <View
                     style={{
                       backgroundColor: Colors(theme).card,
-
                       padding: 10,
                       borderRadius: 5,
                       justifyContent: "center",
@@ -236,6 +236,7 @@ const Applications = () => {
           }
           contentContainerStyle={{
             padding: 16,
+            paddingTop: 8,
             gap: 16,
           }}
           refreshControl={
@@ -253,52 +254,32 @@ const Applications = () => {
               style={{
                 justifyContent: "center",
                 alignItems: "center",
-                gap: 50,
+                padding: 20,
               }}
             >
-              <EmptyState
-                image={require("@/assets/images/illustration6.png")}
-                subtitle="No Applications Found"
-                hideAction
-              />
-
-              <Button
-                mode="contained"
-                onPress={() => router.push("/collaborations")}
+              <Text
+                style={[
+                  styles.title,
+                  {
+                    marginBottom: 10,
+                    color: Colors(theme).text,
+                  },
+                ]}
               >
-                New Collaborations
-              </Button>
+                Looking for past applications
+              </Text>
               <View
                 style={{
-                  alignItems: "center",
+                  backgroundColor: Colors(theme).card,
+                  padding: 10,
+                  borderRadius: 5,
                   justifyContent: "center",
-                  padding: 20,
+                  alignItems: "center",
                 }}
               >
-                <Text
-                  style={[
-                    styles.title,
-                    {
-                      marginBottom: 10,
-                      color: Colors(theme).text,
-                    },
-                  ]}
-                >
-                  Looking for past applications
-                </Text>
-                <View
-                  style={{
-                    backgroundColor: Colors(theme).card,
-                    padding: 10,
-                    borderRadius: 5,
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <Link href={"/past/application"} style={{}}>
-                    <Text>View Past Applications</Text>
-                  </Link>
-                </View>
+                <Link href={"/past/application"} style={{}}>
+                  <Text>View Past Applications</Text>
+                </Link>
               </View>
             </View>
           )}
@@ -317,7 +298,7 @@ const Applications = () => {
           />
         )
       }
-    </View >
+    </View>
   );
 };
 

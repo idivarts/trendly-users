@@ -18,6 +18,8 @@ import Toaster from "@/shared-uis/components/toaster/Toaster";
 interface SettingsProps {
   handleDeactivate: () => Promise<void>;
   handleDelete: () => Promise<void>;
+  isDeactivating: boolean;
+  isDeleting: boolean;
   onSave: (user: User) => void;
   user: User;
 }
@@ -25,6 +27,8 @@ interface SettingsProps {
 const Settings: React.FC<SettingsProps> = ({
   handleDeactivate,
   handleDelete,
+  isDeactivating,
+  isDeleting,
   onSave,
   user,
 }) => {
@@ -166,6 +170,7 @@ const Settings: React.FC<SettingsProps> = ({
           customStyles={{
             borderColor: Colors(theme).danger,
           }}
+          loading={isDeactivating}
           labelStyle={{
             color: Colors(theme).danger,
           }}
@@ -176,17 +181,23 @@ const Settings: React.FC<SettingsProps> = ({
           onPress={() => {
             setDeletionModalVisible(true);
           }}
+          loading={isDeleting}
           customStyles={{
             backgroundColor: Colors(theme).danger,
           }}
         >
-          <FontAwesomeIcon
-            icon={faTrash}
-            style={{
-              marginRight: 8,
-            }}
-            color={Colors(theme).white}
-          /> Delete Account
+          {
+            !isDeleting && (
+              <FontAwesomeIcon
+                icon={faTrash}
+                style={{
+                  marginRight: 8,
+                }}
+                color={Colors(theme).white}
+              />
+            )
+          }
+          {isDeleting ? "Deleting" : "Delete"} Account
         </Button>
       </View>
       <ConfirmationModal
@@ -209,8 +220,8 @@ const Settings: React.FC<SettingsProps> = ({
           setDeletionModalVisible(false);
         }}
         confirmAction={() => {
+          setDeletionModalVisible(false);
           handleDelete().then(() => {
-            setDeletionModalVisible(false);
             Toaster.success('Account deleted successfully');
           });
         }}

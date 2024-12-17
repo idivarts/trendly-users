@@ -6,6 +6,7 @@ import { useAuthContext } from "@/contexts";
 import { useState } from "react";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { User } from "@/types/User";
+import Toast from "react-native-toast-message";
 
 const PreferencesScreen = () => {
   const {
@@ -25,7 +26,7 @@ const PreferencesScreen = () => {
 
   const handleSave = async () => {
     await updateUser(updatedUser.id, updatedUser).then(() => {
-      Toaster.success('Preferences saved');
+      Toaster.success('Saved changes successfully');
     }).catch((error) => {
       Toaster.error('Error saving preferences');
     });
@@ -49,6 +50,7 @@ const PreferencesScreen = () => {
         user={user}
         onSave={handleOnSave}
       />
+      <Toast />
     </View>
   );
 };

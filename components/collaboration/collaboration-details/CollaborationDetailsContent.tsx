@@ -12,7 +12,7 @@ import { stylesFn } from "@/styles/CollaborationDetails.styles";
 import { FirestoreDB } from "@/utils/firestore";
 import { doc, updateDoc } from "firebase/firestore";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
-import { useAuthContext, useNotificationContext } from "@/contexts";
+import { useAuthContext, useChatContext, useNotificationContext } from "@/contexts";
 import Tag from "@/components/ui/tag";
 import { CollaborationDetail } from ".";
 import { Invitation } from "@/types/Collaboration";
@@ -37,6 +37,10 @@ const CollborationDetailsContent = (props: CollaborationDetailsContentProps) => 
   const { createNotification } = useNotificationContext();
   const { user } = useAuthContext();
 
+  const {
+    createGroupWithMembers,
+  } = useChatContext();
+
   const acceptInvitation = async () => {
     if (!props.invitationData) return;
 
@@ -51,31 +55,34 @@ const CollborationDetailsContent = (props: CollaborationDetailsContentProps) => 
     await updateDoc(invitationRef, {
       status: "accepted",
     }).then(() => {
-      createNotification(
-        props?.invitationData?.managerId || "",
-        {
-          data: {
-            userId: user?.id,
-            collaborationId: props.invitationData?.collaborationId,
+      if (!user?.id) return;
+
+      createGroupWithMembers(
+        props.collaborationDetail.name,
+        [user?.id]
+      ).then((channel) => {
+        createNotification(
+          props?.invitationData?.managerId || "",
+          {
+            data: {
+              userId: user?.id,
+              collaborationId: props.invitationData?.collaborationId,
+            },
+            description: `${user?.name} with email id ${user?.email} accepted invitation to collaborate for ${props.collaborationDetail.name}`,
+            isRead: false,
+            timeStamp: Date.now(),
+            title: "Invitation Accepted",
+            type: "invitation-accepted",
           },
-          description: `${user?.name} with email id ${user?.email} accepted invitation to collaborate for ${props.collaborationDetail.name}`,
-          isRead: false,
-          timeStamp: Date.now(),
-          title: "Invitation Accepted",
-          type: "invitation-accepted",
-        },
-        "managers"
-      );
+          "managers"
+        );
+
+        setStatus("accepted");
+        Toaster.success("Invitation accepted successfully");
+
+        // Redirect to chat screen - channel
+      });
     });
-
-    Toaster.success("Invitation accepted successfully");
-
-    props.invitationData = {
-      ...props.invitationData,
-      status: "accepted",
-    };
-    setStatus("accepted");
-    Toaster.success("Invitation Accepted");
   };
 
   const rejectInvitation = () => {
