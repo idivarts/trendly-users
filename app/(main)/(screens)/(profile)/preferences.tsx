@@ -4,10 +4,13 @@ import { Text, View } from "@/components/theme/Themed";
 import ScreenHeader from "@/components/ui/screen-header";
 import { useAuthContext } from "@/contexts";
 import { useState } from "react";
+import Toaster from "@/shared-uis/components/toaster/Toaster";
+import { User } from "@/types/User";
 
 const PreferencesScreen = () => {
   const {
     user,
+    updateUser,
   } = useAuthContext();
 
   if (!user) {
@@ -16,12 +19,16 @@ const PreferencesScreen = () => {
 
   const [updatedUser, setUpdatedUser] = useState(user);
 
-  const handleOnSave = (user: any) => {
+  const handleOnSave = (user: User) => {
     setUpdatedUser(user);
   }
 
-  const handleSave = () => {
-    console.log('User', updatedUser);
+  const handleSave = async () => {
+    await updateUser(updatedUser.id, updatedUser).then(() => {
+      Toaster.success('Preferences saved');
+    }).catch((error) => {
+      Toaster.error('Error saving preferences');
+    });
   }
 
   return (
