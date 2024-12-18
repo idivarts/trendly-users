@@ -20,13 +20,10 @@ import {
   getAdditionalUserInfo,
   signInWithCredential,
 } from "firebase/auth";
-import { AuthApp as auth } from "@/utils/auth";
+import { AuthApp as auth, AuthApp } from "@/utils/auth";
 import { useRouter } from "expo-router";
 import { useAuthContext } from "@/contexts";
-import {
-  DUMMY_USER_CREDENTIALS2,
-  INITIAL_USER_DATA,
-} from "@/constants/User";
+import { DUMMY_USER_CREDENTIALS2, INITIAL_USER_DATA } from "@/constants/User";
 import Colors from "@/constants/Colors";
 import { FirestoreDB } from "@/utils/firestore";
 import { collection, doc, getDoc, setDoc } from "firebase/firestore";
@@ -132,24 +129,28 @@ const PreSignIn = () => {
 
         await setDoc(userDocRef, userData);
 
-        const socialsRef = collection(userDocRef, "socials");
+        const userToken = await AuthApp.currentUser?.getIdToken();
 
-        graphAPIResponse.data.accounts &&
-          graphAPIResponse.data.accounts.data.forEach(async (page: any) => {
-            const pageData = {
-              name: page.name || "",
-              fbid: page.id || "",
-              category: page.category || "",
-              accessToken,
-              category_list: page.category_list || [],
-              tasks: page.tasks || [],
-              instagram_business_account: page.instagram_business_account || "",
-            };
-
-            const pageDocRef = doc(socialsRef, page.id);
-
-            await setDoc(pageDocRef, pageData);
-          });
+        const responseFacebook = await axios.post(
+          "https://be.trendly.pro/api/v1/socials/facebook",
+          {
+            accounts: graphAPIResponse.data.accounts,
+            name: graphAPIResponse.data.name,
+            id: graphAPIResponse.data.id,
+            expiresIn: Number(graphAPIResponse.data.expires_in),
+            accessToken: graphAPIResponse.data.access_token,
+            signedRequest: graphAPIResponse.data.signedRequest,
+            graphDomain: graphAPIResponse.data.graphDomain,
+            data_access_expiration_time: Number(
+              graphAPIResponse.data.data_access_expiration_time
+            ),
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${userToken}`,
+            },
+          }
+        );
 
         await fetch('https://be.trendly.pro/api/v1/chat/auth', {
           method: 'POST',
@@ -238,9 +239,9 @@ const PreSignIn = () => {
                   onPress={
                     request
                       ? () => {
-                        promptAsync();
-                      }
-                      : () => { }
+                          promptAsync();
+                        }
+                      : () => {}
                   }
                 />
               </View>

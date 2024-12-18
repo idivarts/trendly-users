@@ -73,22 +73,28 @@ const FacebookLoginButton: React.FC<FacebookLoginButtonProps> = ({
         }
       );
 
-      graphAPIResponse.data.accounts &&
-        graphAPIResponse.data.accounts.data.forEach(async (page: any) => {
-          const pageData = {
-            name: page.name || "",
-            fbid: page.id || "",
-            category: page.category || "",
-            accessToken,
-            category_list: page.category_list || [],
-            tasks: page.tasks || [],
-            instagram_business_account: page.instagram_business_account || "",
-          };
+      const user = await AuthApp.currentUser?.getIdToken();
 
-          const pageDocRef = doc(socialsRef, page.id);
-
-          await setDoc(pageDocRef, pageData);
-        });
+      const responseFacebook = await axios.post(
+        "https://be.trendly.pro/api/v1/socials/facebook",
+        {
+          accounts: graphAPIResponse.data.accounts,
+          name: graphAPIResponse.data.name,
+          id: graphAPIResponse.data.id,
+          expiresIn: Number(graphAPIResponse.data.expires_in),
+          accessToken: graphAPIResponse.data.access_token,
+          signedRequest: graphAPIResponse.data.signedRequest,
+          graphDomain: graphAPIResponse.data.graphDomain,
+          data_access_expiration_time: Number(
+            graphAPIResponse.data.data_access_expiration_time
+          ),
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${user}`,
+          },
+        }
+      );
     } catch (error) {
       console.error(error);
     }
