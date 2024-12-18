@@ -93,6 +93,13 @@ const PreSignIn = () => {
 
         const findUser = await getDoc(userDocRef);
         if (findUser.exists()) {
+          await fetch('https://be.trendly.pro/api/v1/chat/auth', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${result.user.uid}`,
+            },
+          });
           firebaseSignIn(result.user.uid);
           return;
         }
@@ -144,6 +151,15 @@ const PreSignIn = () => {
             },
           }
         );
+
+
+        await fetch('https://be.trendly.pro/api/v1/chat/auth', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${result.user.uid}`,
+          },
+        });
 
         firebaseSignUp(result.user.uid);
       }

@@ -8,12 +8,13 @@ import {
 } from "react";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { useRouter } from "expo-router";
-import { doc, getDoc, onSnapshot, setDoc, updateDoc } from "firebase/firestore";
+import { collection, deleteDoc, doc, getDoc, getDocs, onSnapshot, query, setDoc, updateDoc, where, writeBatch } from "firebase/firestore";
 import { FirestoreDB } from "@/utils/firestore";
 import { User } from "@/types/User";
 import { AuthApp } from "@/utils/auth";
 import {
   createUserWithEmailAndPassword,
+  deleteUser,
   sendEmailVerification,
   signInWithEmailAndPassword,
   signOut,
@@ -22,6 +23,7 @@ import { analyticsLogEvent } from "@/utils/analytics";
 import { INITIAL_USER_DATA } from "@/constants/User";
 
 interface AuthContextProps {
+  deleteUserAccount: (userId: string) => Promise<void>;
   firebaseSignIn: (token: string) => void;
   firebaseSignUp: (token: string) => void;
   getUser: (userId: string) => Promise<User | null>;
@@ -36,6 +38,7 @@ interface AuthContextProps {
 }
 
 const AuthContext = createContext<AuthContextProps>({
+  deleteUserAccount: () => Promise.resolve(),
   firebaseSignIn: (token: string) => null,
   firebaseSignUp: (token: string) => null,
   getUser: () => Promise.resolve(null),
@@ -89,7 +92,16 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
         email,
         password
       );
+
       setSession(userCredential.user.uid);
+
+      await fetch('https://be.trendly.pro/api/v1/chat/auth', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${userCredential.user.uid}`,
+        },
+      });
 
       await analyticsLogEvent('signed_in', {
         id: userCredential.user.uid,
@@ -121,6 +133,14 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
       });
 
       setSession(userCredential.user.uid);
+
+      await fetch('https://be.trendly.pro/api/v1/chat/auth', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${userCredential.user.uid}`,
+        },
+      });
 
       // For non-existing users, redirect to the onboarding screen.
       router.replace("/questions");
@@ -223,9 +243,79 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
     });
   };
 
+  const deleteUserReferences = async (
+    userId: string,
+    collectionName: string,
+    subcollectionName: string
+  ) => {
+    const mainCollectionRef = collection(FirestoreDB, collectionName);
+    const mainCollectionSnapshot = await getDocs(mainCollectionRef);
+
+    for (const mainDoc of mainCollectionSnapshot.docs) {
+      const subcollectionRef = collection(mainDoc.ref, subcollectionName);
+      const userQuery = query(subcollectionRef, where("userId", "==", userId));
+      const userSnapshot = await getDocs(userQuery);
+
+      userSnapshot.forEach((doc) => {
+        deleteDoc(doc.ref);
+      });
+    }
+  };
+
+  const deleteManagerNotifications = async (userId: string) => {
+    const managersRef = collection(FirestoreDB, "managers");
+    const managersSnapshot = await getDocs(managersRef);
+
+    for (const managerDoc of managersSnapshot.docs) {
+      const notificationsRef = collection(managerDoc.ref, "notifications");
+      const userQuery = query(notificationsRef, where("data.userId", "==", userId));
+      const notificationsSnapshot = await getDocs(userQuery);
+
+      notificationsSnapshot.forEach((doc) => {
+        deleteDoc(doc.ref);
+      });
+    }
+  };
+
+  const deleteUserAccount = async (userId: string) => {
+    try {
+      const user = AuthApp.currentUser;
+
+      if (!user) {
+        console.error("No authenticated user.");
+        return;
+      }
+
+      const batch = writeBatch(FirestoreDB);
+
+      const notificationsRef = collection(FirestoreDB, `users/${userId}/notifications`);
+      const notificationsSnapshot = await getDocs(notificationsRef);
+
+      notificationsSnapshot.forEach((doc) => {
+        batch.delete(doc.ref);
+      });
+
+      await deleteUserReferences(userId, "collaborations", "applications");
+
+      await deleteUserReferences(userId, "collaborations", "invitations");
+
+      await deleteManagerNotifications(userId);
+
+      const userDocRef = doc(FirestoreDB, "users", userId);
+      batch.delete(userDocRef);
+
+      await batch.commit();
+
+      await deleteUser(user);
+    } catch (error) {
+      console.error("Error deleting account:", error);
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
+        deleteUserAccount,
         firebaseSignIn,
         firebaseSignUp,
         getUser,

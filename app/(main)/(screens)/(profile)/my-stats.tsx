@@ -37,6 +37,7 @@ const MyStatsScreen = () => {
         }
       />
 
+
       <ScrollView
         style={{
           flex: 1,
