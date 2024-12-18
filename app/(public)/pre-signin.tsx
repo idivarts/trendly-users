@@ -334,6 +334,17 @@ const PreSignIn = () => {
                   icon={faFacebook}
                   label="Login with Facebook"
                   onPress={
+                    request
+                      ? () => {
+                          promptAsync();
+                        }
+                      : () => {}
+                  }
+                />
+                <SocialButton
+                  icon={faInstagram}
+                  label="Login with Instagram"
+                  onPress={
                     requestInstagram
                       ? () => {
                           promptAsyncInstagram();
