@@ -64,7 +64,7 @@ const ConnectedSocials: React.FC = () => {
                     ? SocialPlatform.INSTAGRAM
                     : SocialPlatform.FACEBOOK
                 }
-                primary={item.primary}
+                id={item.id}
                 image={item.image}
               />
             )}

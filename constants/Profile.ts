@@ -29,13 +29,6 @@ export const PROFILE_ITEMS = [
     route: "/my-stats",
   },
   {
-    id: "4",
-    title: "Reports",
-    active: false,
-    icon: faFileLines,
-    route: "/reports",
-  },
-  {
     id: "5",
     title: "Help and Support",
     active: false,

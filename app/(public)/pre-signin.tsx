@@ -152,6 +152,7 @@ const PreSignIn = () => {
           }
         );
 
+
         await fetch('https://be.trendly.pro/api/v1/chat/auth', {
           method: 'POST',
           headers: {
