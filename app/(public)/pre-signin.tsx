@@ -236,15 +236,12 @@ const PreSignIn = () => {
   };
 
   const handleInstagramSignIn = async (accessToken: string) => {
-    console.log("accessToken", accessToken);
-
     await axios
       .post("https://be.trendly.pro/instagram/auth", {
         code: accessToken,
         redirect_type: Platform.OS === "web" ? "2" : "3",
       })
       .then(async (response) => {
-        console.log("response", response.data);
         const user = await signInWithCustomToken(
           auth,
           response.data.data.firebaseCustomToken
