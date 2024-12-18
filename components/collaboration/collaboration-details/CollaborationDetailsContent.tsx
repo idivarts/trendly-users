@@ -39,6 +39,7 @@ const CollborationDetailsContent = (props: CollaborationDetailsContentProps) => 
 
   const {
     createGroupWithMembers,
+    connectUser,
   } = useChatContext();
 
   const acceptInvitation = async () => {
@@ -61,6 +62,8 @@ const CollborationDetailsContent = (props: CollaborationDetailsContentProps) => 
         props.collaborationDetail.name,
         [user?.id]
       ).then((channel) => {
+        connectUser();
+
         createNotification(
           props?.invitationData?.managerId || "",
           {
@@ -80,7 +83,7 @@ const CollborationDetailsContent = (props: CollaborationDetailsContentProps) => 
         setStatus("accepted");
         Toaster.success("Invitation accepted successfully");
 
-        // Redirect to chat screen - channel
+        router.navigate(`/channel/${channel.cid}`);
       });
     });
   };

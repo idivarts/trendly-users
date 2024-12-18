@@ -18,12 +18,12 @@ interface ChatContextProps {
     groupName: string,
     members: string[],
   ) => Promise<Channel>;
-  client: StreamChat<DefaultGenerics> | null;
+  connectUser: () => void;
 }
 
 const ChatContext = createContext<ChatContextProps>({
   createGroupWithMembers: async () => Promise.resolve({} as Channel),
-  client: null,
+  connectUser: async () => { },
 });
 
 export const useChatContext = () => useContext(ChatContext);
@@ -110,7 +110,7 @@ export const ChatContextProvider: React.FC<PropsWithChildren> = ({
 
     const data = await response.json();
 
-    return data;
+    return data.channel;
   };
 
   return (
@@ -119,7 +119,7 @@ export const ChatContextProvider: React.FC<PropsWithChildren> = ({
         <ChatContext.Provider
           value={{
             createGroupWithMembers,
-            client,
+            connectUser,
           }}
         >
           {children}
