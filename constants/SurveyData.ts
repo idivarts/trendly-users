@@ -28,19 +28,15 @@ export const SURVEY_DATA = [
   },
   {
     id: 3,
-    question: "How many followers do you have?",
-    options: [
-      "Less than 10k",
-      "Less than 100k",
-      "Less than 1M",
-      "More than 1M",
-    ],
-    multiselect: false,
+    question:
+      "Which content format are you willing to post on your social media account for promotions?",
+    options: ["Post", "Reels", "Stories", "Videos", "Live"],
+    multiselect: true,
   },
   {
     id: 4,
-    question: "Which social platforms do you actively work on?",
-    options: ["Instagram", "Facebook", "YouTube", "Threads", "Others"],
+    question: "Which language do you create your content in?",
+    options: ["English", "Hindi", "Bengali", "Others"],
     multiselect: true,
   },
 ];
