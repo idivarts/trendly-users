@@ -110,17 +110,6 @@ const Questions = () => {
     return (
       <View style={styles.container}>
         <View style={styles.header}>
-          <Pressable
-            onPress={() => {
-              console.log("back");
-            }}
-          >
-            <FontAwesomeIcon
-              icon={faChevronLeft}
-              size={24}
-              color={Colors(theme).text}
-            />
-          </Pressable>
           <Text style={styles.questionText}>
             Select your primary social media
           </Text>
@@ -140,8 +129,7 @@ const Questions = () => {
             <Pressable
               key={item.id}
               onPress={() => {
-                setSelectedSocialId(item.id); // Update the selected social media
-                console.log(`Selected social: ${item.name}`);
+                setSelectedSocialId(item.id);
               }}
             >
               <View
