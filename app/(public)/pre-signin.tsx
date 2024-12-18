@@ -19,6 +19,7 @@ import {
   FacebookAuthProvider,
   getAdditionalUserInfo,
   signInWithCredential,
+  signInWithCustomToken,
 } from "firebase/auth";
 import { AuthApp as auth, AuthApp } from "@/utils/auth";
 import { useRouter } from "expo-router";
@@ -26,7 +27,7 @@ import { useAuthContext } from "@/contexts";
 import { DUMMY_USER_CREDENTIALS2, INITIAL_USER_DATA } from "@/constants/User";
 import Colors from "@/constants/Colors";
 import { FirestoreDB } from "@/utils/firestore";
-import { collection, doc, getDoc, setDoc } from "firebase/firestore";
+import { collection, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import BottomSheetActions from "@/components/BottomSheetActions";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faEllipsis, faEnvelope } from "@fortawesome/free-solid-svg-icons";
@@ -35,6 +36,8 @@ import { faFacebook, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import { imageUrl } from "@/utils/url";
 import { FB_APP_ID } from "@/constants/Facebook";
 import axios from "axios";
+import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
+import Toaster from "@/shared-uis/components/toaster/Toaster";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -49,12 +52,43 @@ const PreSignIn = () => {
 
   const router = useRouter();
 
+  const redirectUri = AuthSession.makeRedirectUri({
+    native: `fb${FB_APP_ID}://authorize`,
+  });
+
+  const authUrl = `https://be.trendly.pro/instagram`;
+
+  const [requestInstagram, responseInstagram, promptAsyncInstagram] =
+    AuthSession.useAuthRequest(
+      {
+        clientId: FB_APP_ID,
+        redirectUri,
+      },
+      {
+        authorizationEndpoint: `${authUrl}?redirect_type=${
+          Platform.OS === "web" ? 2 : 3
+        }&`,
+      }
+    );
+
+  useEffect(() => {
+    if (
+      responseInstagram?.type === "success" ||
+      responseInstagram?.type === "error"
+    ) {
+      const { code } = responseInstagram.params;
+      if (code) {
+        handleInstagramSignIn(code);
+      } else {
+        console.log("Instagram login failed. Please try again.");
+      }
+    }
+  }, [responseInstagram]);
+
   const [request, response, promptAsync] = AuthSession.useAuthRequest(
     {
       clientId: FB_APP_ID,
-      redirectUri: AuthSession.makeRedirectUri({
-        native: `fb${FB_APP_ID}://authorize`,
-      }),
+      redirectUri,
       responseType: AuthSession.ResponseType.Token,
       scopes: [
         "public_profile",
@@ -70,6 +104,10 @@ const PreSignIn = () => {
 
   const handleFacebookSignIn = async () => {
     await promptAsync();
+  };
+
+  const handleInstagramSignInAsync = async () => {
+    await promptAsyncInstagram();
   };
 
   useEffect(() => {
@@ -93,11 +131,11 @@ const PreSignIn = () => {
 
         const findUser = await getDoc(userDocRef);
         if (findUser.exists()) {
-          await fetch('https://be.trendly.pro/api/v1/chat/auth', {
-            method: 'POST',
+          await fetch("https://be.trendly.pro/api/v1/chat/auth", {
+            method: "POST",
             headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${result.user.uid}`,
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${result.user.uid}`,
             },
           });
           firebaseSignIn(result.user.uid);
@@ -152,14 +190,41 @@ const PreSignIn = () => {
           }
         );
 
-
-        await fetch('https://be.trendly.pro/api/v1/chat/auth', {
-          method: 'POST',
+        await fetch("https://be.trendly.pro/api/v1/chat/auth", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${result.user.uid}`,
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${result.user.uid}`,
           },
         });
+        if (
+          !graphAPIResponse.data.accounts ||
+          graphAPIResponse.data.accounts.length === 0
+        ) {
+          firebaseSignUp(result.user.uid, false);
+        }
+
+        if (
+          graphAPIResponse.data.accounts &&
+          graphAPIResponse.data.accounts.data.length === 1
+        ) {
+          //update and make this as the primary social
+          const userDocRef = doc(FirestoreDB, "users", result.user.uid);
+          const userDoc = await getDoc(userDocRef);
+          const userData = userDoc.data() as IUsers;
+
+          userData.primarySocial = graphAPIResponse.data.accounts.data[0].id;
+
+          await updateDoc(userDocRef, {
+            primarySocial: userData.primarySocial,
+          })
+            .then(() => {
+              Toaster.success("Social marked as primary");
+            })
+            .catch((error) => {
+              Toaster.error("Error marking social as primary");
+            });
+        }
 
         firebaseSignUp(result.user.uid);
       }
@@ -168,6 +233,41 @@ const PreSignIn = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleInstagramSignIn = async (accessToken: string) => {
+    console.log("accessToken", accessToken);
+
+    await axios
+      .post("https://be.trendly.pro/instagram/auth", {
+        code: accessToken,
+        redirect_type: Platform.OS === "web" ? "2" : "3",
+      })
+      .then(async (response) => {
+        console.log("response", response.data);
+        const user = await signInWithCustomToken(
+          auth,
+          response.data.data.firebaseCustomToken
+        );
+        if (response.data.data.isExistingUser) {
+          firebaseSignIn(user.user.uid);
+        } else {
+          const userCollection = collection(FirestoreDB, "users");
+          const userDocRef = doc(userCollection, user.user.uid);
+          const userData = {
+            ...INITIAL_USER_DATA,
+          };
+
+          await updateDoc(userDocRef, userData);
+          firebaseSignUp(user.user.uid, true);
+        }
+      })
+      .catch((error: Error) => {
+        console.error("Error signing in with Instagram: ", error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   const skipToConnect = () => {
@@ -181,10 +281,6 @@ const PreSignIn = () => {
 
   const handleEmailSignIn = () => {
     router.navigate("/login");
-  };
-
-  const handleInstagramSignIn = () => {
-    signIn(DUMMY_USER_CREDENTIALS2.email, DUMMY_USER_CREDENTIALS2.password);
   };
 
   return (
@@ -238,9 +334,9 @@ const PreSignIn = () => {
                   icon={faFacebook}
                   label="Login with Facebook"
                   onPress={
-                    request
+                    requestInstagram
                       ? () => {
-                          promptAsync();
+                          promptAsyncInstagram();
                         }
                       : () => {}
                   }
@@ -262,7 +358,7 @@ const PreSignIn = () => {
                 <SocialButton
                   icon={faInstagram}
                   label="Login with Instagram"
-                  onPress={handleInstagramSignIn}
+                  onPress={handleInstagramSignInAsync}
                 />
               </View>
             )}

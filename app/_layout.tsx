@@ -23,6 +23,7 @@ import {
 } from "@/contexts";
 import CustomPaperTheme from "@/constants/Theme";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { SocialContextProvider } from "@/contexts/social-context.provider";
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
@@ -59,19 +60,21 @@ const RootLayout = () => {
 
   return (
     <AuthContextProvider>
-      <GestureHandlerRootView>
-        <BottomSheetModalProvider>
-          <AWSContextProvider>
-            <FirebaseStorageContextProvider>
-              <NotificationContextProvider>
-                <CloudMessagingContextProvider>
-                  <RootLayoutStack />
-                </CloudMessagingContextProvider>
-              </NotificationContextProvider>
-            </FirebaseStorageContextProvider>
-          </AWSContextProvider>
-        </BottomSheetModalProvider>
-      </GestureHandlerRootView>
+      <SocialContextProvider>
+        <GestureHandlerRootView>
+          <BottomSheetModalProvider>
+            <AWSContextProvider>
+              <FirebaseStorageContextProvider>
+                <NotificationContextProvider>
+                  <CloudMessagingContextProvider>
+                    <RootLayoutStack />
+                  </CloudMessagingContextProvider>
+                </NotificationContextProvider>
+              </FirebaseStorageContextProvider>
+            </AWSContextProvider>
+          </BottomSheetModalProvider>
+        </GestureHandlerRootView>
+      </SocialContextProvider>
     </AuthContextProvider>
   );
 };
@@ -106,13 +109,11 @@ const RootLayoutStack = () => {
       // User can't access main group if not signed in
       router.replace("/login");
     }
-  }, [session, isLoading]);
+  }, [session, isLoading, user]);
 
   return (
     <ThemeProvider value={appTheme === "dark" ? DarkTheme : ExpoDefaultTheme}>
-      <Provider
-        theme={CustomPaperTheme(theme)}
-      >
+      <Provider theme={CustomPaperTheme(theme)}>
         <Stack
           screenOptions={{
             animation: "ios",
