@@ -56,7 +56,6 @@ const InstagramLoginButton: React.FC<FacebookLoginButtonProps> = () => {
   const handleAddAccount = async (accessToken: string) => {
     setIsLoading(true);
     try {
-      console.log("Instagram access token: ", accessToken);
       const token = await user?.getIdToken();
       await axios
         .post(
@@ -71,9 +70,7 @@ const InstagramLoginButton: React.FC<FacebookLoginButtonProps> = () => {
             },
           }
         )
-        .then(async (response) => {
-          console.log("Instagram account added successfully: ", response.data);
-        });
+        .then(async (response) => {});
       setIsLoading(false);
     } catch (error) {
       console.log("Error adding Instagram account: ", error);

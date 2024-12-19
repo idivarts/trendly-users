@@ -77,7 +77,6 @@ const PrimarySocialSelect = () => {
             key={item.id}
             onPress={() => {
               setSelectedSocialId(item.id); // Update the selected social media
-              console.log(`Selected social: ${item.name}`);
             }}
           >
             <View
