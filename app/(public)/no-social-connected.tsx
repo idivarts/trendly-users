@@ -1,4 +1,5 @@
 import FacebookLoginButton from "@/components/profile/ConnectWithFacebook";
+import InstagramLoginButton from "@/components/profile/ConnectWithInstagram";
 import Colors from "@/constants/Colors";
 import { useAuthContext } from "@/contexts";
 import { useSocialContext } from "@/contexts";
@@ -74,17 +75,7 @@ const TrendlyScreen = () => {
         {/* Buttons */}
         <View style={styles.buttonContainer}>
           <FacebookLoginButton onFacebookLogin={() => {}} />
-          <Button
-            mode="contained"
-            style={styles.button}
-            icon="instagram"
-            labelStyle={{
-              color: Colors(theme).white,
-              fontSize: 16,
-            }}
-          >
-            Add Instagram Account
-          </Button>
+          <InstagramLoginButton onFacebookLogin={() => {}} />
         </View>
       </View>
     </AppLayout>
