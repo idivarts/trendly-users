@@ -5,10 +5,7 @@ import * as WebBrowser from "expo-web-browser";
 import * as AuthSession from "expo-auth-session";
 import { Platform, View } from "react-native";
 import { FB_APP_ID as fbid } from "@/constants/Facebook";
-import { FirestoreDB } from "@/utils/firestore";
 import { AuthApp } from "@/utils/auth";
-import { collection, doc, setDoc } from "firebase/firestore";
-import { useSocialContext } from "@/contexts/social-context.provider";
 
 interface FacebookLoginButtonProps {
   onFacebookLogin: (userId: string | null) => void;

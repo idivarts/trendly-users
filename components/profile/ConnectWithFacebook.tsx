@@ -8,7 +8,6 @@ import { FB_APP_ID as fbid } from "@/constants/Facebook";
 import { FirestoreDB } from "@/utils/firestore";
 import { AuthApp } from "@/utils/auth";
 import { collection, doc, setDoc } from "firebase/firestore";
-import { useSocialContext } from "@/contexts/social-context.provider";
 
 interface FacebookLoginButtonProps {
   onFacebookLogin: (userId: string | null) => void;

@@ -1,7 +1,7 @@
 import FacebookLoginButton from "@/components/profile/ConnectWithFacebook";
 import Colors from "@/constants/Colors";
 import { useAuthContext } from "@/contexts";
-import { useSocialContext } from "@/contexts/social-context.provider";
+import { useSocialContext } from "@/contexts";
 import AppLayout from "@/layouts/app-layout";
 import { imageUrl } from "@/utils/url";
 import { useTheme } from "@react-navigation/native";

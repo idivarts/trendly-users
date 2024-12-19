@@ -121,8 +121,6 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
         email: userCredential.user.email,
       });
 
-      // For existing users, redirect to the main screen.
-      // router.replace("/collaborations");
       Toaster.success("Signed In Successfully!");
     } catch (error) {
       console.error("Error signing in: ", error);

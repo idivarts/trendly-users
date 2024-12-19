@@ -15,7 +15,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Select from "@/components/ui/select";
 import { Text, View } from "@/components/theme/Themed";
-import { useSocialContext } from "@/contexts/social-context.provider";
+import { useSocialContext } from "@/contexts";
 import { useAuthContext } from "@/contexts";
 import { faFacebook, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
