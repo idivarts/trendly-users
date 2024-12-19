@@ -84,13 +84,11 @@ const EditProfileScreen: React.FC = () => {
         containerOffset={containerOffset}
         topInset={insets.top}
       >
-        <BottomSheetScrollView>
-          <ProfileBottomSheet
-            influencer={user as IUsers}
-            theme={theme}
-            isBrandsApp={true}
-          />
-        </BottomSheetScrollView>
+        <ProfileBottomSheet
+          influencer={user as IUsers}
+          theme={theme}
+          isBrandsApp={false}
+        />
       </BottomSheetModal>
 
       <ConfirmationModal

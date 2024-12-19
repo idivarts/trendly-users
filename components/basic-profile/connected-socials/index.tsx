@@ -8,6 +8,7 @@ import { collection, getDocs } from "firebase/firestore";
 import { FirestoreDB } from "@/utils/firestore";
 import { AuthApp } from "@/utils/auth";
 import { ActivityIndicator } from "react-native-paper";
+import InstagramLoginButton from "@/components/profile/ConnectWithInstagram";
 
 const ConnectedSocials: React.FC = () => {
   const [socials, setSocials] = useState<any>();
@@ -74,6 +75,7 @@ const ConnectedSocials: React.FC = () => {
             }}
           />
           <FacebookLoginButton onFacebookLogin={() => {}} />
+          <InstagramLoginButton onFacebookLogin={() => {}} />
         </>
       )}
     </View>

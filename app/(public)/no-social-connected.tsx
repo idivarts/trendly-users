@@ -3,6 +3,7 @@ import Colors from "@/constants/Colors";
 import { useAuthContext } from "@/contexts";
 import { useSocialContext } from "@/contexts/social-context.provider";
 import AppLayout from "@/layouts/app-layout";
+import { imageUrl } from "@/utils/url";
 import { useTheme } from "@react-navigation/native";
 import { router } from "expo-router";
 import React, { useEffect } from "react";
@@ -50,7 +51,7 @@ const TrendlyScreen = () => {
         <View>
           <View style={styles.imageContainer}>
             <Image
-              source={require("../../assets/images/illustration3.png")} // Replace with your local image
+              source={imageUrl(require("@/assets/images/illustration3.png"))} // Replace with your local image
               style={styles.image}
               resizeMode="contain"
             />
