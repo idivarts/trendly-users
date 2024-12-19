@@ -70,9 +70,10 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ item, onPress }) => {
         return;
       }
 
-      const imageToShow = user?.profile?.attachments
-        ? user.profile.attachments[0]
-        : null;
+      const imageToShow =
+        user?.profile?.attachments && user.profile.attachments[0]
+          ? user.profile.attachments[0]
+          : null;
 
       if (imageToShow === null) {
         setImage(user?.profileImage || PLACEHOLDER_PERSON_IMAGE);

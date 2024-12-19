@@ -8,7 +8,19 @@ import {
 } from "react";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { useRouter } from "expo-router";
-import { collection, deleteDoc, doc, getDoc, getDocs, onSnapshot, query, setDoc, updateDoc, where, writeBatch } from "firebase/firestore";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  onSnapshot,
+  query,
+  setDoc,
+  updateDoc,
+  where,
+  writeBatch,
+} from "firebase/firestore";
 import { FirestoreDB } from "@/utils/firestore";
 import { User } from "@/types/User";
 import { AuthApp } from "@/utils/auth";
@@ -25,7 +37,7 @@ import { INITIAL_USER_DATA } from "@/constants/User";
 interface AuthContextProps {
   deleteUserAccount: (userId: string) => Promise<void>;
   firebaseSignIn: (token: string) => void;
-  firebaseSignUp: (token: string) => void;
+  firebaseSignUp: (token: string, hasSocials?: boolean) => void;
   getUser: (userId: string) => Promise<User | null>;
   isLoading: boolean;
   session?: string | null;
@@ -40,7 +52,7 @@ interface AuthContextProps {
 const AuthContext = createContext<AuthContextProps>({
   deleteUserAccount: () => Promise.resolve(),
   firebaseSignIn: (token: string) => null,
-  firebaseSignUp: (token: string) => null,
+  firebaseSignUp: (token: string, hasSocials?: boolean) => null,
   getUser: () => Promise.resolve(null),
   isLoading: false,
   session: null,
@@ -95,22 +107,20 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
 
       setSession(userCredential.user.uid);
 
-      await fetch('https://be.trendly.pro/api/v1/chat/auth', {
-        method: 'POST',
+      await fetch("https://be.trendly.pro/api/v1/chat/auth", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${userCredential.user.uid}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userCredential.user.uid}`,
         },
       });
 
-      await analyticsLogEvent('signed_in', {
+      await analyticsLogEvent("signed_in", {
         id: userCredential.user.uid,
         name: userCredential.user.displayName,
         email: userCredential.user.email,
       });
 
-      // For existing users, redirect to the main screen.
-      router.replace("/collaborations");
       Toaster.success("Signed In Successfully!");
     } catch (error) {
       console.error("Error signing in: ", error);
@@ -134,11 +144,11 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
 
       setSession(userCredential.user.uid);
 
-      await fetch('https://be.trendly.pro/api/v1/chat/auth', {
-        method: 'POST',
+      await fetch("https://be.trendly.pro/api/v1/chat/auth", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${userCredential.user.uid}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${userCredential.user.uid}`,
         },
       });
 
@@ -158,10 +168,15 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
     Toaster.success("Signed In Successfully!");
   };
 
-  const firebaseSignUp = async (token: string) => {
+  const firebaseSignUp = async (token: string, hasSocials?: boolean) => {
     setSession(token);
-    router.replace("/questions");
-    Toaster.success("Signed Up Successfully!");
+    if (hasSocials) {
+      router.replace("/questions");
+      Toaster.success("Signed Up Successfully!");
+    } else {
+      router.replace("/no-social-connected");
+      Toaster.success("Signed Up Successfully!");
+    }
   };
 
   const verifyEmail = async () => {
@@ -187,7 +202,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
     await sendEmailVerification(userCredential).then(() => {
       Toaster.success("Verification email sent successfully.");
     });
-  }
+  };
 
   const verifyPhoneNumber = async (phoneNumber: string) => {
     const userCredential = AuthApp.currentUser;
@@ -196,14 +211,14 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
       Toaster.error("User not found.");
       return;
     }
-  }
+  };
 
   const signOutUser = () => {
     signOut(AuthApp)
       .then(() => {
         setSession("");
 
-        analyticsLogEvent('signed_out', {
+        analyticsLogEvent("signed_out", {
           id: user?.id,
           email: user?.email,
         });
@@ -268,7 +283,10 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
 
     for (const managerDoc of managersSnapshot.docs) {
       const notificationsRef = collection(managerDoc.ref, "notifications");
-      const userQuery = query(notificationsRef, where("data.userId", "==", userId));
+      const userQuery = query(
+        notificationsRef,
+        where("data.userId", "==", userId)
+      );
       const notificationsSnapshot = await getDocs(userQuery);
 
       notificationsSnapshot.forEach((doc) => {
@@ -288,7 +306,10 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
 
       const batch = writeBatch(FirestoreDB);
 
-      const notificationsRef = collection(FirestoreDB, `users/${userId}/notifications`);
+      const notificationsRef = collection(
+        FirestoreDB,
+        `users/${userId}/notifications`
+      );
       const notificationsSnapshot = await getDocs(notificationsRef);
 
       notificationsSnapshot.forEach((doc) => {

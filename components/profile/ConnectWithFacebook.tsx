@@ -75,26 +75,28 @@ const FacebookLoginButton: React.FC<FacebookLoginButtonProps> = ({
 
       const user = await AuthApp.currentUser?.getIdToken();
 
-      const responseFacebook = await axios.post(
-        "https://be.trendly.pro/api/v1/socials/facebook",
-        {
-          accounts: graphAPIResponse.data.accounts,
-          name: graphAPIResponse.data.name,
-          id: graphAPIResponse.data.id,
-          expiresIn: Number(graphAPIResponse.data.expires_in),
-          accessToken: graphAPIResponse.data.access_token,
-          signedRequest: graphAPIResponse.data.signedRequest,
-          graphDomain: graphAPIResponse.data.graphDomain,
-          data_access_expiration_time: Number(
-            graphAPIResponse.data.data_access_expiration_time
-          ),
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${user}`,
+      const responseFacebook = await axios
+        .post(
+          "https://be.trendly.pro/api/v1/socials/facebook",
+          {
+            accounts: graphAPIResponse.data.accounts,
+            name: graphAPIResponse.data.name,
+            id: graphAPIResponse.data.id,
+            expiresIn: Number(graphAPIResponse.data.expires_in),
+            accessToken: graphAPIResponse.data.access_token,
+            signedRequest: graphAPIResponse.data.signedRequest,
+            graphDomain: graphAPIResponse.data.graphDomain,
+            data_access_expiration_time: Number(
+              graphAPIResponse.data.data_access_expiration_time
+            ),
           },
-        }
-      );
+          {
+            headers: {
+              Authorization: `Bearer ${user}`,
+            },
+          }
+        )
+        .then((res) => {});
     } catch (error) {
       console.error(error);
     }
@@ -113,8 +115,10 @@ const FacebookLoginButton: React.FC<FacebookLoginButtonProps> = ({
           mode="contained"
           style={{ marginVertical: 10, paddingVertical: 5 }}
           onPress={handleFacebookSignIn}
+          icon={"facebook"}
+          labelStyle={{ color: "white", fontSize: 16 }}
         >
-          Connect New Social Accounts
+          Add Facebook Account
         </Button>
       )}
     </View>
