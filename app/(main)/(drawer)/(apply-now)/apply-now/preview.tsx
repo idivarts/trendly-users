@@ -1,5 +1,5 @@
 import AppLayout from "@/layouts/app-layout";
-import { View, Text, FlatList } from "react-native";
+import { View, Text, FlatList, Platform } from "react-native";
 import InfluencerCard from "@/components/InfluencerCard";
 import { router, useLocalSearchParams } from "expo-router";
 import { Button } from "react-native-paper";
@@ -162,6 +162,7 @@ const Preview = () => {
         }}
         contentContainerStyle={{
           paddingVertical: 16,
+          paddingHorizontal: Platform.OS === "web" ? 16 : 0,
         }}
       />
     </AppLayout>
