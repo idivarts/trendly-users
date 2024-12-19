@@ -158,7 +158,7 @@ const Invitations = () => {
         <EmptyState
           hideAction
           image={require("@/assets/images/illustration5.png")}
-          subtitle="Start building your profile today to have better reach. If any brand invites you to collaborate we woudl show it here"
+          subtitle="Start building your profile today to have better reach. If any brand invites you to collaborate we would show it here"
           title="No Invitations yet"
         />
       ) : pendingInvitations.length !== 0 ? (
@@ -231,6 +231,7 @@ const Invitations = () => {
           }
           contentContainerStyle={{
             padding: 16,
+            paddingTop: 8,
             gap: 16,
           }}
           refreshControl={

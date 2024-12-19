@@ -1,12 +1,12 @@
 import { Text, View } from "@/components/theme/Themed";
 import TextInput from "@/components/ui/text-input";
 import { useEffect, useState } from "react";
-import { Keyboard, Platform, Animated } from "react-native";
+import { Keyboard, Platform, Animated, Pressable } from "react-native";
 import ContentItem from "./ContentItem";
 import Select from "@/components/ui/select";
 import Button from "@/components/ui/button";
 import { processRawAttachment } from "@/utils/attachments";
-import { generateEmptyAssets, truncateText } from "@/utils/profile";
+import { generateEmptyAssets } from "@/utils/profile";
 import { useBreakpoints } from "@/hooks";
 import { useTheme } from "@react-navigation/native";
 import { stylesFn } from "@/styles/edit-profile/EditProfile.styles";
@@ -20,7 +20,15 @@ import Wrapper from "./grid/wrapper";
 import { useRouter } from "expo-router";
 import SelectGroup from "@/components/ui/select/select-group";
 
-const EditProfile: React.FC = () => {
+interface EditProfileProps {
+  unsavedChanges?: boolean;
+  setUnsavedChanges?: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const EditProfile: React.FC<EditProfileProps> = ({
+  unsavedChanges,
+  setUnsavedChanges,
+}) => {
   const [keyboardHeight] = useState(new Animated.Value(0));
   const [keyboardVisible, setKeyboardVisible] = useState(false);
 
@@ -62,7 +70,10 @@ const EditProfile: React.FC = () => {
     timeCommitment,
     user,
     verifyEmail,
-  } = useEditProfile();
+  } = useEditProfile({
+    unsavedChanges,
+    setUnsavedChanges,
+  });
 
   useEffect(() => {
     const keyboardWillShowListener = Keyboard.addListener(
@@ -146,7 +157,10 @@ const EditProfile: React.FC = () => {
             <TextInput
               label="Name"
               value={name}
-              onChangeText={(name) => setName(name)}
+              onChangeText={(name) => {
+                setName(name);
+                setUnsavedChanges && setUnsavedChanges(true);
+              }}
             />
             <View
               style={styles.inputContainer}
@@ -157,7 +171,10 @@ const EditProfile: React.FC = () => {
                 }}
                 label="Email"
                 value={email}
-                onChangeText={(email) => setEmail(email)}
+                onChangeText={(email) => {
+                  setEmail(email);
+                  setUnsavedChanges && setUnsavedChanges(true);
+                }}
               />
               {
                 user?.emailVerified ? (
@@ -193,7 +210,10 @@ const EditProfile: React.FC = () => {
                 }}
                 label="Phone number"
                 value={phoneNumber}
-                onChangeText={(phoneNumber) => setPhoneNumber(phoneNumber)}
+                onChangeText={(phoneNumber) => {
+                  setPhoneNumber(phoneNumber);
+                  setUnsavedChanges && setUnsavedChanges(true);
+                }}
               />
               <Button
                 mode="contained"
@@ -227,7 +247,10 @@ const EditProfile: React.FC = () => {
                 { label: 'Hobby', value: 'Hobby' },
               ]}
               selectedItem={timeCommitment}
-              onValueChange={(value) => setTimeCommitment(value)}
+              onValueChange={(value) => {
+                setTimeCommitment(value);
+                setUnsavedChanges && setUnsavedChanges(true);
+              }}
             />
             <Text
               style={{
@@ -316,10 +339,8 @@ const EditProfile: React.FC = () => {
           color={Colors(theme).aliceBlue}
           style={styles.processPercentage}
         />
-        <Button
-          mode="contained"
+        <Pressable
           onPress={handleSave}
-          loading={isProcessing}
           style={[
             styles.saveButton,
             {
@@ -327,8 +348,16 @@ const EditProfile: React.FC = () => {
             }
           ]}
         >
-          {isProcessing ? 'Saving...' : 'Save'}
-        </Button>
+          <Button
+            mode="contained"
+            loading={isProcessing}
+            customStyles={[
+              styles.saveButton,
+            ]}
+          >
+            {isProcessing ? 'Saving...' : 'Save'}
+          </Button>
+        </Pressable>
       </Animated.View>
     </View>
   );

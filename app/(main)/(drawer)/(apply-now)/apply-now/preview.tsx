@@ -93,7 +93,7 @@ const Preview = () => {
       if (docset) {
         setErrorMessage("Application submitted successfully");
         setTimeout(() => {
-          router.replace("/collaborations");
+          router.navigate("/collaborations");
         }, 1000); // Give user time to see success message
       } else {
         setErrorMessage("Failed to submit application");
