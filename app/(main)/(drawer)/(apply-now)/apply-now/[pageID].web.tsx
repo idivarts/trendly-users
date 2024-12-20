@@ -241,11 +241,17 @@ const ApplyScreenWeb = () => {
             )
           }
 
-          <ProgressBar
-            progress={processPercentage / 100}
-            color={Colors(theme).primary}
-            style={styles.progressBar}
-          />
+          <View
+            style={{
+              width: "100%",
+            }}
+          >
+            <ProgressBar
+              progress={processPercentage / 100}
+              color={Colors(theme).primary}
+              style={styles.progressBar}
+            />
+          </View>
 
           <Button
             mode="contained"
