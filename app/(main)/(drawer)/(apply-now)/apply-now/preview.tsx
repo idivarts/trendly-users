@@ -1,5 +1,5 @@
 import AppLayout from "@/layouts/app-layout";
-import { View, Text, FlatList } from "react-native";
+import { View, Text, FlatList, Platform } from "react-native";
 import InfluencerCard from "@/components/InfluencerCard";
 import { router, useLocalSearchParams } from "expo-router";
 import { Button } from "react-native-paper";
@@ -93,7 +93,7 @@ const Preview = () => {
       if (docset) {
         setErrorMessage("Application submitted successfully");
         setTimeout(() => {
-          router.replace("/collaborations");
+          router.navigate("/collaborations");
         }, 1000); // Give user time to see success message
       } else {
         setErrorMessage("Failed to submit application");
@@ -162,6 +162,7 @@ const Preview = () => {
         }}
         contentContainerStyle={{
           paddingVertical: 16,
+          paddingHorizontal: Platform.OS === "web" ? 16 : 0,
         }}
       />
     </AppLayout>

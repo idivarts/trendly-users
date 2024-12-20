@@ -106,7 +106,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
       ]}
       resizeMode={ResizeMode.COVER}
       isLooping={false}
-      shouldPlay={false}
+      shouldPlay
       useNativeControls
       onError={(error) => console.error("Video Error:", error)}
       onLoadStart={() => setIsLoading(true)}

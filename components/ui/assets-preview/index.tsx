@@ -63,7 +63,7 @@ const AssetsPreview: React.FC<AssetsPreviewProps> = ({
               <Image
                 source={imageUrl(file.url)}
                 style={styles.image}
-                resizeMode="contain"
+                resizeMode="cover"
               />
             )}
             {onRemove && (

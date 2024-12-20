@@ -2,6 +2,7 @@ import { FirestoreDB } from "@/utils/firestore";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { AuthApp } from "@/utils/auth";
 import { SurveyAnswer } from "@/types/Survey";
+import { getFormattedPreferences } from "@/utils/profile";
 
 export const submitSurvey = async (answers: SurveyAnswer) => {
   try {
@@ -17,10 +18,7 @@ export const submitSurvey = async (answers: SurveyAnswer) => {
       const userData = userSnap.data();
 
       await updateDoc(userRef, {
-        preferences: {
-          ...userData.preferences,
-          ...answers,
-        },
+        preferences: getFormattedPreferences(userData.preferences, answers),
       });
     } else {
       console.log("User data does not exist");

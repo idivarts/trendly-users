@@ -4,7 +4,7 @@ import { Theme } from "@react-navigation/native";
 const styles = (theme: Theme) => StyleSheet.create({
   settingsContainer: {
     flex: 1,
-    alignItems: "center",
+    padding: 16,
   },
   settingsRow: {
     flexDirection: "row",

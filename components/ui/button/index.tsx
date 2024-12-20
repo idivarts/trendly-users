@@ -10,6 +10,7 @@ interface ButtonProps extends RNPButtonProps {
 }
 
 const Button: React.FC<ButtonProps> = ({
+  contentStyle,
   customStyles,
   size,
   ...props
@@ -25,6 +26,7 @@ const Button: React.FC<ButtonProps> = ({
           paddingVertical: 0,
           paddingHorizontal: 0,
         },
+        contentStyle,
       ]}
       labelStyle={[
         size === 'small' && {

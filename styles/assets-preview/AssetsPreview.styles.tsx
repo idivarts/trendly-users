@@ -14,27 +14,35 @@ const stylesFn = (theme: Theme) => StyleSheet.create({
     paddingRight: 32,
   },
   fileContainer: {
-    backgroundColor: theme.dark ? Colors(theme).card : Colors(theme).aliceBlue,
-    width: 250,
-    height: 250,
-    borderRadius: 10,
-    alignItems: "center",
-    justifyContent: "center",
-    position: "relative",
+    ...Platform.select({
+      web: {
+        backgroundColor: theme.dark ? Colors(theme).card : Colors(theme).aliceBlue,
+        width: 250,
+        height: 250,
+        alignItems: "center",
+        justifyContent: "center",
+        position: "relative",
+        borderRadius: 10,
+      },
+    }),
   },
   video: {
-    width: "100%",
+    minWidth: 250,
+    maxWidth: 250,
+    height: 250,
     overflow: "hidden",
     borderRadius: 10,
-    ...((Platform.OS === "ios" || Platform.OS === "android") && {
+    ...((Platform.OS === "web") && {
+      width: '100%',
       height: 250,
     }),
   },
   image: {
     borderRadius: 10,
+    minWidth: 250,
+    maxWidth: 250,
     height: 250,
     overflow: "hidden",
-    width: "100%",
   },
   iconButton: {
     position: "absolute",
