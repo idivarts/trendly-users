@@ -2,21 +2,48 @@ import React from "react";
 import { Text, View } from "@/components/theme/Themed";
 import ScreenHeader from "@/components/ui/screen-header";
 import AppLayout from "@/layouts/app-layout";
-import { ScrollView, Dimensions, StyleSheet } from "react-native";
+import { ScrollView, Dimensions, StyleSheet, Platform } from "react-native";
 import { Button, Card } from "react-native-paper";
 import { BarChart, LineChart, PieChart } from "react-native-gifted-charts";
 import Colors from "@/constants/Colors";
 import { Theme, useTheme } from "@react-navigation/native";
 import { TopBrandCard } from "@/components/basic-profile/stats/TopBrand";
+//@ts-ignore
+import FunnelChart from "react-native-funnel-chart";
+
 import {
   EARNING_TIMELINE_DATA as earningTimelineData,
   PIE_CHART_DATA as pieChartData,
 } from "@/constants/Chart";
+import FunnelChartWeb from "@/components/basic-profile/stats/FunnelChart";
 
 const MyStatsScreen = () => {
   const screenWidth = Dimensions.get("window").width;
   const theme = useTheme();
   const styles = cardStyle(theme);
+
+  const demo_data = [
+    {
+      label: "100 Campaigns Applied",
+      value: "100",
+      color: "#9b46ff40",
+    },
+    {
+      label: "55 Applications Accepted",
+      value: "55",
+      color: "#9b46ff80",
+    },
+    {
+      label: "50 Contracts Created",
+      value: "50",
+      color: "#9b46ff60",
+    },
+    {
+      label: "30 Successful Completions",
+      value: "30",
+      color: "#9b46ff",
+    },
+  ];
 
   return (
     <AppLayout>
@@ -36,7 +63,6 @@ const MyStatsScreen = () => {
           </Button>
         }
       />
-
 
       <ScrollView
         style={{
@@ -145,17 +171,94 @@ const MyStatsScreen = () => {
           </Card.Content>
         </Card>
 
-        <Card style={{ ...styles.cardStyle, marginVertical: 10 }}>
-          <Card.Title title="Earning Timeline" />
+        {Platform.OS !== "web" ? (
+          <Card
+            style={{
+              borderWidth: 0.2,
+              borderRadius: 10,
+              margin: 8,
+              flex: 1,
+              elevation: 3,
+              backgroundColor: Colors(theme).background,
+              marginVertical: 10,
+            }}
+          >
+            <Card.Title title="Earning Timeline" />
+            <Card.Content>
+              <LineChart
+                data={earningTimelineData}
+                width={screenWidth - 1000}
+                height={200}
+                xAxisLabelTextStyle={{ fontSize: 10 }}
+                yAxisTextStyle={{ fontSize: 10 }}
+                isAnimated
+              />
+            </Card.Content>
+          </Card>
+        ) : (
+          <Card
+            style={{
+              borderWidth: 0.2,
+              borderRadius: 10,
+              margin: 8,
+              flex: 1,
+              elevation: 3,
+              justifyContent: "center",
+              alignItems: "center",
+              paddingBottom: 30,
+              backgroundColor: Colors(theme).background,
+              marginVertical: 10,
+            }}
+          >
+            <Card.Title title="Earning Timeline" />
+            <Card.Content>
+              <LineChart
+                data={earningTimelineData}
+                width={screenWidth - 1000}
+                height={200}
+                xAxisLabelTextStyle={{ fontSize: 10 }}
+                yAxisTextStyle={{ fontSize: 10 }}
+                isAnimated
+              />
+            </Card.Content>
+          </Card>
+        )}
+
+        <Card
+          style={{
+            borderWidth: 0.2,
+            borderRadius: 10,
+            margin: 8,
+            paddingBottom: 30,
+            flex: 1,
+            elevation: 3,
+            backgroundColor: Colors(theme).background,
+            marginVertical: 10,
+          }}
+        >
+          <Card.Title title="Application Overview" />
           <Card.Content>
-            <LineChart
-              data={earningTimelineData}
-              width={screenWidth - 1000}
-              height={200}
-              xAxisLabelTextStyle={{ fontSize: 10 }}
-              yAxisTextStyle={{ fontSize: 10 }}
-              isAnimated
-            />
+            {Platform.OS === "web" ? (
+              <FunnelChartWeb
+                dataPoints={[
+                  { label: "100 Campaigns Applied", y: 100 },
+                  { label: "55 Applications Accepted", y: 55 },
+                  { label: "50 Contracts Created", y: 50 },
+                  { label: "30 Successful Completions", y: 30 },
+                ]}
+              />
+            ) : (
+              <FunnelChart
+                animated
+                data={demo_data}
+                backgroundColor={Colors(theme).background}
+                height={200}
+                lineColor={"#fff"}
+                space={3}
+                fontSize={12}
+                textColor={Colors(theme).text}
+              />
+            )}
           </Card.Content>
         </Card>
 
@@ -164,6 +267,7 @@ const MyStatsScreen = () => {
           <Card.Content
             style={{
               alignItems: "center",
+              justifyContent: "center",
               flexDirection: "row",
             }}
           >

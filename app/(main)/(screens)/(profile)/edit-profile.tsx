@@ -5,6 +5,7 @@ import ScreenHeader from "@/components/ui/screen-header";
 import { useAuthContext } from "@/contexts";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import ProfileBottomSheet from "@/shared-uis/components/ProfileModal/Profile-Modal";
+import { FirestoreDB } from "@/utils/firestore";
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
@@ -87,6 +88,7 @@ const EditProfileScreen: React.FC = () => {
         <ProfileBottomSheet
           influencer={user as IUsers}
           theme={theme}
+          FireStoreDB={FirestoreDB}
           isBrandsApp={false}
         />
       </BottomSheetModal>
