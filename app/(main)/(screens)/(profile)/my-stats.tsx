@@ -14,6 +14,7 @@ import FunnelChart from "react-native-funnel-chart";
 import {
   EARNING_TIMELINE_DATA as earningTimelineData,
   PIE_CHART_DATA as pieChartData,
+  FUNNEL_DATA as demo_data,
 } from "@/constants/Chart";
 import FunnelChartWeb from "@/components/basic-profile/stats/FunnelChart";
 
@@ -21,29 +22,6 @@ const MyStatsScreen = () => {
   const screenWidth = Dimensions.get("window").width;
   const theme = useTheme();
   const styles = cardStyle(theme);
-
-  const demo_data = [
-    {
-      label: "100 Campaigns Applied",
-      value: "100",
-      color: "#9b46ff40",
-    },
-    {
-      label: "55 Applications Accepted",
-      value: "55",
-      color: "#9b46ff80",
-    },
-    {
-      label: "50 Contracts Created",
-      value: "50",
-      color: "#9b46ff60",
-    },
-    {
-      label: "30 Successful Completions",
-      value: "30",
-      color: "#9b46ff",
-    },
-  ];
 
   return (
     <AppLayout>

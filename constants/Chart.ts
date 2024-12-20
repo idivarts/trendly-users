@@ -15,4 +15,27 @@ const PIE_CHART_DATA = [
   { value: 40, text: "Graphic Design", frontColor: "#e91e63" },
 ];
 
-export { EARNING_TIMELINE_DATA, PIE_CHART_DATA };
+const FUNNEL_DATA = [
+  {
+    label: "100 Campaigns Applied",
+    value: "100",
+    color: "#9b46ff40",
+  },
+  {
+    label: "55 Applications Accepted",
+    value: "55",
+    color: "#9b46ff80",
+  },
+  {
+    label: "50 Contracts Created",
+    value: "50",
+    color: "#9b46ff60",
+  },
+  {
+    label: "30 Successful Completions",
+    value: "30",
+    color: "#9b46ff",
+  },
+];
+
+export { EARNING_TIMELINE_DATA, PIE_CHART_DATA, FUNNEL_DATA };
