@@ -2,11 +2,9 @@ import AppLayout from "@/layouts/app-layout";
 import { stylesFn } from "@/styles/ApplyNow.styles";
 import { useTheme } from "@react-navigation/native";
 import { router, useLocalSearchParams } from "expo-router";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import React, { useEffect, useState } from "react";
-import {
-  ScrollView,
-  View,
-} from "react-native";
+import { Keyboard, Platform, ScrollView, View } from "react-native";
 import {
   Button,
   Card,
@@ -20,6 +18,8 @@ import {
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import ScreenHeader from "@/components/ui/screen-header";
 import { useAWSContext } from "@/contexts/aws-context.provider";
+import * as FileSystem from "expo-file-system";
+import * as DocumentPicker from "expo-document-picker";
 import {
   faLink,
   faLocationDot,
@@ -33,6 +33,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import * as MediaLibrary from "expo-media-library";
 import { AssetItem } from "@/types/Asset";
 import AssetsPreview from "@/components/ui/assets-preview";
+import { Attachment } from "@/shared-libs/firestore/trendly-pro/constants/attachment";
+import { FirestoreDB } from "@/utils/firestore";
+import { doc, getDoc } from "firebase/firestore";
+import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
+import ContentItem from "@/components/basic-profile/edit-profile/ContentItem";
 
 const ApplyScreen = () => {
   const params = useLocalSearchParams();
@@ -45,9 +50,21 @@ const ApplyScreen = () => {
 
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
-
+  const [quotation, setQuotation] = useState("");
   const [files, setFiles] = useState<AssetItem[]>([]);
   const [uploadedFiles, setUploadedFiles] = useState<any>([]);
+  const [profileAttachments, setProfileAttachments] = useState<Attachment[]>(
+    []
+  );
+  const [questions, setQuestions] = useState<any[]>([]);
+  const [fileAttachments, setFileAttachments] = useState<any[]>([]);
+
+  const [timelineData, setTimelineData] = useState<Date | null>(null);
+  const [showDatePicker, setShowDatePicker] = useState(false);
+
+  const [answers, setAnswers] = useState<{ [key: string]: string }>(
+    params.answers ? JSON.parse(params.answers as string) : {}
+  );
 
   const theme = useTheme();
   const styles = stylesFn(theme);
@@ -58,6 +75,7 @@ const ApplyScreen = () => {
     setProcessMessage,
     setProcessPercentage,
     uploadFileUris,
+    uploadAttachments,
   } = useAWSContext();
 
   const handleAssetUpload = async () => {
@@ -65,9 +83,16 @@ const ApplyScreen = () => {
       router.push({
         pathname: "/apply-now/gallery",
         params: {
+          ...params,
           pageID,
           note,
-          selectedFiles: JSON.stringify(files),
+          quotation,
+          //@ts-ignore
+          timelineData,
+          selectedFiles: params.selectedFiles,
+          profileAttachmentsRoute: params.profileAttachments,
+          fileAttachments: JSON.stringify(fileAttachments),
+          answers: JSON.stringify(answers),
         },
       });
     } catch (e) {
@@ -76,12 +101,40 @@ const ApplyScreen = () => {
     }
   };
 
+  const onDateChange = (event: any, selectedDate?: Date) => {
+    setShowDatePicker(false);
+    if (selectedDate) {
+      setTimelineData(selectedDate);
+    }
+  };
+
   const handleUploadFiles = async () => {
     setLoading(true);
     try {
-      const uploadedFileUrisResponse = await uploadFileUris(files);
+      const uploadedFiles = await uploadAttachments(fileAttachments);
 
-      setUploadedFiles(uploadedFileUrisResponse);
+      const filesWithoutProfileAttachments = // if file uri starts with https, it is a profile attachment and should be removed
+        files.filter((file) => !file.uri.startsWith("https"));
+
+      const uploadedFileUrisResponse = await uploadFileUris(
+        filesWithoutProfileAttachments
+      );
+
+      const finalProfileAttachments = profileAttachments.map(
+        //@ts-ignore
+        ({ id, ...rest }) => rest // Exclude the `id` field
+      );
+
+      setUploadedFiles([
+        ...uploadedFileUrisResponse,
+        ...finalProfileAttachments,
+      ]);
+
+      const finalFiles = [
+        ...uploadedFileUrisResponse,
+        ...finalProfileAttachments,
+      ];
+      const timelineTimestamp = timelineData?.getTime();
 
       setTimeout(() => {
         setLoading(false);
@@ -90,9 +143,14 @@ const ApplyScreen = () => {
         router.push({
           pathname: "/apply-now/preview",
           params: {
+            ...params,
             pageID,
             note,
-            attachments: JSON.stringify(uploadedFileUrisResponse),
+            attachments: JSON.stringify(finalFiles),
+            quotation: quotation,
+            timeline: timelineTimestamp,
+            fileAttachments: JSON.stringify(uploadedFiles),
+            answers: JSON.stringify(answers),
           },
         });
         setLoading(false);
@@ -107,34 +165,135 @@ const ApplyScreen = () => {
     const asset = await MediaLibrary.getAssetInfoAsync(id);
 
     return asset;
-  }
+  };
 
-  const getAssetsData = async (
-    newFiles: AssetItem[]
-  ) => {
+  const getAssetsData = async (newFiles: AssetItem[]) => {
     for (const file of newFiles) {
       const asset = await getAssetData(file.id);
       setFiles((prevFiles) => [
         ...prevFiles,
         {
           id: asset.id,
-          localUri: asset.localUri || '',
+          localUri: asset.localUri || "",
           uri: asset.uri,
-          type: asset.mediaType === 'video' ? 'video' : 'image',
+          type: asset.mediaType === "video" ? "video" : "image",
         },
       ]);
     }
-  }
+  };
+
+  const getProfileAssetsData = async (newFiles: any[]) => {
+    for (const file of newFiles) {
+      setFiles((prevFiles) => [
+        ...prevFiles,
+        {
+          id: file.id,
+          localUri: "",
+          uri:
+            file.type === "image"
+              ? file.imageUrl
+              : Platform.OS === "ios"
+              ? file.appleUrl
+              : file.playUrl,
+          type: file.type,
+        },
+      ]);
+    }
+  };
+
+  const handlePickAttachment = async () => {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: "*/*", // Allow all file types
+        copyToCacheDirectory: true,
+      });
+
+      if (!result.canceled) {
+        const newAttachment: any = {
+          id: result.assets[0].name, // Use file name as ID
+          uri: result.assets[0].uri,
+          type: result.assets[0].mimeType,
+        };
+
+        setFileAttachments((prevAttachments: any) => [
+          ...prevAttachments,
+          newAttachment,
+        ]);
+      }
+    } catch (error) {
+      console.error("Error picking file:", error);
+    }
+  };
+
+  const fetchQuestions = async () => {
+    try {
+      const collabRef = doc(FirestoreDB, "collaborations", pageID);
+      const collabDoc = await getDoc(collabRef);
+      const collabData = collabDoc.data() as ICollaboration;
+      if (collabData.questionsToInfluencers) {
+        setQuestions(collabData.questionsToInfluencers);
+      }
+    } catch (error) {
+      console.error("Error fetching questions:", error);
+    }
+  };
 
   useEffect(() => {
     if (params.selectedFiles) {
-      setFiles([]);
       //@ts-ignore
-      const newFiles = JSON.parse(params.selectedFiles) as AssetItem[];
 
+      const newFiles = JSON.parse(
+        params.selectedFiles as string
+      ) as AssetItem[];
       getAssetsData(newFiles);
+      if (params.profileAttachments) {
+        const profileFiles = JSON.parse(params.profileAttachments as string);
+        if (profileFiles.length > 0) {
+          setProfileAttachments(profileFiles);
+          getProfileAssetsData(profileFiles);
+        } else {
+          setProfileAttachments([]);
+        }
+      }
+    }
+    if (params.quotation) {
+      setQuotation(params.quotation as string);
+    }
+
+    if (params.timelineData) {
+      setTimelineData(new Date(params.timelineData as string));
+    }
+
+    if (params.fileAttachments) {
+      setFileAttachments(JSON.parse(params.fileAttachments as string));
+    }
+
+    if (params.note) {
+      setNote(params.note as string);
     }
   }, [params.selectedFiles]);
+
+  useEffect(() => {
+    if (params.value) {
+      const { textbox } = JSON.parse(params.value as string);
+      const { title: routeTitle, value: textBoxValue } = textbox;
+
+      if (routeTitle === "Quotation") {
+        setQuotation(textBoxValue);
+      }
+      if (routeTitle.includes("Question")) {
+        const questionIndex = parseInt(routeTitle.split(" ")[1]) - 1;
+        setAnswers((prevAnswers) => ({
+          ...prevAnswers,
+          [questionIndex]: textBoxValue,
+        }));
+      }
+    }
+  }, [params.value]);
+
+  useEffect(() => {
+    fetchQuestions();
+  }, []);
 
   return (
     <AppLayout>
@@ -143,41 +302,41 @@ const ApplyScreen = () => {
         style={styles.container}
         contentContainerStyle={styles.contentContainerStyle}
       >
-        {
-          files.length === 0 && (
-            <Card style={styles.card} onPress={handleAssetUpload}>
-              <Card.Content style={styles.cardContent}>
-                <IconButton
-                  icon={() => (
-                    <FontAwesomeIcon
-                      color={theme.dark ? Colors(theme).text : Colors(theme).primary}
-                      icon={faPhotoFilm}
-                      size={36}
-                    />
-                  )}
-                  size={40}
-                  style={styles.uploadIcon}
-                />
-                <Paragraph style={styles.cardParagraph}>
-                  Record a video or add a photo carousel that best describes you
-                </Paragraph>
-              </Card.Content>
-            </Card>
-          )
-        }
+        {files.length === 0 && (
+          <Card style={styles.card} onPress={handleAssetUpload}>
+            <Card.Content style={styles.cardContent}>
+              <IconButton
+                icon={() => (
+                  <FontAwesomeIcon
+                    color={
+                      theme.dark ? Colors(theme).text : Colors(theme).primary
+                    }
+                    icon={faPhotoFilm}
+                    size={36}
+                  />
+                )}
+                size={40}
+                style={styles.uploadIcon}
+              />
+              <Paragraph style={styles.cardParagraph}>
+                Record a video or add a photo carousel that best describes you
+              </Paragraph>
+            </Card.Content>
+          </Card>
+        )}
 
-        {
-          files.length > 0 && (
-            <AssetsPreview
-              files={files.map((file) => ({
-                id: file.id,
-                type: file.type,
-                url: file.type.includes('video') ? file.localUri || file.uri : file.uri,
-              }))}
-              handleAssetUpload={handleAssetUpload}
-            />
-          )
-        }
+        {files.length > 0 && (
+          <AssetsPreview
+            files={files.map((file) => ({
+              id: file.id,
+              type: file.type,
+              url: file.type.includes("video")
+                ? file.localUri || file.uri
+                : file.uri,
+            }))}
+            handleAssetUpload={handleAssetUpload}
+          />
+        )}
 
         <View
           style={{
@@ -206,40 +365,83 @@ const ApplyScreen = () => {
             <ListItem
               title="Your Quote"
               leftIcon={faQuoteLeft}
-              onPress={() => console.log("Quote")}
+              content={quotation === "" ? "Add now" : "Rs. " + quotation}
+              onAction={() => {
+                router.push({
+                  pathname: "/apply-now/quotation",
+                  params: {
+                    title: "Quotation",
+                    value: quotation === "" ? "" : quotation,
+                    path: `/apply-now/${pageID}`,
+                    selectedFiles: params.selectedFiles,
+                    profileAttachments: params.profileAttachments,
+                    placeholder: "Add your quotation",
+                    //@ts-ignore
+                    timelineData: timelineData,
+                    fileAttachments: JSON.stringify(fileAttachments),
+                    answers: JSON.stringify(answers),
+                    note: note,
+                  },
+                });
+              }}
+            />
+            <ListItem
+              title="Timeline"
+              leftIcon={faPaperclip}
+              content={
+                timelineData
+                  ? timelineData.toLocaleDateString()
+                  : "Select a date"
+              }
+              onAction={() => setShowDatePicker(true)}
             />
             <ListItem
               title="Attachments"
               leftIcon={faPaperclip}
-              onPress={() => console.log("Attachments")}
+              content=""
+              attachments={fileAttachments}
+              onAction={handlePickAttachment}
             />
-            <ListItem
-              title="Add relevant Links"
-              leftIcon={faLink}
-              onPress={() => console.log("Links")}
-            />
-            <ListItem
-              title="Add location"
-              leftIcon={faLocationDot}
-              onPress={() => console.log("Location")}
-            />
+            {questions.map((question, index) => (
+              <ListItem
+                key={index}
+                title={question}
+                leftIcon={faLink}
+                content={answers[index] || "Add now"}
+                onAction={() => {
+                  router.push({
+                    pathname: "/apply-now/question",
+                    params: {
+                      title: "Question " + (index + 1),
+                      value: answers[index] || "",
+                      path: `/apply-now/${pageID}`,
+                      selectedFiles: params.selectedFiles,
+                      profileAttachments: params.profileAttachments,
+                      placeholder: "",
+                      //@ts-ignore
+                      timelineData: timelineData,
+                      fileAttachments: JSON.stringify(fileAttachments),
+                      answers: JSON.stringify(answers),
+                      quotation: quotation,
+                      note: note,
+                    },
+                  });
+                }}
+              />
+            ))}
           </List.Section>
 
-          {
-            errorMessage ? (
-              <HelperText type="error" style={styles.errorText}>
-                {errorMessage}
-              </HelperText>
-            ) : null
-          }
+          {errorMessage ? (
+            <HelperText type="error" style={styles.errorText}>
+              {errorMessage}
+            </HelperText>
+          ) : null}
 
-          {
-            processMessage && (
-              <HelperText type="info" style={styles.processText}>
-                {processMessage} - {processPercentage}% done
-              </HelperText>
-            )
-          }
+          {processMessage && (
+            <HelperText type="info" style={styles.processText}>
+              {processMessage} - {processPercentage}% done
+            </HelperText>
+          )}
 
           <ProgressBar
             progress={processPercentage / 100}
@@ -264,12 +466,18 @@ const ApplyScreen = () => {
             }}
             loading={loading}
           >
-            {
-              processMessage ? "Uploading Assets" : "Preview Application"
-            }
+            {processMessage ? "Uploading Assets" : "Preview Application"}
           </Button>
         </View>
       </ScrollView>
+      {showDatePicker && (
+        <DateTimePicker
+          value={timelineData || new Date()} // Use the selected date or current date
+          mode="date" // Show the date picker
+          display="spinner" // Use spinner for iOS
+          onChange={onDateChange} // Handle date changes
+        />
+      )}
     </AppLayout>
   );
 };

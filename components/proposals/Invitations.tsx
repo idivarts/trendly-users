@@ -19,23 +19,31 @@ import { FirestoreDB } from "@/utils/firestore";
 import { AuthApp } from "@/utils/auth";
 import { stylesFn } from "@/styles/Proposal.styles";
 import EmptyState from "../ui/empty-state";
+import CollaborationDetails from "../collaboration/card-components/CollaborationDetails";
+import Carousel from "@/shared-uis/components/carousel/carousel";
+import { processRawAttachment } from "@/utils/attachments";
+import CollaborationHeader from "../collaboration/card-components/CollaborationHeader";
+import { Card } from "react-native-paper";
+import { useAuthContext } from "@/contexts";
 
 const Invitations = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [selectedCollabId, setSelectedCollabId] = useState<string | null>(null);
+  const [invitationID, setInvitationID] = useState<string>();
   const [invitations, setInvitations] = useState<any[]>([]);
   const [notPendingInvitations, setNotPendingInvitations] = useState<number>();
   const [refreshing, setRefreshing] = useState(false);
+  const { user } = useAuthContext();
 
-  const openBottomSheet = (id: string) => {
+  const openBottomSheet = (id: string, invitation: string) => {
     setIsVisible(true);
     setSelectedCollabId(id);
+    setInvitationID(invitation);
   };
   const closeBottomSheet = () => setIsVisible(false);
 
   const theme = useTheme();
   const styles = stylesFn(theme);
-  const user = AuthApp.currentUser;
 
   const [isLoading, setIsLoading] = useState(true);
   const fetchInvitations = async () => {
@@ -70,7 +78,7 @@ const Invitations = () => {
           );
           const applicationSnapshot = query(
             applicationCol,
-            where("userId", "==", user?.uid)
+            where("userId", "==", user?.id)
           );
 
           const applicationData = await getDocs(applicationSnapshot).then(
@@ -85,7 +93,7 @@ const Invitations = () => {
           );
 
           const userApplications = applicationData.filter(
-            (application) => application.userId === user?.uid
+            (application) => application.userId === user?.id
           );
 
           const notPendingApplications = userApplications.filter(
@@ -165,30 +173,63 @@ const Invitations = () => {
         <FlatList
           data={pendingInvitations}
           renderItem={({ item }) => (
-            <JobCard
-              id={item.id}
-              status="pending"
-              name={item.name}
-              brandName={item.brandName}
-              onOpenBottomSheet={openBottomSheet}
-              description={item.description}
-              brandId={item.brandId}
-              budget={{
-                min: Number(item.budget.min),
-                max: Number(item.budget.max),
-              }}
-              cardType="invitation"
-              collaborationType={item.collaborationType}
-              location={item.location}
-              managerId="managerId"
-              numberOfInfluencersNeeded={1}
-              platform={item.platform}
-              promotionType={item.promotionType}
-              timeStamp={item.timeStamp}
-              applications={undefined}
-              invitations={undefined}
-              data={item.applications}
-            />
+            console.log(item),
+            (
+              <Card>
+                <CollaborationHeader
+                  collabName={item.name}
+                  brandName={item.brandName}
+                  collabId={item.id}
+                  brandImage={item.brandImage || ""}
+                  timePosted={0}
+                  paymentVerified={item.paymentVerified || false}
+                  onOpenBottomSheet={() =>
+                    openBottomSheet(item.id, item.applications.id)
+                  }
+                />
+                {item.attachments && item.attachments.length > 0 && (
+                  <Carousel
+                    theme={theme}
+                    data={
+                      user?.profile?.attachments?.map((attachment) =>
+                        processRawAttachment(attachment)
+                      ) || []
+                    }
+                    dot={
+                      <View
+                        style={{
+                          backgroundColor: Colors(theme).primary,
+                          width: 8,
+                          height: 8,
+                          borderRadius: 4,
+                          marginLeft: 3,
+                          marginRight: 3,
+                        }}
+                      />
+                    }
+                    activeDot={
+                      <View
+                        style={{
+                          backgroundColor: Colors(theme).gray100,
+                          width: 8,
+                          height: 8,
+                          borderRadius: 4,
+                          marginLeft: 3,
+                          marginRight: 3,
+                        }}
+                      />
+                    }
+                  />
+                )}
+                <CollaborationDetails
+                  collabDescription={item.description || ""}
+                  promotionType={item.promotionType}
+                  location={item.location}
+                  platform={item.platform}
+                  contentType={item.contentFormat}
+                />
+              </Card>
+            )
           )}
           keyExtractor={(item, index) => index.toString()}
           ListFooterComponent={
@@ -284,6 +325,7 @@ const Invitations = () => {
         <BottomSheetActions
           cardId={selectedCollabId || ""}
           cardType="proposal"
+          invitationId={invitationID}
           isVisible={isVisible}
           onClose={closeBottomSheet}
           snapPointsRange={["20%", "50%"]}

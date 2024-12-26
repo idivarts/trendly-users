@@ -14,6 +14,15 @@ import { FirestoreDB } from "@/utils/firestore";
 import { AuthApp } from "@/utils/auth";
 import BottomSheetActions from "@/components/BottomSheetActions";
 import ScreenHeader from "@/components/ui/screen-header";
+import CollaborationDetails from "@/components/collaboration/card-components/CollaborationDetails";
+import Colors from "@/constants/Colors";
+import { processRawAttachment } from "@/utils/attachments";
+import Carousel from "@/shared-uis/components/carousel/carousel";
+import CollaborationHeader from "@/components/collaboration/card-components/CollaborationHeader";
+import { Card } from "react-native-paper";
+import { useTheme } from "@react-navigation/native";
+import { useAuthContext } from "@/contexts";
+import { MediaItem } from "@/components/ui/carousel/render-media-item";
 
 const PastApplicationPage = (props: any) => {
   const [isVisible, setIsVisible] = React.useState(false);
@@ -22,13 +31,14 @@ const PastApplicationPage = (props: any) => {
   const [selectedCollabId, setSelectedCollabId] = React.useState<string | null>(
     null
   );
+  const theme = useTheme();
   const openBottomSheet = (id: string) => {
     setIsVisible(true);
     setSelectedCollabId(id);
   };
   const closeBottomSheet = () => setIsVisible(false);
 
-  const user = AuthApp.currentUser;
+  const { user } = useAuthContext();
 
   const fetchProposals = async () => {
     try {
@@ -62,7 +72,7 @@ const PastApplicationPage = (props: any) => {
 
           const applicationSnapshot = query(
             applicationCol,
-            where("userId", "==", user?.uid),
+            where("userId", "==", user?.id),
             where("status", "in", ["accepted", "rejected"])
           );
 
@@ -85,6 +95,7 @@ const PastApplicationPage = (props: any) => {
             ...collab,
             applications: applicationData[0],
             brandName: brandData.data().name,
+            brandImage: brandData.data().image,
           };
         })
       );
@@ -116,9 +127,7 @@ const PastApplicationPage = (props: any) => {
 
   return (
     <AppLayout>
-      <ScreenHeader
-        title="Past Applications"
-      />
+      <ScreenHeader title="Past Applications" />
       <View
         style={{
           flex: 1,
@@ -127,30 +136,56 @@ const PastApplicationPage = (props: any) => {
         <FlatList
           data={proposals}
           renderItem={({ item }) => (
-            <JobCard
-              name={item.name}
-              id={item.id}
-              data={item.applications}
-              brandName={item.brandName}
-              brandId={item.brandId}
-              budget={{
-                min: Number(item.budget.min),
-                max: Number(item.budget.max),
-              }}
-              description={item.description}
-              status={item.status}
-              onOpenBottomSheet={openBottomSheet}
-              cardType="proposal"
-              collaborationType={item.collaborationType}
-              location={item.location}
-              managerId={item.managerId}
-              numberOfInfluencersNeeded={1}
-              platform={item.platform}
-              promotionType={item.promotionType}
-              timeStamp={item.timeStamp}
-              applications={undefined}
-              invitations={undefined}
-            />
+            <Card>
+              <CollaborationHeader
+                collabName={item.name}
+                brandName={item.brandName}
+                collabId={item.id}
+                brandImage={item.brandImage || ""}
+                timePosted={0}
+                paymentVerified={item.paymentVerified || false}
+                onOpenBottomSheet={() => openBottomSheet(item.id)}
+              />
+              <Carousel
+                theme={theme}
+                data={
+                  item.applications.attachments.map((attachment: MediaItem) =>
+                    processRawAttachment(attachment)
+                  ) || []
+                }
+                dot={
+                  <View
+                    style={{
+                      backgroundColor: Colors(theme).primary,
+                      width: 8,
+                      height: 8,
+                      borderRadius: 4,
+                      marginLeft: 3,
+                      marginRight: 3,
+                    }}
+                  />
+                }
+                activeDot={
+                  <View
+                    style={{
+                      backgroundColor: Colors(theme).gray100,
+                      width: 8,
+                      height: 8,
+                      borderRadius: 4,
+                      marginLeft: 3,
+                      marginRight: 3,
+                    }}
+                  />
+                }
+              />
+              <CollaborationDetails
+                collabDescription={item.description || ""}
+                promotionType={item.promotionType}
+                location={item.location}
+                platform={item.platform}
+                contentType={item.contentFormat}
+              />
+            </Card>
           )}
           contentContainerStyle={{
             padding: 16,

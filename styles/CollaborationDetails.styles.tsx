@@ -5,12 +5,12 @@ import { StyleSheet } from "react-native";
 export const stylesFn = (theme: Theme) =>
   StyleSheet.create({
     scrollContainer: {
-      padding: 16,
       gap: 16,
     },
     profileCard: {
       backgroundColor: Colors(theme).card,
       borderRadius: 10,
+      gap: 16,
       shadowColor: Colors(theme).transparent,
     },
     profileImage: {
@@ -37,7 +37,7 @@ export const stylesFn = (theme: Theme) =>
     shortDescription: {
       fontSize: 14,
       color: Colors(theme).text,
-      textAlign: "center",
+      textAlign: "left",
       marginVertical: 8,
     },
     statsContainer: {
@@ -49,6 +49,7 @@ export const stylesFn = (theme: Theme) =>
     },
     applyButton: {
       marginVertical: 16,
+      width: "100%",
     },
     infoCard: {
       backgroundColor: Colors(theme).card,

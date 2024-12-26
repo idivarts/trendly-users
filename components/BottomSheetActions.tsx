@@ -3,19 +3,18 @@ import { Modal, Pressable, StyleSheet, View } from "react-native";
 import { List } from "react-native-paper";
 import { Href, useRouter } from "expo-router";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
-import {
-  DUMMY_USER_CREDENTIALS2,
-} from "@/constants/User";
+import { DUMMY_USER_CREDENTIALS2 } from "@/constants/User";
 import { useAuthContext } from "@/contexts";
 
 interface BottomSheetActionsProps {
   cardType:
-  | "collaboration"
-  | "proposal"
-  | "invitation"
-  | "details"
-  | "pre-signin";
+    | "collaboration"
+    | "proposal"
+    | "invitation"
+    | "details"
+    | "pre-signin";
   cardId?: string;
+  invitationId?: string | null;
   isVisible: boolean;
   snapPointsRange: [string, string];
   onClose: () => void;
@@ -25,6 +24,7 @@ const BottomSheetActions = ({
   cardType,
   cardId,
   isVisible,
+  invitationId,
   snapPointsRange,
   onClose,
 }: BottomSheetActionsProps) => {
@@ -95,7 +95,15 @@ const BottomSheetActions = ({
             <List.Item
               title="View"
               onPress={() => {
-                router.push(`/collaboration-details/${cardId}`);
+                router.push({
+                  //@ts-ignore
+                  pathname: `/collaboration-details/${cardId}`,
+                  params: {
+                    cardType: "invitation",
+                    cardId: invitationId,
+                    collaborationID: cardId,
+                  },
+                });
                 handleClose();
               }}
             />
