@@ -124,7 +124,6 @@ const JobCard = (props: CollaborationAdCardProps) => {
           )}
           <Chip>{props.promotionType}</Chip>
           <Chip>{props.platform}</Chip>
-          <Chip>{props.collaborationType}</Chip>
         </View>
 
         {/* Influencers Needed, Applied Count, AI Success Rate, Brand Hire Rate */}

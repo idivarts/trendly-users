@@ -178,7 +178,9 @@ const Invitations = () => {
                 max: Number(item.budget.max),
               }}
               cardType="invitation"
-              collaborationType={item.collaborationType}
+              contentFormat={item.contentFormat}
+              preferences={item.preferences}
+              preferredContentLanguage={item.preferredContentLanguage}
               location={item.location}
               managerId="managerId"
               numberOfInfluencersNeeded={1}
