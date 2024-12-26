@@ -1,3 +1,4 @@
+import React from "react";
 import BottomSheetActions from "@/components/BottomSheetActions";
 import JobCard from "@/components/collaboration/CollaborationCard";
 import { Text, View } from "@/components/theme/Themed";
@@ -250,6 +251,7 @@ const Applications = () => {
                 />
               </Pressable>
             </Card>
+
           )}
           keyExtractor={(item, index) => index.toString()}
           ListFooterComponent={

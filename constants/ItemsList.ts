@@ -14,6 +14,14 @@ export const LANGUAGES = [
   "Sindhi",
 ];
 
+export const INITIAL_LANGUAGES = [
+  "English",
+  "Hindi",
+  "Bengali",
+  "Marathi",
+  "Punjabi",
+];
+
 export const BRAND_INDUSTRIES = [
   "Fashion",
   "Lifestyle",
@@ -32,4 +40,13 @@ export const BRAND_INDUSTRIES = [
   "Sports",
   "Gaming",
   "Career",
+];
+
+export const INITIAL_BRAND_INDUSTRIES = [
+  "Fashion",
+  "Restaurant / Cafes",
+  "Holidays / Stays",
+  "Beauty / Spa",
+  "Travel",
+  "Health",
 ];
