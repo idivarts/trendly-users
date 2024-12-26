@@ -1,6 +1,8 @@
 import { NativeAssetItem } from "@/types/Asset";
 import { Profile } from "@/types/Profile";
 import { processRawAttachment } from "./attachments";
+import { SurveyAnswer } from "@/types/Survey";
+import { IPreferences } from "@/shared-libs/firestore/trendly-pro/models/users";
 
 export const calculateProfileCompletion = (profile: Profile) => {
   const totalFields = 10;
@@ -64,4 +66,17 @@ export const generateEmptyAssets = (
   }
 
   return assets;
+};
+
+export const getFormattedPreferences = (
+  preferences: IPreferences,
+  answers: SurveyAnswer
+) => {
+  return {
+    ...preferences,
+    preferredBrandIndustries: answers.question1,
+    contentCategory: answers.question2,
+    contentWillingToPost: answers.question3,
+    preferredLanguages: answers.question4,
+  };
 };

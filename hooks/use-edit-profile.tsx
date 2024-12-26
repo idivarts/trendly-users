@@ -4,19 +4,35 @@ import { useAWSContext } from "@/contexts/aws-context.provider";
 import { useAuthContext } from "@/contexts";
 import { calculateProfileCompletion } from "@/utils/profile";
 import { SelectItem } from "@/components/ui/select";
-import { Platform } from "react-native";
 import { NativeAssetItem, WebAssetItem } from "@/types/Asset";
+import useProcess from "./use-process";
 
-const useEditProfile = () => {
+interface UseEditProfileProps {
+  unsavedChanges?: boolean;
+  setUnsavedChanges?: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const useEditProfile = ({
+  unsavedChanges,
+  setUnsavedChanges,
+}: UseEditProfileProps) => {
   const {
     user,
     updateUser,
     verifyEmail,
   } = useAuthContext();
   const {
-    uploadFile,
-    uploadFileUri,
+    uploadNewAssets,
   } = useAWSContext();
+
+  const {
+    isProcessing,
+    processMessage,
+    processPercentage,
+    setIsProcessing,
+    setProcessMessage,
+    setProcessPercentage,
+  } = useProcess();
 
   const [attachments, setAttachments] = useState<any[]>([]);
   const [nativeAssets, setNativeAssets] = useState<NativeAssetItem[]>([]);
@@ -36,9 +52,6 @@ const useEditProfile = () => {
     value: 'Full Time',
   });
   const [niches, setNiches] = useState<SelectItem[]>([]);
-  const [processMessage, setProcessMessage] = useState('');
-  const [processPercentage, setProcessPercentage] = useState(0);
-  const [isProcessing, setIsProcessing] = useState(false);
 
   const contents: {
     content: string;
@@ -99,67 +112,17 @@ const useEditProfile = () => {
 
   const handleAssetsUpdateNative = (items: NativeAssetItem[]) => {
     setNativeAssets(items);
+    if (nativeAssets.length !== 0 && setUnsavedChanges) setUnsavedChanges(true);
   }
 
   const handleAssetsUpdateWeb = (items: WebAssetItem[]) => {
     setWebAssets(items);
+    setUnsavedChanges && setUnsavedChanges(true);
   }
 
   const handleNicheSelect = (niche: SelectItem[]) => {
     setNiches(niche);
-  }
-
-  const uploadNewAssets = async () => {
-    let uploadedAssets = [];
-
-    if (Platform.OS === 'web') {
-      for (const asset of webAssets) {
-        if (typeof asset.url === 'string' && asset.url.includes('http')) {
-          const attachment = attachments.find(attachment => (
-            asset.url === attachment.imageUrl || asset.url === attachment.playUrl || asset.url === attachment.appleUrl
-          ));
-
-          uploadedAssets.push(attachment);
-        } else if (asset.url instanceof File) {
-          const uploadAsset = await uploadFile(asset.url as File);
-
-          uploadedAssets.push(uploadAsset);
-        } else {
-          continue;
-        }
-      };
-    } else {
-      const filteredAssets = nativeAssets.filter(asset => asset.url !== '');
-      for (const asset of filteredAssets) {
-        if (asset.url.includes('http')) {
-          const attachment = attachments.find(attachment => (
-            asset.url === attachment.imageUrl || asset.url === attachment.playUrl || asset.url === attachment.appleUrl
-          ));
-
-          uploadedAssets.push(attachment);
-        } else if (asset.type === 'video') {
-          const uploadAsset = await uploadFileUri({
-            id: asset.url,
-            type: 'video',
-            localUri: asset.url,
-            uri: asset.url,
-          });
-
-          uploadedAssets.push(uploadAsset);
-        } else {
-          const uploadAsset = await uploadFileUri({
-            id: asset.url,
-            type: 'image',
-            localUri: asset.url,
-            uri: asset.url,
-          });
-
-          uploadedAssets.push(uploadAsset);
-        }
-      };
-    }
-
-    return uploadedAssets;
+    setUnsavedChanges && setUnsavedChanges(true);
   }
 
   const handleSave = async () => {
@@ -173,7 +136,11 @@ const useEditProfile = () => {
     setProcessPercentage(20);
 
     // Upload assets to aws s3
-    const uploadedAssets = await uploadNewAssets();
+    const uploadedAssets = await uploadNewAssets(
+      attachments,
+      nativeAssets,
+      webAssets,
+    );
 
     setProcessMessage('Saved profile attachments...');
     setProcessPercentage(70);
@@ -202,6 +169,7 @@ const useEditProfile = () => {
         completionPercentage,
       },
     }).then(() => {
+      setUnsavedChanges && setUnsavedChanges(false);
       Toaster.success('Profile saved successfully');
     }).catch((error) => {
       Toaster.error('Failed to save profile');

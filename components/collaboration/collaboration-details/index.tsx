@@ -2,20 +2,33 @@ import { useEffect, useState } from "react";
 import { ActivityIndicator } from "react-native";
 
 import {
+  collection,
+  collectionGroup,
   doc,
   getDoc,
+  getDocs,
+  query,
+  where,
 } from "firebase/firestore";
 
 import { FirestoreDB } from "@/utils/firestore";
 import CollaborationDetailsContent from "./CollaborationDetailsContent";
-import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
+import {
+  IApplications,
+  ICollaboration,
+} from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { View } from "@/components/theme/Themed";
 import { Invitation } from "@/types/Collaboration";
+import { useAuthContext } from "@/contexts";
+import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
 
 export interface CollaborationDetail extends ICollaboration {
   brandDescription: string;
   brandName: string;
   paymentVerified: boolean;
+  brandWebsite: string;
+  brandCategory: string[];
+  brandImage: string;
 }
 
 interface CollaborationDetailsProps {
@@ -31,11 +44,16 @@ const CollaborationDetails: React.FC<CollaborationDetailsProps> = ({
   collaborationID,
   pageID,
 }) => {
-  const [collaboration, setCollaboration] = useState<CollaborationDetail | undefined>(
-    undefined
-  );
+  const [collaboration, setCollaboration] = useState<
+    CollaborationDetail | undefined
+  >(undefined);
   const [loading, setLoading] = useState(true);
+  const [hasApplied, setHasApplied] = useState(false);
+  const [totalApplications, setTotalApplications] = useState(0);
+  const [application, setApplication] = useState<any>();
+  const [cardTypeDetails, setCardTypeDetails] = useState<string>(cardType);
   const [invitation, setInvitation] = useState<Invitation>();
+  const { user } = useAuthContext();
 
   // Fetch Collaboration Data
   const fetchCollaboration = async () => {
@@ -48,13 +66,60 @@ const CollaborationDetails: React.FC<CollaborationDetailsProps> = ({
 
       const brandRef = doc(FirestoreDB, "brands", data.brandId);
       const brandSnapshot = await getDoc(brandRef);
-      const brandData = brandSnapshot.data();
+      const brandData = brandSnapshot.data() as IBrands;
+
+      const applicationsRef = collection(collabRef, "applications");
+      const applicationsSnapshot = await getDocs(applicationsRef);
+      const applicationsData = applicationsSnapshot.docs.map((doc) => {
+        return {
+          id: doc.id,
+          ...doc.data(),
+        };
+      });
+
+      setTotalApplications(applicationsData.length);
+
+      if (!user || !user.id) return;
+
+      const hasApplied = collectionGroup(FirestoreDB, "applications");
+      if (!user || !user.id) return;
+
+      const hasAppliedQuery = query(
+        hasApplied,
+        where("userId", "==", user?.id),
+        where("collaborationId", "==", pageID)
+      );
+
+      // Use getDocs for queries, not getDoc
+      const hasAppliedSnapshot = await getDocs(hasAppliedQuery);
+      const hasAppliedData = hasAppliedSnapshot.docs.map((doc) => {
+        return {
+          id: doc.id,
+          ...doc.data(),
+        };
+      });
+
+      setHasApplied(hasAppliedData.length > 0);
+      setApplication(hasAppliedData[0]);
+
+      if (hasAppliedData.length > 0) {
+        setCardTypeDetails("application");
+      }
 
       setCollaboration({
         ...data,
-        brandDescription: brandData?.description || "",
+        brandDescription: brandData?.profile
+          ? brandData?.profile?.about || ""
+          : "",
         brandName: brandData?.name || "Unknown Brand",
+        brandImage: brandData?.image || "",
         paymentVerified: brandData?.paymentMethodVerified || false,
+        brandWebsite: brandData?.profile
+          ? brandData?.profile?.website || ""
+          : "",
+        brandCategory: brandData?.profile
+          ? brandData?.profile.industries || []
+          : [],
       });
     } catch (e) {
       console.error(e);
@@ -66,6 +131,7 @@ const CollaborationDetails: React.FC<CollaborationDetailsProps> = ({
   // Fetch Specific Invitation Data
   const fetchSpecificInvitation = async () => {
     if (!collaborationID || !cardId) return;
+
     try {
       const invitationRef = doc(
         FirestoreDB,
@@ -105,16 +171,18 @@ const CollaborationDetails: React.FC<CollaborationDetailsProps> = ({
       >
         <ActivityIndicator size="large" />
       </View>
-    )
+    );
   }
 
   if (!collaboration) return null;
 
   return (
     <CollaborationDetailsContent
-      cardType={cardType}
+      cardType={cardTypeDetails}
+      applicationData={application}
       collaborationDetail={collaboration}
       invitationData={invitation}
+      totalApplications={totalApplications}
       pageID={pageID}
     />
   );

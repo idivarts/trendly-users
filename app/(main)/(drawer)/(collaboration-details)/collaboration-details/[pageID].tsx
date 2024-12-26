@@ -15,12 +15,7 @@ const CollaborationDetailsScreen = () => {
   const theme = useTheme();
   const [isVisible, setIsVisible] = useState(false);
 
-  const {
-    cardId,
-    cardType,
-    collaborationID,
-    pageID,
-  } = useLocalSearchParams();
+  const { cardId, cardType, collaborationID, pageID } = useLocalSearchParams();
 
   return (
     <AppLayout>

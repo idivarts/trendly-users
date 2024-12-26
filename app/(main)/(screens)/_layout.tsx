@@ -16,12 +16,6 @@ const ScreensLayout = () => {
             headerShown: false,
           }}
         />
-        <Stack.Screen
-          name="notifications"
-          options={{
-            presentation: "modal",
-          }}
-        />
       </Stack>
     </AppLayout>
   );

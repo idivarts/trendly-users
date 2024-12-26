@@ -11,7 +11,7 @@ export const PROFILE_ITEMS = [
     id: "1",
     title: "My Preferences",
     icon: faChartSimple,
-    route: "/basic-profile",
+    route: "/preferences",
     active: true,
   },
   {
@@ -27,13 +27,6 @@ export const PROFILE_ITEMS = [
     active: false,
     icon: faChartSimple,
     route: "/my-stats",
-  },
-  {
-    id: "4",
-    title: "Reports",
-    active: false,
-    icon: faFileLines,
-    route: "/reports",
   },
   {
     id: "5",

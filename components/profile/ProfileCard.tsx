@@ -1,4 +1,4 @@
-import { Pressable } from "react-native";
+import { Platform, Pressable } from "react-native";
 import { Text, View } from "../theme/Themed";
 import { Avatar, Button } from "react-native-paper";
 import stylesFn from "@/styles/profile/ProfileCard.styles";
@@ -11,6 +11,7 @@ import Colors from "@/constants/Colors";
 import ImageUploadModal from "../ui/modal/ImageUploadModal";
 import { useAuthContext, useFirebaseStorageContext } from "@/contexts";
 import { useEffect, useState } from "react";
+import { ResizeMode, Video } from "expo-av";
 
 interface ProfileCardProps {
   item: User;
@@ -27,6 +28,8 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ item, onPress }) => {
   const [isSaving, setIsSaving] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [capturedImage, setCapturedImage] = useState<string>();
+  const [image, setImage] = useState<string | null>(null);
+  const [isVideo, setIsVideo] = useState(false);
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -58,6 +61,42 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ item, onPress }) => {
     }
   }, [capturedImage]);
 
+  const { user } = useAuthContext();
+
+  const fetchImage = async () => {
+    try {
+      if (!user?.profile) {
+        setImage(user?.profileImage || PLACEHOLDER_PERSON_IMAGE);
+        return;
+      }
+
+      const imageToShow =
+        user?.profile?.attachments && user.profile.attachments[0]
+          ? user.profile.attachments[0]
+          : null;
+
+      if (imageToShow === null) {
+        setImage(user?.profileImage || PLACEHOLDER_PERSON_IMAGE);
+        setIsVideo(false);
+      } else if (imageToShow.type === "image") {
+        setIsVideo(false);
+        setImage(imageToShow.imageUrl || "");
+      } else if (imageToShow.type === "video") {
+        setIsVideo(true);
+        Platform.OS === "ios"
+          ? setImage(imageToShow.appleUrl || "")
+          : setImage(imageToShow.playUrl || "");
+      }
+    } catch (error) {
+      console.error("Error fetching image or generating thumbnail:", error);
+      setImage(PLACEHOLDER_PERSON_IMAGE);
+    }
+  };
+
+  useEffect(() => {
+    fetchImage();
+  }, [user]);
+
   return (
     <View style={styles.container}>
       <View
@@ -65,13 +104,24 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ item, onPress }) => {
           position: "relative",
         }}
       >
-        <Avatar.Image
-          source={{
-            uri: item.profileImage || PLACEHOLDER_PERSON_IMAGE,
-          }}
-          size={200}
-          style={styles.avatar}
-        />
+        {!isVideo && (
+          <Avatar.Image
+            source={{
+              uri: image || PLACEHOLDER_PERSON_IMAGE,
+            }}
+            size={200}
+            style={styles.avatar}
+          />
+        )}
+        {isVideo && (
+          <Video
+            source={{ uri: image || "" }}
+            style={styles.video}
+            isLooping={false}
+            shouldPlay={false}
+            resizeMode={ResizeMode.COVER}
+          />
+        )}
         <Pressable
           onPress={() => setIsModalVisible(true)}
           style={{
@@ -82,7 +132,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ item, onPress }) => {
         >
           <FontAwesomeIcon icon={faPen} color={Colors(theme).text} size={22} />
         </Pressable>
-        <View
+        <Pressable
           style={{
             backgroundColor: "#A69F5BD6",
             alignItems: "center",
@@ -92,6 +142,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ item, onPress }) => {
             bottom: 0,
             right: 45,
           }}
+          onPress={onPress}
         >
           <Text
             style={{
@@ -100,7 +151,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ item, onPress }) => {
           >
             {item.profile?.completionPercentage?.toString() || 0}% Complete
           </Text>
-        </View>
+        </Pressable>
       </View>
       <View style={styles.textContainer}>
         <Text style={styles.titleText}>{item.name}</Text>

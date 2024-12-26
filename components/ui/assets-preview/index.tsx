@@ -38,10 +38,7 @@ const AssetsPreview: React.FC<AssetsPreviewProps> = ({
         contentContainerStyle={styles.scrollViewContent}
       >
         {files.map((file, index) => (
-          <View
-            key={file.id + file.url + index}
-            style={styles.fileContainer}
-          >
+          <View key={file.id + file.url + index} style={styles.fileContainer}>
             {file.type.includes("video") ? (
               <Video
                 source={{
@@ -63,18 +60,16 @@ const AssetsPreview: React.FC<AssetsPreviewProps> = ({
               <Image
                 source={imageUrl(file.url)}
                 style={styles.image}
-                resizeMode="contain"
+                resizeMode="cover"
               />
             )}
             {onRemove && (
               <IconButton
-                icon={() => (
-                  <FontAwesomeIcon
-                    icon={faTrash}
-                    size={12}
-                  />
-                )}
-                style={[styles.iconButton, { backgroundColor: Colors(theme).white }]}
+                icon={() => <FontAwesomeIcon icon={faTrash} size={12} />}
+                style={[
+                  styles.iconButton,
+                  { backgroundColor: Colors(theme).white },
+                ]}
                 size={12}
                 onPress={() => onRemove(file.id)}
               />
@@ -88,8 +83,8 @@ const AssetsPreview: React.FC<AssetsPreviewProps> = ({
         style={[
           styles.editButton,
           {
-            display: Platform.OS === "web" ? 'none' : 'flex',
-          }
+            display: Platform.OS === "web" ? "none" : "flex",
+          },
         ]}
       >
         Edit

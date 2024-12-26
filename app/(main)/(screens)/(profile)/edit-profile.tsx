@@ -1,18 +1,28 @@
 import EditProfile from "@/components/basic-profile/edit-profile";
 import { Text, View } from "@/components/theme/Themed";
+import ConfirmationModal from "@/components/ui/modal/ConfirmationModal";
 import ScreenHeader from "@/components/ui/screen-header";
 import { useAuthContext } from "@/contexts";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import ProfileBottomSheet from "@/shared-uis/components/ProfileModal/Profile-Modal";
-import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import { FirestoreDB } from "@/utils/firestore";
+import {
+  BottomSheetBackdrop,
+  BottomSheetModal,
+  BottomSheetScrollView,
+} from "@gorhom/bottom-sheet";
 import { useTheme } from "@react-navigation/native";
-import { useMemo, useRef } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Pressable } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const EditProfileScreen: React.FC = () => {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  const [unsavedChanges, setUnsavedChanges] = useState(false);
+  const [confirmationModalVisible, setConfirmationModalVisible] =
+    useState(false);
+
   const theme = useTheme();
 
   const snapPoints = useMemo(() => ["25%", "50%", "90%"], []);
@@ -24,11 +34,9 @@ const EditProfileScreen: React.FC = () => {
     right: insets.right,
   });
 
-  const handleSheetChanges = (index: number) => { };
+  const handleSheetChanges = (index: number) => {};
 
-  const {
-    user,
-  } = useAuthContext();
+  const { user } = useAuthContext();
 
   const renderBackdrop = (props: any) => {
     return (
@@ -47,7 +55,14 @@ const EditProfileScreen: React.FC = () => {
         rightAction
         rightActionButton={
           <Pressable
-            onPress={() => bottomSheetModalRef.current?.present()}
+            onPress={() => {
+              if (unsavedChanges) {
+                setConfirmationModalVisible(true);
+                return;
+              }
+
+              bottomSheetModalRef.current?.present();
+            }}
             style={{ padding: 10 }}
           >
             <Text>Preview</Text>
@@ -55,7 +70,10 @@ const EditProfileScreen: React.FC = () => {
         }
       />
 
-      <EditProfile />
+      <EditProfile
+        unsavedChanges={unsavedChanges}
+        setUnsavedChanges={setUnsavedChanges}
+      />
 
       <BottomSheetModal
         ref={bottomSheetModalRef}
@@ -66,16 +84,26 @@ const EditProfileScreen: React.FC = () => {
         enablePanDownToClose={true}
         containerOffset={containerOffset}
         topInset={insets.top}
-        bottomInset={insets.bottom}
       >
-        <BottomSheetScrollView>
-          <ProfileBottomSheet
-            influencer={user as IUsers}
-            theme={theme}
-            isBrandsApp={true}
-          />
-        </BottomSheetScrollView>
+        <ProfileBottomSheet
+          influencer={user as IUsers}
+          theme={theme}
+          FireStoreDB={FirestoreDB}
+          isBrandsApp={false}
+        />
       </BottomSheetModal>
+
+      <ConfirmationModal
+        cancelAction={() => setConfirmationModalVisible(false)}
+        confirmAction={() => {
+          bottomSheetModalRef.current?.present();
+          setConfirmationModalVisible(false);
+        }}
+        confirmText="Continue"
+        description="You have unsaved changes. Are you sure you want to continue?"
+        setVisible={setConfirmationModalVisible}
+        visible={confirmationModalVisible}
+      />
     </View>
   );
 };

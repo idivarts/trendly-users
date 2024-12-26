@@ -1,5 +1,5 @@
 import AppLayout from "@/layouts/app-layout";
-import { View, Text, FlatList } from "react-native";
+import { View, Text, FlatList, Platform } from "react-native";
 import InfluencerCard from "@/components/InfluencerCard";
 import { router, useLocalSearchParams } from "expo-router";
 import { Button } from "react-native-paper";
@@ -22,14 +22,19 @@ const Preview = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [processedAttachments, setProcessedAttachments] = useState([]);
   const [rawAttachments, setRawAttachments] = useState([]);
+  const [fileAttachments, setFileAttachments] = useState([]);
+  const [answers, setAnswers] = useState<
+    {
+      question: number;
+      answer: string;
+    }[]
+  >([]);
+  const [timeline, setTimeline] = useState<number>(0);
+  const [quotation, setQuotation] = useState<string>("");
 
-  const {
-    xl,
-  } = useBreakpoints();
+  const { xl } = useBreakpoints();
 
-  const {
-    user
-  } = useAuthContext();
+  const { user } = useAuthContext();
 
   useEffect(() => {
     try {
@@ -37,7 +42,9 @@ const Preview = () => {
         const rawAttachments = JSON.parse(params.attachments as string);
         setRawAttachments(rawAttachments);
 
-        const processed = rawAttachments.map((attachment: any) => processRawAttachment(attachment));
+        const processed = rawAttachments.map((attachment: any) =>
+          processRawAttachment(attachment)
+        );
 
         setProcessedAttachments(processed);
       }
@@ -46,6 +53,46 @@ const Preview = () => {
       setErrorMessage("Error processing attachments");
     }
   }, [params.attachments]);
+
+  useEffect(() => {
+    try {
+      if (params.fileAttachments) {
+        const rawAttachments = JSON.parse(params.fileAttachments as string);
+        setFileAttachments(rawAttachments);
+      }
+    } catch (error) {
+      console.error("Error processing attachments:", error);
+      setErrorMessage("Error processing attachments");
+    }
+  }, [params.fileAttachments]);
+
+  useEffect(() => {
+    try {
+      const quotationFromParams = JSON.parse(params.quotation as string);
+      setQuotation(quotationFromParams);
+      const timelineFromParams = JSON.parse(params.timeline as string);
+      setTimeline(Number(timelineFromParams));
+    } catch (error) {
+      console.error("Error processing attachments:", error);
+      setErrorMessage("Error processing attachments");
+    }
+  }, [params.fileAttachments]);
+
+  useEffect(() => {
+    try {
+      if (params.answers) {
+        const answers = JSON.parse(params.answers as string);
+        var answersArray = [];
+        for (var key in answers) {
+          answersArray.push({ question: Number(key), answer: answers[key] });
+        }
+        setAnswers(answersArray);
+      }
+    } catch (error) {
+      console.error("Error processing attachments:", error);
+      setErrorMessage("Error processing attachments");
+    }
+  }, [params.answers]);
 
   const handleSubmit = async () => {
     setLoading(true);
@@ -72,6 +119,7 @@ const Preview = () => {
         return;
       }
 
+      //@ts-ignore
       const applicantData: IApplications = {
         userId: user?.id,
         collaborationId: pageID,
@@ -79,6 +127,10 @@ const Preview = () => {
         timeStamp: Date.now(),
         message: note,
         attachments: rawAttachments,
+        fileAttachments: fileAttachments,
+        answersFromInfluencer: answers,
+        quotation: quotation,
+        timeline,
       };
 
       const applicantDocRef = collection(
@@ -93,7 +145,7 @@ const Preview = () => {
       if (docset) {
         setErrorMessage("Application submitted successfully");
         setTimeout(() => {
-          router.replace("/collaborations");
+          router.navigate("/collaborations");
         }, 1000); // Give user time to see success message
       } else {
         setErrorMessage("Failed to submit application");
@@ -108,17 +160,16 @@ const Preview = () => {
 
   return (
     <AppLayout>
-      <ScreenHeader
-        title="Preview"
-      />
+      <ScreenHeader title="Preview" />
       <FlatList
         data={[1]}
         renderItem={() => {
           return (
             <InfluencerCard
-              ToggleModal={() => { }}
+              ToggleModal={() => {}}
               type="influencer"
               influencer={{
+                //@ts-ignore
                 bio: "",
                 followers: 100,
                 name: user?.name || "John Doe",
@@ -157,11 +208,12 @@ const Preview = () => {
           </View>
         }
         style={{
-          width: xl ? 768 : '100%',
+          width: xl ? 768 : "100%",
           marginHorizontal: "auto",
         }}
         contentContainerStyle={{
           paddingVertical: 16,
+          paddingHorizontal: Platform.OS === "web" ? 16 : 0,
         }}
       />
     </AppLayout>

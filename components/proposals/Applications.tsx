@@ -1,3 +1,4 @@
+import React from "react";
 import BottomSheetActions from "@/components/BottomSheetActions";
 import JobCard from "@/components/collaboration/CollaborationCard";
 import { Text, View } from "@/components/theme/Themed";
@@ -14,18 +15,31 @@ import {
   doc as firebaseDoc,
   getDoc,
 } from "firebase/firestore";
-import { ActivityIndicator, FlatList, RefreshControl } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  Pressable,
+  RefreshControl,
+} from "react-native";
 import { FirestoreDB } from "@/utils/firestore";
 import { AuthApp } from "@/utils/auth";
 import { stylesFn } from "@/styles/Proposal.styles";
-import { Button } from "react-native-paper";
+import { Button, Card } from "react-native-paper";
 import EmptyState from "../ui/empty-state";
+import CollaborationStats from "../collaboration/card-components/CollaborationStats";
+import Carousel from "@/shared-uis/components/carousel/carousel";
+import CollaborationHeader from "../collaboration/card-components/CollaborationHeader";
+import CollaborationDetails from "../collaboration/card-components/CollaborationDetails";
+import { useAuthContext } from "@/contexts";
+import { processRawAttachment } from "@/utils/attachments";
+import { MediaItem } from "../ui/carousel/render-media-item";
 
 const Applications = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [proposals, setProposals] = useState<any[]>([]);
   const [selectedCollabId, setSelectedCollabId] = useState<string | null>(null);
   const [notPendingProposals, setNotPendingProposals] = useState<number>();
+  const { user } = useAuthContext();
 
   const openBottomSheet = (id: string) => {
     setIsVisible(true);
@@ -35,7 +49,6 @@ const Applications = () => {
 
   const theme = useTheme();
   const styles = stylesFn(theme);
-  const user = AuthApp.currentUser;
 
   const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -76,7 +89,7 @@ const Applications = () => {
           );
           const applicationSnapshot = query(
             applicationCol,
-            where("userId", "==", user?.uid)
+            where("userId", "==", user?.id)
           );
           const applicationData = await getDocs(applicationSnapshot).then(
             (querySnapshot) => {
@@ -94,7 +107,7 @@ const Applications = () => {
           }
 
           const userApplications = applicationData.filter(
-            (application) => application.userId === user?.uid
+            (application) => application.userId === user?.id
           );
 
           const notPendingApplications = userApplications.filter(
@@ -107,6 +120,7 @@ const Applications = () => {
             ...collab,
             applications: applicationData,
             brandName: brandData.data().name,
+            brandImage: brandData.data().image,
           };
         })
       );
@@ -165,30 +179,79 @@ const Applications = () => {
         <FlatList
           data={pendingProposals}
           renderItem={({ item }) => (
-            <JobCard
-              name={item.name}
-              id={item.id}
-              data={item.applications}
-              status="pending"
-              brandName={item.brandName}
-              description={item.description}
-              brandId={item.brandId}
-              budget={{
-                min: Number(item.budget.min),
-                max: Number(item.budget.max),
-              }}
-              onOpenBottomSheet={openBottomSheet}
-              cardType="proposal"
-              collaborationType={item.collaborationType}
-              location={item.location}
-              managerId="managerId"
-              numberOfInfluencersNeeded={1}
-              platform={item.platform}
-              promotionType={item.promotionType}
-              timeStamp={item.timeStamp}
-              applications={undefined}
-              invitations={undefined}
-            />
+            <Card>
+              <CollaborationHeader
+                cardId={item.id}
+                cardType="collaboration"
+                brand={{
+                  image: item.brandImage,
+                  name: item.brandName,
+                  paymentVerified: item.paymentVerified,
+                }}
+                collaboration={{
+                  collabId: item.id,
+                  collabName: item.name,
+                  timePosted: item.timeStamp,
+                }}
+                onOpenBottomSheet={() => openBottomSheet(item.id)}
+              />
+              <Carousel
+                theme={theme}
+                data={
+                  item.applications[0].attachments.map(
+                    (attachment: MediaItem) => processRawAttachment(attachment)
+                  ) || []
+                }
+                dot={
+                  <View
+                    style={{
+                      backgroundColor: Colors(theme).primary,
+                      width: 8,
+                      height: 8,
+                      borderRadius: 4,
+                      marginLeft: 3,
+                      marginRight: 3,
+                    }}
+                  />
+                }
+                activeDot={
+                  <View
+                    style={{
+                      backgroundColor: Colors(theme).gray100,
+                      width: 8,
+                      height: 8,
+                      borderRadius: 4,
+                      marginLeft: 3,
+                      marginRight: 3,
+                    }}
+                  />
+                }
+              />
+              <Pressable
+                onPress={() => {
+                  router.push({
+                    // @ts-ignore
+                    pathname: `/collaboration-details/${item.id}`,
+                    params: {
+                      cardType: "collaboration",
+                      cardId: item.id,
+                      collaborationID: item.id,
+                    },
+                  });
+                }}
+              >
+                <CollaborationDetails
+                  collaborationDetails={{
+                    collabDescription: item.description || "",
+                    promotionType: item.promotionType,
+                    location: item.location,
+                    platform: item.platform,
+                    contentType: item.contentFormat,
+                  }}
+                />
+              </Pressable>
+            </Card>
+
           )}
           keyExtractor={(item, index) => index.toString()}
           ListFooterComponent={
@@ -206,6 +269,7 @@ const Applications = () => {
                       styles.title,
                       {
                         marginBottom: 10,
+                        color: Colors(theme).text,
                       },
                     ]}
                   >
@@ -214,7 +278,6 @@ const Applications = () => {
                   <View
                     style={{
                       backgroundColor: Colors(theme).card,
-
                       padding: 10,
                       borderRadius: 5,
                       justifyContent: "center",
@@ -235,8 +298,9 @@ const Applications = () => {
             </View>
           }
           contentContainerStyle={{
-            padding: 16,
+            paddingTop: 8,
             gap: 16,
+            paddingHorizontal: 16,
           }}
           refreshControl={
             <RefreshControl
@@ -247,77 +311,55 @@ const Applications = () => {
           }
         />
       ) : (
+        //@ts-ignore
         <>
           {pendingProposals.length === 0 && notPendingProposals !== 0 && (
             <View
               style={{
                 justifyContent: "center",
                 alignItems: "center",
-                gap: 50,
+                padding: 20,
               }}
             >
-              <EmptyState
-                image={require("@/assets/images/illustration6.png")}
-                subtitle="No Applications Found"
-                hideAction
-              />
-
-              <Button
-                mode="contained"
-                onPress={() => router.push("/collaborations")}
+              <Text
+                style={[
+                  styles.title,
+                  {
+                    marginBottom: 10,
+                    color: Colors(theme).text,
+                  },
+                ]}
               >
-                New Collaborations
-              </Button>
+                Looking for past applications
+              </Text>
               <View
                 style={{
-                  alignItems: "center",
+                  backgroundColor: Colors(theme).card,
+                  padding: 10,
+                  borderRadius: 5,
                   justifyContent: "center",
-                  padding: 20,
+                  alignItems: "center",
                 }}
               >
-                <Text
-                  style={[
-                    styles.title,
-                    {
-                      marginBottom: 10,
-                      color: Colors(theme).text,
-                    },
-                  ]}
-                >
-                  Looking for past applications
-                </Text>
-                <View
-                  style={{
-                    backgroundColor: Colors(theme).card,
-                    padding: 10,
-                    borderRadius: 5,
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <Link href={"/past/application"} style={{}}>
-                    <Text>View Past Applications</Text>
-                  </Link>
-                </View>
+                <Link href={"/past/application"} style={{}}>
+                  <Text>View Past Applications</Text>
+                </Link>
               </View>
             </View>
           )}
         </>
-      )
-      }
-      {
-        isVisible && (
-          <BottomSheetActions
-            cardId={selectedCollabId || ""}
-            cardType="proposal"
-            isVisible={isVisible}
-            onClose={closeBottomSheet}
-            snapPointsRange={["20%", "50%"]}
-            key={selectedCollabId}
-          />
-        )
-      }
-    </View >
+      )}
+      {isVisible && (
+        <BottomSheetActions
+          cardId={selectedCollabId || ""}
+          cardType="proposal"
+          isVisible={isVisible}
+          onClose={closeBottomSheet}
+          snapPointsRange={["20%", "50%"]}
+          key={selectedCollabId}
+        />
+      )}
+    </View>
   );
 };
 
