@@ -16,7 +16,7 @@ import {
   PIE_CHART_DATA as pieChartData,
   FUNNEL_DATA as demo_data,
 } from "@/constants/Chart";
-import FunnelChartWeb from "@/components/basic-profile/stats/FunnelChart";
+import FunnelChartWeb from "@/components/basic-profile/stats/funnel-chart/FunnelChart";
 
 const MyStatsScreen = () => {
   const screenWidth = Dimensions.get("window").width;

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { View, FlatList, RefreshControl } from "react-native";
+import { View, FlatList, RefreshControl, Pressable } from "react-native";
 import SearchComponent from "@/components/SearchComponent";
-import JobCard from "./CollaborationCard";
+import JobCard, { CollaborationAdCardProps } from "./CollaborationCard";
 import CollaborationFilter from "@/components/FilterModal";
 import AppLayout from "@/layouts/app-layout";
 import { useTheme } from "@react-navigation/native";
@@ -10,10 +10,17 @@ import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import { FirestoreDB } from "@/utils/firestore";
 import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
-import { ActivityIndicator } from "react-native-paper";
+import { ActivityIndicator, Card } from "react-native-paper";
 import Colors from "@/constants/Colors";
 import BottomSheetActions from "../BottomSheetActions";
 import EmptyState from "../ui/empty-state";
+import CollaborationHeader from "./card-components/CollaborationHeader";
+import Carousel from "@/shared-uis/components/carousel/carousel";
+import CollaborationDetails from "./card-components/CollaborationDetails";
+import CollaborationStats from "./card-components/CollaborationStats";
+import { useAuthContext } from "@/contexts";
+import { processRawAttachment } from "@/utils/attachments";
+import { router } from "expo-router";
 
 interface ICollaborationAddCardProps extends ICollaboration {
   name: string;
@@ -22,6 +29,7 @@ interface ICollaborationAddCardProps extends ICollaboration {
   appliedCount?: number;
   aiSuccessRate?: string;
   id: string;
+  brandImage?: string;
   brandHireRate?: string;
 }
 
@@ -29,6 +37,7 @@ const Collaboration = () => {
   const getUniqueValues = (array: any[], key: string) => {
     return ["All", ...new Set(array.map((item) => item[key]))];
   };
+  const { user } = useAuthContext();
   const [filterVisible, setFilterVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -73,12 +82,17 @@ const Collaboration = () => {
     });
 
     const brandMap: {
-      [key: string]: { name: string; paymentMethodVerified: boolean };
+      [key: string]: {
+        name: string;
+        paymentMethodVerified: boolean;
+        image: string;
+      };
     } = {};
     brandData.forEach((brand) => {
       brandMap[brand.id] = {
         name: brand.name,
         paymentMethodVerified: brand.paymentMethodVerified || false,
+        image: brand.image || "",
       };
     });
 
@@ -86,7 +100,11 @@ const Collaboration = () => {
   };
 
   const fetchCollabs = async (brandsMap: {
-    [key: string]: { name: string; paymentMethodVerified: boolean };
+    [key: string]: {
+      name: string;
+      paymentMethodVerified: boolean;
+      image: string;
+    };
   }) => {
     const collabRef = collection(FirestoreDB, "collaborations");
 
@@ -106,6 +124,7 @@ const Collaboration = () => {
     const collabsWithBrandNames = data.map((collab) => ({
       ...collab,
       brandName: brandsMap[collab.brandId]?.name || "Unknown Brand",
+      brandImage: brandsMap[collab.brandId]?.image || "",
       paymentVerified:
         brandsMap[collab.brandId]?.paymentMethodVerified || false,
     }));
@@ -124,10 +143,13 @@ const Collaboration = () => {
       (selectedCategory === "" ||
         job.promotionType.includes(selectedCategory) ||
         selectedCategory === "All") &&
-      job.budget?.min &&
-      job.budget?.min >= salaryRange[0] &&
-      job.budget?.max &&
-      job.budget?.max <= salaryRange[1]
+      (selectedJobType === "" ||
+        job.contentFormat.includes(selectedJobType) ||
+        selectedJobType === "All") &&
+      job?.budget?.min &&
+      job.budget.min >= salaryRange[0] &&
+      job.budget.max &&
+      job.budget.max <= salaryRange[1]
     );
   });
 
@@ -162,72 +184,141 @@ const Collaboration = () => {
             setSearchQuery={setSearchQuery}
           />
         </View>
-        {
-          filteredList.length === 0 ? (
-            <EmptyState
-              hideAction
-              image={require("@/assets/images/illustration1.png")}
-              subtitle="We are working hard to bring more brands and collaborations for you on Trendly. Thanks for your patience."
-              title="Oops! No Collaborations!"
-            />
-          ) : (
-            <FlatList
-              data={filteredList}
-              renderItem={({ item }) => (
-                <JobCard
-                  {...item}
-                  cardType={"collaboration"}
-                  onOpenBottomSheet={openBottomSheet}
+        {filteredList.length === 0 ? (
+          <EmptyState
+            hideAction
+            image={require("@/assets/images/illustration1.png")}
+            subtitle="We are working hard to bring more brands and collaborations for you on Trendly. Thanks for your patience."
+            title="Oops! No Collaborations!"
+          />
+        ) : (
+          <FlatList
+            data={filteredList}
+            renderItem={({ item }) => (
+              <Card>
+                <CollaborationHeader
+                  cardId={item.id}
+                  cardType="collaboration"
+                  brand={{
+                    image: item.brandImage || "",
+                    name: item.brandName,
+                    paymentVerified: item.paymentVerified || false,
+                  }}
+                  collaboration={{
+                    collabId: item.id,
+                    collabName: item.name,
+                    timePosted: item.timeStamp,
+                  }}
+                  onOpenBottomSheet={() => openBottomSheet(item.id)}
                 />
-              )}
-              keyExtractor={(item) => item.id}
-              style={{
-                flexGrow: 1,
-                paddingTop: 8,
-                paddingHorizontal: 16,
-              }}
-              contentContainerStyle={{
-                gap: 16,
-                paddingBottom: 24,
-              }}
-              refreshControl={
-                <RefreshControl
-                  refreshing={refreshing}
-                  onRefresh={handleRefresh}
-                />
-              }
-            />
-          )
-        }
+                {item.attachments && item.attachments.length > 0 && (
+                  <Carousel
+                    theme={theme}
+                    containerHeight={300}
+                    data={
+                      item.attachments?.map((attachment) =>
+                        processRawAttachment(attachment)
+                      ) || []
+                    }
+                    dot={
+                      <View
+                        style={{
+                          backgroundColor: Colors(theme).primary,
+                          width: 8,
+                          height: 8,
+                          borderRadius: 4,
+                          marginLeft: 3,
+                          marginRight: 3,
+                        }}
+                      />
+                    }
+                    activeDot={
+                      <View
+                        style={{
+                          backgroundColor: Colors(theme).gray100,
+                          width: 8,
+                          height: 8,
+                          borderRadius: 4,
+                          marginLeft: 3,
+                          marginRight: 3,
+                        }}
+                      />
+                    }
+                  />
+                )}
+                <Pressable
+                  onPress={() => {
+                    router.push({
+                      // @ts-ignore
+                      pathname: `/collaboration-details/${item.id}`,
+                      params: {
+                        cardType: "collaboration",
+                        cardId: item.id,
+                        collaborationID: item.id,
+                      },
+                    });
+                  }}
+                >
+                  <CollaborationDetails
+                    collaborationDetails={{
+                      collabDescription: item.description || "",
+                      promotionType: item.promotionType,
+                      location: item.location,
+                      platform: item.platform,
+                      contentType: item.contentFormat,
+                    }}
+                  />
+                  <CollaborationStats
+                    influencerCount={item.numberOfInfluencersNeeded}
+                    collabID={item.id}
+                    budget={item.budget ? item.budget : { min: 0, max: 0 }}
+                    brandHireRate={item.brandHireRate || ""}
+                  />
+                </Pressable>
+              </Card>
+            )}
+            keyExtractor={(item) => item.id}
+            style={{
+              flexGrow: 1,
+              paddingTop: 8,
+            }}
+            contentContainerStyle={{
+              gap: 16,
+              paddingBottom: 24,
+            }}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={handleRefresh}
+              />
+            }
+          />
+        )}
       </View>
-      {
-        isVisible && (
-          <BottomSheetActions
-            cardId={selectedCollabId || ""} // Pass the selected collab id
-            cardType="collaboration"
-            snapPointsRange={["25%", "50%"]}
-            isVisible={isVisible}
-            onClose={closeBottomSheet}
-            key={selectedCollabId} // Ensure the BottomSheetActions re-renders with new id
-          />
-        )
-      }
-      {
-        filterVisible && (
-          <CollaborationFilter
-            categories={getUniqueValues(collabs, "promotionType")}
-            jobTypes={getUniqueValues(collabs, "collaborationType")}
-            currentCategory={selectedCategory}
-            currentJobType={selectedJobType}
-            currentSalaryRange={salaryRange}
-            isVisible={filterVisible}
-            setSelectedCategory={setSelectedCategory}
-            setSelectedJobType={setSelectedJobType}
-            setSalaryRange={setSalaryRange}
-            onClose={toggleFilterModal}
-          />
-        )
-      }
+      {isVisible && (
+        <BottomSheetActions
+          cardId={selectedCollabId || ""} // Pass the selected collab id
+          cardType="collaboration"
+          snapPointsRange={["25%", "50%"]}
+          isVisible={isVisible}
+          onClose={closeBottomSheet}
+          key={selectedCollabId} // Ensure the BottomSheetActions re-renders with new id
+        />
+      )}
+      {filterVisible && (
+        <CollaborationFilter
+          categories={getUniqueValues(collabs, "promotionType")}
+          jobTypes={getUniqueValues(collabs, "collaborationType")}
+          currentCategory={selectedCategory}
+          currentJobType={selectedJobType}
+          currentSalaryRange={salaryRange}
+          isVisible={filterVisible}
+          setSelectedCategory={setSelectedCategory}
+          setSelectedJobType={setSelectedJobType}
+          setSalaryRange={setSalaryRange}
+          onClose={toggleFilterModal}
+        />
+      )}
     </AppLayout>
   );
 };

@@ -17,6 +17,14 @@ import { getDocs } from "firebase/firestore";
 import { AuthApp } from "@/utils/auth";
 import BottomSheetActions from "@/components/BottomSheetActions";
 import ScreenHeader from "@/components/ui/screen-header";
+import CollaborationDetails from "@/components/collaboration/card-components/CollaborationDetails";
+import Colors from "@/constants/Colors";
+import { processRawAttachment } from "@/utils/attachments";
+import Carousel from "@/shared-uis/components/carousel/carousel";
+import CollaborationHeader from "@/components/collaboration/card-components/CollaborationHeader";
+import { Card } from "react-native-paper";
+import { useTheme } from "@react-navigation/native";
+import { useAuthContext } from "@/contexts";
 
 const PastApplicationPage = (props: any) => {
   const [isVisible, setIsVisible] = React.useState(false);
@@ -25,13 +33,13 @@ const PastApplicationPage = (props: any) => {
   const [selectedCollabId, setSelectedCollabId] = React.useState<string | null>(
     null
   );
+  const theme = useTheme();
+  const { user } = useAuthContext();
   const openBottomSheet = (id: string) => {
     setIsVisible(true);
     setSelectedCollabId(id);
   };
   const closeBottomSheet = () => setIsVisible(false);
-
-  const user = AuthApp.currentUser;
 
   const fetchProposals = async () => {
     try {
@@ -65,7 +73,7 @@ const PastApplicationPage = (props: any) => {
 
           const applicationSnapshot = query(
             applicationCol,
-            where("userId", "==", user?.uid),
+            where("userId", "==", user?.id),
             where("status", "in", ["accepted", "rejected"])
           );
 
@@ -88,6 +96,7 @@ const PastApplicationPage = (props: any) => {
             ...collab,
             applications: applicationData[0],
             brandName: brandData.data().name,
+            brandImage: brandData.data().image,
           };
         })
       );
@@ -119,9 +128,7 @@ const PastApplicationPage = (props: any) => {
 
   return (
     <AppLayout>
-      <ScreenHeader
-        title="Past Invitations"
-      />
+      <ScreenHeader title="Past Invitations" />
       <View
         style={{
           flex: 1,
@@ -130,32 +137,66 @@ const PastApplicationPage = (props: any) => {
         <FlatList
           data={proposals}
           renderItem={({ item }) => (
-            <JobCard
-              name={item.name}
-              id={item.id}
-              data={item.applications}
-              brandName={item.brandName}
-              description={item.description}
-              status={item.applications.status}
-              brandId={item.brandId}
-              budget={{
-                min: Number(item.budget.min),
-                max: Number(item.budget.max),
-              }}
-              onOpenBottomSheet={openBottomSheet}
-              cardType="invitation"
-              location={item.location}
-              managerId="managerId"
-              numberOfInfluencersNeeded={1}
-              platform={item.platform}
-              promotionType={item.promotionType as PromotionType}
-              contentFormat={item.contentFormat}
-              preferences={item.preferences}
-              preferredContentLanguage={item.preferredContentLanguage}
-              timeStamp={item.timeStamp}
-              applications={undefined}
-              invitations={undefined}
-            />
+            <Card>
+              <CollaborationHeader
+                cardId={item.id}
+                cardType="invitation"
+                brand={{
+                  image: item.brandImage,
+                  name: item.brandName,
+                  paymentVerified: item.paymentVerified,
+                }}
+                collaboration={{
+                  collabId: item.id,
+                  collabName: item.name,
+                  timePosted: item.timeStamp,
+                }}
+                onOpenBottomSheet={() => openBottomSheet(item.id)}
+              />
+              {item.attachments && item.attachments.length > 0 && (
+                <Carousel
+                  theme={theme}
+                  data={
+                    item.attachments?.map((attachment: any) =>
+                      processRawAttachment(attachment)
+                    ) || []
+                  }
+                  dot={
+                    <View
+                      style={{
+                        backgroundColor: Colors(theme).primary,
+                        width: 8,
+                        height: 8,
+                        borderRadius: 4,
+                        marginLeft: 3,
+                        marginRight: 3,
+                      }}
+                    />
+                  }
+                  activeDot={
+                    <View
+                      style={{
+                        backgroundColor: Colors(theme).gray100,
+                        width: 8,
+                        height: 8,
+                        borderRadius: 4,
+                        marginLeft: 3,
+                        marginRight: 3,
+                      }}
+                    />
+                  }
+                />
+              )}
+              <CollaborationDetails
+                collaborationDetails={{
+                  collabDescription: item.description || "",
+                  promotionType: item.promotionType,
+                  location: item.location,
+                  platform: item.platform,
+                  contentType: item.contentFormat,
+                }}
+              />
+            </Card>
           )}
           contentContainerStyle={{
             padding: 16,

@@ -8,7 +8,10 @@ import { router } from "expo-router";
 import { formatDistanceToNow } from "date-fns";
 import Colors from "@/constants/Colors";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faCircleExclamation, faEllipsis } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCircleExclamation,
+  faEllipsis,
+} from "@fortawesome/free-solid-svg-icons";
 
 export interface CollaborationAdCardProps extends ICollaboration {
   name: string;
@@ -101,19 +104,23 @@ const JobCard = (props: CollaborationAdCardProps) => {
                   borderColor: props.paymentVerified ? "#c3e6cb" : "#f5c6cb",
                 },
               ]}
-              icon={props.paymentVerified ? () => (
-                <FontAwesomeIcon
-                  color="#28a745"
-                  icon={faCircleExclamation}
-                  size={16}
-                />
-              ) : () => (
-                <FontAwesomeIcon
-                  color="#dc3545"
-                  icon={faCircleExclamation}
-                  size={16}
-                />
-              )}
+              icon={
+                props.paymentVerified
+                  ? () => (
+                      <FontAwesomeIcon
+                        color="#28a745"
+                        icon={faCircleExclamation}
+                        size={16}
+                      />
+                    )
+                  : () => (
+                      <FontAwesomeIcon
+                        color="#dc3545"
+                        icon={faCircleExclamation}
+                        size={16}
+                      />
+                    )
+              }
               mode={props.paymentVerified ? "outlined" : "flat"}
               selectedColor={props.paymentVerified ? "#28a745" : "#dc3545"}
             >
@@ -124,6 +131,12 @@ const JobCard = (props: CollaborationAdCardProps) => {
           )}
           <Chip>{props.promotionType}</Chip>
           <Chip>{props.platform}</Chip>
+          <Chip>
+            {
+              //@ts-ignore
+              props.collaborationType
+            }
+          </Chip>
         </View>
 
         {/* Influencers Needed, Applied Count, AI Success Rate, Brand Hire Rate */}
