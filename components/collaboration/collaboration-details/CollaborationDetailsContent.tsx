@@ -189,21 +189,6 @@ const CollborationDetailsContent = (props: CollaborationDetailsContentProps) => 
                 </Tag>
               )
             }
-            {
-              props.collaborationDetail.collaborationType && (
-                <Tag
-                  icon={() => (
-                    <FontAwesomeIcon
-                      color={Colors(theme).primary}
-                      icon={faEye}
-                      size={14}
-                    />
-                  )}
-                >
-                  {props.collaborationDetail.collaborationType}
-                </Tag>
-              )
-            }
             <Tag
               icon={() => (
                 <FontAwesomeIcon
@@ -279,7 +264,7 @@ const CollborationDetailsContent = (props: CollaborationDetailsContentProps) => 
           <Paragraph
             style={styles.paragraph}
           >
-            Cost: {props.collaborationDetail.budget.min}
+            Cost: {props.collaborationDetail.budget?.min || 0}
           </Paragraph>
           <Paragraph
             style={styles.paragraph}

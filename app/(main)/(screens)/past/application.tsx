@@ -141,7 +141,9 @@ const PastApplicationPage = (props: any) => {
               status={item.status}
               onOpenBottomSheet={openBottomSheet}
               cardType="proposal"
-              collaborationType={item.collaborationType}
+              contentFormat={item.contentFormat}
+              preferences={item.preferences}
+              preferredContentLanguage={item.preferredContentLanguage}
               location={item.location}
               managerId={item.managerId}
               numberOfInfluencersNeeded={1}

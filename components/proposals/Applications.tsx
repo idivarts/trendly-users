@@ -1,3 +1,4 @@
+import React from "react";
 import BottomSheetActions from "@/components/BottomSheetActions";
 import JobCard from "@/components/collaboration/CollaborationCard";
 import { Text, View } from "@/components/theme/Themed";
@@ -179,7 +180,9 @@ const Applications = () => {
               }}
               onOpenBottomSheet={openBottomSheet}
               cardType="proposal"
-              collaborationType={item.collaborationType}
+              contentFormat={item.contentFormat}
+              preferences={item.preferences}
+              preferredContentLanguage={item.preferredContentLanguage}
               location={item.location}
               managerId="managerId"
               numberOfInfluencersNeeded={1}

@@ -33,10 +33,7 @@ export const stylesFn = (
     backgroundColor: Colors(theme).transparent,
   },
   saveButton: {
-    backgroundColor: Colors(theme).primary,
-    height: 60,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 0,
   },
 });

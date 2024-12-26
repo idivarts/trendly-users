@@ -79,6 +79,10 @@ const Preview = () => {
         timeStamp: Date.now(),
         message: note,
         attachments: rawAttachments,
+        answersFromInfluencer: [],
+        timeline: 0,
+        fileAttachments: [],
+        quotation: "",
       };
 
       const applicantDocRef = collection(

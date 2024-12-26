@@ -144,12 +144,14 @@ const PastApplicationPage = (props: any) => {
               }}
               onOpenBottomSheet={openBottomSheet}
               cardType="invitation"
-              collaborationType={CollaborationType.PAID}
               location={item.location}
               managerId="managerId"
               numberOfInfluencersNeeded={1}
-              platform={SocialPlatform.INSTAGRAM}
-              promotionType={PromotionType.ADD_REVIEWS}
+              platform={item.platform}
+              promotionType={item.promotionType as PromotionType}
+              contentFormat={item.contentFormat}
+              preferences={item.preferences}
+              preferredContentLanguage={item.preferredContentLanguage}
               timeStamp={item.timeStamp}
               applications={undefined}
               invitations={undefined}

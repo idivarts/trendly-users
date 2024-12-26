@@ -332,6 +332,9 @@ const EditProfile: React.FC<EditProfileProps> = ({
         styles.saveButtonContainer,
         {
           bottom: keyboardHeight,
+          backgroundColor: keyboardVisible ? Colors(theme).primary : 'transparent',
+          paddingHorizontal: keyboardVisible ? 0 : 16,
+          paddingBottom: keyboardVisible ? 0 : 16,
         }
       ]}>
         <ProgressBar
@@ -339,25 +342,21 @@ const EditProfile: React.FC<EditProfileProps> = ({
           color={Colors(theme).aliceBlue}
           style={styles.processPercentage}
         />
-        <Pressable
+        <Button
+          mode="contained"
+          loading={isProcessing}
           onPress={handleSave}
           style={[
             styles.saveButton,
             {
               marginBottom: keyboardVisible ? -36 : 0,
+              height: keyboardVisible ? 60 : 'auto',
+              borderRadius: keyboardVisible ? 0 : 100,
             }
           ]}
         >
-          <Button
-            mode="contained"
-            loading={isProcessing}
-            customStyles={[
-              styles.saveButton,
-            ]}
-          >
-            {isProcessing ? 'Saving...' : 'Save'}
-          </Button>
-        </Pressable>
+          {isProcessing ? 'Saving...' : 'Save'}
+        </Button>
       </Animated.View>
     </View>
   );

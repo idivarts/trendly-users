@@ -124,13 +124,10 @@ const Collaboration = () => {
       (selectedCategory === "" ||
         job.promotionType.includes(selectedCategory) ||
         selectedCategory === "All") &&
-      (selectedJobType === "" ||
-        job.collaborationType.includes(selectedJobType) ||
-        selectedJobType === "All") &&
-      job.budget.min &&
-      job.budget.min >= salaryRange[0] &&
-      job.budget.max &&
-      job.budget.max <= salaryRange[1]
+      job.budget?.min &&
+      job.budget?.min >= salaryRange[0] &&
+      job.budget?.max &&
+      job.budget?.max <= salaryRange[1]
     );
   });
 
