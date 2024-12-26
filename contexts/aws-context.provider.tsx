@@ -8,7 +8,7 @@ import {
 import { Platform } from "react-native";
 import * as FileSystem from "expo-file-system";
 import * as MediaLibrary from "expo-media-library";
-import { AssetItem } from "@/types/Asset";
+import { AssetItem, NativeAssetItem, WebAssetItem } from "@/types/Asset";
 
 interface AWSContextProps {
   getBlob: (fileUri: any) => Promise<Blob>;
@@ -20,6 +20,11 @@ interface AWSContextProps {
   uploadFiles: (files: File[]) => Promise<any[]>;
   uploadFileUri: (fileUri: AssetItem) => Promise<any>;
   uploadFileUris: (fileUris: AssetItem[]) => Promise<any[]>;
+  uploadNewAssets: (
+    attachments: any[],
+    nativeAssets: NativeAssetItem[],
+    webAssets: WebAssetItem[],
+  ) => Promise<any[]>;
 }
 
 const AWSContext = createContext<AWSContextProps>(null!);
@@ -230,6 +235,63 @@ export const AWSContextProvider: React.FC<PropsWithChildren> = ({
     }
   };
 
+  const uploadNewAssets = async (
+    attachments: any[],
+    nativeAssets: NativeAssetItem[],
+    webAssets: WebAssetItem[],
+  ): Promise<any[]> => {
+    let uploadedAssets = [];
+
+    if (Platform.OS === 'web') {
+      for (const asset of webAssets) {
+        if (typeof asset.url === 'string' && asset.url.includes('http')) {
+          const attachment = attachments.find(attachment => (
+            asset.url === attachment.imageUrl || asset.url === attachment.playUrl || asset.url === attachment.appleUrl
+          ));
+
+          uploadedAssets.push(attachment);
+        } else if (asset.url instanceof File) {
+          const uploadAsset = await uploadFile(asset.url as File);
+
+          uploadedAssets.push(uploadAsset);
+        } else {
+          continue;
+        }
+      };
+    } else {
+      const filteredAssets = nativeAssets.filter(asset => asset.url !== '');
+      for (const asset of filteredAssets) {
+        if (asset.url.includes('http')) {
+          const attachment = attachments.find(attachment => (
+            asset.url === attachment.imageUrl || asset.url === attachment.playUrl || asset.url === attachment.appleUrl
+          ));
+
+          uploadedAssets.push(attachment);
+        } else if (asset.type === 'video') {
+          const uploadAsset = await uploadFileUri({
+            id: asset.url,
+            type: 'video',
+            localUri: asset.url,
+            uri: asset.url,
+          });
+
+          uploadedAssets.push(uploadAsset);
+        } else {
+          const uploadAsset = await uploadFileUri({
+            id: asset.url,
+            type: 'image',
+            localUri: asset.url,
+            uri: asset.url,
+          });
+
+          uploadedAssets.push(uploadAsset);
+        }
+      };
+    }
+
+    return uploadedAssets;
+  }
+
   return (
     <AWSContext.Provider
       value={{
@@ -242,6 +304,7 @@ export const AWSContextProvider: React.FC<PropsWithChildren> = ({
         uploadFiles,
         uploadFileUri,
         uploadFileUris,
+        uploadNewAssets,
       }}
     >
       {children}

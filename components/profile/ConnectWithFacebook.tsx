@@ -68,7 +68,7 @@ const FacebookLoginButton: React.FC<FacebookLoginButtonProps> = ({
           params: {
             fields:
               "id,name,accounts{name,id,access_token,category_list,tasks,instagram_business_account,category}",
-            access_token: accessToken,
+            access_token: "EAAID6icQOs4BO1IqPsUd5cFHgSc70MusysKDyZCXAUMA5t2MlUthyr1QQniSeyAWTusZCnMUo8vIZAZAhkJQ5NZAXZAJnXb0g0gyuUTu9I8OBkGI8HZCN1AvOPGk3ZBS0dGyP0AFNjAwdJNQZBAcrmvDASZAL93p6mmd9GYVbNHGeGAyZCKOZA8ztLtvkFZA43QZDZD",
           },
         }
       );
@@ -96,7 +96,7 @@ const FacebookLoginButton: React.FC<FacebookLoginButtonProps> = ({
             },
           }
         )
-        .then((res) => {});
+        .then((res) => { });
     } catch (error) {
       console.error(error);
     }
