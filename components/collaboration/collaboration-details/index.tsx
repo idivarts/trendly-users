@@ -20,6 +20,7 @@ import {
 import { View } from "@/components/theme/Themed";
 import { Invitation } from "@/types/Collaboration";
 import { useAuthContext } from "@/contexts";
+import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
 
 export interface CollaborationDetail extends ICollaboration {
   brandDescription: string;
@@ -65,7 +66,7 @@ const CollaborationDetails: React.FC<CollaborationDetailsProps> = ({
 
       const brandRef = doc(FirestoreDB, "brands", data.brandId);
       const brandSnapshot = await getDoc(brandRef);
-      const brandData = brandSnapshot.data();
+      const brandData = brandSnapshot.data() as IBrands;
 
       const applicationsRef = collection(collabRef, "applications");
       const applicationsSnapshot = await getDocs(applicationsRef);
@@ -107,12 +108,18 @@ const CollaborationDetails: React.FC<CollaborationDetailsProps> = ({
 
       setCollaboration({
         ...data,
-        brandDescription: brandData?.description || "",
+        brandDescription: brandData?.profile
+          ? brandData?.profile?.about || ""
+          : "",
         brandName: brandData?.name || "Unknown Brand",
         brandImage: brandData?.image || "",
         paymentVerified: brandData?.paymentMethodVerified || false,
-        brandWebsite: brandData?.website || "",
-        brandCategory: brandData?.category || [],
+        brandWebsite: brandData?.profile
+          ? brandData?.profile?.website || ""
+          : "",
+        brandCategory: brandData?.preferences
+          ? brandData?.preferences?.influencerCategory
+          : [],
       });
     } catch (e) {
       console.error(e);

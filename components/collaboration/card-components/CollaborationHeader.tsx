@@ -41,7 +41,7 @@ const CollaborationHeader: FC<CollaborationHeaderProps> = ({
       onPress={() => {
         router.push({
           // @ts-ignore
-          pathname: `/collaboration-details/${collabId}`,
+          pathname: `/collaboration-details/${collaboration.collabId}`,
           params: {
             cardType: cardType,
             cardId: cardId,
