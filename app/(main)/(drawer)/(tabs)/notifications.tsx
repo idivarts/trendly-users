@@ -1,15 +1,14 @@
 import AppLayout from "@/layouts/app-layout";
 import React from "react";
-import { Appbar } from "react-native-paper";
 import { useTheme } from "@react-navigation/native";
 import Colors from "@/constants/Colors";
 import Notifications from "@/components/notifications";
 import { useAuthContext, useNotificationContext } from "@/contexts";
-import ScreenHeader from "@/components/ui/screen-header";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
+import { Pressable } from "react-native";
 
-export default function NotificationsScreen() {
+export const NotificationAction = () => {
   const theme = useTheme();
 
   const {
@@ -17,6 +16,32 @@ export default function NotificationsScreen() {
   } = useAuthContext();
   const {
     markAllNotificationsAsRead,
+  } = useNotificationContext();
+
+  return (
+    <Pressable
+      onPress={() => {
+        markAllNotificationsAsRead(user?.id as string);
+      }}
+      style={{
+        paddingRight: 16,
+      }}
+    >
+      <FontAwesomeIcon
+        icon={faCheck}
+        size={20}
+        color={Colors(theme).text}
+      />
+    </Pressable>
+  );
+}
+
+export default function NotificationsScreen() {
+
+  const {
+    user,
+  } = useAuthContext();
+  const {
     userNotifications,
     updateUserNotification,
   } = useNotificationContext();
@@ -33,25 +58,6 @@ export default function NotificationsScreen() {
 
   return (
     <AppLayout>
-      <ScreenHeader
-        title="Notifications"
-        rightAction
-        rightActionButton={
-          <Appbar.Action
-            icon={() => (
-              <FontAwesomeIcon
-                icon={faCheck}
-                size={20}
-                color={Colors(theme).text}
-              />
-            )}
-            onPress={() => {
-              markAllNotificationsAsRead(user?.id as string);
-            }}
-            color={Colors(theme).text}
-          />
-        }
-      />
       <Notifications
         notifications={userNotifications}
         onMarkAsRead={onMarkAsRead}

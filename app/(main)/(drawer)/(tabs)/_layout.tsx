@@ -8,15 +8,15 @@ import { useTheme } from "@react-navigation/native";
 import NotificationIcon from "@/components/notifications/notification-icon";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
+  faBell,
   faComment,
-  faFileLines,
   faHandshake,
   faStar,
   faUser,
 } from "@fortawesome/free-regular-svg-icons";
 import {
   faComment as faCommentSolid,
-  faFileLines as faFileLinesSolid,
+  faBell as faBellSolid,
   faGear,
   faHandshake as faHandshakeSolid,
   faStar as faStarSolid,
@@ -26,6 +26,7 @@ import { TouchableOpacity } from "react-native";
 import { useAuthContext } from "@/contexts";
 import { COMPLETION_PERCENTAGE } from "@/constants/CompletionPercentage";
 import { View } from "@/components/theme/Themed";
+import { NotificationAction } from "./notifications";
 
 const TabLayout = () => {
   const { xl } = useBreakpoints();
@@ -98,19 +99,19 @@ const TabLayout = () => {
         }}
       />
       <Tabs.Screen
-        name="contracts"
+        name="notifications"
         options={{
           tabBarIcon: ({ color, focused }) => (
             <FontAwesomeIcon
               color={color}
-              icon={focused ? faFileLinesSolid : faFileLines}
+              icon={focused ? faBellSolid : faBell}
               size={24}
             />
           ),
-          title: "Contracts",
-          tabBarLabel: "Contracts",
+          title: "Notifications",
+          tabBarLabel: "Notifications",
           headerTitleAlign: "left",
-          headerRight: () => <NotificationIcon />,
+          headerRight: () => <NotificationAction />,
         }}
       />
       <Tabs.Screen
@@ -127,18 +128,18 @@ const TabLayout = () => {
               />
               {(!user?.profile?.completionPercentage ||
                 user.profile.completionPercentage < COMPLETION_PERCENTAGE) && (
-                <View
-                  style={{
-                    backgroundColor: Colors(theme).yellow,
-                    width: 15,
-                    height: 15,
-                    position: "absolute",
-                    top: 5,
-                    right: 20,
-                    borderRadius: 40,
-                  }}
-                ></View>
-              )}
+                  <View
+                    style={{
+                      backgroundColor: Colors(theme).yellow,
+                      width: 15,
+                      height: 15,
+                      position: "absolute",
+                      top: 5,
+                      right: 20,
+                      borderRadius: 40,
+                    }}
+                  />
+                )}
             </>
           ),
 

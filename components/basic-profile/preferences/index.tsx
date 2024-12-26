@@ -5,13 +5,13 @@ import SelectGroup from "@/components/ui/select/select-group";
 import { MultiRangeSlider } from "@/components/ui/multislider";
 import { Selector } from "@/components/ui/select/selector";
 import { faDollarSign, faVideo } from "@fortawesome/free-solid-svg-icons";
-import { SearchAdd } from "@/shared-uis/components/search-add";
 import { useTheme } from "@react-navigation/native";
-import { BRAND_INDUSTRIES, LANGUAGES } from "@/constants/ItemsList";
+import { BRAND_INDUSTRIES, INITIAL_BRAND_INDUSTRIES, INITIAL_LANGUAGES, LANGUAGES } from "@/constants/ItemsList";
 import { includeSelectedItems } from "@/utils/items-list";
 import { User } from "@/types/User";
 import ContentWrapper from "@/components/ui/content-wrapper";
 import { IPreferences } from "@/shared-libs/firestore/trendly-pro/models/users";
+import { MultiSelectExtendable } from "@/shared-uis/components/multiselect-extendable";
 
 interface PreferencesProps {
   user: User;
@@ -89,9 +89,10 @@ const Preferences: React.FC<PreferencesProps> = ({
         title="Preferred Brand Industry"
         description="Specifying the industry will help us match better with relevant brands."
       >
-        <SearchAdd
+        <MultiSelectExtendable
           buttonLabel="Add Brand Industry"
           initialItemsList={includeSelectedItems(BRAND_INDUSTRIES, preferences.preferredBrandIndustries || [])}
+          initialMultiselectItemsList={includeSelectedItems(INITIAL_BRAND_INDUSTRIES, preferences.preferredBrandIndustries || [])}
           onSelectedItemsChange={(value) => {
             setPreferences({
               ...preferences,
@@ -217,9 +218,10 @@ const Preferences: React.FC<PreferencesProps> = ({
         title="Language Used for content creation"
         description="Which language do you create your content in? Is it local language or maybe mix og multiple languages"
       >
-        <SearchAdd
+        <MultiSelectExtendable
           buttonLabel="Add Language"
           initialItemsList={includeSelectedItems(LANGUAGES, preferences.preferredLanguages || [])}
+          initialMultiselectItemsList={INITIAL_LANGUAGES}
           onSelectedItemsChange={(value) => {
             setPreferences({
               ...preferences,
