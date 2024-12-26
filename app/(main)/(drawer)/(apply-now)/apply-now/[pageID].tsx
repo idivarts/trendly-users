@@ -18,7 +18,6 @@ import {
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import ScreenHeader from "@/components/ui/screen-header";
 import { useAWSContext } from "@/contexts/aws-context.provider";
-import * as FileSystem from "expo-file-system";
 import * as DocumentPicker from "expo-document-picker";
 import {
   faLink,

@@ -267,7 +267,7 @@ export const AWSContextProvider: React.FC<PropsWithChildren> = ({
       }
 
       return {
-        attachmentUrl: preUploadUrl.attachmentUrl,
+        url: preUploadUrl.attachmentUrl,
         type: "attachment",
         name: file.id,
       };
