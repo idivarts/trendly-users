@@ -13,19 +13,23 @@ import {
 import { PromotionType } from "@/shared-libs/firestore/trendly-pro/constants/promotion-type";
 
 interface CollaborationDetailsProps {
-  collabDescription: string;
-  promotionType: string;
-  location: any;
-  platform: string[];
-  contentType: string[];
+  collaborationDetails: {
+    collabDescription: string;
+    promotionType: string;
+    location: any;
+    platform: string[];
+    contentType: string[];
+  };
 }
 
 const CollaborationDetails: FC<CollaborationDetailsProps> = ({
-  collabDescription,
-  promotionType,
-  location,
-  platform,
-  contentType,
+  collaborationDetails: {
+    collabDescription,
+    promotionType,
+    location,
+    platform,
+    contentType,
+  },
 }) => {
   const theme = useTheme();
   return (

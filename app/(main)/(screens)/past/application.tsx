@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { View, FlatList } from "react-native";
+import { View, FlatList, Pressable } from "react-native";
 import AppLayout from "@/layouts/app-layout";
 import JobCard from "@/components/collaboration/CollaborationCard";
 import {
@@ -23,6 +23,7 @@ import { Card } from "react-native-paper";
 import { useTheme } from "@react-navigation/native";
 import { useAuthContext } from "@/contexts";
 import { MediaItem } from "@/components/ui/carousel/render-media-item";
+import { router } from "expo-router";
 
 const PastApplicationPage = (props: any) => {
   const [isVisible, setIsVisible] = React.useState(false);
@@ -138,12 +139,18 @@ const PastApplicationPage = (props: any) => {
           renderItem={({ item }) => (
             <Card>
               <CollaborationHeader
-                collabName={item.name}
-                brandName={item.brandName}
-                collabId={item.id}
-                brandImage={item.brandImage || ""}
-                timePosted={0}
-                paymentVerified={item.paymentVerified || false}
+                cardId={item.id}
+                cardType="collaboration"
+                brand={{
+                  image: item.brandImage,
+                  name: item.brandName,
+                  paymentVerified: item.paymentVerified,
+                }}
+                collaboration={{
+                  collabId: item.id,
+                  collabName: item.name,
+                  timePosted: item.timeStamp,
+                }}
                 onOpenBottomSheet={() => openBottomSheet(item.id)}
               />
               <Carousel
@@ -178,13 +185,29 @@ const PastApplicationPage = (props: any) => {
                   />
                 }
               />
-              <CollaborationDetails
-                collabDescription={item.description || ""}
-                promotionType={item.promotionType}
-                location={item.location}
-                platform={item.platform}
-                contentType={item.contentFormat}
-              />
+              <Pressable
+                onPress={() => {
+                  router.push({
+                    // @ts-ignore
+                    pathname: `/collaboration-details/${item.id}`,
+                    params: {
+                      cardType: "collaboration",
+                      cardId: item.id,
+                      collaborationID: item.id,
+                    },
+                  });
+                }}
+              >
+                <CollaborationDetails
+                  collaborationDetails={{
+                    collabDescription: item.description || "",
+                    promotionType: item.promotionType,
+                    location: item.location,
+                    platform: item.platform,
+                    contentType: item.contentFormat,
+                  }}
+                />
+              </Pressable>
             </Card>
           )}
           contentContainerStyle={{

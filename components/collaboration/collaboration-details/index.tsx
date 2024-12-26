@@ -25,6 +25,8 @@ export interface CollaborationDetail extends ICollaboration {
   brandDescription: string;
   brandName: string;
   paymentVerified: boolean;
+  brandWebsite: string;
+  brandCategory: string[];
   brandImage: string;
 }
 
@@ -47,7 +49,7 @@ const CollaborationDetails: React.FC<CollaborationDetailsProps> = ({
   const [loading, setLoading] = useState(true);
   const [hasApplied, setHasApplied] = useState(false);
   const [totalApplications, setTotalApplications] = useState(0);
-  const [application, setApplication] = useState<IApplications>();
+  const [application, setApplication] = useState<any>();
   const [cardTypeDetails, setCardTypeDetails] = useState<string>(cardType);
   const [invitation, setInvitation] = useState<Invitation>();
   const { user } = useAuthContext();
@@ -67,9 +69,13 @@ const CollaborationDetails: React.FC<CollaborationDetailsProps> = ({
 
       const applicationsRef = collection(collabRef, "applications");
       const applicationsSnapshot = await getDocs(applicationsRef);
-      const applicationsData = applicationsSnapshot.docs.map((doc) =>
-        doc.data()
-      );
+      const applicationsData = applicationsSnapshot.docs.map((doc) => {
+        return {
+          id: doc.id,
+          ...doc.data(),
+        };
+      });
+
       setTotalApplications(applicationsData.length);
 
       if (!user || !user.id) return;
@@ -85,10 +91,15 @@ const CollaborationDetails: React.FC<CollaborationDetailsProps> = ({
 
       // Use getDocs for queries, not getDoc
       const hasAppliedSnapshot = await getDocs(hasAppliedQuery);
-      const hasAppliedData = hasAppliedSnapshot.docs.map((doc) => doc.data());
+      const hasAppliedData = hasAppliedSnapshot.docs.map((doc) => {
+        return {
+          id: doc.id,
+          ...doc.data(),
+        };
+      });
 
       setHasApplied(hasAppliedData.length > 0);
-      setApplication(hasAppliedData[0] as IApplications);
+      setApplication(hasAppliedData[0]);
 
       if (hasAppliedData.length > 0) {
         setCardTypeDetails("application");
@@ -100,6 +111,8 @@ const CollaborationDetails: React.FC<CollaborationDetailsProps> = ({
         brandName: brandData?.name || "Unknown Brand",
         brandImage: brandData?.image || "",
         paymentVerified: brandData?.paymentMethodVerified || false,
+        brandWebsite: brandData?.website || "",
+        brandCategory: brandData?.category || [],
       });
     } catch (e) {
       console.error(e);

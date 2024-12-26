@@ -23,9 +23,14 @@ const Preview = () => {
   const [processedAttachments, setProcessedAttachments] = useState([]);
   const [rawAttachments, setRawAttachments] = useState([]);
   const [fileAttachments, setFileAttachments] = useState([]);
-  const [answers, setAnswers] = useState<any[]>([]);
-  const [timeline, setTimeline] = useState<any>();
-  const [quotation, setQuotation] = useState<any>();
+  const [answers, setAnswers] = useState<
+    {
+      question: number;
+      answer: string;
+    }[]
+  >([]);
+  const [timeline, setTimeline] = useState<number>(0);
+  const [quotation, setQuotation] = useState<string>("");
 
   const { xl } = useBreakpoints();
 

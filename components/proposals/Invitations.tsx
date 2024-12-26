@@ -4,7 +4,7 @@ import { Text, View } from "@/components/theme/Themed";
 import Colors from "@/constants/Colors";
 import AppLayout from "@/layouts/app-layout";
 import { useTheme } from "@react-navigation/native";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import {
   collection,
@@ -14,7 +14,12 @@ import {
   doc as firebaseDoc,
   getDoc,
 } from "firebase/firestore";
-import { ActivityIndicator, FlatList, RefreshControl } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  Pressable,
+  RefreshControl,
+} from "react-native";
 import { FirestoreDB } from "@/utils/firestore";
 import { AuthApp } from "@/utils/auth";
 import { stylesFn } from "@/styles/Proposal.styles";
@@ -173,63 +178,82 @@ const Invitations = () => {
         <FlatList
           data={pendingInvitations}
           renderItem={({ item }) => (
-            console.log(item),
-            (
-              <Card>
-                <CollaborationHeader
-                  collabName={item.name}
-                  brandName={item.brandName}
-                  collabId={item.id}
-                  brandImage={item.brandImage || ""}
-                  timePosted={0}
-                  paymentVerified={item.paymentVerified || false}
-                  onOpenBottomSheet={() =>
-                    openBottomSheet(item.id, item.applications.id)
+            <Card>
+              <CollaborationHeader
+                cardId={item.id}
+                cardType="invitation"
+                brand={{
+                  image: item.brandImage,
+                  name: item.brandName,
+                  paymentVerified: item.paymentVerified,
+                }}
+                collaboration={{
+                  collabId: item.id,
+                  collabName: item.name,
+                  timePosted: item.timeStamp,
+                }}
+                onOpenBottomSheet={() =>
+                  openBottomSheet(item.id, item.applications.id)
+                }
+              />
+              {item.attachments && item.attachments.length > 0 && (
+                <Carousel
+                  theme={theme}
+                  data={
+                    user?.profile?.attachments?.map((attachment) =>
+                      processRawAttachment(attachment)
+                    ) || []
+                  }
+                  dot={
+                    <View
+                      style={{
+                        backgroundColor: Colors(theme).primary,
+                        width: 8,
+                        height: 8,
+                        borderRadius: 4,
+                        marginLeft: 3,
+                        marginRight: 3,
+                      }}
+                    />
+                  }
+                  activeDot={
+                    <View
+                      style={{
+                        backgroundColor: Colors(theme).gray100,
+                        width: 8,
+                        height: 8,
+                        borderRadius: 4,
+                        marginLeft: 3,
+                        marginRight: 3,
+                      }}
+                    />
                   }
                 />
-                {item.attachments && item.attachments.length > 0 && (
-                  <Carousel
-                    theme={theme}
-                    data={
-                      user?.profile?.attachments?.map((attachment) =>
-                        processRawAttachment(attachment)
-                      ) || []
-                    }
-                    dot={
-                      <View
-                        style={{
-                          backgroundColor: Colors(theme).primary,
-                          width: 8,
-                          height: 8,
-                          borderRadius: 4,
-                          marginLeft: 3,
-                          marginRight: 3,
-                        }}
-                      />
-                    }
-                    activeDot={
-                      <View
-                        style={{
-                          backgroundColor: Colors(theme).gray100,
-                          width: 8,
-                          height: 8,
-                          borderRadius: 4,
-                          marginLeft: 3,
-                          marginRight: 3,
-                        }}
-                      />
-                    }
-                  />
-                )}
+              )}
+              <Pressable
+                onPress={() => {
+                  router.push({
+                    // @ts-ignore
+                    pathname: `/collaboration-details/${item.id}`,
+                    params: {
+                      cardType: "invitation",
+                      cardId: item.applications.id,
+                      collaborationID: item.id,
+                    },
+                  });
+                }}
+              >
                 <CollaborationDetails
-                  collabDescription={item.description || ""}
-                  promotionType={item.promotionType}
-                  location={item.location}
-                  platform={item.platform}
-                  contentType={item.contentFormat}
+                  collaborationDetails={{
+                    collabDescription: item.description || "",
+                    promotionType: item.promotionType,
+                    location: item.location,
+                    platform: item.platform,
+                    contentType: item.contentFormat,
+                  }}
                 />
-              </Card>
-            )
+              </Pressable>
+            </Card>
           )}
           keyExtractor={(item, index) => index.toString()}
           ListFooterComponent={

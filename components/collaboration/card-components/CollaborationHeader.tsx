@@ -7,34 +7,53 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import Colors from "@/constants/Colors";
 import { faEllipsisH } from "@fortawesome/free-solid-svg-icons";
 import { useTheme } from "@react-navigation/native";
+import { router } from "expo-router";
 
 interface CollaborationHeaderProps {
-  collabName: string;
-  brandName: string;
-  brandImage: string;
-  collabId: string;
-  timePosted?: number;
-  paymentVerified: boolean;
+  cardType: string;
+  cardId: string;
+  brand: {
+    name: string;
+    image: string;
+    paymentVerified: boolean;
+  };
+  collaboration: {
+    collabName: string;
+    collabId: string;
+    timePosted?: number;
+  };
+
   onOpenBottomSheet: (id: string) => void;
 }
 
 const CollaborationHeader: FC<CollaborationHeaderProps> = ({
-  collabName,
-  brandName,
-  collabId,
-  brandImage,
-  timePosted,
-  paymentVerified,
+  brand,
+  cardId,
+  cardType,
+  collaboration,
+
   onOpenBottomSheet,
 }) => {
   const theme = useTheme();
 
   return (
-    <View
+    <Pressable
+      onPress={() => {
+        router.push({
+          // @ts-ignore
+          pathname: `/collaboration-details/${collabId}`,
+          params: {
+            cardType: cardType,
+            cardId: cardId,
+            collaborationID: collaboration.collabId,
+          },
+        });
+      }}
       style={{
         display: "flex",
         flexDirection: "row",
         alignItems: "center",
+        backgroundColor: Colors(theme).background,
         padding: 16,
       }}
     >
@@ -48,7 +67,7 @@ const CollaborationHeader: FC<CollaborationHeaderProps> = ({
         }}
       >
         <Image
-          source={{ uri: brandImage }}
+          source={{ uri: brand.image }}
           style={{
             width: 40,
             height: 40,
@@ -70,14 +89,14 @@ const CollaborationHeader: FC<CollaborationHeaderProps> = ({
               width: 200,
             }}
           >
-            {collabName}
+            {collaboration.collabName}
           </Text>
           <Text
             style={{
               fontSize: 16,
             }}
           >
-            {brandName}
+            {brand.name}
           </Text>
         </View>
       </View>
@@ -88,7 +107,7 @@ const CollaborationHeader: FC<CollaborationHeaderProps> = ({
           alignItems: "center",
         }}
       >
-        {timePosted ? (
+        {collaboration.timePosted ? (
           <Text
             style={{
               fontSize: 12,
@@ -96,14 +115,14 @@ const CollaborationHeader: FC<CollaborationHeaderProps> = ({
               paddingRight: 8,
             }}
           >
-            {formatDistanceToNow(timePosted, {
+            {formatDistanceToNow(collaboration.timePosted, {
               addSuffix: true,
             })}
           </Text>
         ) : null}
         <Pressable
           onPress={() => {
-            onOpenBottomSheet(collabId);
+            onOpenBottomSheet(collaboration.collabId);
           }}
         >
           <FontAwesomeIcon
@@ -113,7 +132,7 @@ const CollaborationHeader: FC<CollaborationHeaderProps> = ({
           />
         </Pressable>
       </View>
-    </View>
+    </Pressable>
   );
 };
 

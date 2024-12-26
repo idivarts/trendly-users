@@ -128,7 +128,7 @@ const ListItem: React.FC<ContentItemProps> = ({
             {attachments.map((attachment) => (
               <List.Item
                 key={attachment.id}
-                title={attachment.id}
+                title={attachment.id || attachment.name}
                 description={attachment.type}
                 left={(props) => <List.Icon {...props} icon="file" />}
               />

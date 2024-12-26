@@ -7,19 +7,19 @@ import { Chip, Modal } from "react-native-paper";
 import Colors from "@/constants/Colors";
 
 interface ManagerModalProps {
-  managerName: string;
-  managerEmail: string;
+  manager: {
+    name: string;
+    email: string;
+    image: string;
+  };
   brandDescription: string;
-  managerImage: string;
   visible: boolean;
   setVisibility: (visible: boolean) => void;
 }
 
 const ManagerModal: React.FC<ManagerModalProps> = ({
-  managerName,
-  managerEmail,
+  manager,
   brandDescription,
-  managerImage,
   visible,
   setVisibility,
 }) => {
@@ -40,7 +40,7 @@ const ManagerModal: React.FC<ManagerModalProps> = ({
       <View style={{ alignItems: "center", gap: 20 }}>
         {/* Brand Image */}
         <Image
-          source={{ uri: managerImage }}
+          source={{ uri: manager.image }}
           style={{
             width: 120,
             height: 120,
@@ -57,7 +57,7 @@ const ManagerModal: React.FC<ManagerModalProps> = ({
             textAlign: "center",
           }}
         >
-          {managerName}
+          {manager.name}
         </Text>
 
         {/* Brand Description */}
@@ -84,7 +84,7 @@ const ManagerModal: React.FC<ManagerModalProps> = ({
               color: Colors(theme).text,
             }}
           >
-            Email: {managerEmail}
+            Email: {manager.email}
           </Text>
         </View>
 

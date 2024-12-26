@@ -35,7 +35,7 @@ export const stylesFn = (theme: Theme) =>
       color: Colors(theme).text,
     },
     shortDescription: {
-      fontSize: 14,
+      fontSize: 16,
       color: Colors(theme).text,
       textAlign: "left",
       marginVertical: 8,
@@ -49,7 +49,6 @@ export const stylesFn = (theme: Theme) =>
     },
     applyButton: {
       marginVertical: 16,
-      width: "100%",
     },
     infoCard: {
       backgroundColor: Colors(theme).card,

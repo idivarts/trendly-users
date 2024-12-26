@@ -9,24 +9,21 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faCheckCircle } from "@fortawesome/free-solid-svg-icons";
 
 interface BrandModalProps {
-  brandName: string;
-  brandDescription: string;
-  brandImage: string;
-  brandWebsite: string;
+  brand: {
+    name: string;
+    description: string;
+    image: string;
+    website: string;
+    verified: boolean;
+    category: string[];
+  };
   visible: boolean;
-  brandVerified: boolean;
-  category: string[];
   setVisibility: (visible: boolean) => void;
 }
 
 const BrandModal: React.FC<BrandModalProps> = ({
-  brandName,
-  brandDescription,
-  brandImage,
+  brand,
   visible,
-  brandVerified,
-  brandWebsite,
-  category,
   setVisibility,
 }) => {
   const theme = useTheme();
@@ -46,7 +43,7 @@ const BrandModal: React.FC<BrandModalProps> = ({
       <View style={{ alignItems: "center", gap: 20 }}>
         {/* Brand Image */}
         <Image
-          source={{ uri: brandImage }}
+          source={{ uri: brand.image }}
           style={{
             width: 120,
             height: 120,
@@ -63,8 +60,8 @@ const BrandModal: React.FC<BrandModalProps> = ({
             textAlign: "center",
           }}
         >
-          {brandName}{" "}
-          {brandVerified && (
+          {brand.name}{" "}
+          {brand.verified && (
             <FontAwesomeIcon
               icon={faCheckCircle}
               color={Colors(theme).primary}
@@ -81,7 +78,7 @@ const BrandModal: React.FC<BrandModalProps> = ({
             textAlign: "center",
           }}
         >
-          {brandDescription}
+          {brand.description}
         </Text>
 
         <View
@@ -92,7 +89,7 @@ const BrandModal: React.FC<BrandModalProps> = ({
             gap: 10,
           }}
         >
-          {category.map((cat, index) => (
+          {brand.category.map((cat, index) => (
             <Chip
               key={index}
               style={{
@@ -107,7 +104,7 @@ const BrandModal: React.FC<BrandModalProps> = ({
 
         {/* Brand Website */}
         <Pressable
-          onPress={() => Linking.openURL(brandWebsite)}
+          onPress={() => Linking.openURL(brand.website)}
           style={{
             backgroundColor: Colors(theme).primary,
             borderRadius: 5,

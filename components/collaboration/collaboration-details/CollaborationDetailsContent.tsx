@@ -302,7 +302,10 @@ const CollborationDetailsContent = (
           {cardType === "collaboration" && (
             <Button
               mode="contained"
-              style={styles.applyButton}
+              style={{
+                marginVertical: 16,
+                width: "100%",
+              }}
               onPress={() => {
                 router.push(`/apply-now/${props.pageID}`);
               }}
@@ -631,19 +634,23 @@ const CollborationDetailsContent = (
       </Card>
       <Portal>
         <BrandModal
-          brandDescription={props.collaborationDetail.brandDescription}
-          brandImage={props.collaborationDetail.brandImage}
-          brandName={props.collaborationDetail.brandName}
-          brandWebsite="google.com"
-          brandVerified={props.collaborationDetail.paymentVerified}
-          category={["Tech", "Fashion"]}
+          brand={{
+            image: props.collaborationDetail.brandImage,
+            name: props.collaborationDetail.brandName,
+            description: props.collaborationDetail.brandDescription,
+            verified: props.collaborationDetail.paymentVerified,
+            website: props.collaborationDetail.brandWebsite,
+            category: props.collaborationDetail.brandCategory,
+          }}
           visible={brandModalVisible}
           setVisibility={setBrandModalVisible}
         />
         <ManagerModal
-          managerEmail={managerDetails?.email}
-          managerImage={managerDetails?.profileImage}
-          managerName={managerDetails?.name}
+          manager={{
+            email: managerDetails?.email,
+            image: managerDetails?.profileImage,
+            name: managerDetails?.name,
+          }}
           brandDescription={props.collaborationDetail.brandDescription}
           visible={managerModalVisible}
           setVisibility={setManagerModalVisible}

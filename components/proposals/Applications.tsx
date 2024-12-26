@@ -14,7 +14,12 @@ import {
   doc as firebaseDoc,
   getDoc,
 } from "firebase/firestore";
-import { ActivityIndicator, FlatList, RefreshControl } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  Pressable,
+  RefreshControl,
+} from "react-native";
 import { FirestoreDB } from "@/utils/firestore";
 import { AuthApp } from "@/utils/auth";
 import { stylesFn } from "@/styles/Proposal.styles";
@@ -173,10 +178,56 @@ const Applications = () => {
         <FlatList
           data={pendingProposals}
           renderItem={({ item }) => (
-            console.log(item),
-            (
-              <Card
-                onPress={() =>
+            <Card>
+              <CollaborationHeader
+                cardId={item.id}
+                cardType="collaboration"
+                brand={{
+                  image: item.brandImage,
+                  name: item.brandName,
+                  paymentVerified: item.paymentVerified,
+                }}
+                collaboration={{
+                  collabId: item.id,
+                  collabName: item.name,
+                  timePosted: item.timeStamp,
+                }}
+                onOpenBottomSheet={() => openBottomSheet(item.id)}
+              />
+              <Carousel
+                theme={theme}
+                data={
+                  item.applications[0].attachments.map(
+                    (attachment: MediaItem) => processRawAttachment(attachment)
+                  ) || []
+                }
+                dot={
+                  <View
+                    style={{
+                      backgroundColor: Colors(theme).primary,
+                      width: 8,
+                      height: 8,
+                      borderRadius: 4,
+                      marginLeft: 3,
+                      marginRight: 3,
+                    }}
+                  />
+                }
+                activeDot={
+                  <View
+                    style={{
+                      backgroundColor: Colors(theme).gray100,
+                      width: 8,
+                      height: 8,
+                      borderRadius: 4,
+                      marginLeft: 3,
+                      marginRight: 3,
+                    }}
+                  />
+                }
+              />
+              <Pressable
+                onPress={() => {
                   router.push({
                     // @ts-ignore
                     pathname: `/collaboration-details/${item.id}`,
@@ -185,60 +236,20 @@ const Applications = () => {
                       cardId: item.id,
                       collaborationID: item.id,
                     },
-                  })
-                }
+                  });
+                }}
               >
-                <CollaborationHeader
-                  collabName={item.name}
-                  brandName={item.brandName}
-                  collabId={item.id}
-                  brandImage={item.brandImage || ""}
-                  timePosted={item.applications[0].timeStamp}
-                  paymentVerified={item.paymentVerified || false}
-                  onOpenBottomSheet={() => openBottomSheet(item.id)}
-                />
-                <Carousel
-                  theme={theme}
-                  data={
-                    item.applications[0].attachments.map(
-                      (attachment: MediaItem) =>
-                        processRawAttachment(attachment)
-                    ) || []
-                  }
-                  dot={
-                    <View
-                      style={{
-                        backgroundColor: Colors(theme).primary,
-                        width: 8,
-                        height: 8,
-                        borderRadius: 4,
-                        marginLeft: 3,
-                        marginRight: 3,
-                      }}
-                    />
-                  }
-                  activeDot={
-                    <View
-                      style={{
-                        backgroundColor: Colors(theme).gray100,
-                        width: 8,
-                        height: 8,
-                        borderRadius: 4,
-                        marginLeft: 3,
-                        marginRight: 3,
-                      }}
-                    />
-                  }
-                />
                 <CollaborationDetails
-                  collabDescription={item.description || ""}
-                  promotionType={item.promotionType}
-                  location={item.location}
-                  platform={item.platform}
-                  contentType={item.contentFormat}
+                  collaborationDetails={{
+                    collabDescription: item.description || "",
+                    promotionType: item.promotionType,
+                    location: item.location,
+                    platform: item.platform,
+                    contentType: item.contentFormat,
+                  }}
                 />
-              </Card>
-            )
+              </Pressable>
+            </Card>
           )}
           keyExtractor={(item, index) => index.toString()}
           ListFooterComponent={

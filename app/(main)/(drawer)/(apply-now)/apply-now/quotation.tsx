@@ -24,6 +24,8 @@ const Quotation: React.FC = () => {
     timelineData,
     note,
     fileAttachments,
+    originalAttachments,
+    collaborationId,
     answers,
   } = useLocalSearchParams();
 
@@ -50,7 +52,9 @@ const Quotation: React.FC = () => {
         selectedFiles,
         profileAttachments,
         timelineData,
+        originalAttachments,
         note,
+        collaborationId,
         fileAttachments,
         answers,
       },

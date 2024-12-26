@@ -8,6 +8,7 @@ import { processRawAttachment } from "@/utils/attachments";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faPaperclip } from "@fortawesome/free-solid-svg-icons";
 import { formatDistanceToNow } from "date-fns";
+import { router } from "expo-router";
 
 interface UserResponseProps {
   application?: IApplications;
@@ -63,7 +64,20 @@ const UserResponse: FC<UserResponseProps> = ({
           >
             Withdraw
           </Text>
-          <Button mode="contained">Edit</Button>
+          <Button
+            mode="contained"
+            onPress={() => {
+              router.push({
+                //@ts-ignore
+                pathname: `/edit-application/${application?.id}`,
+                params: {
+                  collaborationId: application?.collaborationId,
+                },
+              });
+            }}
+          >
+            Edit
+          </Button>
         </View>
       </View>
       <View
