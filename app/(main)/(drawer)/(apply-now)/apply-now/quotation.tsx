@@ -101,6 +101,7 @@ const Quotation: React.FC = () => {
           <TextInput
             value={value as string}
             onChangeText={setValue}
+            autoFocus
             placeholder={placeholder as string}
             keyboardType="numeric"
           />

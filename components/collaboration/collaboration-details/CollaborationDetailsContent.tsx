@@ -5,7 +5,7 @@ import { router } from "expo-router";
 import { useTheme } from "@react-navigation/native";
 import { stylesFn } from "@/styles/CollaborationDetails.styles";
 import { FirestoreDB } from "@/utils/firestore";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { deleteDoc, doc, getDoc, updateDoc } from "firebase/firestore";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import {
   useAuthContext,
@@ -42,6 +42,11 @@ import UserResponse from "../UserResponse";
 import BrandModal from "./modal/BrandModal";
 import ManagerModal from "./modal/ManagerModal";
 import { PromotionType } from "@/shared-libs/firestore/trendly-pro/constants/promotion-type";
+import ConfirmationModal from "@/components/ui/modal/ConfirmationModal";
+
+interface ApplicationData extends IApplications {
+  id: string;
+}
 
 interface CollaborationDetailsContentProps {
   pageID: string;
@@ -49,7 +54,8 @@ interface CollaborationDetailsContentProps {
   collaborationDetail: CollaborationDetail;
   logo?: string;
   totalApplications: number;
-  applicationData?: IApplications;
+  fetchCollaboration: () => void;
+  applicationData?: ApplicationData;
   invitationData?: Invitation;
 }
 
@@ -62,7 +68,9 @@ const CollborationDetailsContent = (
   const [managerDetails, setManagerDetails] = React.useState<any>();
   const [brandModalVisible, setBrandModalVisible] = useState(false);
   const [managerModalVisible, setManagerModalVisible] = useState(false);
-  const cardType = props.cardType;
+  const [confirmationModalVisible, setConfirmationModalVisible] =
+    useState(false);
+  const [cardType, setCardType] = useState(props.cardType);
 
   const { createNotification } = useNotificationContext();
   const { user } = useAuthContext();
@@ -187,6 +195,26 @@ const CollborationDetailsContent = (
       status: "rejected",
     };
     setStatus("rejected");
+  };
+
+  const withdrawApplication = () => {
+    try {
+      if (!props.applicationData) return;
+      const applicationRef = doc(
+        FirestoreDB,
+        "collaborations",
+        props.pageID,
+        "applications",
+        props?.applicationData?.id
+      );
+      deleteDoc(applicationRef);
+
+      Toaster.success("Application Withdrawn Successfully");
+      setCardType("collaboration");
+      props.fetchCollaboration();
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   useEffect(() => {
@@ -350,6 +378,7 @@ const CollborationDetailsContent = (
               influencerQuestions={
                 props?.collaborationDetail?.questionsToInfluencers
               }
+              setConfirmationModalVisible={setConfirmationModalVisible}
             />
           )}
 
@@ -654,6 +683,18 @@ const CollborationDetailsContent = (
           brandDescription={props.collaborationDetail.brandDescription}
           visible={managerModalVisible}
           setVisibility={setManagerModalVisible}
+        />
+        <ConfirmationModal
+          cancelAction={() => setConfirmationModalVisible(false)}
+          confirmAction={() => {
+            setConfirmationModalVisible(false);
+            withdrawApplication();
+          }}
+          visible={confirmationModalVisible}
+          setVisible={setConfirmationModalVisible}
+          confirmText="Yes"
+          cancelText="No"
+          description="Are you sure you want to withdraw your application?"
         />
       </Portal>
     </ScrollView>

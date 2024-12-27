@@ -52,8 +52,11 @@ const GalleryScreen = () => {
     profileAttachmentsRoute,
     quotation,
     timelineData,
+    collaborationId,
     fileAttachments,
+    path,
     answers,
+    originalAttachments,
   } = useLocalSearchParams();
   const theme = useTheme();
   const styles = stylesFn(theme);
@@ -140,16 +143,19 @@ const GalleryScreen = () => {
   const handleSelectionComplete = () => {
     try {
       router.push({
-        pathname: "/apply-now/[pageID]",
+        //@ts-ignore
+        pathname: path,
         params: {
           note: note,
           selectedFiles: JSON.stringify(selectedItems),
           profileAttachments: JSON.stringify(profileAttachments),
           quotation: quotation,
+          collaborationId,
           timelineData: timelineData,
           //@ts-ignore
           pageID: pageID,
           fileAttachments: fileAttachments,
+          originalAttachments: originalAttachments,
           answers: answers,
         },
       });
