@@ -338,12 +338,7 @@ const ApplyScreen = () => {
           />
         )}
 
-        <View
-          style={{
-            paddingHorizontal: 16,
-            paddingTop: 16,
-          }}
-        >
+        <View>
           <TextInput
             style={{
               backgroundColor: Colors(theme).background,

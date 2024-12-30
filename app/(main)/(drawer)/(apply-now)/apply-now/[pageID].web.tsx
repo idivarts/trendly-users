@@ -260,12 +260,7 @@ const ApplyScreenWeb = () => {
             onRemove={removeFile}
           />
         )}
-        <View
-          style={{
-            paddingHorizontal: 16,
-            paddingTop: 16,
-          }}
-        >
+        <View>
           <TextInput
             style={{
               backgroundColor: Colors(theme).background,
@@ -287,7 +282,7 @@ const ApplyScreenWeb = () => {
             <ListItem
               title="Your Quote"
               leftIcon={faQuoteLeft}
-              content={quotation === "" ? "Add now" : "Rs. " + quotation}
+              content={quotation === "" ? "" : "Rs. " + quotation}
               onAction={() => {
                 handleModalOrInputPage({
                   isWeb: Platform.OS === "web",
@@ -326,6 +321,7 @@ const ApplyScreenWeb = () => {
                     fontSize: 16,
                     color: "inherit",
                     outline: "none",
+                    borderWidth: 0,
                   }}
                 />
               )}
@@ -342,7 +338,7 @@ const ApplyScreenWeb = () => {
                 key={index}
                 title={question}
                 leftIcon={faLink}
-                content={answers[index] || "Add now"}
+                content={answers[index] || ""}
                 onAction={() => {
                   handleModalOrInputPage({
                     isWeb: Platform.OS === "web",
@@ -371,11 +367,13 @@ const ApplyScreenWeb = () => {
             </HelperText>
           )}
 
-          <ProgressBar
-            progress={processPercentage / 100}
-            color={Colors(theme).primary}
-            style={styles.progressBar}
-          />
+          {processMessage && (
+            <ProgressBar
+              progress={processPercentage / 100}
+              color={Colors(theme).primary}
+              style={styles.progressBar}
+            />
+          )}
 
           <Button
             mode="contained"

@@ -396,6 +396,7 @@ const ApplyScreenWeb = () => {
             style={{
               backgroundColor: "transparent",
               visibility: "hidden",
+              border: "none",
             }}
             multiple
             onChange={handleFileSelection}
@@ -413,12 +414,7 @@ const ApplyScreenWeb = () => {
             onRemove={removeFile}
           />
         )}
-        <View
-          style={{
-            paddingHorizontal: 16,
-            paddingTop: 16,
-          }}
-        >
+        <View>
           <TextInput
             style={{
               backgroundColor: Colors(theme).background,

@@ -539,16 +539,11 @@ const EditApplicationScreen = () => {
           />
         )}
 
-        <View
-          style={{
-            paddingHorizontal: 16,
-            paddingTop: 16,
-          }}
-        >
+        <View>
           <TextInput
             style={{
               backgroundColor: Colors(theme).background,
-              lineHeight: 24,
+              lineHeight: 22,
             }}
             activeOutlineColor={Colors(theme).primary}
             label="Add a short note"

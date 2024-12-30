@@ -7,7 +7,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
-import { Dimensions, Pressable } from "react-native";
+import { Dimensions, Platform, Pressable } from "react-native";
 import { IconButton, List } from "react-native-paper";
 
 interface ContentItemProps {
@@ -38,7 +38,9 @@ const ListItem: React.FC<ContentItemProps> = ({
         flexDirection: "row",
         alignItems: "center",
         borderBottomWidth: 0.3,
-        paddingVertical: content ? 0 : 16,
+        borderColor: Colors(theme).gray300,
+        paddingVertical: content ? (Platform.OS === "web" ? 16 : 0) : 16,
+        paddingBottom: content ? 16 : 32,
       }}
       onPress={onAction}
     >
@@ -73,6 +75,7 @@ const ListItem: React.FC<ContentItemProps> = ({
             <Text
               style={{
                 fontSize: 20,
+                width: screenWidth - 100,
               }}
             >
               {title}
@@ -88,7 +91,7 @@ const ListItem: React.FC<ContentItemProps> = ({
         {content && (
           <Text
             style={{
-              color: Colors(theme).text,
+              color: Colors(theme).gray300,
               fontSize: 18,
               paddingVertical: 6,
             }}
@@ -105,6 +108,8 @@ const ListItem: React.FC<ContentItemProps> = ({
                 description={attachment.type}
                 style={{
                   paddingHorizontal: 0,
+                  paddingVertical: 0,
+                  marginVertical: 0,
                 }}
                 left={(props) => <List.Icon {...props} icon="file" />}
                 right={(props) => (

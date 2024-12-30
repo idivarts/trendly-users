@@ -33,7 +33,6 @@ const UserResponse: FC<UserResponseProps> = ({
         width: "100%",
         padding: 10,
         gap: 10,
-        marginVertical: 10,
       }}
     >
       <View
