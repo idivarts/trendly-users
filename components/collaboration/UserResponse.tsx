@@ -2,7 +2,7 @@ import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collab
 import { FC } from "react";
 import { Text, View } from "../theme/Themed";
 import { Button } from "react-native-paper";
-import { ScrollView } from "react-native";
+import { Pressable, ScrollView } from "react-native";
 import RenderMediaItem from "../ui/carousel/render-media-item";
 import { processRawAttachment } from "@/utils/attachments";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -13,11 +13,13 @@ import { router } from "expo-router";
 interface UserResponseProps {
   application?: IApplications;
   influencerQuestions?: string[];
+  setConfirmationModalVisible: (value: boolean) => void;
 }
 
 const UserResponse: FC<UserResponseProps> = ({
   application,
   influencerQuestions,
+  setConfirmationModalVisible,
 }) => {
   const attachmentFiltered = application?.attachments.map((attachment) => {
     return processRawAttachment(attachment);
@@ -31,7 +33,6 @@ const UserResponse: FC<UserResponseProps> = ({
         width: "100%",
         padding: 10,
         gap: 10,
-        marginVertical: 10,
       }}
     >
       <View
@@ -57,13 +58,15 @@ const UserResponse: FC<UserResponseProps> = ({
             gap: 10,
           }}
         >
-          <Text
-            style={{
-              fontSize: 16,
-            }}
-          >
-            Withdraw
-          </Text>
+          <Pressable onPress={() => setConfirmationModalVisible(true)}>
+            <Text
+              style={{
+                fontSize: 16,
+              }}
+            >
+              Withdraw
+            </Text>
+          </Pressable>
           <Button
             mode="contained"
             onPress={() => {

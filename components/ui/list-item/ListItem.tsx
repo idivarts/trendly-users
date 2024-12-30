@@ -1,9 +1,13 @@
 import { Text, View } from "@/components/theme/Themed";
 import Colors from "@/constants/Colors";
-import { faChevronRight, faPlus } from "@fortawesome/free-solid-svg-icons";
+import {
+  faChevronRight,
+  faPlus,
+  faTrash,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
-import { Dimensions, Pressable } from "react-native";
+import { Dimensions, Platform, Pressable } from "react-native";
 import { IconButton, List } from "react-native-paper";
 
 interface ContentItemProps {
@@ -12,6 +16,7 @@ interface ContentItemProps {
   leftIcon?: any;
   attachments?: any[];
   onAction?: () => void;
+  onRemove?: (id: string) => void;
   title: string;
 }
 
@@ -22,6 +27,7 @@ const ListItem: React.FC<ContentItemProps> = ({
   leftIcon,
   title,
   attachments,
+  onRemove,
 }) => {
   const theme = useTheme();
   const screenWidth = Dimensions.get("window").width;
@@ -32,13 +38,17 @@ const ListItem: React.FC<ContentItemProps> = ({
         flexDirection: "row",
         alignItems: "center",
         borderBottomWidth: 0.3,
-        paddingBottom: 12,
+        borderColor: Colors(theme).gray300,
+        paddingVertical: content ? (Platform.OS === "web" ? 16 : 0) : 16,
+        paddingBottom: content ? 16 : 32,
       }}
       onPress={onAction}
     >
       <View
         style={{
           flex: 1,
+          flexDirection: "column",
+          gap: 20,
         }}
       >
         <View
@@ -65,58 +75,24 @@ const ListItem: React.FC<ContentItemProps> = ({
             <Text
               style={{
                 fontSize: 20,
+                width: screenWidth - 100,
               }}
             >
               {title}
             </Text>
           </View>
-          {empty ? (
-            <View
-              style={{
-                backgroundColor: Colors(theme).yellow,
-                paddingVertical: 4,
-                paddingHorizontal: 8,
-                borderRadius: 50,
-              }}
-            >
-              <Text
-                style={{
-                  color: Colors(theme).black,
-                  fontSize: 12,
-                }}
-              >
-                Add now
-              </Text>
-            </View>
-          ) : (
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-                paddingVertical: 12,
-                paddingHorizontal: 16,
-                borderRadius: 8,
-                backgroundColor: Colors(theme).background,
-              }}
-            >
-              <IconButton
-                icon={() => (
-                  <FontAwesomeIcon
-                    icon={empty ? faPlus : faChevronRight}
-                    size={18}
-                    color={Colors(theme).text}
-                  />
-                )}
-              />
-            </View>
-          )}
+
+          <FontAwesomeIcon
+            icon={empty ? faPlus : faChevronRight}
+            size={18}
+            color={Colors(theme).text}
+          />
         </View>
         {content && (
           <Text
             style={{
-              color: Colors(theme).text,
-              fontSize: 16,
+              color: Colors(theme).gray300,
+              fontSize: 18,
               paddingVertical: 6,
             }}
           >
@@ -130,7 +106,21 @@ const ListItem: React.FC<ContentItemProps> = ({
                 key={attachment.id}
                 title={attachment.id || attachment.name}
                 description={attachment.type}
+                style={{
+                  paddingHorizontal: 0,
+                  paddingVertical: 0,
+                  marginVertical: 0,
+                }}
                 left={(props) => <List.Icon {...props} icon="file" />}
+                right={(props) => (
+                  //@ts-ignore
+                  <Pressable onPress={() => onRemove(attachment.id)}>
+                    <List.Icon
+                      {...props}
+                      icon={() => <FontAwesomeIcon icon={faTrash} size={16} />}
+                    />
+                  </Pressable>
+                )}
               />
             ))}
           </List.Section>

@@ -21,6 +21,7 @@ import CollaborationStats from "./card-components/CollaborationStats";
 import { useAuthContext } from "@/contexts";
 import { processRawAttachment } from "@/utils/attachments";
 import { router } from "expo-router";
+import Toast from "react-native-toast-message";
 
 interface ICollaborationAddCardProps extends ICollaboration {
   name: string;

@@ -24,6 +24,8 @@ const Question: React.FC = () => {
     note,
     timelineData,
     answers,
+    originalAttachments,
+    collaborationId,
     quotation,
     fileAttachments,
   } = useLocalSearchParams();
@@ -51,9 +53,11 @@ const Question: React.FC = () => {
         selectedFiles,
         profileAttachments,
         timelineData,
+        originalAttachments,
         answers,
         quotation,
         note,
+        collaborationId,
         fileAttachments,
       },
     });
@@ -100,6 +104,7 @@ const Question: React.FC = () => {
             value={value as string}
             onChangeText={setValue}
             placeholder={placeholder as string}
+            autoFocus
           />
         </View>
       </View>

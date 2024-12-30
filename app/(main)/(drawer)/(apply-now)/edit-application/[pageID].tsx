@@ -34,11 +34,15 @@ import { AssetItem } from "@/types/Asset";
 import AssetsPreview from "@/components/ui/assets-preview";
 import { Attachment } from "@/shared-libs/firestore/trendly-pro/constants/attachment";
 import { FirestoreDB } from "@/utils/firestore";
-import { doc, getDoc } from "firebase/firestore";
-import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import {
+  IApplications,
+  ICollaboration,
+} from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import ContentItem from "@/components/basic-profile/edit-profile/ContentItem";
+import Toast from "react-native-toast-message";
 
-const ApplyScreen = () => {
+const EditApplicationScreen = () => {
   const params = useLocalSearchParams();
   const pageID = Array.isArray(params.pageID)
     ? params.pageID[0]
@@ -52,9 +56,35 @@ const ApplyScreen = () => {
   const [quotation, setQuotation] = useState("");
   const [files, setFiles] = useState<AssetItem[]>([]);
   const [uploadedFiles, setUploadedFiles] = useState<any>([]);
-  const [profileAttachments, setProfileAttachments] = useState<Attachment[]>(
-    []
-  );
+  const [profileAttachments, setProfileAttachments] = useState<
+    {
+      id: string;
+      imageUrl: string;
+      playUrl: string;
+      appleUrl: string;
+      type: string;
+    }[]
+  >([]);
+  const [originalAttachments, setOriginalAttachments] = useState<
+    {
+      id: string;
+      imageUrl: string;
+      playUrl: string;
+      appleUrl: string;
+      type: string;
+    }[]
+  >([]);
+  const [finalFiles, setFinalFiles] = useState<
+    {
+      id: string;
+      localUri: string;
+      uri: string;
+      type: string;
+      imageUrl: string;
+      playUrl: string;
+      appleUrl: string;
+    }[]
+  >([]);
   const [questions, setQuestions] = useState<any[]>([]);
   const [fileAttachments, setFileAttachments] = useState<any[]>([]);
 
@@ -75,6 +105,7 @@ const ApplyScreen = () => {
     setProcessPercentage,
     uploadFileUris,
     uploadAttachments,
+    uploadNewAssets,
   } = useAWSContext();
 
   const handleAssetUpload = async () => {
@@ -85,12 +116,14 @@ const ApplyScreen = () => {
           ...params,
           pageID,
           note,
+          path: "/edit-application/[pageID]",
           quotation,
-          path: `/apply-now/[pageID]`,
           //@ts-ignore
           timelineData,
           selectedFiles: params.selectedFiles,
+          collaborationId: params.collaborationId,
           profileAttachmentsRoute: params.profileAttachments,
+          originalAttachments: JSON.stringify(originalAttachments),
           fileAttachments: JSON.stringify(fileAttachments),
           answers: JSON.stringify(answers),
         },
@@ -111,50 +144,104 @@ const ApplyScreen = () => {
   const handleUploadFiles = async () => {
     setLoading(true);
     try {
-      const uploadedFiles = await uploadAttachments(fileAttachments);
+      var finalFilesToUploadWithoutParsing = [];
+      var finalFilesToUploadWithParsing = [];
+      for (const file of finalFiles) {
+        if (!file.uri) {
+          finalFilesToUploadWithoutParsing.push(file);
+        } else {
+          // finalFilesToUploadWithParsing.push(file);
+          if (file.uri.startsWith("https")) {
+            if (file.type === "image") {
+              finalFilesToUploadWithoutParsing.push({
+                imageUrl: file.uri,
+                type: file.type,
+              });
+            } else {
+              finalFilesToUploadWithoutParsing.push({
+                playUrl: file.playUrl,
+                type: file.type,
+                appleUrl: file.appleUrl,
+              });
+            }
+          } else {
+            finalFilesToUploadWithParsing.push(file);
+          }
+        }
+      }
 
-      const filesWithoutProfileAttachments = // if file uri starts with https, it is a profile attachment and should be removed
-        files.filter((file) => !file.uri.startsWith("https"));
+      setLoading(false);
 
-      const uploadedFileUrisResponse = await uploadFileUris(
-        filesWithoutProfileAttachments
+      var attachmentToUploadWithoutParsing = [];
+      var attachmentToUploadWithParsing = [];
+
+      if (fileAttachments.length > 0) {
+        for (const file of fileAttachments) {
+          if (!file.uri) {
+            attachmentToUploadWithoutParsing.push(file);
+          } else {
+            attachmentToUploadWithParsing.push(file);
+          }
+        }
+      }
+
+      const uploadedFiles = await uploadAttachments(
+        attachmentToUploadWithParsing
       );
 
-      const finalProfileAttachments = profileAttachments.map(
+      const uploadedFileUrisResponse = await uploadFileUris(
+        finalFilesToUploadWithParsing
+      );
+
+      const finalProfileAttachments = finalFilesToUploadWithoutParsing.map(
         //@ts-ignore
         ({ id, ...rest }) => rest // Exclude the `id` field
       );
+
+      const finalFileAttachment = [
+        ...uploadedFiles,
+        ...attachmentToUploadWithoutParsing,
+      ];
 
       setUploadedFiles([
         ...uploadedFileUrisResponse,
         ...finalProfileAttachments,
       ]);
 
-      const finalFiles = [
+      const finalFilesSending = [
         ...uploadedFileUrisResponse,
         ...finalProfileAttachments,
       ];
       const timelineTimestamp = timelineData?.getTime();
 
+      const applicationRef = doc(
+        FirestoreDB,
+        "collaborations",
+        params.collaborationId as string,
+        "applications",
+        pageID
+      );
+
+      await updateDoc(applicationRef, {
+        message: note,
+        attachments: finalFilesSending,
+        quotation: quotation,
+        timeline: timelineTimestamp,
+        fileAttachments: finalFileAttachment,
+        answersFromInfluencer: Object.entries(answers).map(
+          ([question, answer]) => ({
+            question,
+            answer,
+          })
+        ),
+      });
+
+      Toaster.success("Application updated successfully");
+      setLoading(false);
+      setProcessMessage("");
       setTimeout(() => {
-        setLoading(false);
-        setProcessMessage("");
-        setProcessPercentage(0);
-        router.push({
-          pathname: "/apply-now/preview",
-          params: {
-            ...params,
-            pageID,
-            note,
-            attachments: JSON.stringify(finalFiles),
-            quotation: quotation,
-            timeline: timelineTimestamp,
-            fileAttachments: JSON.stringify(uploadedFiles),
-            answers: JSON.stringify(answers),
-          },
-        });
-        setLoading(false);
-      }, 5000);
+        router.push("/collaborations");
+      }, 1000);
     } catch (error) {
       console.error(error);
       setLoading(false);
@@ -196,6 +283,9 @@ const ApplyScreen = () => {
               ? file.appleUrl
               : file.playUrl,
           type: file.type,
+          imageUrl: file.imageUrl,
+          playUrl: file.playUrl,
+          appleUrl: file.appleUrl,
         },
       ]);
     }
@@ -227,9 +317,19 @@ const ApplyScreen = () => {
 
   const fetchQuestions = async () => {
     try {
-      const collabRef = doc(FirestoreDB, "collaborations", pageID);
+      if (!params.collaborationId) {
+        return;
+      }
+
+      const collabRef = doc(
+        FirestoreDB,
+        "collaborations",
+        params.collaborationId as string
+      );
+
       const collabDoc = await getDoc(collabRef);
       const collabData = collabDoc.data() as ICollaboration;
+
       if (collabData.questionsToInfluencers) {
         setQuestions(collabData.questionsToInfluencers);
       }
@@ -237,6 +337,50 @@ const ApplyScreen = () => {
       console.error("Error fetching questions:", error);
     }
   };
+
+  const fetchApplicationData = async () => {
+    if (params.value || params.fileAttachments || params.quotation) {
+      return;
+    }
+    const applicationRef = doc(
+      FirestoreDB,
+      "collaborations",
+      params.collaborationId as string,
+      "applications",
+      pageID
+    );
+    const applicationDoc = await getDoc(applicationRef);
+    const applicationData = applicationDoc.data() as IApplications;
+
+    if (applicationData) {
+      setNote(applicationData.message || "");
+      setQuotation(applicationData.quotation || "");
+      setTimelineData(
+        applicationData.timeline ? new Date(applicationData.timeline) : null
+      );
+      setFileAttachments(applicationData.fileAttachments || []);
+      setOriginalAttachments(
+        applicationData.attachments as {
+          id: string;
+          imageUrl: string;
+          playUrl: string;
+          appleUrl: string;
+          type: string;
+        }[]
+      );
+      setAnswers(
+        applicationData.answersFromInfluencer.reduce(
+          (acc, curr) => ({ ...acc, [curr.question]: curr.answer }),
+          {}
+        )
+      );
+    }
+  };
+
+  useEffect(() => {
+    fetchApplicationData();
+    fetchQuestions();
+  }, []);
 
   useEffect(() => {
     if (params.selectedFiles) {
@@ -268,8 +412,16 @@ const ApplyScreen = () => {
       setFileAttachments(JSON.parse(params.fileAttachments as string));
     }
 
+    if (params.originalAttachments) {
+      setOriginalAttachments(JSON.parse(params.originalAttachments as string));
+    }
+
     if (params.note) {
       setNote(params.note as string);
+    }
+
+    if (params.originalAttachments) {
+      setOriginalAttachments(JSON.parse(params.originalAttachments as string));
     }
   }, [params.selectedFiles]);
 
@@ -295,14 +447,41 @@ const ApplyScreen = () => {
     fetchQuestions();
   }, []);
 
+  useEffect(() => {
+    const originalAttachmentWithID = originalAttachments.map(
+      (attachment, index) => ({
+        id:
+          attachment.type === "image"
+            ? attachment.imageUrl
+            : attachment.playUrl,
+        imageUrl: attachment.imageUrl,
+        playUrl: attachment.playUrl,
+        appleUrl: attachment.appleUrl,
+        type: attachment.type,
+      })
+    );
+
+    // check if the file is already uploaded
+
+    const finalFiles = [...files, ...originalAttachmentWithID];
+
+    // Remove duplicates
+    const uniqueFiles = Array.from(
+      new Set(finalFiles.map((file) => JSON.stringify(file)))
+    ).map((file) => JSON.parse(file));
+
+    setFinalFiles(uniqueFiles);
+  }, [files, profileAttachments, originalAttachments]);
+
   return (
     <AppLayout>
-      <ScreenHeader title="Apply Now" />
+      <ScreenHeader title="Edit Application" />
+      <Toast />
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.contentContainerStyle}
       >
-        {files.length === 0 && (
+        {finalFiles.length === 0 && (
           <Card style={styles.card} onPress={handleAssetUpload}>
             <Card.Content style={styles.cardContent}>
               <IconButton
@@ -325,15 +504,37 @@ const ApplyScreen = () => {
           </Card>
         )}
 
-        {files.length > 0 && (
+        {finalFiles.length > 0 && (
           <AssetsPreview
-            files={files.map((file) => ({
+            files={finalFiles.map((file) => ({
               id: file.id,
               type: file.type,
               url: file.type.includes("video")
-                ? file.localUri || file.uri
-                : file.uri,
+                ? file.localUri || file.uri || Platform.OS === "ios"
+                  ? file.appleUrl
+                  : file.playUrl
+                : file.uri || file.imageUrl,
             }))}
+            onRemove={(id) => {
+              setFinalFiles((prevFiles) =>
+                prevFiles.filter((file) => file.id !== id)
+              );
+              if (files.some((file) => file.id === id)) {
+                setFiles((prevFiles) =>
+                  prevFiles.filter((file) => file.id !== id)
+                );
+              }
+              if (profileAttachments.some((file) => file.id === id)) {
+                setProfileAttachments((prevFiles) =>
+                  prevFiles.filter((file) => file.id !== id)
+                );
+              }
+              if (originalAttachments.some((file) => file.id === id)) {
+                setOriginalAttachments((prevFiles) =>
+                  prevFiles.filter((file) => file.id !== id)
+                );
+              }
+            }}
             handleAssetUpload={handleAssetUpload}
           />
         )}
@@ -342,6 +543,7 @@ const ApplyScreen = () => {
           <TextInput
             style={{
               backgroundColor: Colors(theme).background,
+              lineHeight: 22,
             }}
             activeOutlineColor={Colors(theme).primary}
             label="Add a short note"
@@ -358,29 +560,34 @@ const ApplyScreen = () => {
 
           <List.Section
             style={{
-              gap: 16,
               width: "100%",
+              gap: 16,
             }}
           >
             <ListItem
               title="Your Quote"
               leftIcon={faQuoteLeft}
-              content={quotation === "" ? "" : "Rs. " + quotation}
+              content={quotation === "" ? "Add now" : "Rs. " + quotation}
               onAction={() => {
                 router.push({
                   pathname: "/apply-now/quotation",
                   params: {
                     title: "Quotation",
                     value: quotation === "" ? "" : quotation,
-                    path: `/apply-now/${pageID}`,
-                    selectedFiles: params.selectedFiles,
-                    profileAttachments: params.profileAttachments,
+                    path: `/edit-application/${pageID}`,
+                    selectedFiles:
+                      params.selectedFiles || JSON.stringify(files),
+                    profileAttachments:
+                      params.profileAttachments ||
+                      JSON.stringify(profileAttachments),
+                    originalAttachments: JSON.stringify(originalAttachments),
                     placeholder: "Add your quotation",
                     //@ts-ignore
                     timelineData: timelineData,
                     fileAttachments: JSON.stringify(fileAttachments),
                     answers: JSON.stringify(answers),
                     note: note,
+                    collaborationId: params.collaborationId,
                   },
                 });
               }}
@@ -388,7 +595,11 @@ const ApplyScreen = () => {
             <ListItem
               title="Timeline"
               leftIcon={faPaperclip}
-              content={timelineData ? timelineData.toLocaleDateString() : ""}
+              content={
+                timelineData
+                  ? timelineData.toLocaleDateString()
+                  : "Select a date"
+              }
               onAction={() => setShowDatePicker(true)}
             />
             <ListItem
@@ -397,26 +608,33 @@ const ApplyScreen = () => {
               content=""
               attachments={fileAttachments}
               onAction={handlePickAttachment}
+              onRemove={(id) => {
+                setFileAttachments((prevAttachments) =>
+                  prevAttachments.filter((attachment) => attachment.id !== id)
+                );
+              }}
             />
             {questions.map((question, index) => (
               <ListItem
                 key={index}
                 title={question}
                 leftIcon={faLink}
-                content={answers[index]}
+                content={answers[index] || "Add now"}
                 onAction={() => {
                   router.push({
                     pathname: "/apply-now/question",
                     params: {
                       title: "Question " + (index + 1),
                       value: answers[index] || "",
-                      path: `/apply-now/${pageID}`,
+                      path: `/edit-application/${pageID}`,
                       selectedFiles: params.selectedFiles,
                       profileAttachments: params.profileAttachments,
+                      collaborationId: params.collaborationId,
                       placeholder: "",
                       //@ts-ignore
                       timelineData: timelineData,
                       fileAttachments: JSON.stringify(fileAttachments),
+                      originalAttachments: JSON.stringify(originalAttachments),
                       answers: JSON.stringify(answers),
                       quotation: quotation,
                       note: note,
@@ -453,7 +671,7 @@ const ApplyScreen = () => {
                 return;
               }
 
-              if (files.length === 0) {
+              if (finalFiles.length === 0) {
                 Toaster.error("Please upload a asset");
                 return;
               }
@@ -462,7 +680,7 @@ const ApplyScreen = () => {
             }}
             loading={loading}
           >
-            {processMessage ? "Uploading Assets" : "Preview Application"}
+            {processMessage ? "Uploading Assets" : "Update Application"}
           </Button>
         </View>
       </ScrollView>
@@ -478,4 +696,4 @@ const ApplyScreen = () => {
   );
 };
 
-export default ApplyScreen;
+export default EditApplicationScreen;
