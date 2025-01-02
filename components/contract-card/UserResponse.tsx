@@ -55,7 +55,7 @@ const UserResponse: FC<UserResponseProps> = ({
       <View
         style={{
           width: "100%",
-          gap: 10,
+          gap: 16,
         }}
       >
         <ScrollView horizontal style={{}}>
@@ -70,9 +70,7 @@ const UserResponse: FC<UserResponseProps> = ({
             />
           ))}
         </ScrollView>
-        <Text style={{ fontSize: 16, marginTop: 10 }}>
-          {application?.message}
-        </Text>
+        <Text style={{ fontSize: 16 }}>{application?.message}</Text>
         <View
           style={{
             flexDirection: "row",
@@ -81,7 +79,7 @@ const UserResponse: FC<UserResponseProps> = ({
           }}
         >
           <Text style={{ fontSize: 16 }}>
-            Quote: {application?.quotation || "N/A"}
+            Quote: Rs. {application?.quotation || "N/A"}
           </Text>
           {application?.timeline && (
             <Text style={{ fontSize: 16 }}>

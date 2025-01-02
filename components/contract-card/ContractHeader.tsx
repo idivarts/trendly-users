@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import Colors from "@/constants/Colors";
 import { faEllipsisH } from "@fortawesome/free-solid-svg-icons";
 import { useTheme } from "@react-navigation/native";
+import { imageUrl } from "@/utils/url";
 
 interface ContractHeaderProps {
   username: string;
@@ -46,7 +47,7 @@ const ContractHeader: FC<ContractHeaderProps> = ({
         }}
       >
         <Image
-          source={{ uri: userImage }}
+          source={imageUrl(userImage)}
           style={{
             width: 40,
             height: 40,

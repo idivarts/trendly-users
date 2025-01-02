@@ -348,55 +348,57 @@ const GalleryScreen = () => {
           flexGrow: 1,
         }}
       >
-        <FlatList
-          data={attachmentFiltered}
-          renderItem={({ item, index }) => (
-            <Pressable
-              onPress={() => {
-                const attachment = attachmentFiltered?.[index];
-              }}
-              style={styles.itemWrapper}
-            >
-              <Surface style={styles.itemContainer}>
-                <RenderMediaItem
-                  handleImagePress={() => {}}
-                  index={item.id}
-                  item={item.attachment}
-                  height={140}
-                  width={140}
-                />
-                <View style={styles.checkboxContainer}>
-                  <Checkbox
-                    status={
-                      profileAttachments.find(
-                        (selectedItem) => item.id === selectedItem.id
-                      )
-                        ? "checked"
-                        : "unchecked"
-                    }
-                    onPress={() => {
-                      handleSelectProfileItem(item);
-                    }}
+        {attachmentFiltered && attachmentFiltered.length > 0 && (
+          <FlatList
+            data={attachmentFiltered}
+            renderItem={({ item, index }) => (
+              <Pressable
+                onPress={() => {
+                  const attachment = attachmentFiltered?.[index];
+                }}
+                style={styles.itemWrapper}
+              >
+                <Surface style={styles.itemContainer}>
+                  <RenderMediaItem
+                    handleImagePress={() => {}}
+                    index={item.id}
+                    item={item.attachment}
+                    height={140}
+                    width={140}
                   />
-                </View>
-              </Surface>
-            </Pressable>
-          )}
-          numColumns={3}
-          contentContainerStyle={styles.galleryContainer}
-          ListHeaderComponent={
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: "bold",
-                marginVertical: 16,
-                marginHorizontal: 16,
-              }}
-            >
-              Media from your profile
-            </Text>
-          }
-        />
+                  <View style={styles.checkboxContainer}>
+                    <Checkbox
+                      status={
+                        profileAttachments.find(
+                          (selectedItem) => item.id === selectedItem.id
+                        )
+                          ? "checked"
+                          : "unchecked"
+                      }
+                      onPress={() => {
+                        handleSelectProfileItem(item);
+                      }}
+                    />
+                  </View>
+                </Surface>
+              </Pressable>
+            )}
+            numColumns={3}
+            contentContainerStyle={styles.galleryContainer}
+            ListHeaderComponent={
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontWeight: "bold",
+                  marginVertical: 16,
+                  marginHorizontal: 16,
+                }}
+              >
+                Media from your profile
+              </Text>
+            }
+          />
+        )}
 
         <FlatList
           data={assets}

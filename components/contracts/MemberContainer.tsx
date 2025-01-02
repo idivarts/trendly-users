@@ -1,7 +1,7 @@
 import { useTheme } from "@react-navigation/native";
 import { Text, View } from "../theme/Themed";
 import { FC, useEffect } from "react";
-import { Button } from "react-native-paper";
+import { ActivityIndicator, Button } from "react-native-paper";
 import Colors from "@/constants/Colors";
 import React from "react";
 import { faNoteSticky } from "@fortawesome/free-regular-svg-icons";
@@ -25,9 +25,11 @@ const MemberContainer: FC<MemberContainerProps> = ({
   const theme = useTheme();
   const { fetchMembers } = useChatContext();
   const [members, setMembers] = React.useState<any[]>([]);
+  const [loading, setLoading] = React.useState<boolean>(false);
 
   const fetchMembersFromClient = async () => {
     try {
+      setLoading(true);
       const members = await fetchMembers(channelId);
       const memberData = await Promise.all(
         members.map(async (member: any) => {
@@ -47,10 +49,13 @@ const MemberContainer: FC<MemberContainerProps> = ({
       );
       const validMembers = memberData.filter((data) => data !== null);
 
+      console.log("Members", validMembers);
+
       // Set the filtered members
       setMembers(validMembers);
 
       setMembersFromBrand(validMembers);
+      setLoading(false);
     } catch (e) {
       console.log(e);
     }
@@ -84,6 +89,17 @@ const MemberContainer: FC<MemberContainerProps> = ({
           Members
         </Text>
       </View>
+      {loading && (
+        <View
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+            padding: 16,
+          }}
+        >
+          <ActivityIndicator size="small" color={Colors(theme).primary} />
+        </View>
+      )}
       <FlatList
         data={members}
         renderItem={({ item }) => <MembersCard manager={item} />}

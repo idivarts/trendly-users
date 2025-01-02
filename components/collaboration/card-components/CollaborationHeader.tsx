@@ -8,6 +8,7 @@ import Colors from "@/constants/Colors";
 import { faEllipsisH } from "@fortawesome/free-solid-svg-icons";
 import { useTheme } from "@react-navigation/native";
 import { router } from "expo-router";
+import { imageUrl } from "@/utils/url";
 
 interface CollaborationHeaderProps {
   cardType: string;
@@ -70,7 +71,7 @@ const CollaborationHeader: FC<CollaborationHeaderProps> = ({
         }}
       >
         <Image
-          source={{ uri: brand.image }}
+          source={imageUrl(brand.image)}
           style={{
             width: 40,
             height: 40,
