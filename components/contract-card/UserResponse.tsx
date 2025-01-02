@@ -99,7 +99,6 @@ const UserResponse: FC<UserResponseProps> = ({
               >
                 <FontAwesomeIcon icon={faPaperclip} />
                 <Text
-                  key={index}
                   style={{
                     fontSize: 16,
                   }}

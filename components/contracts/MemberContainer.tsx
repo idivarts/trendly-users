@@ -5,7 +5,7 @@ import { ActivityIndicator, Button } from "react-native-paper";
 import Colors from "@/constants/Colors";
 import React from "react";
 import { faNoteSticky } from "@fortawesome/free-regular-svg-icons";
-import { useChatContext } from "@/contexts";
+import { useAuthContext, useChatContext } from "@/contexts";
 import { doc, getDoc } from "firebase/firestore";
 import { FirestoreDB } from "@/utils/firestore";
 import { FlatList, Pressable } from "react-native";
@@ -24,6 +24,7 @@ const MemberContainer: FC<MemberContainerProps> = ({
 }) => {
   const theme = useTheme();
   const { fetchMembers } = useChatContext();
+  const { user } = useAuthContext();
   const [members, setMembers] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState<boolean>(false);
 
@@ -31,6 +32,7 @@ const MemberContainer: FC<MemberContainerProps> = ({
     try {
       setLoading(true);
       const members = await fetchMembers(channelId);
+
       const memberData = await Promise.all(
         members.map(async (member: any) => {
           const memberRef = doc(FirestoreDB, "managers", member.user.id);
@@ -63,7 +65,7 @@ const MemberContainer: FC<MemberContainerProps> = ({
 
   useEffect(() => {
     fetchMembersFromClient();
-  }, []);
+  }, [user?.id]);
 
   return (
     <View

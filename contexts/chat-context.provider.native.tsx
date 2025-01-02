@@ -120,11 +120,15 @@ export const ChatContextProvider: React.FC<PropsWithChildren> = ({
   };
 
   const fetchMembers = async (channel: string) => {
-    const channelToWatch = streamClient.channel("messaging", channel);
-    channelToWatch.watch();
-    const membersList = Object.values(channelToWatch.state.members);
+    try {
+      const channelToWatch = streamClient.channel("messaging", channel);
+      await channelToWatch.watch();
+      const membersList = Object.values(channelToWatch.state.members);
 
-    return membersList;
+      return membersList;
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const fetchChannelCid = async (channelId: string) => {
