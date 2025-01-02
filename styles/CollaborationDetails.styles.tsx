@@ -10,7 +10,6 @@ export const stylesFn = (theme: Theme) =>
     profileCard: {
       backgroundColor: Colors(theme).card,
       borderRadius: 10,
-      gap: 0,
       shadowColor: Colors(theme).transparent,
     },
     profileImage: {
@@ -42,7 +41,7 @@ export const stylesFn = (theme: Theme) =>
       marginTop: 16,
     },
     applyButton: {
-      marginVertical: 16,
+      // marginVertical: 16,
     },
     infoCard: {
       backgroundColor: Colors(theme).card,

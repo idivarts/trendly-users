@@ -54,6 +54,7 @@ const Quotation: React.FC = () => {
         timelineData,
         originalAttachments,
         note,
+        showModal: "true",
         collaborationId,
         fileAttachments,
         answers,

@@ -3,7 +3,7 @@ import { FC } from "react";
 import { Text, View } from "../theme/Themed";
 import { Button } from "react-native-paper";
 import { Pressable, ScrollView } from "react-native";
-import RenderMediaItem from "../ui/carousel/render-media-item";
+import RenderMediaItem from "@/shared-uis/components/carousel/render-media-item";
 import { processRawAttachment } from "@/utils/attachments";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faPaperclip } from "@fortawesome/free-solid-svg-icons";
@@ -31,12 +31,9 @@ const UserResponse: FC<UserResponseProps> = ({
   return (
     <View
       style={{
-        borderWidth: 0.3,
         borderRadius: 5,
         width: "100%",
-        padding: 10,
-        borderColor: Colors(theme).gray300,
-        gap: 10,
+        gap: 16,
       }}
     >
       <View
@@ -52,40 +49,8 @@ const UserResponse: FC<UserResponseProps> = ({
             fontWeight: "bold",
           }}
         >
-          Your Application
+          Application
         </Text>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-            gap: 10,
-          }}
-        >
-          <Pressable onPress={() => setConfirmationModalVisible(true)}>
-            <Text
-              style={{
-                fontSize: 16,
-              }}
-            >
-              Withdraw
-            </Text>
-          </Pressable>
-          <Button
-            mode="contained"
-            onPress={() => {
-              router.push({
-                //@ts-ignore
-                pathname: `/edit-application/${application?.id}`,
-                params: {
-                  collaborationId: application?.collaborationId,
-                },
-              });
-            }}
-          >
-            Edit
-          </Button>
-        </View>
       </View>
       <View
         style={{

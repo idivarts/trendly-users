@@ -6,6 +6,7 @@ import {
   Modal,
   Pressable,
   Platform,
+  ScrollView,
 } from "react-native";
 import * as MediaLibrary from "expo-media-library";
 import { Button, Surface, Text, Checkbox } from "react-native-paper";
@@ -338,75 +339,85 @@ const GalleryScreen = () => {
 
       {/* Gallery */}
 
-      <FlatList
-        data={attachmentFiltered}
-        renderItem={({ item, index }) => (
-          <Pressable
-            onPress={() => {
-              const attachment = attachmentFiltered?.[index];
-            }}
-            style={styles.itemWrapper}
-          >
-            <Surface style={styles.itemContainer}>
-              <RenderMediaItem
-                handleImagePress={() => {}}
-                index={item.id}
-                item={item.attachment}
-                height={140}
-                width={140}
-              />
-              <View style={styles.checkboxContainer}>
-                <Checkbox
-                  status={
-                    profileAttachments.find(
-                      (selectedItem) => item.id === selectedItem.id
-                    )
-                      ? "checked"
-                      : "unchecked"
-                  }
-                  onPress={() => {
-                    handleSelectProfileItem(item);
-                  }}
+      <ScrollView
+        style={{
+          flex: 1,
+          width: "100%",
+        }}
+        contentContainerStyle={{
+          flexGrow: 1,
+        }}
+      >
+        <FlatList
+          data={attachmentFiltered}
+          renderItem={({ item, index }) => (
+            <Pressable
+              onPress={() => {
+                const attachment = attachmentFiltered?.[index];
+              }}
+              style={styles.itemWrapper}
+            >
+              <Surface style={styles.itemContainer}>
+                <RenderMediaItem
+                  handleImagePress={() => {}}
+                  index={item.id}
+                  item={item.attachment}
+                  height={140}
+                  width={140}
                 />
-              </View>
-            </Surface>
-          </Pressable>
-        )}
-        numColumns={3}
-        contentContainerStyle={styles.galleryContainer}
-        ListHeaderComponent={
-          <Text
-            style={{
-              fontSize: 16,
-              fontWeight: "bold",
-              marginVertical: 16,
-              marginHorizontal: 16,
-            }}
-          >
-            Media from your profile
-          </Text>
-        }
-      />
+                <View style={styles.checkboxContainer}>
+                  <Checkbox
+                    status={
+                      profileAttachments.find(
+                        (selectedItem) => item.id === selectedItem.id
+                      )
+                        ? "checked"
+                        : "unchecked"
+                    }
+                    onPress={() => {
+                      handleSelectProfileItem(item);
+                    }}
+                  />
+                </View>
+              </Surface>
+            </Pressable>
+          )}
+          numColumns={3}
+          contentContainerStyle={styles.galleryContainer}
+          ListHeaderComponent={
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: "bold",
+                marginVertical: 16,
+                marginHorizontal: 16,
+              }}
+            >
+              Media from your profile
+            </Text>
+          }
+        />
 
-      <FlatList
-        data={assets}
-        keyExtractor={(item) => item.id + item.filename}
-        renderItem={renderItem}
-        numColumns={3}
-        contentContainerStyle={styles.galleryContainer}
-        ListHeaderComponent={
-          <Text
-            style={{
-              fontSize: 16,
-              fontWeight: "bold",
-              marginVertical: 16,
-              marginHorizontal: 16,
-            }}
-          >
-            Media from your gallery
-          </Text>
-        }
-      />
+        <FlatList
+          data={assets}
+          keyExtractor={(item) => item.id + item.filename}
+          renderItem={renderItem}
+          numColumns={3}
+          contentContainerStyle={styles.galleryContainer}
+          ListHeaderComponent={
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: "bold",
+                marginVertical: 16,
+                marginHorizontal: 16,
+              }}
+            >
+              Media from your gallery
+            </Text>
+          }
+        />
+      </ScrollView>
 
       {/* Footer */}
       <View style={styles.footer}>

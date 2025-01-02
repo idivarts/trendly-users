@@ -1,6 +1,6 @@
 import AppLayout from "@/layouts/app-layout";
 import { stylesFn } from "@/styles/ApplyNow.styles";
-import { useTheme } from "@react-navigation/native";
+import { useIsFocused, useTheme } from "@react-navigation/native";
 import { router, useLocalSearchParams } from "expo-router";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import React, { useEffect, useState } from "react";
@@ -55,6 +55,7 @@ const EditApplicationScreen = () => {
   const [loading, setLoading] = useState(false);
   const [quotation, setQuotation] = useState("");
   const [files, setFiles] = useState<AssetItem[]>([]);
+  const isFocused = useIsFocused();
   const [uploadedFiles, setUploadedFiles] = useState<any>([]);
   const [profileAttachments, setProfileAttachments] = useState<
     {
@@ -380,7 +381,7 @@ const EditApplicationScreen = () => {
   useEffect(() => {
     fetchApplicationData();
     fetchQuestions();
-  }, []);
+  }, [isFocused]);
 
   useEffect(() => {
     if (params.selectedFiles) {
@@ -529,9 +530,9 @@ const EditApplicationScreen = () => {
                   prevFiles.filter((file) => file.id !== id)
                 );
               }
-              if (originalAttachments.some((file) => file.id === id)) {
+              if (originalAttachments.some((file) => file.imageUrl === id)) {
                 setOriginalAttachments((prevFiles) =>
-                  prevFiles.filter((file) => file.id !== id)
+                  prevFiles.filter((file) => file.imageUrl !== id)
                 );
               }
             }}
