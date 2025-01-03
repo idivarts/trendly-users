@@ -472,6 +472,7 @@ const ApplyScreen = () => {
           mode="date" // Show the date picker
           display="spinner" // Use spinner for iOS
           onChange={onDateChange} // Handle date changes
+          themeVariant={theme.dark ? "dark" : "light"} // Use dark theme if
         />
       )}
     </AppLayout>

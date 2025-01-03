@@ -43,7 +43,7 @@ const Collaboration = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedJobType, setSelectedJobType] = useState("");
-  const [salaryRange, setSalaryRange] = useState([0, 10000]);
+  const [salaryRange, setSalaryRange] = useState([0, 100000]);
   const [collabs, setCollabs] = useState<ICollaborationAddCardProps[]>([]);
   const theme = useTheme();
   const [isVisible, setIsVisible] = useState(false);
@@ -138,20 +138,20 @@ const Collaboration = () => {
   };
 
   const filteredList = collabs.filter((job) => {
-    return (
-      (job.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        searchQuery === "") &&
+    return (job.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      searchQuery === "") &&
       (selectedCategory === "" ||
         job.promotionType.includes(selectedCategory) ||
         selectedCategory === "All") &&
       (selectedJobType === "" ||
         job.contentFormat.includes(selectedJobType) ||
         selectedJobType === "All") &&
-      job?.budget?.min &&
-      job.budget.min >= salaryRange[0] &&
-      job.budget.max &&
-      job.budget.max <= salaryRange[1]
-    );
+      job.budget &&
+      job.budget.min
+      ? job.budget.min >= salaryRange[0]
+      : true && job.budget && job.budget.max
+      ? job.budget.max <= salaryRange[1]
+      : true;
   });
 
   const styles = stylesFn(theme);

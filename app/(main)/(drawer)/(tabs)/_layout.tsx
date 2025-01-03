@@ -127,18 +127,18 @@ const TabLayout = () => {
               />
               {(!user?.profile?.completionPercentage ||
                 user.profile.completionPercentage < COMPLETION_PERCENTAGE) && (
-                  <View
-                    style={{
-                      backgroundColor: Colors(theme).yellow,
-                      width: 15,
-                      height: 15,
-                      position: "absolute",
-                      top: 5,
-                      right: 20,
-                      borderRadius: 40,
-                    }}
-                  />
-                )}
+                <View
+                  style={{
+                    backgroundColor: Colors(theme).yellow,
+                    width: 15,
+                    height: 15,
+                    position: "absolute",
+                    top: 5,
+                    right: 20,
+                    borderRadius: 40,
+                  }}
+                />
+              )}
             </>
           ),
 
