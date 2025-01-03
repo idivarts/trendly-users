@@ -21,11 +21,11 @@ interface DrawerMenuContentProps { }
 
 const DRAWER_MENU_CONTENT_ITEMS = [
   {
-    href: "/proposals",
+    href: "/collaborations",
     icon: ({
       focused,
-    }: IconPropFn) => focused ? faHandshakeSolid : faHandshake,
-    label: "Proposals",
+    }: IconPropFn) => focused ? faStarSolid : faStar,
+    label: "Collaborations",
   },
   {
     href: "/messages",
@@ -35,18 +35,18 @@ const DRAWER_MENU_CONTENT_ITEMS = [
     label: "Messages",
   },
   {
-    href: "/collaborations",
-    icon: ({
-      focused,
-    }: IconPropFn) => focused ? faStarSolid : faStar,
-    label: "Collaborations",
-  },
-  {
     href: "/contracts",
     icon: ({
       focused,
     }: IconPropFn) => focused ? faFileLinesSolid : faFileLines,
     label: "Contracts",
+  },
+  {
+    href: "/proposals",
+    icon: ({
+      focused,
+    }: IconPropFn) => focused ? faHandshakeSolid : faHandshake,
+    label: "Proposals",
   },
   {
     href: "/profile",

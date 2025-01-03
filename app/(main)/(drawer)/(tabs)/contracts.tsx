@@ -1,3 +1,4 @@
+
 import { View } from "@/components/theme/Themed";
 import AppLayout from "@/layouts/app-layout";
 import Applications from "@/components/proposals/Applications";
