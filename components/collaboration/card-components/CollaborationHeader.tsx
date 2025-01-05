@@ -58,7 +58,9 @@ const CollaborationHeader: FC<CollaborationHeaderProps> = ({
         flexDirection: "row",
         alignItems: "center",
         backgroundColor: Colors(theme).background,
-        padding: 16,
+        justifyContent: "space-between",
+        padding: 8,
+        paddingVertical: 16,
       }}
     >
       <View
@@ -67,7 +69,7 @@ const CollaborationHeader: FC<CollaborationHeaderProps> = ({
           flexDirection: "row",
           alignItems: "center",
           gap: 8,
-          flexGrow: 1,
+          width: "45%",
         }}
       >
         <Image
@@ -90,14 +92,14 @@ const CollaborationHeader: FC<CollaborationHeaderProps> = ({
             style={{
               fontSize: 16,
               fontWeight: "bold",
-              width: 200,
+              width: 150,
             }}
           >
             {collaboration.collabName}
           </Text>
           <Text
             style={{
-              fontSize: 16,
+              fontSize: 14,
             }}
           >
             {brand.name}
@@ -114,7 +116,7 @@ const CollaborationHeader: FC<CollaborationHeaderProps> = ({
         {collaboration.timePosted ? (
           <Text
             style={{
-              fontSize: 12,
+              fontSize: 10,
               color: Colors(theme).text,
               paddingRight: 8,
             }}
