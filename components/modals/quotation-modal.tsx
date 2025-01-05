@@ -87,7 +87,7 @@ const QuotationModal: React.FC<QuotationModalProps> = ({
           }}
         >
           <View style={styles.header}>
-            <Text style={styles.title}>Give Feedback</Text>
+            <Text style={styles.title}>Your Quotation</Text>
             <Pressable
               onPress={handleClose}
             >
@@ -99,7 +99,7 @@ const QuotationModal: React.FC<QuotationModalProps> = ({
             </Pressable>
           </View>
 
-          <Text style={styles.subtitle}>Your feedback is valuable to us</Text>
+          <Text style={styles.subtitle}>Revise your quotation here</Text>
 
           <List.Section
             style={{
