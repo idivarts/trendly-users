@@ -1,17 +1,14 @@
 import { useTheme } from "@react-navigation/native";
 import { Text, View } from "../theme/Themed";
 import { FC, useEffect } from "react";
-import { ActivityIndicator, Button } from "react-native-paper";
+import { ActivityIndicator } from "react-native-paper";
 import Colors from "@/constants/Colors";
 import React from "react";
-import { faNoteSticky } from "@fortawesome/free-regular-svg-icons";
 import { useAuthContext, useChatContext } from "@/contexts";
 import { doc, getDoc } from "firebase/firestore";
 import { FirestoreDB } from "@/utils/firestore";
-import { FlatList, Pressable } from "react-native";
+import { FlatList } from "react-native";
 import MembersCard from "./members-card";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
 
 interface MemberContainerProps {
   channelId: string;
@@ -50,8 +47,6 @@ const MemberContainer: FC<MemberContainerProps> = ({
         })
       );
       const validMembers = memberData.filter((data) => data !== null);
-
-      console.log("Members", validMembers);
 
       // Set the filtered members
       setMembers(validMembers);

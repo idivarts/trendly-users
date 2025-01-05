@@ -1,20 +1,12 @@
 import React, { useEffect, useState } from "react";
-import {
-  View,
-  Image,
-  ScrollView,
-  Pressable,
-  Linking,
-  Dimensions,
-} from "react-native";
-import { Text, Card, Paragraph, Button, Portal } from "react-native-paper";
+import { View, Image, ScrollView } from "react-native";
+import { Text, Card, Portal } from "react-native-paper";
 import { useTheme } from "@react-navigation/native";
 import { stylesFn } from "@/styles/CollaborationDetails.styles";
 import Colors from "@/constants/Colors";
 import Carousel from "@/shared-uis/components/carousel/carousel";
 import { processRawAttachment } from "@/utils/attachments";
 import { formatDistanceToNow } from "date-fns";
-import { PLACEHOLDER_PERSON_IMAGE } from "@/constants/Placeholder";
 import {
   IApplications,
   ICollaboration,
@@ -25,7 +17,7 @@ import ActionContainer from "./ActionContainer";
 import { IContracts } from "@/shared-libs/firestore/trendly-pro/models/contracts";
 import MemberContainer from "./MemberContainer";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faArrowRight, faCheckCircle } from "@fortawesome/free-solid-svg-icons";
+import { faCheckCircle } from "@fortawesome/free-solid-svg-icons";
 import FeedbackModal from "./FeedbackModal";
 import ReviseQuotationModal from "./ReviseQuotationModal";
 import { useLocalSearchParams } from "expo-router";

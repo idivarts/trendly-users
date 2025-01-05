@@ -28,7 +28,7 @@ export const stylesFn = (theme: Theme) =>
       fontSize: 20,
       color: Colors(theme).text,
       lineHeight: 20,
-      width: "80%",
+      width: "50%",
       marginTop: 16,
     },
     brandName: {
