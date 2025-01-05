@@ -4,7 +4,7 @@ import InfluencerCard from "@/components/InfluencerCard";
 import { router, useLocalSearchParams } from "expo-router";
 import { Button } from "react-native-paper";
 import { FirestoreDB } from "@/utils/firestore";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, doc, setDoc } from "firebase/firestore";
 import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { useState, useEffect } from "react";
 import ScreenHeader from "@/components/ui/screen-header";
@@ -133,23 +133,23 @@ const Preview = () => {
         timeline,
       };
 
-      const applicantDocRef = collection(
+      const applicantColRef = collection(
         FirestoreDB,
         "collaborations",
         pageID,
         "applications"
       );
 
-      const docset = await addDoc(applicantDocRef, applicantData);
-
-      if (docset) {
+      // Application Id as userId
+      const applicantDocRef = doc(applicantColRef, user?.id);
+      await setDoc(applicantDocRef, applicantData).then(() => {
         setErrorMessage("Application submitted successfully");
         setTimeout(() => {
           router.navigate("/collaborations");
         }, 1000); // Give user time to see success message
-      } else {
+      }).catch((e) => {
         setErrorMessage("Failed to submit application");
-      }
+      });
     } catch (e) {
       console.error(e);
       setErrorMessage("Error submitting application");
@@ -166,7 +166,7 @@ const Preview = () => {
         renderItem={() => {
           return (
             <InfluencerCard
-              ToggleModal={() => {}}
+              ToggleModal={() => { }}
               type="influencer"
               influencer={{
                 //@ts-ignore
