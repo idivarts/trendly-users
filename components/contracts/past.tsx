@@ -16,7 +16,7 @@ import {
   doc,
   getDoc,
 } from "firebase/firestore";
-import { ActivityIndicator, FlatList } from "react-native";
+import { ActivityIndicator, FlatList, Pressable } from "react-native";
 import { FirestoreDB } from "@/utils/firestore";
 import { AuthApp } from "@/utils/auth";
 import { RefreshControl } from "react-native";
@@ -172,9 +172,16 @@ const PastContracts = () => {
             data={filteredProposals}
             showsVerticalScrollIndicator={false}
             renderItem={({ item }) => (
-              <Card
+              <Pressable
                 onPress={() => {
                   router.push(`/contract-details/${item.streamChannelId}`);
+                }}
+                style={{
+                  width: "100%",
+                  borderWidth: 0.3,
+                  borderColor: Colors(theme).gray300,
+                  borderRadius: 5,
+                  overflow: "hidden",
                 }}
               >
                 <CollaborationHeader
@@ -204,7 +211,7 @@ const PastContracts = () => {
                   }
                   collabDetails={item.collaborationData.description || ""}
                 />
-              </Card>
+              </Pressable>
             )}
             keyExtractor={(item, index) => index.toString()}
             style={{

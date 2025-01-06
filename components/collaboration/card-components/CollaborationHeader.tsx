@@ -60,7 +60,7 @@ const CollaborationHeader: FC<CollaborationHeaderProps> = ({
         backgroundColor: Colors(theme).background,
         justifyContent: "space-between",
         padding: 8,
-        paddingVertical: 16,
+        paddingTop: 16,
       }}
     >
       <View

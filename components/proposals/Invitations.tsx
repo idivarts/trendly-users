@@ -178,7 +178,17 @@ const Invitations = () => {
         <FlatList
           data={pendingInvitations}
           renderItem={({ item }) => (
-            <Card>
+            <View
+              style={{
+                width: "100%",
+                borderWidth: 0.3,
+                borderColor: Colors(theme).gray300,
+                gap: 8,
+                borderRadius: 5,
+                overflow: "hidden",
+                paddingBottom: 16,
+              }}
+            >
               <CollaborationHeader
                 cardId={item.id}
                 cardType="invitation"
@@ -253,7 +263,7 @@ const Invitations = () => {
                   }}
                 />
               </Pressable>
-            </Card>
+            </View>
           )}
           keyExtractor={(item, index) => index.toString()}
           ListFooterComponent={

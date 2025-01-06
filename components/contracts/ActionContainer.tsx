@@ -93,98 +93,100 @@ const ActionContainer: FC<ActionContainerProps> = ({
         gap: 16,
       }}
     >
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          gap: 16,
-        }}
-      >
-        {contract.status === 0 && (
-          <>
-            <Button
-              mode="contained"
-              style={{
-                flex: 1,
-              }}
-              onPress={() => {
-                try {
-                  sendSystemMessage(
-                    contract.streamChannelId,
-                    "Let's start the contract"
-                  );
-                  Toaster.success("Sent message to the brand");
-                } catch (e) {
-                  console.log(e);
-                }
-              }}
-            >
-              Start Contract
-            </Button>
-            <Button
-              mode="contained"
-              style={{
-                flex: 1,
-              }}
-              onPress={showQuotationModal}
-            >
-              Revise Quote
-            </Button>
-          </>
-        )}
-        {contract.status === 1 && (
-          <>
-            <Button
-              mode="contained"
-              style={{
-                flex: 1,
-              }}
-              onPress={() => {
-                {
+      {contract.status !== 3 && (
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            gap: 16,
+          }}
+        >
+          {contract.status === 0 && (
+            <>
+              <Button
+                mode="contained"
+                style={{
+                  flex: 1,
+                }}
+                onPress={() => {
                   try {
                     sendSystemMessage(
                       contract.streamChannelId,
-                      "Let's end the contract"
+                      "Let's start the contract"
                     );
                     Toaster.success("Sent message to the brand");
                   } catch (e) {
                     console.log(e);
                   }
-                }
-              }}
-            >
-              End Contract
-            </Button>
-            <Button
-              mode="contained"
-              style={{
-                flex: 1,
-              }}
-              onPress={async () => {
-                const channelCid = await fetchChannelCid(
-                  contract.streamChannelId
-                );
-                router.navigate(`/channel/${channelCid}`);
-              }}
-            >
-              Go to Messages
-            </Button>
-          </>
-        )}
-        {contract.status === 2 && !contract.feedbackFromInfluencer && (
-          <>
-            <Button
-              mode="contained"
-              style={{
-                flex: 1,
-              }}
-              onPress={feedbackModalVisible}
-            >
-              Give Feedback
-            </Button>
-          </>
-        )}
-      </View>
+                }}
+              >
+                Start Contract
+              </Button>
+              <Button
+                mode="contained"
+                style={{
+                  flex: 1,
+                }}
+                onPress={showQuotationModal}
+              >
+                Revise Quote
+              </Button>
+            </>
+          )}
+          {contract.status === 1 && (
+            <>
+              <Button
+                mode="contained"
+                style={{
+                  flex: 1,
+                }}
+                onPress={() => {
+                  {
+                    try {
+                      sendSystemMessage(
+                        contract.streamChannelId,
+                        "Let's end the contract"
+                      );
+                      Toaster.success("Sent message to the brand");
+                    } catch (e) {
+                      console.log(e);
+                    }
+                  }
+                }}
+              >
+                End Contract
+              </Button>
+              <Button
+                mode="contained"
+                style={{
+                  flex: 1,
+                }}
+                onPress={async () => {
+                  const channelCid = await fetchChannelCid(
+                    contract.streamChannelId
+                  );
+                  router.navigate(`/channel/${channelCid}`);
+                }}
+              >
+                Go to Messages
+              </Button>
+            </>
+          )}
+          {contract.status === 2 && !contract.feedbackFromInfluencer && (
+            <>
+              <Button
+                mode="contained"
+                style={{
+                  flex: 1,
+                }}
+                onPress={feedbackModalVisible}
+              >
+                Give Feedback
+              </Button>
+            </>
+          )}
+        </View>
+      )}
       {contract.feedbackFromBrand && (
         <View
           style={{

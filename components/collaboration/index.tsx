@@ -196,7 +196,17 @@ const Collaboration = () => {
           <FlatList
             data={filteredList}
             renderItem={({ item }) => (
-              <Card>
+              <View
+                style={{
+                  width: "100%",
+                  borderWidth: 0.3,
+                  borderColor: Colors(theme).gray300,
+                  gap: 8,
+                  borderRadius: 5,
+                  paddingBottom: 16,
+                  overflow: "hidden",
+                }}
+              >
                 <CollaborationHeader
                   cardId={item.id}
                   cardType="collaboration"
@@ -215,35 +225,10 @@ const Collaboration = () => {
                 {item.attachments && item.attachments.length > 0 && (
                   <Carousel
                     theme={theme}
-                    containerHeight={300}
                     data={
                       item.attachments?.map((attachment) =>
                         processRawAttachment(attachment)
                       ) || []
-                    }
-                    dot={
-                      <View
-                        style={{
-                          backgroundColor: Colors(theme).primary,
-                          width: 8,
-                          height: 8,
-                          borderRadius: 4,
-                          marginLeft: 3,
-                          marginRight: 3,
-                        }}
-                      />
-                    }
-                    activeDot={
-                      <View
-                        style={{
-                          backgroundColor: Colors(theme).gray100,
-                          width: 8,
-                          height: 8,
-                          borderRadius: 4,
-                          marginLeft: 3,
-                          marginRight: 3,
-                        }}
-                      />
                     }
                   />
                 )}
@@ -276,7 +261,7 @@ const Collaboration = () => {
                     brandHireRate={item.brandHireRate || ""}
                   />
                 </Pressable>
-              </Card>
+              </View>
             )}
             keyExtractor={(item) => item.id}
             style={{
