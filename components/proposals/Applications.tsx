@@ -121,6 +121,7 @@ const Applications = () => {
             applications: applicationData,
             brandName: brandData.data().name,
             brandImage: brandData.data().image,
+            paymentVerified: brandData.data().paymentMethodVerified,
           };
         })
       );

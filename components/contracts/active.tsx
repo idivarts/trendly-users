@@ -138,7 +138,9 @@ const ActiveContracts = () => {
   }, [user]);
 
   const filteredProposals = useMemo(() => {
-    return proposals.filter((proposal) => proposal.status !== 3);
+    return proposals.filter((proposal) => {
+      return proposal.status !== 0 && proposal.status !== 3;
+    });
   }, [proposals]);
 
   if (isLoading) {

@@ -139,6 +139,7 @@ const UserResponse: FC<UserResponseProps> = ({
                   key={index}
                   style={{
                     fontSize: 16,
+                    width: "95%",
                   }}
                 >
                   {attachment.name}

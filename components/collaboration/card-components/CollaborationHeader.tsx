@@ -5,7 +5,7 @@ import { Avatar } from "react-native-paper";
 import { Image, Pressable } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import Colors from "@/constants/Colors";
-import { faEllipsisH } from "@fortawesome/free-solid-svg-icons";
+import { faCheckCircle, faEllipsisH } from "@fortawesome/free-solid-svg-icons";
 import { useTheme } from "@react-navigation/native";
 import { router } from "expo-router";
 import { imageUrl } from "@/utils/url";
@@ -102,7 +102,14 @@ const CollaborationHeader: FC<CollaborationHeaderProps> = ({
               fontSize: 14,
             }}
           >
-            {brand.name}
+            {brand.name}{" "}
+            {brand.paymentVerified && (
+              <FontAwesomeIcon
+                icon={faCheckCircle}
+                color={Colors(theme).primary}
+                size={12}
+              />
+            )}
           </Text>
         </View>
       </View>
