@@ -5,16 +5,20 @@ import Button from "@/components/ui/button";
 import { CHAT_MESSAGE_TOPBAR_DESCRIPTION } from "@/constants/ChatMessageTopbar";
 import MessageTopbar from "@/shared-uis/components/chat-message-bar";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { Channel as ChannelType } from "stream-chat";
+import { useChatContext } from "@/contexts";
+import { Contract } from "@/types/Contract";
 
 interface FirstPhaseProps {
-  channel: ChannelType;
+  contract: Contract;
 }
 
 const FirstPhase: React.FC<FirstPhaseProps> = ({
-  channel,
+  contract,
 }) => {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  const {
+    sendSystemMessage
+  } = useChatContext();
 
   return (
     <>
@@ -31,7 +35,7 @@ const FirstPhase: React.FC<FirstPhaseProps> = ({
               size="small"
               mode="text"
               onPress={() => {
-                // TODO: Trigger a system message
+                sendSystemMessage(contract.id, "Start Contract");
               }}
             >
               Start Contract

@@ -16,6 +16,7 @@ import { useColorScheme } from "@/components/theme/useColorScheme";
 import {
   AuthContextProvider,
   AWSContextProvider,
+  BrandContextProvider,
   CloudMessagingContextProvider,
   CollaborationContextProvider,
   ContractContextProvider,
@@ -67,15 +68,17 @@ const RootLayout = () => {
           <BottomSheetModalProvider>
             <AWSContextProvider>
               <FirebaseStorageContextProvider>
-                <CollaborationContextProvider>
-                  <ContractContextProvider>
-                    <NotificationContextProvider>
-                      <CloudMessagingContextProvider>
-                        <RootLayoutStack />
-                      </CloudMessagingContextProvider>
-                    </NotificationContextProvider>
-                  </ContractContextProvider>
-                </CollaborationContextProvider>
+                <BrandContextProvider>
+                  <CollaborationContextProvider>
+                    <ContractContextProvider>
+                      <NotificationContextProvider>
+                        <CloudMessagingContextProvider>
+                          <RootLayoutStack />
+                        </CloudMessagingContextProvider>
+                      </NotificationContextProvider>
+                    </ContractContextProvider>
+                  </CollaborationContextProvider>
+                </BrandContextProvider>
               </FirebaseStorageContextProvider>
             </AWSContextProvider>
           </BottomSheetModalProvider>

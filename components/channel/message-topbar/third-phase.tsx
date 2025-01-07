@@ -6,10 +6,45 @@ import Button from "@/components/ui/button";
 import { CHAT_MESSAGE_TOPBAR_DESCRIPTION } from "@/constants/ChatMessageTopbar";
 import MessageTopbar from "@/shared-uis/components/chat-message-bar";
 import FeedbackModal from "@/shared-uis/components/feedback-modal";
+import { useContractContext } from "@/contexts";
+import { IContracts } from "@/shared-libs/firestore/trendly-pro/models/contracts";
+import Toaster from "@/shared-uis/components/toaster/Toaster";
 
-const ThirdPhase = () => {
+interface ThirdPhaseProps {
+  contract: IContracts;
+  contractId: string;
+  setStatus: React.Dispatch<React.SetStateAction<number>>;
+}
+
+const ThirdPhase: React.FC<ThirdPhaseProps> = ({
+  contract,
+  contractId,
+  setStatus,
+}) => {
   const [feedbackModalVisible, setFeedbackModalVisible] = useState(false);
   const theme = useTheme();
+
+  const {
+    updateContract,
+  } = useContractContext();
+
+  const handleFeedbackSubmit = async (
+    rating: number,
+    feedback: string,
+  ) => {
+    await updateContract(contractId, {
+      ...contract,
+      feedbackFromInfluencer: {
+        ratings: rating,
+        feedbackReview: feedback,
+        timeSubmitted: new Date().getTime(),
+      },
+      status: 3,
+    }).then(() => {
+      Toaster.success("Feedback submitted successfully");
+      setStatus(3);
+    });
+  }
 
   return (
     <>
@@ -38,8 +73,9 @@ const ThirdPhase = () => {
           rating: number,
           feedback: string,
         ) => {
-          console.log(rating, feedback);
-          setFeedbackModalVisible(false);
+          handleFeedbackSubmit(rating, feedback).then(() => {
+            setFeedbackModalVisible(false);
+          });
         }}
         isVisible={feedbackModalVisible}
         setIsVisible={setFeedbackModalVisible}

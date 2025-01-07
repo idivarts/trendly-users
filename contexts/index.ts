@@ -18,6 +18,10 @@ import {
   useSocialContext,
 } from "./social-context.provider";
 import {
+  BrandContextProvider,
+  useBrandContext,
+} from "./brand-context.provider";
+import {
   CollaborationContextProvider,
   useCollaborationContext,
 } from "./collaboration-context.provider";
@@ -29,6 +33,7 @@ import {
 export {
   AuthContextProvider,
   AWSContextProvider,
+  BrandContextProvider,
   ChatContextProvider,
   CloudMessagingContextProvider,
   CollaborationContextProvider,
@@ -37,6 +42,7 @@ export {
   NotificationContextProvider,
   SocialContextProvider,
   useAuthContext,
+  useBrandContext,
   useChatContext,
   useCloudMessagingContext,
   useCollaborationContext,
