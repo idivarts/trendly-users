@@ -16,7 +16,7 @@ import {
   doc,
   getDoc,
 } from "firebase/firestore";
-import { ActivityIndicator, FlatList } from "react-native";
+import { ActivityIndicator, FlatList, Pressable } from "react-native";
 import { FirestoreDB } from "@/utils/firestore";
 import { AuthApp } from "@/utils/auth";
 import { RefreshControl } from "react-native";
@@ -138,7 +138,9 @@ const ActiveContracts = () => {
   }, [user]);
 
   const filteredProposals = useMemo(() => {
-    return proposals.filter((proposal) => proposal.status !== 3);
+    return proposals.filter((proposal) => {
+      return proposal.status !== 0 && proposal.status !== 3;
+    });
   }, [proposals]);
 
   if (isLoading) {
@@ -172,9 +174,16 @@ const ActiveContracts = () => {
             data={filteredProposals}
             showsVerticalScrollIndicator={false}
             renderItem={({ item }) => (
-              <Card
+              <Pressable
                 onPress={() => {
                   router.push(`/contract-details/${item.streamChannelId}`);
+                }}
+                style={{
+                  width: "100%",
+                  borderWidth: 0.3,
+                  borderColor: Colors(theme).gray300,
+                  borderRadius: 5,
+                  overflow: "hidden",
                 }}
               >
                 <CollaborationHeader
@@ -204,7 +213,7 @@ const ActiveContracts = () => {
                   }
                   collabDetails={item.collaborationData.description || ""}
                 />
-              </Card>
+              </Pressable>
             )}
             keyExtractor={(item, index) => index.toString()}
             style={{

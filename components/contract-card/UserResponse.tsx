@@ -131,6 +131,7 @@ const UserResponse: FC<UserResponseProps> = ({
                       fontWeight: "bold",
                     }}
                   >
+                    Q{") "}
                     {influencerQuestions[answer.question]}
                   </Text>
                   <Text
@@ -138,6 +139,7 @@ const UserResponse: FC<UserResponseProps> = ({
                       fontSize: 16,
                     }}
                   >
+                    A{") "}
                     {answer.answer}
                   </Text>
                 </View>
