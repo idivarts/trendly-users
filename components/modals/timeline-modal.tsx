@@ -1,34 +1,45 @@
 import Colors from "@/constants/Colors";
 import { Theme, useTheme } from "@react-navigation/native";
-import { useState } from "react";
 import { Modal, Pressable, StyleSheet } from "react-native";
+import DateTimePicker from "@react-native-community/datetimepicker";
+
 import { Text, View } from "../theme/Themed";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
-import TextInput from "../ui/text-input";
 import Button from "../ui/button";
+import Toaster from "@/shared-uis/components/toaster/Toaster";
 
-interface QuotationModalProps {
+interface TimelineModalProps {
   isVisible: boolean;
-  quotation: string;
   setIsVisible: React.Dispatch<React.SetStateAction<boolean>>;
-  setQuotation: React.Dispatch<React.SetStateAction<string>>;
+  setTimeline: React.Dispatch<React.SetStateAction<Date | null>>;
+  timeline: Date | null;
 }
 
-const QuotationModal: React.FC<QuotationModalProps> = ({
+const TimelineModal: React.FC<TimelineModalProps> = ({
   isVisible,
-  quotation,
   setIsVisible,
-  setQuotation,
+  setTimeline,
+  timeline,
 }) => {
   const theme = useTheme();
   const styles = stylesFn(theme);
+
+  const onDateChange = (event: any, selectedDate?: Date) => {
+    if (selectedDate) {
+      setTimeline(selectedDate);
+    }
+  };
 
   const handleClose = () => {
     setIsVisible(false);
   };
 
   const handleSubmit = () => {
+    if (!timeline) {
+      Toaster.error('Please select a date');
+      return;
+    }
     setIsVisible(false);
   };
 
@@ -43,7 +54,7 @@ const QuotationModal: React.FC<QuotationModalProps> = ({
       <View style={styles.overlay}>
         <View style={styles.modal}>
           <View style={styles.header}>
-            <Text style={styles.title}>Your Quotation</Text>
+            <Text style={styles.title}>Your Timeline</Text>
             <Pressable
               onPress={() => {
                 setIsVisible(false);
@@ -56,18 +67,11 @@ const QuotationModal: React.FC<QuotationModalProps> = ({
               />
             </Pressable>
           </View>
-          <TextInput
-            activeOutlineColor={Colors(theme).primary}
-            contentStyle={{
-              color: Colors(theme).text,
-            }}
-            mode="outlined"
-            onChangeText={setQuotation}
-            outlineColor={Colors(theme).primary}
-            placeholder="Quotation"
-            style={styles.input}
-            theme={theme}
-            value={quotation}
+          <DateTimePicker
+            display="spinner"
+            mode="date"
+            onChange={onDateChange}
+            value={timeline || new Date()}
           />
           <View style={styles.buttonContainer}>
             <Button
@@ -98,7 +102,7 @@ const QuotationModal: React.FC<QuotationModalProps> = ({
   );
 };
 
-export default QuotationModal;
+export default TimelineModal;
 
 const stylesFn = (theme: Theme) => StyleSheet.create({
   overlay: {
