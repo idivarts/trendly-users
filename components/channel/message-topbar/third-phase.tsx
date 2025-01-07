@@ -38,8 +38,7 @@ const ThirdPhase: React.FC<ThirdPhaseProps> = ({
         ratings: rating,
         feedbackReview: feedback,
         timeSubmitted: new Date().getTime(),
-      },
-      status: 3,
+      }
     }).then(() => {
       Toaster.success("Feedback submitted successfully");
       setStatus(3);
