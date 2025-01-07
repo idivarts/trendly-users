@@ -17,6 +17,8 @@ import {
   AuthContextProvider,
   AWSContextProvider,
   CloudMessagingContextProvider,
+  CollaborationContextProvider,
+  ContractContextProvider,
   FirebaseStorageContextProvider,
   NotificationContextProvider,
   useAuthContext,
@@ -65,11 +67,15 @@ const RootLayout = () => {
           <BottomSheetModalProvider>
             <AWSContextProvider>
               <FirebaseStorageContextProvider>
-                <NotificationContextProvider>
-                  <CloudMessagingContextProvider>
-                    <RootLayoutStack />
-                  </CloudMessagingContextProvider>
-                </NotificationContextProvider>
+                <CollaborationContextProvider>
+                  <ContractContextProvider>
+                    <NotificationContextProvider>
+                      <CloudMessagingContextProvider>
+                        <RootLayoutStack />
+                      </CloudMessagingContextProvider>
+                    </NotificationContextProvider>
+                  </ContractContextProvider>
+                </CollaborationContextProvider>
               </FirebaseStorageContextProvider>
             </AWSContextProvider>
           </BottomSheetModalProvider>

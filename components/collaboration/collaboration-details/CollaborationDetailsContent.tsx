@@ -9,7 +9,6 @@ import { deleteDoc, doc, getDoc, updateDoc } from "firebase/firestore";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import {
   useAuthContext,
-  useChatContext,
   useNotificationContext,
 } from "@/contexts";
 import { CollaborationDetail } from ".";
@@ -74,8 +73,6 @@ const CollborationDetailsContent = (
 
   const { createNotification } = useNotificationContext();
   const { user } = useAuthContext();
-
-  const { createGroupWithMembers, connectUser } = useChatContext();
 
   const fetchManagerDetails = async () => {
     const managerRef = doc(
@@ -147,32 +144,26 @@ const CollborationDetailsContent = (
     }).then(() => {
       if (!user?.id) return;
 
-      createGroupWithMembers(props.collaborationDetail.name, [user?.id]).then(
-        (channel) => {
-          connectUser();
+      createNotification(
+        props?.invitationData?.managerId || "",
+        {
+          data: {
+            userId: user?.id,
+            collaborationId: props.invitationData?.collaborationId,
+          },
+          description: `${user?.name} with email id ${user?.email} accepted invitation to collaborate for ${props.collaborationDetail.name}`,
+          isRead: false,
+          timeStamp: Date.now(),
+          title: "Invitation Accepted",
+          type: "invitation-accepted",
+        },
+        "managers"
+      ).then(() => {
+        setStatus("accepted");
+        Toaster.success("Invitation accepted successfully");
 
-          createNotification(
-            props?.invitationData?.managerId || "",
-            {
-              data: {
-                userId: user?.id,
-                collaborationId: props.invitationData?.collaborationId,
-              },
-              description: `${user?.name} with email id ${user?.email} accepted invitation to collaborate for ${props.collaborationDetail.name}`,
-              isRead: false,
-              timeStamp: Date.now(),
-              title: "Invitation Accepted",
-              type: "invitation-accepted",
-            },
-            "managers"
-          );
-
-          setStatus("accepted");
-          Toaster.success("Invitation accepted successfully");
-
-          router.navigate(`/channel/${channel.cid}`);
-        }
-      );
+        router.navigate(`/apply-now/${props?.invitationData?.collaborationId}`);
+      });
     });
   };
 
@@ -186,9 +177,11 @@ const CollborationDetailsContent = (
       "invitations",
       props.invitationData.id
     );
+
     const updation = updateDoc(invitationRef, {
       status: "rejected",
     });
+
     Toaster.success("Invitation Rejected");
     props.invitationData = {
       ...props.invitationData,
@@ -475,19 +468,19 @@ const CollborationDetailsContent = (
             </Text>
             {props.collaborationDetail.promotionType ===
               PromotionType.PAID_COLLAB && (
-              <Text
-                style={{
-                  fontSize: 16,
-                  color: Colors(theme).text,
-                }}
-              >
-                Budget:
-                {props.collaborationDetail?.budget?.min ===
-                props.collaborationDetail?.budget?.max
-                  ? `$${props.collaborationDetail?.budget?.min}`
-                  : `$${props.collaborationDetail?.budget?.min} - $${props.collaborationDetail?.budget?.max}`}
-              </Text>
-            )}
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: Colors(theme).text,
+                  }}
+                >
+                  Budget:
+                  {props.collaborationDetail?.budget?.min ===
+                    props.collaborationDetail?.budget?.max
+                    ? `$${props.collaborationDetail?.budget?.min}`
+                    : `$${props.collaborationDetail?.budget?.min} - $${props.collaborationDetail?.budget?.max}`}
+                </Text>
+              )}
           </View>
           {/* chips */}
           <View
@@ -500,7 +493,7 @@ const CollborationDetailsContent = (
             <ChipCard
               chipText={
                 props.collaborationDetail.promotionType ===
-                PromotionType.PAID_COLLAB
+                  PromotionType.PAID_COLLAB
                   ? "Paid"
                   : "Unpaid"
               }
@@ -514,18 +507,18 @@ const CollborationDetailsContent = (
               chipText={
                 props.collaborationDetail.platform.length > 1
                   ? props.collaborationDetail.platform[0] +
-                    "+" +
-                    (props.collaborationDetail.platform.length - 1)
+                  "+" +
+                  (props.collaborationDetail.platform.length - 1)
                   : props.collaborationDetail.platform[0]
               }
               chipIcon={
                 props.collaborationDetail.platform[0] === "Instagram"
                   ? faInstagram
                   : props.collaborationDetail.platform[0] === "Facebook"
-                  ? faFacebook
-                  : props.collaborationDetail.platform[0] === "Youtube"
-                  ? faYoutube
-                  : faInstagram
+                    ? faFacebook
+                    : props.collaborationDetail.platform[0] === "Youtube"
+                      ? faYoutube
+                      : faInstagram
               }
             />
           </View>
@@ -572,8 +565,8 @@ const CollborationDetailsContent = (
                   latitudeDelta: 0.0922,
                   longitudeDelta: 0.042,
                 }}
-                onMapRegionChange={(region) => {}}
-                onFormattedAddressChange={(address) => {}}
+                onMapRegionChange={(region) => { }}
+                onFormattedAddressChange={(address) => { }}
               />
               <Text
                 style={{

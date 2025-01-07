@@ -5,8 +5,15 @@ import Button from "@/components/ui/button";
 import { CHAT_MESSAGE_TOPBAR_DESCRIPTION } from "@/constants/ChatMessageTopbar";
 import MessageTopbar from "@/shared-uis/components/chat-message-bar";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { Channel as ChannelType } from "stream-chat";
 
-const FirstPhase = () => {
+interface FirstPhaseProps {
+  channel: ChannelType;
+}
+
+const FirstPhase: React.FC<FirstPhaseProps> = ({
+  channel,
+}) => {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
   return (

@@ -66,6 +66,7 @@ const ChannelNative = () => {
       />
       <ChatMessageTopbar
         status={0}
+        channel={channel}
       />
       <MessageList />
       <MessageInput />
