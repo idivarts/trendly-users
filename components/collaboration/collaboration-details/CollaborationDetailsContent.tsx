@@ -42,6 +42,7 @@ import BrandModal from "./modal/BrandModal";
 import ManagerModal from "./modal/ManagerModal";
 import { PromotionType } from "@/shared-libs/firestore/trendly-pro/constants/promotion-type";
 import ConfirmationModal from "@/components/ui/modal/ConfirmationModal";
+import { imageUrl } from "@/utils/url";
 
 interface ApplicationData extends IApplications {
   id: string;
@@ -304,7 +305,7 @@ const CollborationDetailsContent = (
                   }}
                 >
                   <Image
-                    source={{ uri: props.collaborationDetail.brandImage }}
+                    source={imageUrl(props.collaborationDetail.brandImage)}
                     style={{ width: 40, height: 40, borderRadius: 5 }}
                   />
                   <View style={{ flex: 1 }}>

@@ -5,9 +5,10 @@ import { Avatar } from "react-native-paper";
 import { Image, Pressable } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import Colors from "@/constants/Colors";
-import { faEllipsisH } from "@fortawesome/free-solid-svg-icons";
+import { faCheckCircle, faEllipsisH } from "@fortawesome/free-solid-svg-icons";
 import { useTheme } from "@react-navigation/native";
 import { router } from "expo-router";
+import { imageUrl } from "@/utils/url";
 
 interface CollaborationHeaderProps {
   cardType: string;
@@ -41,7 +42,10 @@ const CollaborationHeader: FC<CollaborationHeaderProps> = ({
       onPress={() => {
         router.push({
           // @ts-ignore
-          pathname: `/collaboration-details/${collaboration.collabId}`,
+          pathname:
+            cardType === "contract"
+              ? `/contract-details/${cardId}`
+              : `/collaboration-details/${collaboration.collabId}`,
           params: {
             cardType: cardType,
             cardId: cardId,
@@ -54,7 +58,9 @@ const CollaborationHeader: FC<CollaborationHeaderProps> = ({
         flexDirection: "row",
         alignItems: "center",
         backgroundColor: Colors(theme).background,
-        padding: 16,
+        justifyContent: "space-between",
+        padding: 8,
+        paddingTop: 16,
       }}
     >
       <View
@@ -63,11 +69,11 @@ const CollaborationHeader: FC<CollaborationHeaderProps> = ({
           flexDirection: "row",
           alignItems: "center",
           gap: 8,
-          flexGrow: 1,
+          width: "45%",
         }}
       >
         <Image
-          source={{ uri: brand.image }}
+          source={imageUrl(brand.image)}
           style={{
             width: 40,
             height: 40,
@@ -86,17 +92,24 @@ const CollaborationHeader: FC<CollaborationHeaderProps> = ({
             style={{
               fontSize: 16,
               fontWeight: "bold",
-              width: 200,
+              width: 150,
             }}
           >
             {collaboration.collabName}
           </Text>
           <Text
             style={{
-              fontSize: 16,
+              fontSize: 14,
             }}
           >
-            {brand.name}
+            {brand.name}{" "}
+            {brand.paymentVerified && (
+              <FontAwesomeIcon
+                icon={faCheckCircle}
+                color={Colors(theme).primary}
+                size={12}
+              />
+            )}
           </Text>
         </View>
       </View>
@@ -110,7 +123,7 @@ const CollaborationHeader: FC<CollaborationHeaderProps> = ({
         {collaboration.timePosted ? (
           <Text
             style={{
-              fontSize: 12,
+              fontSize: 10,
               color: Colors(theme).text,
               paddingRight: 8,
             }}

@@ -137,7 +137,17 @@ const PastApplicationPage = (props: any) => {
         <FlatList
           data={proposals}
           renderItem={({ item }) => (
-            <Card>
+            <View
+              style={{
+                width: "100%",
+                borderWidth: 0.3,
+                borderColor: Colors(theme).gray300,
+                gap: 8,
+                borderRadius: 5,
+                paddingBottom: 16,
+                overflow: "hidden",
+              }}
+            >
               <CollaborationHeader
                 cardId={item.id}
                 cardType="invitation"
@@ -161,30 +171,6 @@ const PastApplicationPage = (props: any) => {
                       processRawAttachment(attachment)
                     ) || []
                   }
-                  dot={
-                    <View
-                      style={{
-                        backgroundColor: Colors(theme).primary,
-                        width: 8,
-                        height: 8,
-                        borderRadius: 4,
-                        marginLeft: 3,
-                        marginRight: 3,
-                      }}
-                    />
-                  }
-                  activeDot={
-                    <View
-                      style={{
-                        backgroundColor: Colors(theme).gray100,
-                        width: 8,
-                        height: 8,
-                        borderRadius: 4,
-                        marginLeft: 3,
-                        marginRight: 3,
-                      }}
-                    />
-                  }
                 />
               )}
               <CollaborationDetails
@@ -196,7 +182,7 @@ const PastApplicationPage = (props: any) => {
                   contentType: item.contentFormat,
                 }}
               />
-            </Card>
+            </View>
           )}
           contentContainerStyle={{
             padding: 16,

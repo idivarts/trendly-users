@@ -36,17 +36,18 @@ const CollaborationDetails: FC<CollaborationDetailsProps> = ({
     <View
       style={{
         paddingHorizontal: 16,
-        paddingBottom: 16,
       }}
     >
-      <Text
-        style={{
-          color: Colors(theme).gray100,
-          fontSize: 16,
-        }}
-      >
-        {collabDescription}
-      </Text>
+      {collabDescription && (
+        <Text
+          style={{
+            color: Colors(theme).gray100,
+            fontSize: 16,
+          }}
+        >
+          {collabDescription}
+        </Text>
+      )}
       <View
         style={{
           flexDirection: "row",

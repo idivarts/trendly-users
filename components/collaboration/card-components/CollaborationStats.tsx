@@ -42,7 +42,6 @@ const CollaborationStats: FC<CollaborationStatsProps> = (
     <View
       style={{
         paddingHorizontal: 16,
-        paddingBottom: 16,
       }}
     >
       <View style={styles.infoRow}>

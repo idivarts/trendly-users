@@ -3,7 +3,7 @@ import { FC } from "react";
 import { Text, View } from "../theme/Themed";
 import { Button } from "react-native-paper";
 import { Pressable, ScrollView } from "react-native";
-import RenderMediaItem from "../ui/carousel/render-media-item";
+import RenderMediaItem from "@/shared-uis/components/carousel/render-media-item";
 import { processRawAttachment } from "@/utils/attachments";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faPaperclip } from "@fortawesome/free-solid-svg-icons";
@@ -31,12 +31,9 @@ const UserResponse: FC<UserResponseProps> = ({
   return (
     <View
       style={{
-        borderWidth: 0.3,
         borderRadius: 5,
         width: "100%",
-        padding: 10,
-        borderColor: Colors(theme).gray300,
-        gap: 10,
+        gap: 16,
       }}
     >
       <View
@@ -52,45 +49,13 @@ const UserResponse: FC<UserResponseProps> = ({
             fontWeight: "bold",
           }}
         >
-          Your Application
+          Application
         </Text>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-            gap: 10,
-          }}
-        >
-          <Pressable onPress={() => setConfirmationModalVisible(true)}>
-            <Text
-              style={{
-                fontSize: 16,
-              }}
-            >
-              Withdraw
-            </Text>
-          </Pressable>
-          <Button
-            mode="contained"
-            onPress={() => {
-              router.push({
-                //@ts-ignore
-                pathname: `/edit-application/${application?.id}`,
-                params: {
-                  collaborationId: application?.collaborationId,
-                },
-              });
-            }}
-          >
-            Edit
-          </Button>
-        </View>
       </View>
       <View
         style={{
           width: "100%",
-          gap: 10,
+          gap: 16,
         }}
       >
         <ScrollView horizontal style={{}}>
@@ -105,9 +70,7 @@ const UserResponse: FC<UserResponseProps> = ({
             />
           ))}
         </ScrollView>
-        <Text style={{ fontSize: 16, marginTop: 10 }}>
-          {application?.message}
-        </Text>
+        <Text style={{ fontSize: 16 }}>{application?.message}</Text>
         <View
           style={{
             flexDirection: "row",
@@ -116,7 +79,7 @@ const UserResponse: FC<UserResponseProps> = ({
           }}
         >
           <Text style={{ fontSize: 16 }}>
-            Quote: {application?.quotation || "N/A"}
+            Quote: Rs. {application?.quotation || "N/A"}
           </Text>
           {application?.timeline && (
             <Text style={{ fontSize: 16 }}>
@@ -136,10 +99,8 @@ const UserResponse: FC<UserResponseProps> = ({
               >
                 <FontAwesomeIcon icon={faPaperclip} />
                 <Text
-                  key={index}
                   style={{
                     fontSize: 16,
-                    width: "95%",
                   }}
                 >
                   {attachment.name}
@@ -170,6 +131,7 @@ const UserResponse: FC<UserResponseProps> = ({
                       fontWeight: "bold",
                     }}
                   >
+                    Q{") "}
                     {influencerQuestions[answer.question]}
                   </Text>
                   <Text
@@ -177,6 +139,7 @@ const UserResponse: FC<UserResponseProps> = ({
                       fontSize: 16,
                     }}
                   >
+                    A{") "}
                     {answer.answer}
                   </Text>
                 </View>

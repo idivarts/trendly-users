@@ -548,7 +548,7 @@ const ApplyScreenWeb = () => {
             }}
             loading={loading}
           >
-            {processMessage ? "Uploading Assets" : "Preview Application"}
+            {processMessage ? "Uploading Assets" : "Update Application"}
           </Button>
         </View>
       </ScrollView>
