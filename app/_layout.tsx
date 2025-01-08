@@ -126,27 +126,31 @@ const RootLayoutStack = () => {
     if (isLoading) return;
 
     if (Platform.OS !== "web") {
-      if (session && inMainGroup) {
-        router.replace(pathname as Href);
-      } else if (session) {
-        resetAndNavigate("/(main)/collaborations");
-      } else if (inPublicGroup) {
-        resetAndNavigate(pathname as Href);
-      } else {
-        router.replace("/pre-signin");
-      }
-    } else {
-      if (!session) {
-        resetAndNavigate("/pre-signin");
-      } else if (
-        session && (
-          pathname === "/"
-          || pathname === "/pre-signin"
-          || inAuthGroup
-        )
+      if (
+        session
+        && !inPublicGroup
+        && (pathname === "/" || inAuthGroup)
       ) {
+        // On boot up, session exist and user is not in public group
         resetAndNavigate("/(main)/collaborations");
+      } else if (!session && !inPublicGroup) {
+        // On boot up, session doesn't exist and user is not in public group, redirect to pre-signin
+        resetAndNavigate("/pre-signin");
       }
+      // Redirect user to respective screen
+    } else {
+      if (
+        session
+        && !inPublicGroup
+        && (pathname === "/" || inAuthGroup)
+      ) {
+        // On boot up, session exist and user is not in public group
+        resetAndNavigate("/(main)/collaborations");
+      } else if (!session && inMainGroup) {
+        // On boot up, session doesn't exist and user is in main group, redirect to pre-signin
+        resetAndNavigate("/pre-signin");
+      }
+      // Redirect user to respective screen
     }
   }, [session, isLoading, user]);
 
@@ -159,12 +163,9 @@ const RootLayoutStack = () => {
             headerShown: false,
           }}
         >
+          <Stack.Screen name="(main)" options={{ headerShown: false }} />
+          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
           <Stack.Screen name="(public)" options={{ headerShown: false }} />
-          {!session ? (
-            <Stack.Screen name="(main)" options={{ headerShown: false }} />
-          ) : (
-            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-          )}
           <Stack.Screen name="index" />
           <Stack.Screen name="modal" options={{ presentation: "modal" }} />
           <Stack.Screen name="+not-found" />

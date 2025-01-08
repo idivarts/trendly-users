@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Pressable, Image } from "react-native";
 import { useTheme } from "@react-navigation/native";
 import { stylesFn } from "@/styles/Questions.styles";
-import { useRouter } from "expo-router";
 import Colors from "@/constants/Colors";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
@@ -19,13 +18,13 @@ import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { FirestoreDB } from "@/utils/firestore";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
+import { resetAndNavigate } from "@/utils/router";
 
 const PrimarySocialSelect = () => {
   const { user } = useAuthContext();
   const { socials } = useSocialContext();
   const theme = useTheme();
   const styles = stylesFn(theme);
-  const router = useRouter();
 
   const [selectedSocialId, setSelectedSocialId] = useState(
     user?.primarySocial || null
@@ -45,7 +44,7 @@ const PrimarySocialSelect = () => {
       await updateDoc(userDocRef, { primarySocial: userData.primarySocial })
         .then(() => {
           Toaster.success("Social marked as primary");
-          router.navigate("/collaborations");
+          resetAndNavigate("/collaborations");
         })
         .catch((error) => {
           Toaster.error("Error marking social as primary");
