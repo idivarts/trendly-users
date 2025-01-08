@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IconButton } from "react-native-paper";
 import { useLocalSearchParams } from "expo-router";
 
@@ -14,8 +14,13 @@ import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 const CollaborationDetailsScreen = () => {
   const theme = useTheme();
   const [isVisible, setIsVisible] = useState(false);
+  const [key, setKey] = useState(0);
 
   const { cardId, cardType, collaborationID, pageID } = useLocalSearchParams();
+
+  useEffect(() => {
+    setKey((prev) => prev + 1);
+  }, [cardId, cardType, collaborationID, pageID]);
 
   return (
     <AppLayout>
@@ -43,6 +48,7 @@ const CollaborationDetailsScreen = () => {
         cardType={cardType as string}
         collaborationID={collaborationID as string}
         pageID={pageID as string}
+        key={key}
       />
       <BottomSheetActions
         cardId={pageID as string}

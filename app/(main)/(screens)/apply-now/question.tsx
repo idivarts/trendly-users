@@ -2,7 +2,12 @@ import React, { useState } from "react";
 import { useTheme } from "@react-navigation/native";
 import { Text, View } from "@/components/theme/Themed";
 import { Appbar } from "react-native-paper";
-import { router, useLocalSearchParams, useRouter } from "expo-router";
+import {
+  router,
+  useLocalSearchParams,
+  useNavigation,
+  useRouter,
+} from "expo-router";
 import AppLayout from "@/layouts/app-layout";
 import Colors from "@/constants/Colors";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
@@ -13,6 +18,7 @@ import TextInput from "@/components/ui/text-input";
 const Question: React.FC = () => {
   const theme = useTheme();
   const navigation = useRouter();
+  const reactNavigation = useNavigation();
 
   const {
     title,
@@ -45,7 +51,7 @@ const Question: React.FC = () => {
       },
     };
 
-    router.push({
+    router.replace({
       //@ts-ignore
       pathname: path as string,
       params: {
@@ -64,7 +70,21 @@ const Question: React.FC = () => {
   };
 
   const handleGoBack = () => {
-    navigation.back();
+    router.replace({
+      //@ts-ignore
+      pathname: path as string,
+      params: {
+        selectedFiles,
+        profileAttachments,
+        timelineData,
+        originalAttachments,
+        answers,
+        quotation,
+        note,
+        collaborationId,
+        fileAttachments,
+      },
+    });
   };
 
   return (

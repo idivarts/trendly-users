@@ -19,7 +19,7 @@ const TrendlyScreen = () => {
   useEffect(() => {
     if (socials.length > 0) {
       // Redirect to the main screen
-      router.push("/(main)/collaborations");
+      router.replace("/(main)/collaborations");
     }
   }, [socials]);
 

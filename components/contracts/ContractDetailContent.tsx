@@ -25,6 +25,7 @@ import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
 import { doc, getDoc } from "firebase/firestore";
 import { FirestoreDB } from "@/utils/firestore";
 import { imageUrl } from "@/utils/url";
+import ImageComponent from "@/shared-uis/components/image-component";
 
 export interface Application extends IApplications {
   id: string;
@@ -174,8 +175,10 @@ const ContractDetailsContent = (props: CollaborationDetailsContentProps) => {
                 flexGrow: 1,
               }}
             >
-              <Image
-                source={imageUrl(brandData?.image)}
+              <ImageComponent
+                url={brandData?.image || ""}
+                altText="Brand Image"
+                shape="square"
                 style={{ width: 40, height: 40, borderRadius: 5 }}
               />
               <View style={{ flex: 1 }}>

@@ -79,7 +79,7 @@ const ApplyScreen = () => {
 
   const handleAssetUpload = async () => {
     try {
-      router.push({
+      router.replace({
         pathname: "/apply-now/gallery",
         params: {
           ...params,
@@ -140,7 +140,7 @@ const ApplyScreen = () => {
         setLoading(false);
         setProcessMessage("");
         setProcessPercentage(0);
-        router.push({
+        router.replace({
           pathname: "/apply-now/preview",
           params: {
             ...params,
@@ -271,7 +271,7 @@ const ApplyScreen = () => {
     if (params.note) {
       setNote(params.note as string);
     }
-  }, [params.selectedFiles]);
+  }, [params.selectedFiles, params.pageID]);
 
   useEffect(() => {
     if (params.value) {
@@ -287,6 +287,10 @@ const ApplyScreen = () => {
           ...prevAnswers,
           [questionIndex]: textBoxValue,
         }));
+      }
+    } else {
+      if (!params.quotation) {
+        setQuotation("");
       }
     }
   }, [params.value]);
@@ -367,7 +371,7 @@ const ApplyScreen = () => {
               leftIcon={faQuoteLeft}
               content={quotation === "" ? "" : "Rs. " + quotation}
               onAction={() => {
-                router.push({
+                router.replace({
                   pathname: "/apply-now/quotation",
                   params: {
                     title: "Quotation",
@@ -405,7 +409,7 @@ const ApplyScreen = () => {
                 leftIcon={faLink}
                 content={answers[index]}
                 onAction={() => {
-                  router.push({
+                  router.replace({
                     pathname: "/apply-now/question",
                     params: {
                       title: "Question " + (index + 1),

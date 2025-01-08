@@ -143,7 +143,7 @@ const GalleryScreen = () => {
 
   const handleSelectionComplete = () => {
     try {
-      router.push({
+      router.replace({
         //@ts-ignore
         pathname: path,
         params: {

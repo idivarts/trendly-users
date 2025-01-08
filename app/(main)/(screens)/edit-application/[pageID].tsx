@@ -111,7 +111,7 @@ const EditApplicationScreen = () => {
 
   const handleAssetUpload = async () => {
     try {
-      router.push({
+      router.replace({
         pathname: "/apply-now/gallery",
         params: {
           ...params,
@@ -241,7 +241,7 @@ const EditApplicationScreen = () => {
       setLoading(false);
       setProcessMessage("");
       setTimeout(() => {
-        router.push("/collaborations");
+        router.replace("/collaborations");
       }, 1000);
     } catch (error) {
       console.error(error);
@@ -476,7 +476,13 @@ const EditApplicationScreen = () => {
 
   return (
     <AppLayout>
-      <ScreenHeader title="Edit Application" />
+      <ScreenHeader
+        title="Edit Application"
+        action={() => {
+          router.back();
+          router.replace(`/collaboration-details/${params.collaborationId}`);
+        }}
+      />
       <Toast />
       <ScrollView
         style={styles.container}
@@ -570,7 +576,7 @@ const EditApplicationScreen = () => {
               leftIcon={faQuoteLeft}
               content={quotation === "" ? "Add now" : "Rs. " + quotation}
               onAction={() => {
-                router.push({
+                router.replace({
                   pathname: "/apply-now/quotation",
                   params: {
                     title: "Quotation",
@@ -622,7 +628,7 @@ const EditApplicationScreen = () => {
                 leftIcon={faLink}
                 content={answers[index] || "Add now"}
                 onAction={() => {
-                  router.push({
+                  router.replace({
                     pathname: "/apply-now/question",
                     params: {
                       title: "Question " + (index + 1),
