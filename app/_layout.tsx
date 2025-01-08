@@ -139,9 +139,11 @@ const RootLayoutStack = () => {
       if (!session) {
         resetAndNavigate("/pre-signin");
       } else if (
-        session && pathname === "/"
-        || pathname === "/pre-signin"
-        || inAuthGroup
+        session && (
+          pathname === "/"
+          || pathname === "/pre-signin"
+          || inAuthGroup
+        )
       ) {
         resetAndNavigate("/(main)/collaborations");
       }
