@@ -69,7 +69,7 @@ const LoginScreen = () => {
           <Text
             style={styles.footerLink}
             onPress={() =>
-              router.navigate({
+              router.replace({
                 pathname: "/signup",
               })
             }

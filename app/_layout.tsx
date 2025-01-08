@@ -11,6 +11,7 @@ import { Href, Stack, usePathname, useRouter, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { Linking, Platform } from "react-native";
 import "react-native-reanimated";
 import { useColorScheme } from "@/components/theme/useColorScheme";
 import {
@@ -27,6 +28,8 @@ import {
 import CustomPaperTheme from "@/constants/Theme";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { SocialContextProvider } from "@/contexts/social-context.provider";
+import { APP_SCHEME } from "@/constants/App";
+import { resetAndNavigate } from "@/utils/router";
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
@@ -98,25 +101,52 @@ const RootLayoutStack = () => {
 
   const appTheme = user?.settings?.theme || colorScheme;
 
+  const linkingWorkaround = () => {
+    const subscription = Linking.addEventListener("url", ({ url }) => {
+      const match = url.match(new RegExp(`^${APP_SCHEME}://(.*)`));
+      if (match) {
+        router.navigate(`/${match[1]}` as Href);
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    }
+  }
+
+  useEffect(() => {
+    linkingWorkaround();
+  }, []);
+
   useEffect(() => {
     const inAuthGroup = segments[0] === "(auth)";
     const inMainGroup = segments[0] === "(main)";
+    const inPublicGroup = segments[0] === "(public)";
 
     if (isLoading) return;
 
-    if (session && inMainGroup) {
-      // Redirect to main group path if signed in
-      router.replace(pathname as Href);
-    } else if (session) {
-      // Redirect to main group if signed in
-      router.replace("/collaborations");
-      // router.replace("/pre-signin");
-    } else if (!session && !inAuthGroup) {
-      // App should start at pre-signin
-      router.replace("/pre-signin");
-    } else if (!session && inMainGroup) {
-      // User can't access main group if not signed in
-      router.replace("/login");
+    if (Platform.OS !== "web") {
+      if (session && inMainGroup) {
+        router.replace(pathname as Href);
+      } else if (session) {
+        resetAndNavigate("/(main)/collaborations");
+      } else if (inPublicGroup) {
+        resetAndNavigate(pathname as Href);
+      } else {
+        router.replace("/pre-signin");
+      }
+    } else {
+      if (!session) {
+        resetAndNavigate("/pre-signin");
+      } else if (
+        session && (
+          pathname === "/"
+          || pathname === "/pre-signin"
+          || inAuthGroup
+        )
+      ) {
+        resetAndNavigate("/(main)/collaborations");
+      }
     }
   }, [session, isLoading, user]);
 

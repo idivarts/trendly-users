@@ -1,0 +1,23 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "8UTA9QW6TV.pro.trendly.creators",
+        "paths": [
+          "/collaboration/*"
+        ]
+      }
+    ]
+  },
+  "activitycontinuation": {
+    "apps": [
+      "8UTA9QW6TV.pro.trendly.creators"
+    ]
+  },
+  "webcredentials": {
+    "apps": [
+      "8UTA9QW6TV.pro.trendly.creators"
+    ]
+  }
+}
