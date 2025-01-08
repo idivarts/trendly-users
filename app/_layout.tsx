@@ -28,6 +28,8 @@ import {
 import CustomPaperTheme from "@/constants/Theme";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { SocialContextProvider } from "@/contexts/social-context.provider";
+import { APP_SCHEME } from "@/constants/App";
+import { resetAndNavigate } from "@/utils/router";
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
@@ -100,15 +102,15 @@ const RootLayoutStack = () => {
   const appTheme = user?.settings?.theme || colorScheme;
 
   const linkingWorkaround = () => {
-    Linking.addEventListener("url", ({ url }) => {
-      const match = url.match(new RegExp(`^trendly-creators://(.*)`));
+    const subscription = Linking.addEventListener("url", ({ url }) => {
+      const match = url.match(new RegExp(`^${APP_SCHEME}://(.*)`));
       if (match) {
         router.navigate(`/${match[1]}` as Href);
       }
     });
 
     return () => {
-      Linking.removeAllListeners("url");
+      subscription.remove();
     }
   }
 
@@ -119,6 +121,7 @@ const RootLayoutStack = () => {
   useEffect(() => {
     const inAuthGroup = segments[0] === "(auth)";
     const inMainGroup = segments[0] === "(main)";
+    const inPublicGroup = segments[0] === "(public)";
 
     if (isLoading) return;
 
@@ -126,19 +129,21 @@ const RootLayoutStack = () => {
       if (session && inMainGroup) {
         router.replace(pathname as Href);
       } else if (session) {
-        router.replace("/(main)/collaborations");
+        resetAndNavigate("/(main)/collaborations");
+      } else if (inPublicGroup) {
+        resetAndNavigate(pathname as Href);
       } else {
         router.replace("/pre-signin");
       }
     } else {
       if (!session) {
-        router.replace("/pre-signin");
+        resetAndNavigate("/pre-signin");
       } else if (
         session && pathname === "/"
         || pathname === "/pre-signin"
         || inAuthGroup
       ) {
-        router.replace("/(main)/collaborations");
+        resetAndNavigate("/(main)/collaborations");
       }
     }
   }, [session, isLoading, user]);

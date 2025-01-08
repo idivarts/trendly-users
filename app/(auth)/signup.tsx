@@ -102,7 +102,7 @@ const SignUpScreen = () => {
           Already have an account?{" "}
           <Text
             style={styles.loginLink}
-            onPress={() => router.navigate("/(auth)/login")}
+            onPress={() => router.replace("/(auth)/login")}
           >
             Login
           </Text>

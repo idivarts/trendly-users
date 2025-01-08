@@ -10,12 +10,13 @@ import {
 
 import { Text, View } from "../theme/Themed";
 import Colors from "@/constants/Colors";
-import { Platform, Pressable, StyleSheet } from "react-native";
+import { Pressable, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faClose, faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
 import Button from "../ui/button";
 import { useBreakpoints } from "@/hooks";
+import { handleDeepLink } from "@/utils/deeplink";
 
 interface DownloadAppModalProps {
   bottomSheetModalRef: React.RefObject<BottomSheetModal>;
@@ -104,9 +105,7 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
               },
             }}
             onPress={() => {
-              if (!lg) {
-                window.open(`trendly-creators://collaboration/${collaborationId}`);
-              }
+              handleDeepLink(`collaboration/${collaborationId}`, lg);
             }}
           >
             Download App
