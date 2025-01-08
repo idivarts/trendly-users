@@ -121,6 +121,7 @@ const Applications = () => {
             applications: applicationData,
             brandName: brandData.data().name,
             brandImage: brandData.data().image,
+            paymentVerified: brandData.data().paymentMethodVerified,
           };
         })
       );
@@ -179,7 +180,17 @@ const Applications = () => {
         <FlatList
           data={pendingProposals}
           renderItem={({ item }) => (
-            <Card>
+            <View
+              style={{
+                width: "100%",
+                borderWidth: 0.3,
+                borderColor: Colors(theme).gray300,
+                gap: 8,
+                borderRadius: 5,
+                overflow: "hidden",
+                paddingBottom: 16,
+              }}
+            >
               <CollaborationHeader
                 cardId={item.id}
                 cardType="collaboration"
@@ -201,30 +212,6 @@ const Applications = () => {
                   item.applications[0].attachments.map(
                     (attachment: MediaItem) => processRawAttachment(attachment)
                   ) || []
-                }
-                dot={
-                  <View
-                    style={{
-                      backgroundColor: Colors(theme).primary,
-                      width: 8,
-                      height: 8,
-                      borderRadius: 4,
-                      marginLeft: 3,
-                      marginRight: 3,
-                    }}
-                  />
-                }
-                activeDot={
-                  <View
-                    style={{
-                      backgroundColor: Colors(theme).gray100,
-                      width: 8,
-                      height: 8,
-                      borderRadius: 4,
-                      marginLeft: 3,
-                      marginRight: 3,
-                    }}
-                  />
                 }
               />
               <Pressable
@@ -250,8 +237,7 @@ const Applications = () => {
                   }}
                 />
               </Pressable>
-            </Card>
-
+            </View>
           )}
           keyExtractor={(item, index) => index.toString()}
           ListFooterComponent={

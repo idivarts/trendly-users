@@ -2,26 +2,31 @@ import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collab
 import { FC } from "react";
 import { Text, View } from "../theme/Themed";
 import { Button } from "react-native-paper";
-import { ScrollView } from "react-native";
+import { Pressable, ScrollView } from "react-native";
 import RenderMediaItem from "../ui/carousel/render-media-item";
 import { processRawAttachment } from "@/utils/attachments";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faPaperclip } from "@fortawesome/free-solid-svg-icons";
 import { formatDistanceToNow } from "date-fns";
 import { router } from "expo-router";
+import Colors from "@/constants/Colors";
+import { useTheme } from "@react-navigation/native";
 
 interface UserResponseProps {
   application?: IApplications;
   influencerQuestions?: string[];
+  setConfirmationModalVisible: (value: boolean) => void;
 }
 
 const UserResponse: FC<UserResponseProps> = ({
   application,
   influencerQuestions,
+  setConfirmationModalVisible,
 }) => {
   const attachmentFiltered = application?.attachments.map((attachment) => {
     return processRawAttachment(attachment);
   });
+  const theme = useTheme();
 
   return (
     <View
@@ -30,8 +35,8 @@ const UserResponse: FC<UserResponseProps> = ({
         borderRadius: 5,
         width: "100%",
         padding: 10,
+        borderColor: Colors(theme).gray300,
         gap: 10,
-        marginVertical: 10,
       }}
     >
       <View
@@ -57,13 +62,15 @@ const UserResponse: FC<UserResponseProps> = ({
             gap: 10,
           }}
         >
-          <Text
-            style={{
-              fontSize: 16,
-            }}
-          >
-            Withdraw
-          </Text>
+          <Pressable onPress={() => setConfirmationModalVisible(true)}>
+            <Text
+              style={{
+                fontSize: 16,
+              }}
+            >
+              Withdraw
+            </Text>
+          </Pressable>
           <Button
             mode="contained"
             onPress={() => {
@@ -132,6 +139,7 @@ const UserResponse: FC<UserResponseProps> = ({
                   key={index}
                   style={{
                     fontSize: 16,
+                    width: "95%",
                   }}
                 >
                   {attachment.name}

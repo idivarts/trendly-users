@@ -21,6 +21,7 @@ import CollaborationStats from "./card-components/CollaborationStats";
 import { useAuthContext } from "@/contexts";
 import { processRawAttachment } from "@/utils/attachments";
 import { router } from "expo-router";
+import Toast from "react-native-toast-message";
 
 interface ICollaborationAddCardProps extends ICollaboration {
   name: string;
@@ -42,7 +43,7 @@ const Collaboration = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedJobType, setSelectedJobType] = useState("");
-  const [salaryRange, setSalaryRange] = useState([0, 10000]);
+  const [salaryRange, setSalaryRange] = useState([0, 100000]);
   const [collabs, setCollabs] = useState<ICollaborationAddCardProps[]>([]);
   const theme = useTheme();
   const [isVisible, setIsVisible] = useState(false);
@@ -137,20 +138,20 @@ const Collaboration = () => {
   };
 
   const filteredList = collabs.filter((job) => {
-    return (
-      (job.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        searchQuery === "") &&
+    return (job.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      searchQuery === "") &&
       (selectedCategory === "" ||
         job.promotionType.includes(selectedCategory) ||
         selectedCategory === "All") &&
       (selectedJobType === "" ||
         job.contentFormat.includes(selectedJobType) ||
         selectedJobType === "All") &&
-      job?.budget?.min &&
-      job.budget.min >= salaryRange[0] &&
-      job.budget.max &&
-      job.budget.max <= salaryRange[1]
-    );
+      job.budget &&
+      job.budget.min
+      ? job.budget.min >= salaryRange[0]
+      : true && job.budget && job.budget.max
+      ? job.budget.max <= salaryRange[1]
+      : true;
   });
 
   const styles = stylesFn(theme);
@@ -195,7 +196,17 @@ const Collaboration = () => {
           <FlatList
             data={filteredList}
             renderItem={({ item }) => (
-              <Card>
+              <View
+                style={{
+                  width: "100%",
+                  borderWidth: 0.3,
+                  borderColor: Colors(theme).gray300,
+                  gap: 8,
+                  borderRadius: 5,
+                  paddingBottom: 16,
+                  overflow: "hidden",
+                }}
+              >
                 <CollaborationHeader
                   cardId={item.id}
                   cardType="collaboration"
@@ -214,35 +225,10 @@ const Collaboration = () => {
                 {item.attachments && item.attachments.length > 0 && (
                   <Carousel
                     theme={theme}
-                    containerHeight={300}
                     data={
                       item.attachments?.map((attachment) =>
                         processRawAttachment(attachment)
                       ) || []
-                    }
-                    dot={
-                      <View
-                        style={{
-                          backgroundColor: Colors(theme).primary,
-                          width: 8,
-                          height: 8,
-                          borderRadius: 4,
-                          marginLeft: 3,
-                          marginRight: 3,
-                        }}
-                      />
-                    }
-                    activeDot={
-                      <View
-                        style={{
-                          backgroundColor: Colors(theme).gray100,
-                          width: 8,
-                          height: 8,
-                          borderRadius: 4,
-                          marginLeft: 3,
-                          marginRight: 3,
-                        }}
-                      />
                     }
                   />
                 )}
@@ -275,7 +261,7 @@ const Collaboration = () => {
                     brandHireRate={item.brandHireRate || ""}
                   />
                 </Pressable>
-              </Card>
+              </View>
             )}
             keyExtractor={(item) => item.id}
             style={{

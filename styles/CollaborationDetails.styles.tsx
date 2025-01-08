@@ -10,7 +10,6 @@ export const stylesFn = (theme: Theme) =>
     profileCard: {
       backgroundColor: Colors(theme).card,
       borderRadius: 10,
-      gap: 16,
       shadowColor: Colors(theme).transparent,
     },
     profileImage: {
@@ -22,13 +21,14 @@ export const stylesFn = (theme: Theme) =>
     profileContent: {
       alignItems: "center",
       width: "100%",
+      gap: 16,
     },
     name: {
       fontWeight: "bold",
       fontSize: 20,
       color: Colors(theme).text,
       lineHeight: 20,
-      marginTop: 8,
+      width: "50%",
     },
     brandName: {
       fontSize: 16,
@@ -38,28 +38,15 @@ export const stylesFn = (theme: Theme) =>
       fontSize: 16,
       color: Colors(theme).text,
       textAlign: "left",
-      marginVertical: 8,
-    },
-    statsContainer: {
-      flexDirection: "row",
-      justifyContent: "center",
-      marginTop: 12,
-      flexWrap: "wrap",
-      gap: 8,
+      marginTop: 16,
     },
     applyButton: {
-      marginVertical: 16,
+      // marginVertical: 16,
     },
     infoCard: {
       backgroundColor: Colors(theme).card,
       borderRadius: 10,
       shadowColor: Colors(theme).transparent,
-    },
-    cardName: {
-      fontSize: 16,
-      fontWeight: "bold",
-      color: Colors(theme).text,
-      margin: 16,
     },
     paragraph: {
       color: Colors(theme).text,

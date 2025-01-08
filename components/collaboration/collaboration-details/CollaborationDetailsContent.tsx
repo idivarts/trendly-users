@@ -5,11 +5,10 @@ import { router } from "expo-router";
 import { useTheme } from "@react-navigation/native";
 import { stylesFn } from "@/styles/CollaborationDetails.styles";
 import { FirestoreDB } from "@/utils/firestore";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { deleteDoc, doc, getDoc, updateDoc } from "firebase/firestore";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import {
   useAuthContext,
-  useChatContext,
   useNotificationContext,
 } from "@/contexts";
 import { CollaborationDetail } from ".";
@@ -42,6 +41,12 @@ import UserResponse from "../UserResponse";
 import BrandModal from "./modal/BrandModal";
 import ManagerModal from "./modal/ManagerModal";
 import { PromotionType } from "@/shared-libs/firestore/trendly-pro/constants/promotion-type";
+import ConfirmationModal from "@/components/ui/modal/ConfirmationModal";
+import { imageUrl } from "@/utils/url";
+
+interface ApplicationData extends IApplications {
+  id: string;
+}
 
 interface CollaborationDetailsContentProps {
   pageID: string;
@@ -49,7 +54,8 @@ interface CollaborationDetailsContentProps {
   collaborationDetail: CollaborationDetail;
   logo?: string;
   totalApplications: number;
-  applicationData?: IApplications;
+  fetchCollaboration: () => void;
+  applicationData?: ApplicationData;
   invitationData?: Invitation;
 }
 
@@ -62,12 +68,12 @@ const CollborationDetailsContent = (
   const [managerDetails, setManagerDetails] = React.useState<any>();
   const [brandModalVisible, setBrandModalVisible] = useState(false);
   const [managerModalVisible, setManagerModalVisible] = useState(false);
-  const cardType = props.cardType;
+  const [confirmationModalVisible, setConfirmationModalVisible] =
+    useState(false);
+  const [cardType, setCardType] = useState(props.cardType);
 
   const { createNotification } = useNotificationContext();
   const { user } = useAuthContext();
-
-  const { createGroupWithMembers, connectUser } = useChatContext();
 
   const fetchManagerDetails = async () => {
     const managerRef = doc(
@@ -139,32 +145,26 @@ const CollborationDetailsContent = (
     }).then(() => {
       if (!user?.id) return;
 
-      createGroupWithMembers(props.collaborationDetail.name, [user?.id]).then(
-        (channel) => {
-          connectUser();
+      createNotification(
+        props?.invitationData?.managerId || "",
+        {
+          data: {
+            userId: user?.id,
+            collaborationId: props.invitationData?.collaborationId,
+          },
+          description: `${user?.name} with email id ${user?.email} accepted invitation to collaborate for ${props.collaborationDetail.name}`,
+          isRead: false,
+          timeStamp: Date.now(),
+          title: "Invitation Accepted",
+          type: "invitation-accepted",
+        },
+        "managers"
+      ).then(() => {
+        setStatus("accepted");
+        Toaster.success("Invitation accepted successfully");
 
-          createNotification(
-            props?.invitationData?.managerId || "",
-            {
-              data: {
-                userId: user?.id,
-                collaborationId: props.invitationData?.collaborationId,
-              },
-              description: `${user?.name} with email id ${user?.email} accepted invitation to collaborate for ${props.collaborationDetail.name}`,
-              isRead: false,
-              timeStamp: Date.now(),
-              title: "Invitation Accepted",
-              type: "invitation-accepted",
-            },
-            "managers"
-          );
-
-          setStatus("accepted");
-          Toaster.success("Invitation accepted successfully");
-
-          router.navigate(`/channel/${channel.cid}`);
-        }
-      );
+        router.navigate(`/apply-now/${props?.invitationData?.collaborationId}`);
+      });
     });
   };
 
@@ -178,9 +178,11 @@ const CollborationDetailsContent = (
       "invitations",
       props.invitationData.id
     );
+
     const updation = updateDoc(invitationRef, {
       status: "rejected",
     });
+
     Toaster.success("Invitation Rejected");
     props.invitationData = {
       ...props.invitationData,
@@ -189,14 +191,37 @@ const CollborationDetailsContent = (
     setStatus("rejected");
   };
 
+  const withdrawApplication = () => {
+    try {
+      if (!props.applicationData) return;
+      const applicationRef = doc(
+        FirestoreDB,
+        "collaborations",
+        props.pageID,
+        "applications",
+        props?.applicationData?.id
+      );
+      deleteDoc(applicationRef);
+
+      Toaster.success("Application Withdrawn Successfully");
+      setCardType("collaboration");
+      props.fetchCollaboration();
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   useEffect(() => {
     fetchManagerDetails();
   }, []);
 
   return (
-    <ScrollView contentContainerStyle={styles.scrollContainer}>
+    <ScrollView
+      contentContainerStyle={styles.scrollContainer}
+      showsVerticalScrollIndicator={false}
+    >
       {/* Collaboration Details */}
-      <Card style={styles.profileCard}>
+      <View style={styles.profileCard}>
         {props?.collaborationDetail?.attachments &&
           props?.collaborationDetail?.attachments.length > 0 && (
             <Carousel
@@ -209,43 +234,62 @@ const CollborationDetailsContent = (
             />
           )}
         <Card.Content style={styles.profileContent}>
+          {/* About Collaboration */}
           <View
             style={{
               display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-between",
+              flexDirection: "column",
               width: "100%",
-              alignItems: "center",
             }}
           >
-            <Text variant="headlineMedium" style={styles.name}>
-              {props.collaborationDetail.name}
-            </Text>
-            {props.collaborationDetail.timeStamp ? (
-              <Text
-                style={{
-                  fontSize: 12,
-                  color: Colors(theme).text,
-                  paddingRight: 8,
-                }}
-              >
-                {formatDistanceToNow(props.collaborationDetail.timeStamp, {
-                  addSuffix: true,
-                })}
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                width: "100%",
+                alignItems: "center",
+              }}
+            >
+              <Text variant="headlineMedium" style={styles.name}>
+                {props.collaborationDetail.name}
               </Text>
-            ) : null}
+              {props.collaborationDetail.timeStamp ? (
+                <Text
+                  style={{
+                    fontSize: 12,
+                    color: Colors(theme).text,
+                    paddingRight: 8,
+                  }}
+                >
+                  {formatDistanceToNow(props.collaborationDetail.timeStamp, {
+                    addSuffix: true,
+                  })}
+                </Text>
+              ) : null}
+            </View>
+            <View
+              style={{
+                width: "100%",
+              }}
+            >
+              <Text variant="bodySmall" style={styles.shortDescription}>
+                {props.collaborationDetail.description}
+              </Text>
+            </View>
           </View>
+
+          {/* Brand Information */}
+
           <View
             style={{
               width: "100%",
+              borderWidth: 0.3,
+              paddingVertical: 16,
+              borderRadius: 10,
+              borderColor: Colors(theme).gray300,
             }}
           >
-            <Text variant="bodySmall" style={styles.shortDescription}>
-              {props.collaborationDetail.description}
-            </Text>
-          </View>
-
-          <Card style={{ width: "100%", borderWidth: 0.3 }}>
             <Card.Content>
               <Pressable
                 style={{ flex: 1, flexDirection: "column", gap: 16 }}
@@ -261,7 +305,7 @@ const CollborationDetailsContent = (
                   }}
                 >
                   <Image
-                    source={{ uri: props.collaborationDetail.brandImage }}
+                    source={imageUrl(props.collaborationDetail.brandImage)}
                     style={{ width: 40, height: 40, borderRadius: 5 }}
                   />
                   <View style={{ flex: 1 }}>
@@ -285,6 +329,7 @@ const CollborationDetailsContent = (
                         fontSize: 16,
                         flexWrap: "wrap",
                         overflow: "hidden",
+                        lineHeight: 22,
                         color: Colors(theme).text,
                       }}
                     >
@@ -297,13 +342,12 @@ const CollborationDetailsContent = (
                 </View>
               </Pressable>
             </Card.Content>
-          </Card>
+          </View>
 
           {cardType === "collaboration" && (
             <Button
               mode="contained"
               style={{
-                marginVertical: 16,
                 width: "100%",
               }}
               onPress={() => {
@@ -350,6 +394,7 @@ const CollborationDetailsContent = (
               influencerQuestions={
                 props?.collaborationDetail?.questionsToInfluencers
               }
+              setConfirmationModalVisible={setConfirmationModalVisible}
             />
           )}
 
@@ -360,7 +405,6 @@ const CollborationDetailsContent = (
                   flexDirection: "row",
                   flexWrap: "wrap",
                   gap: 16,
-                  marginTop: 16,
                   justifyContent: "space-between",
                 }}
               >
@@ -370,7 +414,6 @@ const CollborationDetailsContent = (
                       key={index}
                       mode="contained"
                       style={{
-                        marginBottom: 16,
                         flexBasis: 1,
                         flexGrow: 1,
                       }}
@@ -385,6 +428,8 @@ const CollborationDetailsContent = (
               </View>
             )}
 
+          {/* Statistics */}
+
           <View
             style={{
               display: "flex",
@@ -393,6 +438,7 @@ const CollborationDetailsContent = (
               gap: 8,
               borderWidth: 0.3,
               borderRadius: 10,
+              borderColor: Colors(theme).gray300,
               padding: 16,
             }}
           >
@@ -423,24 +469,24 @@ const CollborationDetailsContent = (
             </Text>
             {props.collaborationDetail.promotionType ===
               PromotionType.PAID_COLLAB && (
-              <Text
-                style={{
-                  fontSize: 16,
-                  color: Colors(theme).text,
-                }}
-              >
-                Budget:
-                {props.collaborationDetail?.budget?.min ===
-                props.collaborationDetail?.budget?.max
-                  ? `$${props.collaborationDetail?.budget?.min}`
-                  : `$${props.collaborationDetail?.budget?.min} - $${props.collaborationDetail?.budget?.max}`}
-              </Text>
-            )}
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: Colors(theme).text,
+                  }}
+                >
+                  Budget:
+                  {props.collaborationDetail?.budget?.min ===
+                    props.collaborationDetail?.budget?.max
+                    ? `$${props.collaborationDetail?.budget?.min}`
+                    : `$${props.collaborationDetail?.budget?.min} - $${props.collaborationDetail?.budget?.max}`}
+                </Text>
+              )}
           </View>
+          {/* chips */}
           <View
             style={{
               flexDirection: "row",
-              marginTop: 16,
               flexWrap: "wrap",
               width: "100%",
             }}
@@ -448,7 +494,7 @@ const CollborationDetailsContent = (
             <ChipCard
               chipText={
                 props.collaborationDetail.promotionType ===
-                PromotionType.PAID_COLLAB
+                  PromotionType.PAID_COLLAB
                   ? "Paid"
                   : "Unpaid"
               }
@@ -462,18 +508,18 @@ const CollborationDetailsContent = (
               chipText={
                 props.collaborationDetail.platform.length > 1
                   ? props.collaborationDetail.platform[0] +
-                    "+" +
-                    (props.collaborationDetail.platform.length - 1)
+                  "+" +
+                  (props.collaborationDetail.platform.length - 1)
                   : props.collaborationDetail.platform[0]
               }
               chipIcon={
                 props.collaborationDetail.platform[0] === "Instagram"
                   ? faInstagram
                   : props.collaborationDetail.platform[0] === "Facebook"
-                  ? faFacebook
-                  : props.collaborationDetail.platform[0] === "Youtube"
-                  ? faYoutube
-                  : faInstagram
+                    ? faFacebook
+                    : props.collaborationDetail.platform[0] === "Youtube"
+                      ? faYoutube
+                      : faInstagram
               }
             />
           </View>
@@ -482,10 +528,8 @@ const CollborationDetailsContent = (
               <View
                 style={{
                   flexDirection: "row",
-                  marginTop: 10,
                   flexWrap: "wrap",
                   width: "100%",
-                  marginBottom: 16,
                 }}
               >
                 {props.collaborationDetail.contentFormat.map(
@@ -503,8 +547,6 @@ const CollborationDetailsContent = (
             <View
               style={{
                 width: "100%",
-                gap: 16,
-                marginVertical: 16,
               }}
             >
               <Text
@@ -512,6 +554,7 @@ const CollborationDetailsContent = (
                   fontSize: 16,
                   color: Colors(theme).text,
                   fontWeight: "bold",
+                  marginBottom: 16,
                 }}
               >
                 Location
@@ -523,10 +566,16 @@ const CollborationDetailsContent = (
                   latitudeDelta: 0.0922,
                   longitudeDelta: 0.042,
                 }}
-                onMapRegionChange={(region) => {}}
-                onFormattedAddressChange={(address) => {}}
+                onMapRegionChange={(region) => { }}
+                onFormattedAddressChange={(address) => { }}
               />
-              <Text style={{ fontSize: 16, color: Colors(theme).text }}>
+              <Text
+                style={{
+                  fontSize: 16,
+                  color: Colors(theme).text,
+                  lineHeight: 24,
+                }}
+              >
                 {props.collaborationDetail.location.name}
               </Text>
             </View>
@@ -540,6 +589,7 @@ const CollborationDetailsContent = (
                   width: "100%",
                   gap: 8,
                   borderWidth: 0.3,
+                  borderColor: Colors(theme).gray300,
                   borderRadius: 10,
                   padding: 16,
                 }}
@@ -569,7 +619,7 @@ const CollborationDetailsContent = (
                 )}
               </View>
             )}
-          <View style={{ width: "100%", marginTop: 16, gap: 16 }}>
+          <View style={{ width: "100%", gap: 16 }}>
             <Text
               style={{
                 fontSize: 16,
@@ -631,7 +681,7 @@ const CollborationDetailsContent = (
             </Pressable>
           </View>
         </Card.Content>
-      </Card>
+      </View>
       <Portal>
         <BrandModal
           brand={{
@@ -654,6 +704,18 @@ const CollborationDetailsContent = (
           brandDescription={props.collaborationDetail.brandDescription}
           visible={managerModalVisible}
           setVisibility={setManagerModalVisible}
+        />
+        <ConfirmationModal
+          cancelAction={() => setConfirmationModalVisible(false)}
+          confirmAction={() => {
+            setConfirmationModalVisible(false);
+            withdrawApplication();
+          }}
+          visible={confirmationModalVisible}
+          setVisible={setConfirmationModalVisible}
+          confirmText="Yes"
+          cancelText="No"
+          description="Are you sure you want to withdraw your application?"
         />
       </Portal>
     </ScrollView>

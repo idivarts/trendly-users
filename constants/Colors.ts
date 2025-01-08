@@ -42,6 +42,8 @@ export default (theme: Theme) => ({
   whiteSmoke: "#f5f5f5",
   success: "#02ca30",
   successForeground: "#28a745",
+  gold: "#ECD694",
+  green: "#9DD586",
   yellow: "#E8B931",
   pink: "#f8d7da",
   pinkForeground: "#dc3545",

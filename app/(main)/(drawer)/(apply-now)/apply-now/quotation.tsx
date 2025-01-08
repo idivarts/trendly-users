@@ -54,6 +54,7 @@ const Quotation: React.FC = () => {
         timelineData,
         originalAttachments,
         note,
+        showModal: "true",
         collaborationId,
         fileAttachments,
         answers,
@@ -101,6 +102,7 @@ const Quotation: React.FC = () => {
           <TextInput
             value={value as string}
             onChangeText={setValue}
+            autoFocus
             placeholder={placeholder as string}
             keyboardType="numeric"
           />

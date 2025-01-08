@@ -7,9 +7,12 @@ export const stylesFn = (theme: Theme) =>
     container: {
       flex: 1,
       backgroundColor: Colors(theme).background,
+      paddingHorizontal: 16,
     },
     contentContainerStyle: {
       paddingBottom: 40,
+      paddingTop: 16,
+      gap: 16,
     },
     title: {
       fontSize: 26,
@@ -56,7 +59,6 @@ export const stylesFn = (theme: Theme) =>
     },
     card: {
       backgroundColor: Colors(theme).card,
-      margin: 16,
       borderRadius: 8,
       padding: 16,
       elevation: 3,

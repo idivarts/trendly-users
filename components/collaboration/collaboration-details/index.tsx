@@ -21,6 +21,7 @@ import { View } from "@/components/theme/Themed";
 import { Invitation } from "@/types/Collaboration";
 import { useAuthContext } from "@/contexts";
 import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
+import { useIsFocused } from "@react-navigation/native";
 
 export interface CollaborationDetail extends ICollaboration {
   brandDescription: string;
@@ -54,6 +55,7 @@ const CollaborationDetails: React.FC<CollaborationDetailsProps> = ({
   const [cardTypeDetails, setCardTypeDetails] = useState<string>(cardType);
   const [invitation, setInvitation] = useState<Invitation>();
   const { user } = useAuthContext();
+  const isFocused = useIsFocused();
 
   // Fetch Collaboration Data
   const fetchCollaboration = async () => {
@@ -152,7 +154,7 @@ const CollaborationDetails: React.FC<CollaborationDetailsProps> = ({
 
   useEffect(() => {
     fetchCollaboration();
-  }, [pageID]);
+  }, [pageID, isFocused]);
 
   useEffect(() => {
     if (cardType === "invitation") {
@@ -183,6 +185,7 @@ const CollaborationDetails: React.FC<CollaborationDetailsProps> = ({
       collaborationDetail={collaboration}
       invitationData={invitation}
       totalApplications={totalApplications}
+      fetchCollaboration={fetchCollaboration}
       pageID={pageID}
     />
   );

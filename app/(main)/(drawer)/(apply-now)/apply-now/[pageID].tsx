@@ -86,6 +86,7 @@ const ApplyScreen = () => {
           pageID,
           note,
           quotation,
+          path: `/apply-now/[pageID]`,
           //@ts-ignore
           timelineData,
           selectedFiles: params.selectedFiles,
@@ -337,12 +338,7 @@ const ApplyScreen = () => {
           />
         )}
 
-        <View
-          style={{
-            paddingHorizontal: 16,
-            paddingTop: 16,
-          }}
-        >
+        <View>
           <TextInput
             style={{
               backgroundColor: Colors(theme).background,
@@ -360,11 +356,16 @@ const ApplyScreen = () => {
             Write a short note to the brand about why you are interested in this
           </HelperText>
 
-          <List.Section>
+          <List.Section
+            style={{
+              gap: 16,
+              width: "100%",
+            }}
+          >
             <ListItem
               title="Your Quote"
               leftIcon={faQuoteLeft}
-              content={quotation === "" ? "Add now" : "Rs. " + quotation}
+              content={quotation === "" ? "" : "Rs. " + quotation}
               onAction={() => {
                 router.push({
                   pathname: "/apply-now/quotation",
@@ -387,11 +388,7 @@ const ApplyScreen = () => {
             <ListItem
               title="Timeline"
               leftIcon={faPaperclip}
-              content={
-                timelineData
-                  ? timelineData.toLocaleDateString()
-                  : "Select a date"
-              }
+              content={timelineData ? timelineData.toLocaleDateString() : ""}
               onAction={() => setShowDatePicker(true)}
             />
             <ListItem
@@ -406,7 +403,7 @@ const ApplyScreen = () => {
                 key={index}
                 title={question}
                 leftIcon={faLink}
-                content={answers[index] || "Add now"}
+                content={answers[index]}
                 onAction={() => {
                   router.push({
                     pathname: "/apply-now/question",
@@ -475,6 +472,7 @@ const ApplyScreen = () => {
           mode="date" // Show the date picker
           display="spinner" // Use spinner for iOS
           onChange={onDateChange} // Handle date changes
+          themeVariant={theme.dark ? "dark" : "light"} // Use dark theme if
         />
       )}
     </AppLayout>

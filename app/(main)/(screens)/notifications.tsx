@@ -7,6 +7,8 @@ import { useAuthContext, useNotificationContext } from "@/contexts";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { Pressable } from "react-native";
+import ScreenHeader from "@/components/ui/screen-header";
+import { Appbar } from "react-native-paper";
 
 export const NotificationAction = () => {
   const theme = useTheme();
@@ -37,14 +39,16 @@ export const NotificationAction = () => {
 }
 
 export default function NotificationsScreen() {
-
   const {
     user,
   } = useAuthContext();
   const {
     userNotifications,
     updateUserNotification,
+    markAllNotificationsAsRead,
   } = useNotificationContext();
+
+  const theme = useTheme();
 
   const onMarkAsRead = (notificationId: string) => {
     updateUserNotification(
@@ -58,6 +62,25 @@ export default function NotificationsScreen() {
 
   return (
     <AppLayout>
+      <ScreenHeader
+        title="Notifications"
+        rightAction
+        rightActionButton={
+          <Appbar.Action
+            icon={() => (
+              <FontAwesomeIcon
+                icon={faCheck}
+                size={20}
+                color={Colors(theme).text}
+              />
+            )}
+            onPress={() => {
+              markAllNotificationsAsRead(user?.id as string);
+            }}
+            color={Colors(theme).text}
+          />
+        }
+      />
       <Notifications
         notifications={userNotifications}
         onMarkAsRead={onMarkAsRead}
