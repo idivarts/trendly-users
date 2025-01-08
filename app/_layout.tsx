@@ -11,6 +11,7 @@ import { Href, Stack, usePathname, useRouter, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { Linking, Platform } from "react-native";
 import "react-native-reanimated";
 import { useColorScheme } from "@/components/theme/useColorScheme";
 import {
@@ -98,25 +99,47 @@ const RootLayoutStack = () => {
 
   const appTheme = user?.settings?.theme || colorScheme;
 
+  const linkingWorkaround = () => {
+    Linking.addEventListener("url", ({ url }) => {
+      const match = url.match(new RegExp(`^trendly-creators://(.*)`));
+      if (match) {
+        router.navigate(`/${match[1]}` as Href);
+      }
+    });
+
+    return () => {
+      Linking.removeAllListeners("url");
+    }
+  }
+
+  useEffect(() => {
+    linkingWorkaround();
+  }, []);
+
   useEffect(() => {
     const inAuthGroup = segments[0] === "(auth)";
     const inMainGroup = segments[0] === "(main)";
 
     if (isLoading) return;
 
-    if (session && inMainGroup) {
-      // Redirect to main group path if signed in
-      router.replace(pathname as Href);
-    } else if (session) {
-      // Redirect to main group if signed in
-      router.replace("/collaborations");
-      // router.replace("/pre-signin");
-    } else if (!session && !inAuthGroup) {
-      // App should start at pre-signin
-      router.replace("/pre-signin");
-    } else if (!session && inMainGroup) {
-      // User can't access main group if not signed in
-      router.replace("/login");
+    if (Platform.OS !== "web") {
+      if (session && inMainGroup) {
+        router.replace(pathname as Href);
+      } else if (session) {
+        router.replace("/(main)/collaborations");
+      } else {
+        router.replace("/pre-signin");
+      }
+    } else {
+      if (!session) {
+        router.replace("/pre-signin");
+      } else if (
+        session && pathname === "/"
+        || pathname === "/pre-signin"
+        || inAuthGroup
+      ) {
+        router.replace("/(main)/collaborations");
+      }
     }
   }, [session, isLoading, user]);
 
