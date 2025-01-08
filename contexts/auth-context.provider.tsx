@@ -33,6 +33,7 @@ import {
 } from "firebase/auth";
 import { analyticsLogEvent } from "@/utils/analytics";
 import { INITIAL_USER_DATA } from "@/constants/User";
+import { resetAndNavigate } from "@/utils/router";
 
 interface AuthContextProps {
   deleteUserAccount: (userId: string) => Promise<void>;
@@ -153,7 +154,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
       });
 
       // For non-existing users, redirect to the onboarding screen.
-      router.replace("/questions");
+      resetAndNavigate("/questions");
       Toaster.success("Signed Up Successfully!");
     } catch (error) {
       console.error("Error signing up: ", error);
@@ -164,17 +165,17 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
   const firebaseSignIn = async (token: string) => {
     setSession(token);
 
-    router.replace("/collaborations");
+    resetAndNavigate("/collaborations");
     Toaster.success("Signed In Successfully!");
   };
 
   const firebaseSignUp = async (token: string, hasSocials?: boolean) => {
     setSession(token);
     if (hasSocials) {
-      router.replace("/questions");
+      resetAndNavigate("/questions");
       Toaster.success("Signed Up Successfully!");
     } else {
-      router.replace("/no-social-connected");
+      resetAndNavigate("/no-social-connected");
       Toaster.success("Signed Up Successfully!");
     }
   };
@@ -223,7 +224,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
           email: user?.email,
         });
 
-        router.replace("/pre-signin");
+        resetAndNavigate("/pre-signin");
         Toaster.success("Signed Out Successfully!");
       })
       .catch((error) => {
