@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "pro.trendly.creators",
+      "sha256_cert_fingerprints": [
+        "3f:c3:bb:b7:05:30:f1:68:e0:83:be:14:01:8a:d3:c8:35:48:b5:3c"
+      ]
+    }
+  }
+]

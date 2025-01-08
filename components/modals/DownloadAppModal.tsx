@@ -105,7 +105,7 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
             }}
             onPress={() => {
               if (!lg) {
-                window.open(`trendly-creators://collaboration/${collaborationId}`, "_blank");
+                window.open(`trendly-creators://collaboration/${collaborationId}`);
               }
             }}
           >
