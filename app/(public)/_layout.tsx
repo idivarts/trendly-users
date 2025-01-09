@@ -22,6 +22,12 @@ const PublicLayout = () => {
               headerShown: false,
             }}
           />
+          <Stack.Screen
+            name="collaboration/[collaborationId]"
+            options={{
+              headerShown: false,
+            }}
+          />
         </Stack>
       </View>
     </AppLayout>
