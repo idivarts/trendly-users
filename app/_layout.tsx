@@ -125,33 +125,22 @@ const RootLayoutStack = () => {
 
     if (isLoading) return;
 
-    if (Platform.OS !== "web") {
-      if (
-        session
-        && !inPublicGroup
-        && (pathname === "/" || inAuthGroup)
-      ) {
-        // On boot up, session exist and user is not in public group
-        resetAndNavigate("/(main)/collaborations");
-      } else if (!session && !inPublicGroup) {
-        // On boot up, session doesn't exist and user is not in public group, redirect to pre-signin
-        resetAndNavigate("/pre-signin");
-      }
-      // Redirect user to respective screen
-    } else {
-      if (
-        session
-        && !inPublicGroup
-        && (pathname === "/" || inAuthGroup)
-      ) {
-        // On boot up, session exist and user is not in public group
-        resetAndNavigate("/(main)/collaborations");
-      } else if (!session && inMainGroup) {
-        // On boot up, session doesn't exist and user is in main group, redirect to pre-signin
-        resetAndNavigate("/pre-signin");
-      }
-      // Redirect user to respective screen
+    if (
+      session
+      && (inAuthGroup || pathname === "/")
+    ) {
+      // On boot up, session exist and user is in auth group or /, redirect to collaborations
+      resetAndNavigate("/collaborations");
+    } else if (
+      !session
+      && (inMainGroup || pathname === "/")
+    ) {
+      // On boot up, session doesn't exist and user is in main group or /, redirect to pre-signin
+      resetAndNavigate("/pre-signin");
+    } else if (inPublicGroup) {
+      resetAndNavigate(pathname as Href);
     }
+    // Redirect user to respective screen
   }, [session, isLoading, user]);
 
   return (
