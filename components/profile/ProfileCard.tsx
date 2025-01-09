@@ -153,10 +153,10 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ item, onPress }) => {
           </Text>
         </Pressable>
       </View>
-      <View style={styles.textContainer}>
+      <Pressable style={styles.textContainer} onPress={onPress}>
         <Text style={styles.titleText}>{item.name}</Text>
         <FontAwesomeIcon icon={faChevronRight} size={20} />
-      </View>
+      </Pressable>
       <Button
         onPress={onPress}
         buttonColor={Colors(theme).primary}
