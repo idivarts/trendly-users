@@ -47,7 +47,7 @@
             {
               "scheme": "https",
               "host": "creators.trendly.pro",
-              "pathPrefix": "/collaboration"
+              "pathPrefix": "/collaboration/*"
             }
           ],
           "category": [
