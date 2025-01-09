@@ -1,13 +1,7 @@
-import {
-  ActivityIndicator,
-  Image,
-} from "react-native";
+import { ActivityIndicator, Image } from "react-native";
 import Animated from "react-native-reanimated";
 import { ResizeMode, Video } from "expo-av";
-import {
-  TapGestureHandler,
-  State,
-} from "react-native-gesture-handler";
+import { TapGestureHandler, State } from "react-native-gesture-handler";
 
 import { stylesFn } from "@/styles/InfluencerCard.styles";
 import { useTheme } from "@react-navigation/native";
@@ -27,6 +21,7 @@ interface RenderMediaItemProps {
   item: MediaItem;
   videoRefs?: React.MutableRefObject<{ [key: number]: any }>;
   width?: number;
+  borderRadius?: number;
 }
 
 const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
@@ -34,6 +29,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
   height,
   index,
   item,
+  borderRadius,
   videoRefs,
   width,
 }) => {
@@ -60,7 +56,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
               styles.loadingIndicatorContainer,
               {
                 display: isLoading ? "flex" : "none",
-              }
+              },
             ]}
           >
             {isLoading && <ActivityIndicator />}
@@ -72,7 +68,8 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
               {
                 height: height || 250,
                 width: width || "100%",
-              }
+                borderRadius: borderRadius || 0,
+              },
             ]}
             resizeMode="stretch"
             onLoadStart={() => setIsLoading(true)}
@@ -93,8 +90,8 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
       source={
         item.url
           ? {
-            uri: item.url,
-          }
+              uri: item.url,
+            }
           : require("@/assets/videos/ForBiggerJoyrides.mp4")
       }
       style={[
@@ -102,7 +99,8 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
         {
           height: height || 250,
           width: width || "100%",
-        }
+          borderRadius: borderRadius || 0,
+        },
       ]}
       resizeMode={ResizeMode.COVER}
       isLooping={false}

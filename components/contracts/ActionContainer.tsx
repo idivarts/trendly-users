@@ -214,6 +214,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
               url={manager?.profileImage || ""}
               shape="circle"
               altText="Manager Image"
+              initials={manager?.name}
               style={{ width: 40, height: 40, borderRadius: 20 }}
             />
             <View style={{ flex: 1 }}>
@@ -263,9 +264,10 @@ const ActionContainer: FC<ActionContainerProps> = ({
             }}
           >
             <ImageComponent
-              url={imageUrl(userData.profileImage)}
+              url={userData.profileImage || ""}
               shape="circle"
               altText="User Image"
+              initials={userData.name}
               style={{ width: 40, height: 40, borderRadius: 20 }}
             />
             <View style={{ flex: 1 }}>

@@ -12,6 +12,7 @@ import ImageUploadModal from "../ui/modal/ImageUploadModal";
 import { useAuthContext, useFirebaseStorageContext } from "@/contexts";
 import { useEffect, useState } from "react";
 import { ResizeMode, Video } from "expo-av";
+import ImageComponent from "@/shared-uis/components/image-component";
 
 interface ProfileCardProps {
   item: User;
@@ -66,7 +67,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ item, onPress }) => {
   const fetchImage = async () => {
     try {
       if (!user?.profile) {
-        setImage(user?.profileImage || PLACEHOLDER_PERSON_IMAGE);
+        setImage(user?.profileImage || "");
         return;
       }
 
@@ -76,7 +77,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ item, onPress }) => {
           : null;
 
       if (imageToShow === null) {
-        setImage(user?.profileImage || PLACEHOLDER_PERSON_IMAGE);
+        setImage(user?.profileImage || "");
         setIsVideo(false);
       } else if (imageToShow.type === "image") {
         setIsVideo(false);
@@ -105,12 +106,13 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ item, onPress }) => {
         }}
       >
         {!isVideo && (
-          <Avatar.Image
-            source={{
-              uri: image || PLACEHOLDER_PERSON_IMAGE,
-            }}
-            size={200}
+          <ImageComponent
+            url={image || ""}
+            size="medium"
+            altText="Profile Image"
+            initials={item.name}
             style={styles.avatar}
+            initialsSize={39}
           />
         )}
         {isVideo && (

@@ -29,6 +29,7 @@ const Question: React.FC = () => {
     placeholder,
     note,
     timelineData,
+    actualQuestion,
     answers,
     originalAttachments,
     collaborationId,
@@ -50,7 +51,7 @@ const Question: React.FC = () => {
         value,
       },
     };
-
+    router.back();
     router.replace({
       //@ts-ignore
       pathname: path as string,
@@ -70,21 +71,7 @@ const Question: React.FC = () => {
   };
 
   const handleGoBack = () => {
-    router.replace({
-      //@ts-ignore
-      pathname: path as string,
-      params: {
-        selectedFiles,
-        profileAttachments,
-        timelineData,
-        originalAttachments,
-        answers,
-        quotation,
-        note,
-        collaborationId,
-        fileAttachments,
-      },
-    });
+    router.back();
   };
 
   return (
@@ -117,14 +104,16 @@ const Question: React.FC = () => {
         <View
           style={{
             flex: 1,
+            gap: 16,
           }}
         >
-          <Text>{title}</Text>
+          <Text>{actualQuestion}</Text>
           <TextInput
             value={value as string}
             onChangeText={setValue}
             placeholder={placeholder as string}
             autoFocus
+            multiline
           />
         </View>
       </View>

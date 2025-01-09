@@ -43,6 +43,8 @@ const ManagerModal: React.FC<ManagerModalProps> = ({
         {/* Brand Image */}
         <ImageComponent
           url={manager.image}
+          initials={manager.name}
+          initialsSize={40}
           altText="Manager Image"
           style={{
             width: 120,

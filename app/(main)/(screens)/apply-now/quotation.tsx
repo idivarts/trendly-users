@@ -43,7 +43,7 @@ const Quotation: React.FC = () => {
         value,
       },
     };
-
+    router.back();
     router.replace({
       //@ts-ignore
       pathname: path as string,
@@ -63,22 +63,7 @@ const Quotation: React.FC = () => {
   };
 
   const handleGoBack = () => {
-    router.replace({
-      //@ts-ignore
-      pathname: path as string,
-      params: {
-        selectedFiles,
-        profileAttachments,
-        timelineData,
-        originalAttachments,
-        note,
-        showModal: "true",
-        collaborationId,
-        fileAttachments,
-        answers,
-        quotation: initialValue,
-      },
-    });
+    router.back();
   };
 
   return (

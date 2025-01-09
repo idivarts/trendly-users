@@ -111,7 +111,7 @@ const EditApplicationScreen = () => {
 
   const handleAssetUpload = async () => {
     try {
-      router.replace({
+      router.push({
         pathname: "/apply-now/gallery",
         params: {
           ...params,
@@ -476,13 +476,7 @@ const EditApplicationScreen = () => {
 
   return (
     <AppLayout>
-      <ScreenHeader
-        title="Edit Application"
-        action={() => {
-          router.back();
-          router.replace(`/collaboration-details/${params.collaborationId}`);
-        }}
-      />
+      <ScreenHeader title="Edit Application" />
       <Toast />
       <ScrollView
         style={styles.container}
@@ -568,15 +562,15 @@ const EditApplicationScreen = () => {
           <List.Section
             style={{
               width: "100%",
-              gap: 16,
             }}
           >
             <ListItem
               title="Your Quote"
               leftIcon={faQuoteLeft}
               content={quotation === "" ? "Add now" : "Rs. " + quotation}
+              rightContent={true}
               onAction={() => {
-                router.replace({
+                router.push({
                   pathname: "/apply-now/quotation",
                   params: {
                     title: "Quotation",
@@ -602,6 +596,7 @@ const EditApplicationScreen = () => {
             <ListItem
               title="Timeline"
               leftIcon={faPaperclip}
+              rightContent={true}
               content={
                 timelineData
                   ? timelineData.toLocaleDateString()
@@ -628,7 +623,7 @@ const EditApplicationScreen = () => {
                 leftIcon={faLink}
                 content={answers[index] || "Add now"}
                 onAction={() => {
-                  router.replace({
+                  router.push({
                     pathname: "/apply-now/question",
                     params: {
                       title: "Question " + (index + 1),
@@ -640,6 +635,7 @@ const EditApplicationScreen = () => {
                       placeholder: "",
                       //@ts-ignore
                       timelineData: timelineData,
+                      actualQuestion: question,
                       fileAttachments: JSON.stringify(fileAttachments),
                       originalAttachments: JSON.stringify(originalAttachments),
                       answers: JSON.stringify(answers),

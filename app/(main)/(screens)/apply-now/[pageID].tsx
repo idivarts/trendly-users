@@ -79,7 +79,7 @@ const ApplyScreen = () => {
 
   const handleAssetUpload = async () => {
     try {
-      router.replace({
+      router.push({
         pathname: "/apply-now/gallery",
         params: {
           ...params,
@@ -140,7 +140,7 @@ const ApplyScreen = () => {
         setLoading(false);
         setProcessMessage("");
         setProcessPercentage(0);
-        router.replace({
+        router.push({
           pathname: "/apply-now/preview",
           params: {
             ...params,
@@ -362,7 +362,6 @@ const ApplyScreen = () => {
 
           <List.Section
             style={{
-              gap: 16,
               width: "100%",
             }}
           >
@@ -370,8 +369,9 @@ const ApplyScreen = () => {
               title="Your Quote"
               leftIcon={faQuoteLeft}
               content={quotation === "" ? "" : "Rs. " + quotation}
+              rightContent={true}
               onAction={() => {
-                router.replace({
+                router.push({
                   pathname: "/apply-now/quotation",
                   params: {
                     title: "Quotation",
@@ -392,6 +392,7 @@ const ApplyScreen = () => {
             <ListItem
               title="Timeline"
               leftIcon={faPaperclip}
+              rightContent={true}
               content={timelineData ? timelineData.toLocaleDateString() : ""}
               onAction={() => setShowDatePicker(true)}
             />
@@ -409,13 +410,14 @@ const ApplyScreen = () => {
                 leftIcon={faLink}
                 content={answers[index]}
                 onAction={() => {
-                  router.replace({
+                  router.push({
                     pathname: "/apply-now/question",
                     params: {
                       title: "Question " + (index + 1),
                       value: answers[index] || "",
                       path: `/apply-now/${pageID}`,
                       selectedFiles: params.selectedFiles,
+                      actualQuestion: question,
                       profileAttachments: params.profileAttachments,
                       placeholder: "",
                       //@ts-ignore

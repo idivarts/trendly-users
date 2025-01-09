@@ -143,6 +143,7 @@ const GalleryScreen = () => {
 
   const handleSelectionComplete = () => {
     try {
+      router.back();
       router.replace({
         //@ts-ignore
         pathname: path,
@@ -363,8 +364,9 @@ const GalleryScreen = () => {
                     handleImagePress={() => {}}
                     index={item.id}
                     item={item.attachment}
-                    height={140}
-                    width={140}
+                    height={120}
+                    width={120}
+                    borderRadius={8}
                   />
                   <View style={styles.checkboxContainer}>
                     <Checkbox
@@ -411,7 +413,7 @@ const GalleryScreen = () => {
               style={{
                 fontSize: 16,
                 fontWeight: "bold",
-                marginVertical: 16,
+                marginBottom: 16,
                 marginHorizontal: 16,
               }}
             >

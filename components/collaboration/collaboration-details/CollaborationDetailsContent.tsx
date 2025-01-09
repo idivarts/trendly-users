@@ -641,6 +641,7 @@ const CollborationDetailsContent = (
                 <ImageComponent
                   url={managerDetails?.profileImage}
                   shape="circle"
+                  initials={managerDetails?.name}
                   altText="Manager Profile Image"
                   size="small"
                 />
