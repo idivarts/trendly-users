@@ -4,7 +4,6 @@ import { useTheme } from "@react-navigation/native";
 import { SURVEY_DATA } from "@/constants/SurveyData";
 import { submitSurvey } from "@/components/surverHandlers";
 import { stylesFn } from "@/styles/Questions.styles";
-import { useRouter } from "expo-router";
 import Colors from "@/constants/Colors";
 import { SurveyAnswer } from "@/types/Survey";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -22,6 +21,7 @@ import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { FirestoreDB } from "@/utils/firestore";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
+import { resetAndNavigate } from "@/utils/router";
 
 const Questions = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -35,7 +35,6 @@ const Questions = () => {
   const { socials } = useSocialContext();
   const theme = useTheme();
   const styles = stylesFn(theme);
-  const router = useRouter();
 
   const currentQuestion = SURVEY_DATA[currentQuestionIndex];
   const [selectedSocialId, setSelectedSocialId] = useState(
@@ -70,7 +69,7 @@ const Questions = () => {
     if (currentQuestionIndex === SURVEY_DATA.length - 1) {
       submitSurvey(updatedAnswers)
         .then(() => {
-          router.replace("/collaborations");
+          resetAndNavigate("/collaborations");
         })
         .catch((error) => {
           console.error("Error submitting survey:", error);
@@ -283,7 +282,7 @@ const Questions = () => {
         )}
 
         <Pressable
-          onPress={() => router.replace("/collaborations")}
+          onPress={() => resetAndNavigate("/collaborations")}
           style={styles.skipButton}
         >
           <Text style={styles.skipText}>Skip</Text>
