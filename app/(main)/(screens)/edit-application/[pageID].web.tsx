@@ -437,6 +437,7 @@ const ApplyScreenWeb = () => {
               title="Your Quote"
               leftIcon={faQuoteLeft}
               content={quotation === "" ? "Add now" : "Rs. " + quotation}
+              rightContent={true}
               onAction={() => {
                 handleModalOrInputPage({
                   isWeb: Platform.OS === "web",
@@ -453,6 +454,7 @@ const ApplyScreenWeb = () => {
             <ListItem
               title="Timeline"
               leftIcon={faPaperclip}
+              rightContent={true}
               content=""
               onAction={() => setShowDatePicker(true)}
             />
