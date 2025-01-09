@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { View, Image, ScrollView, Pressable, Linking } from "react-native";
 import { Text, Card, Paragraph, Button, Portal } from "react-native-paper";
 import { router } from "expo-router";
@@ -18,6 +18,7 @@ import {
   faCoins,
   faDollar,
   faMap,
+  faNoteSticky,
   faStar,
   faStarHalfStroke,
 } from "@fortawesome/free-solid-svg-icons";
@@ -43,6 +44,8 @@ import ManagerModal from "./modal/ManagerModal";
 import { PromotionType } from "@/shared-libs/firestore/trendly-pro/constants/promotion-type";
 import ConfirmationModal from "@/components/ui/modal/ConfirmationModal";
 import { imageUrl } from "@/utils/url";
+import AuthModal from "@/components/modals/AuthModal";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 
 interface ApplicationData extends IApplications {
   id: string;
@@ -50,7 +53,7 @@ interface ApplicationData extends IApplications {
 
 interface CollaborationDetailsContentProps {
   pageID: string;
-  cardType: string; // "collaboration" | "invitation" | "application"
+  cardType: string; // "collaboration" | "invitation" | "application" | "public-collaboration"
   collaborationDetail: CollaborationDetail;
   logo?: string;
   totalApplications: number;
@@ -72,6 +75,7 @@ const CollborationDetailsContent = (
     useState(false);
   const [cardType, setCardType] = useState(props.cardType);
 
+  const authModalBottomSheetModalRef = useRef<BottomSheetModal>(null);
   const { createNotification } = useNotificationContext();
   const { user } = useAuthContext();
 
@@ -343,6 +347,51 @@ const CollborationDetailsContent = (
               </Pressable>
             </Card.Content>
           </View>
+
+          {cardType === "public-collaboration" && (
+            <View
+              style={{
+                gap: 16,
+                width: "100%",
+              }}
+            >
+              <Button
+                mode="contained"
+                style={{
+                  width: "100%",
+                }}
+                onPress={() => {
+                  authModalBottomSheetModalRef.current?.present();
+                }}
+              >
+                Register Now
+              </Button>
+              <View
+                style={{
+                  alignItems: "center",
+                  backgroundColor: Colors(theme).gold,
+                  borderRadius: 5,
+                  flexDirection: "row",
+                  gap: 10,
+                  padding: 16,
+                }}
+              >
+                <FontAwesomeIcon
+                  icon={faNoteSticky}
+                  size={20}
+                  color={Colors(theme).primary}
+                />
+                <Text
+                  style={{
+                    fontSize: 16,
+                    width: "95%"
+                  }}
+                >
+                  Please make sure to use this chat to first understand the influencer. Post that, you can start your collaboration here
+                </Text>
+              </View>
+            </View>
+          )}
 
           {cardType === "collaboration" && (
             <Button
@@ -716,6 +765,9 @@ const CollborationDetailsContent = (
           confirmText="Yes"
           cancelText="No"
           description="Are you sure you want to withdraw your application?"
+        />
+        <AuthModal
+          bottomSheetModalRef={authModalBottomSheetModalRef}
         />
       </Portal>
     </ScrollView>
