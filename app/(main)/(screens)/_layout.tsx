@@ -16,6 +16,12 @@ const ScreensLayout = () => {
             headerShown: false,
           }}
         />
+        <Stack.Screen
+          name="no-social-connected"
+          options={{
+            headerShown: false,
+          }}
+        />
       </Stack>
     </AppLayout>
   );

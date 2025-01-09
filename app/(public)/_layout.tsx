@@ -17,7 +17,7 @@ const PublicLayout = () => {
           }}
         >
           <Stack.Screen
-            name="pre-signin"
+            name="collaboration/[collaborationId]"
             options={{
               headerShown: false,
             }}

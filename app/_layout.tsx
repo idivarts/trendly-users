@@ -125,29 +125,22 @@ const RootLayoutStack = () => {
 
     if (isLoading) return;
 
-    if (Platform.OS !== "web") {
-      if (session && inMainGroup) {
-        router.replace(pathname as Href);
-      } else if (session) {
-        resetAndNavigate("/(main)/collaborations");
-      } else if (inPublicGroup) {
-        resetAndNavigate(pathname as Href);
-      } else {
-        router.replace("/pre-signin");
-      }
-    } else {
-      if (!session) {
-        resetAndNavigate("/pre-signin");
-      } else if (
-        session && (
-          pathname === "/"
-          || pathname === "/pre-signin"
-          || inAuthGroup
-        )
-      ) {
-        resetAndNavigate("/(main)/collaborations");
-      }
+    if (
+      session
+      && (inAuthGroup || pathname === "/")
+    ) {
+      // On boot up, session exist and user is in auth group or /, redirect to collaborations
+      resetAndNavigate("/collaborations");
+    } else if (
+      !session
+      && (inMainGroup || pathname === "/")
+    ) {
+      // On boot up, session doesn't exist and user is in main group or /, redirect to pre-signin
+      resetAndNavigate("/pre-signin");
+    } else if (inPublicGroup) {
+      resetAndNavigate(pathname as Href);
     }
+    // Redirect user to respective screen
   }, [session, isLoading, user]);
 
   return (
@@ -159,12 +152,9 @@ const RootLayoutStack = () => {
             headerShown: false,
           }}
         >
+          <Stack.Screen name="(main)" options={{ headerShown: false }} />
+          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
           <Stack.Screen name="(public)" options={{ headerShown: false }} />
-          {!session ? (
-            <Stack.Screen name="(main)" options={{ headerShown: false }} />
-          ) : (
-            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-          )}
           <Stack.Screen name="index" />
           <Stack.Screen name="modal" options={{ presentation: "modal" }} />
           <Stack.Screen name="+not-found" />
