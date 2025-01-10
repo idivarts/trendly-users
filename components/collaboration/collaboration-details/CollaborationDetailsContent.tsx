@@ -7,16 +7,15 @@ import { stylesFn } from "@/styles/CollaborationDetails.styles";
 import { FirestoreDB } from "@/utils/firestore";
 import { deleteDoc, doc, getDoc, updateDoc } from "firebase/firestore";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
-import {
-  useAuthContext,
-  useNotificationContext,
-} from "@/contexts";
+import { useAuthContext, useNotificationContext } from "@/contexts";
 import { CollaborationDetail } from ".";
 import { Invitation } from "@/types/Collaboration";
 import {
   faCheckCircle,
   faCoins,
   faDollar,
+  faDollarSign,
+  faHouseLaptop,
   faMap,
   faNoteSticky,
   faStar,
@@ -44,6 +43,7 @@ import ManagerModal from "./modal/ManagerModal";
 import { PromotionType } from "@/shared-libs/firestore/trendly-pro/constants/promotion-type";
 import ConfirmationModal from "@/components/ui/modal/ConfirmationModal";
 import { imageUrl } from "@/utils/url";
+import ImageComponent from "@/shared-uis/components/image-component";
 import AuthModal from "@/components/modals/AuthModal";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 
@@ -308,9 +308,11 @@ const CollborationDetailsContent = (
                     flexGrow: 1,
                   }}
                 >
-                  <Image
-                    source={imageUrl(props.collaborationDetail.brandImage)}
-                    style={{ width: 40, height: 40, borderRadius: 5 }}
+                  <ImageComponent
+                    url={props.collaborationDetail.brandImage}
+                    altText="Brand Logo"
+                    shape="square"
+                    size="small"
                   />
                   <View style={{ flex: 1 }}>
                     <Text
@@ -384,10 +386,11 @@ const CollborationDetailsContent = (
                 <Text
                   style={{
                     fontSize: 16,
-                    width: "95%"
+                    width: "95%",
                   }}
                 >
-                  Please make sure to use this chat to first understand the influencer. Post that, you can start your collaboration here
+                  Please make sure to use this chat to first understand the
+                  influencer. Post that, you can start your collaboration here
                 </Text>
               </View>
             </View>
@@ -518,19 +521,19 @@ const CollborationDetailsContent = (
             </Text>
             {props.collaborationDetail.promotionType ===
               PromotionType.PAID_COLLAB && (
-                <Text
-                  style={{
-                    fontSize: 16,
-                    color: Colors(theme).text,
-                  }}
-                >
-                  Budget:
-                  {props.collaborationDetail?.budget?.min ===
-                    props.collaborationDetail?.budget?.max
-                    ? `$${props.collaborationDetail?.budget?.min}`
-                    : `$${props.collaborationDetail?.budget?.min} - $${props.collaborationDetail?.budget?.max}`}
-                </Text>
-              )}
+              <Text
+                style={{
+                  fontSize: 16,
+                  color: Colors(theme).text,
+                }}
+              >
+                Budget:
+                {props.collaborationDetail?.budget?.min ===
+                props.collaborationDetail?.budget?.max
+                  ? `$${props.collaborationDetail?.budget?.min}`
+                  : `$${props.collaborationDetail?.budget?.min} - $${props.collaborationDetail?.budget?.max}`}
+              </Text>
+            )}
           </View>
           {/* chips */}
           <View
@@ -543,32 +546,32 @@ const CollborationDetailsContent = (
             <ChipCard
               chipText={
                 props.collaborationDetail.promotionType ===
-                  PromotionType.PAID_COLLAB
+                PromotionType.PAID_COLLAB
                   ? "Paid"
                   : "Unpaid"
               }
-              chipIcon={faDollar}
+              chipIcon={faDollarSign}
             />
             <ChipCard
               chipText={props.collaborationDetail.location.type}
-              chipIcon={faMap}
+              chipIcon={faHouseLaptop}
             />
             <ChipCard
               chipText={
                 props.collaborationDetail.platform.length > 1
                   ? props.collaborationDetail.platform[0] +
-                  "+" +
-                  (props.collaborationDetail.platform.length - 1)
+                    "+" +
+                    (props.collaborationDetail.platform.length - 1)
                   : props.collaborationDetail.platform[0]
               }
               chipIcon={
                 props.collaborationDetail.platform[0] === "Instagram"
                   ? faInstagram
                   : props.collaborationDetail.platform[0] === "Facebook"
-                    ? faFacebook
-                    : props.collaborationDetail.platform[0] === "Youtube"
-                      ? faYoutube
-                      : faInstagram
+                  ? faFacebook
+                  : props.collaborationDetail.platform[0] === "Youtube"
+                  ? faYoutube
+                  : faInstagram
               }
             />
           </View>
@@ -615,8 +618,8 @@ const CollborationDetailsContent = (
                   latitudeDelta: 0.0922,
                   longitudeDelta: 0.042,
                 }}
-                onMapRegionChange={(region) => { }}
-                onFormattedAddressChange={(address) => { }}
+                onMapRegionChange={(region) => {}}
+                onFormattedAddressChange={(address) => {}}
               />
               <Text
                 style={{
@@ -687,17 +690,12 @@ const CollborationDetailsContent = (
                   gap: 10,
                 }}
               >
-                <Image
-                  source={
-                    !managerDetails?.profileImage
-                      ? { uri: PLACEHOLDER_IMAGE }
-                      : { uri: managerDetails?.profileImage }
-                  }
-                  style={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: 20,
-                  }}
+                <ImageComponent
+                  url={managerDetails?.profileImage}
+                  shape="circle"
+                  initials={managerDetails?.name}
+                  altText="Manager Profile Image"
+                  size="small"
                 />
                 <View
                   style={{
@@ -766,9 +764,7 @@ const CollborationDetailsContent = (
           cancelText="No"
           description="Are you sure you want to withdraw your application?"
         />
-        <AuthModal
-          bottomSheetModalRef={authModalBottomSheetModalRef}
-        />
+        <AuthModal bottomSheetModalRef={authModalBottomSheetModalRef} />
       </Portal>
     </ScrollView>
   );

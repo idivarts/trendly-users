@@ -44,7 +44,7 @@ const PrimarySocialSelect = () => {
       await updateDoc(userDocRef, { primarySocial: userData.primarySocial })
         .then(() => {
           Toaster.success("Social marked as primary");
-          resetAndNavigate("/collaborations");
+          resetAndNavigate("/questions");
         })
         .catch((error) => {
           Toaster.error("Error marking social as primary");

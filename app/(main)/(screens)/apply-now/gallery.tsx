@@ -16,7 +16,7 @@ import { stylesFn } from "@/styles/apply-now/gallery.styles";
 import { useTheme } from "@react-navigation/native";
 import ScreenHeader from "@/components/ui/screen-header";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faCamera, faVideo } from "@fortawesome/free-solid-svg-icons";
+import { faCamera, faImage, faVideo } from "@fortawesome/free-solid-svg-icons";
 import Colors from "@/constants/Colors";
 import { AssetItem } from "@/types/Asset";
 import { useAuthContext } from "@/contexts";
@@ -143,7 +143,8 @@ const GalleryScreen = () => {
 
   const handleSelectionComplete = () => {
     try {
-      router.push({
+      router.back();
+      router.replace({
         //@ts-ignore
         pathname: path,
         params: {
@@ -266,7 +267,7 @@ const GalleryScreen = () => {
           mode="contained"
           icon={() => (
             <FontAwesomeIcon
-              icon={faCamera}
+              icon={faImage}
               size={16}
               color={Colors(theme).white}
             />
@@ -363,8 +364,9 @@ const GalleryScreen = () => {
                     handleImagePress={() => {}}
                     index={item.id}
                     item={item.attachment}
-                    height={140}
-                    width={140}
+                    height={120}
+                    width={120}
+                    borderRadius={8}
                   />
                   <View style={styles.checkboxContainer}>
                     <Checkbox
@@ -411,7 +413,7 @@ const GalleryScreen = () => {
               style={{
                 fontSize: 16,
                 fontWeight: "bold",
-                marginVertical: 16,
+                marginBottom: 16,
                 marginHorizontal: 16,
               }}
             >

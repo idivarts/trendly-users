@@ -41,6 +41,7 @@ const styles = (theme: Theme) =>
       fontSize: 16,
       textAlign: "center",
       paddingHorizontal: 20,
+
       color: Colors(theme).text,
     },
     socialContainer: {

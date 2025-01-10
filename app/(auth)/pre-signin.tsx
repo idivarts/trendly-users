@@ -23,7 +23,13 @@ import Colors from "@/constants/Colors";
 import { FirestoreDB } from "@/utils/firestore";
 import BottomSheetActions from "@/components/BottomSheetActions";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faEllipsis, faEnvelope } from "@fortawesome/free-solid-svg-icons";
+import {
+  faArrowRight,
+  faArrowRightArrowLeft,
+  faChevronRight,
+  faEllipsis,
+  faEnvelope,
+} from "@fortawesome/free-solid-svg-icons";
 import SocialButton from "@/components/ui/button/social-button";
 import { faFacebook, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import { imageUrl } from "@/utils/url";
@@ -167,6 +173,38 @@ const PreSignIn = () => {
                   onPress={instagramLogin}
                 />
               </View>
+            )}
+            {slide.key !== "connect" && (
+              <Pressable
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginTop: 15,
+                  backgroundColor: Colors(theme).primary,
+                  paddingHorizontal: 20,
+                  paddingVertical: 10,
+                  borderRadius: 5,
+                  gap: 10,
+                }}
+                onPress={() => {
+                  swiperRef.current?.scrollBy(1);
+                }}
+              >
+                <Text
+                  style={{
+                    color: Colors(theme).white,
+                    fontSize: 16,
+                  }}
+                >
+                  Next
+                </Text>
+                <FontAwesomeIcon
+                  icon={faArrowRight}
+                  size={16}
+                  color={Colors(theme).white}
+                />
+              </Pressable>
             )}
             {slide.key === "connect" && loading && (
               <Portal>
