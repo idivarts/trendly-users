@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useSharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Theme, useTheme } from "@react-navigation/native";
@@ -10,12 +10,15 @@ import {
 
 import { Text, View } from "../theme/Themed";
 import Colors from "@/constants/Colors";
-import { Pressable, StyleSheet } from "react-native";
-import { useRouter } from "expo-router";
+import { Platform, Pressable, StyleSheet } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faClose, faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
-import Button from "../ui/button";
+import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { faFacebook, faInstagram } from "@fortawesome/free-brands-svg-icons";
+import SocialButton from "../ui/button/social-button";
+import { useFacebookLogin, useInstagramLogin } from "@/hooks/requests";
+import { AuthApp } from "@/utils/auth";
+import { FirestoreDB } from "@/utils/firestore";
+import { INITIAL_USER_DATA } from "@/constants/User";
 
 interface AuthModalProps {
   bottomSheetModalRef: React.RefObject<BottomSheetModal>;
@@ -24,8 +27,10 @@ interface AuthModalProps {
 const AuthModal: React.FC<AuthModalProps> = ({
   bottomSheetModalRef,
 }) => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   const snapPoints = useMemo(() => ["35%", "35%", "35%"], []);
-  const router = useRouter();
 
   const theme = useTheme();
   const styles = stylesFn(theme);
@@ -37,6 +42,30 @@ const AuthModal: React.FC<AuthModalProps> = ({
     left: insets.left,
     right: insets.right,
   });
+
+  const {
+    instagramLogin,
+    promptAsyncInstagram,
+    requestInstagram,
+  } = useInstagramLogin(
+    AuthApp,
+    FirestoreDB,
+    INITIAL_USER_DATA,
+    setLoading,
+    setError,
+  );
+
+  const {
+    facebookLogin,
+    promptAsyncFacebook,
+    requestFacebook,
+  } = useFacebookLogin(
+    AuthApp,
+    FirestoreDB,
+    INITIAL_USER_DATA,
+    setLoading,
+    setError,
+  );
 
   const renderBackdrop = (props: any) => {
     return (
@@ -90,61 +119,50 @@ const AuthModal: React.FC<AuthModalProps> = ({
               gap: 16,
             }}
           >
-            <Button
-              theme={{
-                colors: {
-                  primary: Colors(theme).primary,
-                },
-              }}
-              onPress={() => { }}
+            <SocialButton
+              icon={faFacebook}
+              iconColor={Colors(theme).white}
               customStyles={{
-                alignItems: "center",
-                gap: 8,
+                backgroundColor: Colors(theme).primary,
+                justifyContent: "center",
+
               }}
-            >
-              {/* <FontAwesomeIcon
-                color={Colors(theme).white}
-                icon={faFacebook}
-                size={24}
-                style={{
-                  marginRight: 8,
-                }}
-              /> */}
-              <Text
-                style={{
-                  color: Colors(theme).white,
-                }}
-              >
-                Continue with Facebook
-              </Text>
-            </Button>
-            <Button
-              theme={{
-                colors: {
-                  primary: Colors(theme).primary,
-                },
+              label="Continue with Facebook"
+              labelStyles={{
+                color: Colors(theme).white,
               }}
-              onPress={() => { }}
+              onPress={() => {
+                if (Platform.OS === "web") {
+                  facebookLogin();
+                } else {
+                  if (requestFacebook) {
+                    promptAsyncFacebook();
+                  }
+                }
+              }}
+            />
+            <SocialButton
+              icon={faInstagram}
+              iconColor={Colors(theme).white}
               customStyles={{
-                alignItems: "center",
+                backgroundColor: Colors(theme).primary,
+                justifyContent: "center",
+
               }}
-            >
-              {/* <FontAwesomeIcon
-                color={Colors(theme).white}
-                icon={faInstagram}
-                size={24}
-                style={{
-                  marginRight: 8,
-                }}
-              /> */}
-              <Text
-                style={{
-                  color: Colors(theme).white,
-                }}
-              >
-                Continue with Instagram
-              </Text>
-            </Button>
+              label="Continue with Instagram"
+              labelStyles={{
+                color: Colors(theme).white,
+              }}
+              onPress={() => {
+                if (Platform.OS === "web") {
+                  instagramLogin();
+                } else {
+                  if (requestInstagram) {
+                    promptAsyncInstagram();
+                  }
+                }
+              }}
+            />
           </View>
         </View>
       </BottomSheetScrollView>

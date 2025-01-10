@@ -1,17 +1,21 @@
 import { Appbar } from "react-native-paper";
 import { useTheme } from "@react-navigation/native";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 
 import { Text } from "@/components/theme/Themed";
 import Button from "@/components/ui/button";
 import Colors from "@/constants/Colors";
 import AppLayout from "@/layouts/app-layout";
 import DownloadAppModal from "@/components/modals/DownloadAppModal";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { Platform } from "react-native";
 import { useBreakpoints } from "@/hooks";
 import CollaborationDetails from "@/components/collaboration/collaboration-details";
+import AuthModal from "@/components/modals/AuthModal";
+import { useAuthContext } from "@/contexts";
+import { AuthApp } from "@/utils/auth";
+import { signInAnonymously } from "firebase/auth";
 
 const CollaborationDetailsScreen = () => {
   const {
@@ -19,18 +23,36 @@ const CollaborationDetailsScreen = () => {
   } = useLocalSearchParams();
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+  const authModalBottomSheetModalRef = useRef<BottomSheetModal>(null);
 
+  const router = useRouter();
   const {
     lg,
   } = useBreakpoints();
 
   const theme = useTheme();
 
-  useEffect(() => {
+  const {
+    user,
+  } = useAuthContext();
+
+  const renderBottomSheet = useCallback(() => {
     if (Platform.OS === "web" && !lg) {
       bottomSheetModalRef.current?.present();
     }
   }, []);
+
+  useEffect(() => {
+    renderBottomSheet();
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      router.replace(`/collaboration-details/${collaborationId}`);
+    } else {
+      signInAnonymously(AuthApp);
+    }
+  }, [user]);
 
   return (
     <AppLayout>
@@ -54,7 +76,9 @@ const CollaborationDetailsScreen = () => {
         </Text>
 
         <Button
-          onPress={() => { }}
+          onPress={() => {
+            authModalBottomSheetModalRef.current?.present();
+          }}
         >
           Register Now
         </Button>
@@ -62,12 +86,15 @@ const CollaborationDetailsScreen = () => {
       <CollaborationDetails
         pageID={collaborationId as string}
         cardId={null as any}
-        cardType="collaboration"
+        cardType="public-collaboration"
         collaborationID={collaborationId as string}
       />
       <DownloadAppModal
         bottomSheetModalRef={bottomSheetModalRef}
         collaborationId={collaborationId as string}
+      />
+      <AuthModal
+        bottomSheetModalRef={authModalBottomSheetModalRef}
       />
     </AppLayout>
   );
