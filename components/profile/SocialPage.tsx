@@ -21,6 +21,7 @@ import { FirestoreDB } from "@/utils/firestore";
 import { collection, doc, getDoc, updateDoc } from "firebase/firestore";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { useAuthContext } from "@/contexts";
+import ImageComponent from "@/shared-uis/components/image-component";
 
 interface SocialPageProps {
   name: string;
@@ -78,12 +79,13 @@ const SocialPage: React.FC<SocialPageProps> = ({
       <Card style={styles.card}>
         <View style={styles.row}>
           <View style={styles.leftSection}>
-            <Image
-              source={{
-                uri: image,
-              }}
+            <ImageComponent
+              url={image}
+              altText="Profile Photo"
+              shape="square"
               width={50}
               height={50}
+              size="small"
             />
             <View
               style={{

@@ -7,7 +7,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
-import { Dimensions, Platform, Pressable } from "react-native";
+import { Dimensions, Pressable } from "react-native";
 import { IconButton, List } from "react-native-paper";
 
 interface ContentItemProps {
@@ -18,6 +18,7 @@ interface ContentItemProps {
   onAction?: () => void;
   onRemove?: (id: string) => void;
   title: string;
+  rightContent?: boolean;
 }
 
 const ListItem: React.FC<ContentItemProps> = ({
@@ -28,9 +29,9 @@ const ListItem: React.FC<ContentItemProps> = ({
   title,
   attachments,
   onRemove,
+  rightContent = false,
 }) => {
   const theme = useTheme();
-  const screenWidth = Dimensions.get("window").width;
 
   return (
     <Pressable
@@ -39,8 +40,7 @@ const ListItem: React.FC<ContentItemProps> = ({
         alignItems: "center",
         borderBottomWidth: 0.3,
         borderColor: Colors(theme).gray300,
-        paddingVertical: content ? (Platform.OS === "web" ? 16 : 0) : 16,
-        paddingBottom: content ? 16 : 32,
+        paddingVertical: 16,
       }}
       onPress={onAction}
     >
@@ -48,7 +48,7 @@ const ListItem: React.FC<ContentItemProps> = ({
         style={{
           flex: 1,
           flexDirection: "column",
-          gap: 20,
+          gap: 16,
         }}
       >
         <View
@@ -56,8 +56,6 @@ const ListItem: React.FC<ContentItemProps> = ({
             flexDirection: "row",
             alignItems: "center",
             justifyContent: "space-between",
-            gap: 12,
-            marginBottom: empty ? 6 : -6,
           }}
         >
           <View
@@ -75,31 +73,50 @@ const ListItem: React.FC<ContentItemProps> = ({
             <Text
               style={{
                 fontSize: 20,
-                width: screenWidth - 100,
+                minWidth: Dimensions.get("window").width / 3,
+                maxWidth: Dimensions.get("window").width * 0.7,
               }}
             >
               {title}
             </Text>
           </View>
-
-          <FontAwesomeIcon
-            icon={empty ? faPlus : faChevronRight}
-            size={18}
-            color={Colors(theme).text}
-          />
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 12,
+            }}
+          >
+            {rightContent ? (
+              <Text
+                style={{
+                  color: Colors(theme).gray300,
+                  fontSize: 18,
+                  paddingVertical: 6,
+                }}
+              >
+                {content}
+              </Text>
+            ) : null}
+            <FontAwesomeIcon
+              icon={empty ? faPlus : faChevronRight}
+              size={18}
+              color={Colors(theme).text}
+            />
+          </View>
         </View>
-        {content && (
+        {!rightContent && content && (
           <Text
             style={{
               color: Colors(theme).gray300,
               fontSize: 18,
-              paddingVertical: 6,
             }}
           >
             {content}
           </Text>
         )}
-        {attachments && attachments.length > 0 && (
+        {attachments && attachments.length > 0 ? (
           <List.Section>
             {attachments.map((attachment) => (
               <List.Item
@@ -124,7 +141,7 @@ const ListItem: React.FC<ContentItemProps> = ({
               />
             ))}
           </List.Section>
-        )}
+        ) : null}
       </View>
     </Pressable>
   );

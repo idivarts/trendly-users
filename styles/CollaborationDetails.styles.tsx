@@ -1,11 +1,13 @@
-import Colors from "@/constants/Colors";
-import { Theme } from "@react-navigation/native";
 import { StyleSheet } from "react-native";
+import { Theme } from "@react-navigation/native";
+
+import Colors from "@/constants/Colors";
 
 export const stylesFn = (theme: Theme) =>
   StyleSheet.create({
     scrollContainer: {
       gap: 16,
+      paddingBottom: 24,
     },
     profileCard: {
       backgroundColor: Colors(theme).card,

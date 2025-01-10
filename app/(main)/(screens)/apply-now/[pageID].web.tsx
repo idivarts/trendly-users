@@ -283,6 +283,7 @@ const ApplyScreenWeb = () => {
               title="Your Quote"
               leftIcon={faQuoteLeft}
               content={quotation === "" ? "" : "Rs. " + quotation}
+              rightContent={true}
               onAction={() => {
                 handleModalOrInputPage({
                   isWeb: Platform.OS === "web",
@@ -300,6 +301,7 @@ const ApplyScreenWeb = () => {
               title="Timeline"
               leftIcon={faPaperclip}
               content=""
+              rightContent={true}
               onAction={() => setShowDatePicker(true)}
             />
             <TextInput
@@ -332,6 +334,11 @@ const ApplyScreenWeb = () => {
               content=""
               attachments={fileAttachments}
               onAction={handlePickAttachment}
+              onRemove={(id) => {
+                setFileAttachments((prevAttachments: any) =>
+                  prevAttachments.filter((f: any) => f.id !== id)
+                );
+              }}
             />
             {questions.map((question, index) => (
               <ListItem

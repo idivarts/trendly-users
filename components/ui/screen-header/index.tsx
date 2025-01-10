@@ -4,6 +4,7 @@ import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
 import { useNavigation } from "expo-router";
+import { Pressable } from "react-native";
 import { Appbar } from "react-native-paper";
 
 interface ScreenHeaderProps {
@@ -28,7 +29,7 @@ const ScreenHeader: React.FC<ScreenHeaderProps> = ({
     } else {
       navigation.goBack();
     }
-  }
+  };
 
   return (
     <Appbar.Header
@@ -38,34 +39,29 @@ const ScreenHeader: React.FC<ScreenHeaderProps> = ({
       }}
       statusBarHeight={0}
     >
-      <Appbar.Action
-        icon={() => (
-          <View
+      <View
+        style={{
+          marginTop: 2,
+          marginLeft: 10,
+        }}
+        lightColor={Colors(theme).transparent}
+        darkColor={Colors(theme).transparent}
+      >
+        <Pressable onPress={handleAction}>
+          <FontAwesomeIcon
+            icon={faArrowLeft}
+            size={20}
+            color={Colors(theme).text}
             style={{
-              marginTop: 2,
+              alignItems: "center",
             }}
-            lightColor={Colors(theme).transparent}
-            darkColor={Colors(theme).transparent}
-          >
-            <FontAwesomeIcon
-              icon={faArrowLeft}
-              size={20}
-              color={Colors(theme).text}
-            />
-          </View>
-        )}
-        color={Colors(theme).text}
-        onPress={handleAction}
-      />
+          />
+        </Pressable>
+      </View>
 
-      <Appbar.Content
-        title={title}
-        color={Colors(theme).text}
-      />
+      <Appbar.Content title={title} color={Colors(theme).text} />
 
-      {
-        rightAction && rightActionButton
-      }
+      {rightAction && rightActionButton}
     </Appbar.Header>
   );
 };

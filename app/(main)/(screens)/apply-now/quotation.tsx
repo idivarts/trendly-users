@@ -43,8 +43,8 @@ const Quotation: React.FC = () => {
         value,
       },
     };
-
-    router.push({
+    router.back();
+    router.replace({
       //@ts-ignore
       pathname: path as string,
       params: {
@@ -63,7 +63,7 @@ const Quotation: React.FC = () => {
   };
 
   const handleGoBack = () => {
-    navigation.back();
+    router.back();
   };
 
   return (

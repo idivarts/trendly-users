@@ -9,6 +9,7 @@ import { faCheckCircle, faEllipsisH } from "@fortawesome/free-solid-svg-icons";
 import { useTheme } from "@react-navigation/native";
 import { router } from "expo-router";
 import { imageUrl } from "@/utils/url";
+import ImageComponent from "@/shared-uis/components/image-component";
 
 interface CollaborationHeaderProps {
   cardType: string;
@@ -72,8 +73,10 @@ const CollaborationHeader: FC<CollaborationHeaderProps> = ({
           width: "45%",
         }}
       >
-        <Image
-          source={imageUrl(brand.image)}
+        <ImageComponent
+          url={imageUrl(brand.image)}
+          altText="brand logo"
+          shape="square"
           style={{
             width: 40,
             height: 40,

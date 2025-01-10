@@ -1,24 +1,17 @@
+import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
+
 export const DUMMY_USER_ID = "IjOAHWjc3d8ff8u6Z2rD";
 
 export const DUMMY_IMAGE =
   "https://www.pngkey.com/png/full/114-1149878_setting-user-avatar-in-specific-size-without-breaking.png";
 
-export const INITIAL_USER_DATA = {
-  location: "",
+export const INITIAL_USER_DATA: Partial<IUsers> = {
+  profileImage: "",
   phoneNumber: "",
-  preferences: {
-    question1: [],
-    question2: [],
-    question3: [],
-    question4: [],
-  },
-  pushNotificationToken: {
-    ios: [],
-    android: [],
-    web: [],
-  },
+  location: "",
+  isVerified: false,
   profile: {
-    category: [],
+    completionPercentage: 0,
     content: {
       about: "",
       socialMediaHighlight: "",
@@ -27,52 +20,39 @@ export const INITIAL_USER_DATA = {
       funFactAboutUser: "",
     },
     introVideo: "",
+    category: [],
     attachments: [],
     timeCommitment: "",
-    completionPercentage: 0,
   },
-  profileImage: "",
   settings: {
-    emailNotifications: true,
-    pushNotifications: true,
+    emailNotification: true,
+    pushNotification: true,
     theme: "light",
+  },
+  pushNotificationToken: {
+    ios: [],
+    android: [],
+    web: [],
   },
 };
 
-export const DUMMY_USER_CREDENTIALS = {
-  name: "Alice Johnson",
-  email: "alice.johnson@gmail.com",
-  password: "password",
-  location: "",
-  phoneNumber: "",
-  preferences: {
-    question1: "",
-    question2: "",
-    question3: "",
-  },
-  profileImage: "",
-  settings: {
-    emailNotifications: true,
-    pushNotifications: true,
-    theme: "light",
-  },
-};
-
-export const DUMMY_USER_CREDENTIALS2 = {
+export const DUMMY_USER_CREDENTIALS: Partial<IUsers> = {
   name: "John Doe",
-  email: "john.doe@gmail.com",
-  password: "password",
-  location: "",
-  phoneNumber: "",
-  preferences: {
-    question1: "",
-    question2: "",
-    question3: "",
-  },
   profileImage: "",
+  email: "john.doe@gmail.com",
+  phoneNumber: "",
+  location: "",
+  isVerified: false,
   settings: {
-    emailNotifications: true,
-    pushNotifications: true,
+    emailNotification: true,
+    pushNotification: true,
     theme: "dark",
   },
+  pushNotificationToken: {
+    ios: [],
+    android: [],
+    web: [],
+  },
 };
+
+export const DUMMY_PASSWORD = "password";

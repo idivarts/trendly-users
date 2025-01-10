@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useState, useRef } from "react";
 import {
   View,
   Text,
@@ -13,31 +13,27 @@ import stylesFn from "@/styles/tab1.styles";
 import { useTheme } from "@react-navigation/native";
 import AppLayout from "@/layouts/app-layout";
 import { slides } from "@/constants/Slides";
-import * as AuthSession from "expo-auth-session";
 import * as WebBrowser from "expo-web-browser";
-import {
-  FacebookAuthProvider,
-  getAdditionalUserInfo,
-  signInWithCredential,
-  signInWithCustomToken,
-} from "firebase/auth";
-import { AuthApp as auth, AuthApp } from "@/utils/auth";
+import { AuthApp } from "@/utils/auth";
 import { useRouter } from "expo-router";
-import { useAuthContext } from "@/contexts";
-import { DUMMY_USER_CREDENTIALS2, INITIAL_USER_DATA } from "@/constants/User";
+import {
+  INITIAL_USER_DATA,
+} from "@/constants/User";
 import Colors from "@/constants/Colors";
 import { FirestoreDB } from "@/utils/firestore";
-import { collection, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import BottomSheetActions from "@/components/BottomSheetActions";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faEllipsis, faEnvelope } from "@fortawesome/free-solid-svg-icons";
+import {
+  faArrowRight,
+  faArrowRightArrowLeft,
+  faChevronRight,
+  faEllipsis,
+  faEnvelope,
+} from "@fortawesome/free-solid-svg-icons";
 import SocialButton from "@/components/ui/button/social-button";
 import { faFacebook, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import { imageUrl } from "@/utils/url";
-import { FB_APP_ID } from "@/constants/Facebook";
-import axios from "axios";
-import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
-import Toaster from "@/shared-uis/components/toaster/Toaster";
+import { useFacebookLogin, useInstagramLogin } from "@/hooks/requests";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -45,227 +41,35 @@ const PreSignIn = () => {
   const theme = useTheme();
   const styles = stylesFn(theme);
   const [error, setError] = useState<string | null>(null);
-  const { firebaseSignIn, firebaseSignUp, signIn, signUp } = useAuthContext();
   const swiperRef = useRef<Swiper>(null); // Use ref for Swiper
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
 
-  const redirectUri = AuthSession.makeRedirectUri({
-    native: `fb${FB_APP_ID}://authorize`,
-  });
-
-  const authUrl = `https://be.trendly.pro/instagram`;
-
-  const [requestInstagram, responseInstagram, promptAsyncInstagram] =
-    AuthSession.useAuthRequest(
-      {
-        clientId: FB_APP_ID,
-        redirectUri,
-      },
-      {
-        authorizationEndpoint: `${authUrl}?redirect_type=${
-          Platform.OS === "web" ? 2 : 3
-        }&`,
-      }
-    );
-
-  useEffect(() => {
-    if (
-      responseInstagram?.type === "success" ||
-      responseInstagram?.type === "error"
-    ) {
-      const { code } = responseInstagram.params;
-      if (code) {
-        handleInstagramSignIn(code);
-      } else {
-        console.log("Instagram login failed. Please try again.");
-      }
-    }
-  }, [responseInstagram]);
-
-  const [request, response, promptAsync] = AuthSession.useAuthRequest(
-    {
-      clientId: FB_APP_ID,
-      redirectUri,
-      responseType: AuthSession.ResponseType.Token,
-      scopes: [
-        "public_profile",
-        "email",
-        "pages_show_list",
-        "pages_read_engagement",
-        "instagram_basic",
-        "instagram_manage_messages",
-      ],
-    },
-    { authorizationEndpoint: "https://www.facebook.com/v10.0/dialog/oauth" }
+  const {
+    instagramLogin,
+    promptAsyncInstagram,
+    requestInstagram,
+  } = useInstagramLogin(
+    AuthApp,
+    FirestoreDB,
+    INITIAL_USER_DATA,
+    setLoading,
+    setError,
   );
 
-  const handleFacebookSignIn = async () => {
-    await promptAsync();
-  };
-
-  const handleInstagramSignInAsync = async () => {
-    await promptAsyncInstagram();
-  };
-
-  useEffect(() => {
-    if (response?.type === "success") {
-      const { access_token } = response.params;
-      handleFirebaseSignIn(access_token);
-    } else if (response?.type === "error") {
-      setError("Facebook login failed. Please try again.");
-    }
-  }, [response]);
-
-  const handleFirebaseSignIn = async (accessToken: string) => {
-    try {
-      setLoading(true);
-      const credential = FacebookAuthProvider.credential(accessToken);
-      const result = await signInWithCredential(auth, credential);
-      if (result.user) {
-        const userCollection = collection(FirestoreDB, "users");
-        const userDocRef = doc(userCollection, result.user.uid);
-        const fbid = result.user.providerData[0].uid;
-
-        const findUser = await getDoc(userDocRef);
-        if (findUser.exists()) {
-          await fetch("https://be.trendly.pro/api/v1/chat/auth", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${result.user.uid}`,
-            },
-          });
-          firebaseSignIn(result.user.uid);
-          return;
-        }
-
-        const user = getAdditionalUserInfo(result);
-
-        const graphAPIResponse = await axios.get(
-          `https://graph.facebook.com/v21.0/me`,
-          {
-            params: {
-              fields:
-                "id,name,accounts{name,id,access_token,category_list,tasks,instagram_business_account,category}",
-              access_token: accessToken,
-            },
-          }
-        );
-
-        const userData = {
-          ...INITIAL_USER_DATA,
-          accessToken,
-          name: result.user.displayName,
-          email: result.user.email || "",
-          // @ts-ignore
-          profileImage: user?.profile?.picture?.data?.url || "",
-          fbid,
-        };
-
-        await setDoc(userDocRef, userData);
-
-        const userToken = await AuthApp.currentUser?.getIdToken();
-
-        const responseFacebook = await axios.post(
-          "https://be.trendly.pro/api/v1/socials/facebook",
-          {
-            accounts: graphAPIResponse.data.accounts,
-            name: graphAPIResponse.data.name,
-            id: graphAPIResponse.data.id,
-            expiresIn: Number(graphAPIResponse.data.expires_in),
-            accessToken: graphAPIResponse.data.access_token,
-            signedRequest: graphAPIResponse.data.signedRequest,
-            graphDomain: graphAPIResponse.data.graphDomain,
-            data_access_expiration_time: Number(
-              graphAPIResponse.data.data_access_expiration_time
-            ),
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${userToken}`,
-            },
-          }
-        );
-
-        await fetch("https://be.trendly.pro/api/v1/chat/auth", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${result.user.uid}`,
-          },
-        });
-        if (
-          !graphAPIResponse.data.accounts ||
-          graphAPIResponse.data.accounts.length === 0
-        ) {
-          firebaseSignUp(result.user.uid, false);
-        }
-
-        if (
-          graphAPIResponse.data.accounts &&
-          graphAPIResponse.data.accounts.data.length === 1
-        ) {
-          //update and make this as the primary social
-          const userDocRef = doc(FirestoreDB, "users", result.user.uid);
-          const userDoc = await getDoc(userDocRef);
-          const userData = userDoc.data() as IUsers;
-
-          userData.primarySocial = graphAPIResponse.data.accounts.data[0].id;
-
-          await updateDoc(userDocRef, {
-            primarySocial: userData.primarySocial,
-          })
-            .then(() => {
-              Toaster.success("Social marked as primary");
-            })
-            .catch((error) => {
-              Toaster.error("Error marking social as primary");
-            });
-        }
-
-        firebaseSignUp(result.user.uid);
-      }
-    } catch (error: any) {
-      setError(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleInstagramSignIn = async (accessToken: string) => {
-    await axios
-      .post("https://be.trendly.pro/instagram/auth", {
-        code: accessToken,
-        redirect_type: Platform.OS === "web" ? "2" : "3",
-      })
-      .then(async (response) => {
-        const user = await signInWithCustomToken(
-          auth,
-          response.data.data.firebaseCustomToken
-        );
-        if (response.data.data.isExistingUser) {
-          firebaseSignIn(user.user.uid);
-        } else {
-          const userCollection = collection(FirestoreDB, "users");
-          const userDocRef = doc(userCollection, user.user.uid);
-          const userData = {
-            ...INITIAL_USER_DATA,
-          };
-
-          await updateDoc(userDocRef, userData);
-          firebaseSignUp(user.user.uid, true);
-        }
-      })
-      .catch((error: Error) => {
-        console.error("Error signing in with Instagram: ", error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  };
+  const {
+    facebookLogin,
+    promptAsyncFacebook,
+    requestFacebook,
+  } = useFacebookLogin(
+    AuthApp,
+    FirestoreDB,
+    INITIAL_USER_DATA,
+    setLoading,
+    setError,
+  );
 
   const skipToConnect = () => {
     const connectSlideIndex = slides.findIndex(
@@ -331,11 +135,11 @@ const PreSignIn = () => {
                   icon={faFacebook}
                   label="Login with Facebook"
                   onPress={
-                    request
+                    requestFacebook
                       ? () => {
-                          promptAsync();
-                        }
-                      : () => {}
+                        promptAsyncFacebook();
+                      }
+                      : () => { }
                   }
                 />
                 <SocialButton
@@ -344,9 +148,9 @@ const PreSignIn = () => {
                   onPress={
                     requestInstagram
                       ? () => {
-                          promptAsyncInstagram();
-                        }
-                      : () => {}
+                        promptAsyncInstagram();
+                      }
+                      : () => { }
                   }
                 />
               </View>
@@ -356,7 +160,7 @@ const PreSignIn = () => {
                 <SocialButton
                   icon={faFacebook}
                   label="Login with Facebook"
-                  onPress={handleFacebookSignIn}
+                  onPress={facebookLogin}
                 />
                 <SocialButton
                   icon={faEnvelope}
@@ -366,9 +170,41 @@ const PreSignIn = () => {
                 <SocialButton
                   icon={faInstagram}
                   label="Login with Instagram"
-                  onPress={handleInstagramSignInAsync}
+                  onPress={instagramLogin}
                 />
               </View>
+            )}
+            {slide.key !== "connect" && (
+              <Pressable
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginTop: 15,
+                  backgroundColor: Colors(theme).primary,
+                  paddingHorizontal: 20,
+                  paddingVertical: 10,
+                  borderRadius: 5,
+                  gap: 10,
+                }}
+                onPress={() => {
+                  swiperRef.current?.scrollBy(1);
+                }}
+              >
+                <Text
+                  style={{
+                    color: Colors(theme).white,
+                    fontSize: 16,
+                  }}
+                >
+                  Next
+                </Text>
+                <FontAwesomeIcon
+                  icon={faArrowRight}
+                  size={16}
+                  color={Colors(theme).white}
+                />
+              </Pressable>
             )}
             {slide.key === "connect" && loading && (
               <Portal>

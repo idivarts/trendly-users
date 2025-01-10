@@ -2,7 +2,12 @@ import React, { useState } from "react";
 import { useTheme } from "@react-navigation/native";
 import { Text, View } from "@/components/theme/Themed";
 import { Appbar } from "react-native-paper";
-import { router, useLocalSearchParams, useRouter } from "expo-router";
+import {
+  router,
+  useLocalSearchParams,
+  useNavigation,
+  useRouter,
+} from "expo-router";
 import AppLayout from "@/layouts/app-layout";
 import Colors from "@/constants/Colors";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
@@ -12,7 +17,6 @@ import TextInput from "@/components/ui/text-input";
 
 const Question: React.FC = () => {
   const theme = useTheme();
-  const navigation = useRouter();
 
   const {
     title,
@@ -23,6 +27,7 @@ const Question: React.FC = () => {
     placeholder,
     note,
     timelineData,
+    actualQuestion,
     answers,
     originalAttachments,
     collaborationId,
@@ -44,8 +49,8 @@ const Question: React.FC = () => {
         value,
       },
     };
-
-    router.push({
+    router.back();
+    router.replace({
       //@ts-ignore
       pathname: path as string,
       params: {
@@ -64,7 +69,7 @@ const Question: React.FC = () => {
   };
 
   const handleGoBack = () => {
-    navigation.back();
+    router.back();
   };
 
   return (
@@ -89,7 +94,7 @@ const Question: React.FC = () => {
       <Toast />
       <View
         style={{
-          padding: 20,
+          paddingHorizontal: 20,
           justifyContent: "space-between",
           flex: 1,
         }}
@@ -97,14 +102,19 @@ const Question: React.FC = () => {
         <View
           style={{
             flex: 1,
+            gap: 16,
           }}
         >
-          <Text>{title}</Text>
+          <Text>{actualQuestion}</Text>
           <TextInput
             value={value as string}
             onChangeText={setValue}
+            style={{
+              minHeight: 100,
+            }}
             placeholder={placeholder as string}
             autoFocus
+            multiline
           />
         </View>
       </View>
