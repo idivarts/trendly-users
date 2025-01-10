@@ -402,6 +402,11 @@ const ApplyScreen = () => {
               content=""
               attachments={fileAttachments}
               onAction={handlePickAttachment}
+              onRemove={(id) => {
+                setFileAttachments((prevAttachments) =>
+                  prevAttachments.filter((attachment) => attachment.id !== id)
+                );
+              }}
             />
             {questions.map((question, index) => (
               <ListItem

@@ -4,7 +4,7 @@ import Colors from "@/constants/Colors";
 import stylesFn from "@/styles/profile/ProfileItemCard.styles";
 import { useTheme } from "@react-navigation/native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import { faCaretRight, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { useAuthContext } from "@/contexts";
 import { COMPLETION_PERCENTAGE } from "@/constants/CompletionPercentage";
 
@@ -44,7 +44,7 @@ const ProfileItemCard: React.FC<ProfileItemCardProps> = ({ item, onPress }) => {
         </View>
         <FontAwesomeIcon
           color={theme.dark ? Colors(theme).text : Colors(theme).primary}
-          icon={faChevronRight}
+          icon={faCaretRight}
           size={14}
           style={styles.icon}
         />

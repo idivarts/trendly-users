@@ -4,7 +4,12 @@ import { useTheme } from "@react-navigation/native";
 import { FC } from "react";
 import { Chip } from "react-native-paper";
 import ChipCard from "./ChipComponent";
-import { faCoins, faDollar, faMap } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCoins,
+  faDollarSign,
+  faHouseLaptop,
+  faMap,
+} from "@fortawesome/free-solid-svg-icons";
 import {
   faFacebook,
   faInstagram,
@@ -59,9 +64,9 @@ const CollaborationDetails: FC<CollaborationDetailsProps> = ({
           chipText={
             promotionType === PromotionType.PAID_COLLAB ? "Paid" : "Unpaid"
           }
-          chipIcon={faDollar}
+          chipIcon={faDollarSign}
         />
-        <ChipCard chipText={location.type} chipIcon={faMap} />
+        <ChipCard chipText={location.type} chipIcon={faHouseLaptop} />
         <ChipCard
           chipText={
             platform.length > 1

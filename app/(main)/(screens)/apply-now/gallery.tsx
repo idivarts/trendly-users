@@ -16,7 +16,7 @@ import { stylesFn } from "@/styles/apply-now/gallery.styles";
 import { useTheme } from "@react-navigation/native";
 import ScreenHeader from "@/components/ui/screen-header";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faCamera, faVideo } from "@fortawesome/free-solid-svg-icons";
+import { faCamera, faImage, faVideo } from "@fortawesome/free-solid-svg-icons";
 import Colors from "@/constants/Colors";
 import { AssetItem } from "@/types/Asset";
 import { useAuthContext } from "@/contexts";
@@ -267,7 +267,7 @@ const GalleryScreen = () => {
           mode="contained"
           icon={() => (
             <FontAwesomeIcon
-              icon={faCamera}
+              icon={faImage}
               size={16}
               color={Colors(theme).white}
             />

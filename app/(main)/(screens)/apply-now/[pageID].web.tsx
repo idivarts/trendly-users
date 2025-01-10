@@ -334,6 +334,11 @@ const ApplyScreenWeb = () => {
               content=""
               attachments={fileAttachments}
               onAction={handlePickAttachment}
+              onRemove={(id) => {
+                setFileAttachments((prevAttachments: any) =>
+                  prevAttachments.filter((f: any) => f.id !== id)
+                );
+              }}
             />
             {questions.map((question, index) => (
               <ListItem

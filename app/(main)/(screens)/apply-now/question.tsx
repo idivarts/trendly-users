@@ -96,7 +96,7 @@ const Question: React.FC = () => {
       <Toast />
       <View
         style={{
-          padding: 20,
+          paddingHorizontal: 20,
           justifyContent: "space-between",
           flex: 1,
         }}
@@ -111,6 +111,9 @@ const Question: React.FC = () => {
           <TextInput
             value={value as string}
             onChangeText={setValue}
+            style={{
+              minHeight: 100,
+            }}
             placeholder={placeholder as string}
             autoFocus
             multiline

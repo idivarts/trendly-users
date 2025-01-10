@@ -12,7 +12,11 @@ import { Text, View } from "../theme/Themed";
 import Colors from "@/constants/Colors";
 import { Pressable, StyleSheet } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faClose, faPaperclip, faQuoteLeft } from "@fortawesome/free-solid-svg-icons";
+import {
+  faClose,
+  faPaperclip,
+  faQuoteLeft,
+} from "@fortawesome/free-solid-svg-icons";
 import Button from "../ui/button";
 import ListItem from "../ui/list-item/ListItem";
 import { List } from "react-native-paper";
@@ -21,15 +25,15 @@ import TimelineModal from "./timeline-modal";
 
 interface QuotationBottomSheetProps {
   bottomSheetModalRef: React.RefObject<BottomSheetModal>;
-  onSubmit: (data: { quotation: string, timeline: number }) => void;
+  onSubmit: (data: { quotation: string; timeline: number }) => void;
   setState: {
     quotation: React.Dispatch<React.SetStateAction<string>>;
     timeline: React.Dispatch<React.SetStateAction<Date | null>>;
-  }
+  };
   state: {
     quotation: string;
     timeline: Date | null;
-  }
+  };
 }
 
 const QuotationBottomSheet: React.FC<QuotationBottomSheetProps> = ({
@@ -65,7 +69,7 @@ const QuotationBottomSheet: React.FC<QuotationBottomSheetProps> = ({
 
   const handleClose = () => {
     bottomSheetModalRef.current?.dismiss();
-  }
+  };
 
   const handleSubmit = () => {
     onSubmit({
@@ -95,9 +99,7 @@ const QuotationBottomSheet: React.FC<QuotationBottomSheetProps> = ({
           >
             <View style={styles.header}>
               <Text style={styles.title}>Your Quotation</Text>
-              <Pressable
-                onPress={handleClose}
-              >
+              <Pressable onPress={handleClose}>
                 <FontAwesomeIcon
                   icon={faClose}
                   color={Colors(theme).primary}
@@ -117,14 +119,18 @@ const QuotationBottomSheet: React.FC<QuotationBottomSheetProps> = ({
               <ListItem
                 title="Your Quote"
                 leftIcon={faQuoteLeft}
+                rightContent
                 content={state.quotation === "" ? "" : "Rs. " + state.quotation}
                 onAction={() => {
                   setIsQuotationModalVisible(true);
                 }}
               />
               <ListItem
-                content={state.timeline ? state.timeline.toLocaleDateString() : ""}
+                content={
+                  state.timeline ? state.timeline.toLocaleDateString() : ""
+                }
                 leftIcon={faPaperclip}
+                rightContent
                 onAction={() => setIsTimelineModalVisible(true)}
                 title="Timeline"
               />
@@ -161,44 +167,45 @@ const QuotationBottomSheet: React.FC<QuotationBottomSheetProps> = ({
 
 export default QuotationBottomSheet;
 
-const stylesFn = (theme: Theme) => StyleSheet.create({
-  overlay: {
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    flex: 1,
-    justifyContent: 'center',
-  },
-  modal: {
-    backgroundColor: Colors(theme).card,
-    borderRadius: 12,
-    gap: 16,
-    maxWidth: 400,
-    padding: 20,
-    width: '90%',
-  },
-  header: {
-    alignItems: 'center',
-    backgroundColor: Colors(theme).card,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 8,
-  },
-  input: {
-    backgroundColor: Colors(theme).card,
-    borderColor: Colors(theme).primary,
-    textAlignVertical: 'top',
-  },
-  buttonContainer: {
-    backgroundColor: Colors(theme).card,
-    flexDirection: 'row',
-    gap: 8,
-    justifyContent: 'flex-end',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: '600',
-  },
-  subtitle: {
-    color: Colors(theme).gray100,
-  },
-});
+const stylesFn = (theme: Theme) =>
+  StyleSheet.create({
+    overlay: {
+      alignItems: "center",
+      backgroundColor: "rgba(0, 0, 0, 0.5)",
+      flex: 1,
+      justifyContent: "center",
+    },
+    modal: {
+      backgroundColor: Colors(theme).card,
+      borderRadius: 12,
+      gap: 16,
+      maxWidth: 400,
+      padding: 20,
+      width: "90%",
+    },
+    header: {
+      alignItems: "center",
+      backgroundColor: Colors(theme).card,
+      flexDirection: "row",
+      justifyContent: "space-between",
+      marginBottom: 8,
+    },
+    input: {
+      backgroundColor: Colors(theme).card,
+      borderColor: Colors(theme).primary,
+      textAlignVertical: "top",
+    },
+    buttonContainer: {
+      backgroundColor: Colors(theme).card,
+      flexDirection: "row",
+      gap: 8,
+      justifyContent: "flex-end",
+    },
+    title: {
+      fontSize: 20,
+      fontWeight: "600",
+    },
+    subtitle: {
+      color: Colors(theme).gray100,
+    },
+  });

@@ -116,6 +116,7 @@ const ReviseQuotationModal: FC<ReviseQuotationModalProps> = ({
         <ListItem
           title="Your Quote"
           leftIcon={faQuoteLeft}
+          rightContent
           content={quotation === "" ? "" : "Rs. " + quotation}
           onAction={() => {
             onDismiss();
@@ -133,6 +134,7 @@ const ReviseQuotationModal: FC<ReviseQuotationModalProps> = ({
         <ListItem
           title="Timeline"
           leftIcon={faPaperclip}
+          rightContent
           content={timeline ? timeline.toLocaleDateString() : ""}
           onAction={() => setShowDatePicker(true)}
         />

@@ -14,6 +14,8 @@ import {
   faCheckCircle,
   faCoins,
   faDollar,
+  faDollarSign,
+  faHouseLaptop,
   faMap,
   faStar,
   faStarHalfStroke,
@@ -498,11 +500,11 @@ const CollborationDetailsContent = (
                   ? "Paid"
                   : "Unpaid"
               }
-              chipIcon={faDollar}
+              chipIcon={faDollarSign}
             />
             <ChipCard
               chipText={props.collaborationDetail.location.type}
-              chipIcon={faMap}
+              chipIcon={faHouseLaptop}
             />
             <ChipCard
               chipText={
