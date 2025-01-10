@@ -17,8 +17,6 @@ import TextInput from "@/components/ui/text-input";
 
 const Question: React.FC = () => {
   const theme = useTheme();
-  const navigation = useRouter();
-  const reactNavigation = useNavigation();
 
   const {
     title,

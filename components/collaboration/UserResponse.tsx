@@ -74,17 +74,13 @@ const UserResponse: FC<UserResponseProps> = ({
           <Button
             mode="contained"
             onPress={() => {
-              try {
-                router.push({
-                  //@ts-ignore
-                  pathname: `/edit-application/${application?.id}`,
-                  params: {
-                    collaborationId: application?.collaborationId,
-                  },
-                });
-              } catch (e) {
-                console.log(e);
-              }
+              router.push({
+                //@ts-ignore
+                pathname: `/edit-application/${application?.id}`,
+                params: {
+                  collaborationId: application?.collaborationId,
+                },
+              });
             }}
           >
             Edit
