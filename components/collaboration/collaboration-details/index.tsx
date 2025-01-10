@@ -81,31 +81,30 @@ const CollaborationDetails: React.FC<CollaborationDetailsProps> = ({
 
       setTotalApplications(applicationsData.length);
 
-      if (!user || !user.id) return;
+      if (user) {
+        const hasApplied = collectionGroup(FirestoreDB, "applications");
 
-      const hasApplied = collectionGroup(FirestoreDB, "applications");
-      if (!user || !user.id) return;
+        const hasAppliedQuery = query(
+          hasApplied,
+          where("userId", "==", user?.id),
+          where("collaborationId", "==", pageID)
+        );
 
-      const hasAppliedQuery = query(
-        hasApplied,
-        where("userId", "==", user?.id),
-        where("collaborationId", "==", pageID)
-      );
+        // Use getDocs for queries, not getDoc
+        const hasAppliedSnapshot = await getDocs(hasAppliedQuery);
+        const hasAppliedData = hasAppliedSnapshot.docs.map((doc) => {
+          return {
+            id: doc.id,
+            ...doc.data(),
+          };
+        });
 
-      // Use getDocs for queries, not getDoc
-      const hasAppliedSnapshot = await getDocs(hasAppliedQuery);
-      const hasAppliedData = hasAppliedSnapshot.docs.map((doc) => {
-        return {
-          id: doc.id,
-          ...doc.data(),
-        };
-      });
+        setHasApplied(hasAppliedData.length > 0);
+        setApplication(hasAppliedData[0]);
 
-      setHasApplied(hasAppliedData.length > 0);
-      setApplication(hasAppliedData[0]);
-
-      if (hasAppliedData.length > 0) {
-        setCardTypeDetails("application");
+        if (hasAppliedData.length > 0) {
+          setCardTypeDetails("application");
+        }
       }
 
       setCollaboration({

@@ -7,13 +7,15 @@ import Button from "@/components/ui/button";
 import Colors from "@/constants/Colors";
 import AppLayout from "@/layouts/app-layout";
 import DownloadAppModal from "@/components/modals/DownloadAppModal";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { Platform } from "react-native";
 import { useBreakpoints } from "@/hooks";
 import CollaborationDetails from "@/components/collaboration/collaboration-details";
 import AuthModal from "@/components/modals/AuthModal";
 import { useAuthContext } from "@/contexts";
+import { AuthApp } from "@/utils/auth";
+import { signInAnonymously } from "firebase/auth";
 
 const CollaborationDetailsScreen = () => {
   const {
@@ -34,15 +36,21 @@ const CollaborationDetailsScreen = () => {
     user,
   } = useAuthContext();
 
-  useEffect(() => {
+  const renderBottomSheet = useCallback(() => {
     if (Platform.OS === "web" && !lg) {
       bottomSheetModalRef.current?.present();
     }
   }, []);
 
   useEffect(() => {
+    renderBottomSheet();
+  }, []);
+
+  useEffect(() => {
     if (user) {
       router.replace(`/collaboration-details/${collaborationId}`);
+    } else {
+      signInAnonymously(AuthApp);
     }
   }, [user]);
 
