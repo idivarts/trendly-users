@@ -4,18 +4,22 @@ import stylesFn from "@/styles/button/Button.styles";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
-import { Pressable, PressableProps, StyleProp, ViewStyle } from "react-native";
+import { Pressable, PressableProps, StyleProp, TextStyle, ViewStyle } from "react-native";
 
 interface SocialButtonProps extends PressableProps {
   customStyles?: StyleProp<ViewStyle>;
   icon: IconProp;
+  iconColor?: string;
   label: string;
+  labelStyles?: StyleProp<TextStyle>;
 }
 
 const SocialButton: React.FC<SocialButtonProps> = ({
   customStyles,
   icon,
+  iconColor,
   label,
+  labelStyles,
   ...props
 }) => {
   const theme = useTheme();
@@ -32,10 +36,17 @@ const SocialButton: React.FC<SocialButtonProps> = ({
       <FontAwesomeIcon
         icon={icon}
         size={24}
-        color={Colors(theme).text}
+        color={iconColor ? iconColor : Colors(theme).text}
         style={styles.socialButtonIcon}
       />
-      <Text style={styles.socialButtonText}>{label}</Text>
+      <Text
+        style={[
+          styles.socialButtonText,
+          labelStyles,
+        ]}
+      >
+        {label}
+      </Text>
     </Pressable>
   );
 };
