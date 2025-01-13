@@ -245,6 +245,20 @@ const GalleryScreen = () => {
             onPress={() => handleSelectItem(item)}
           />
         </View>
+        {item.mediaType === "video" ? (
+          <View
+            style={{
+              position: "absolute",
+              bottom: 2,
+              left: 2,
+              backgroundColor: Colors(theme).white,
+              padding: 4,
+              borderRadius: 4,
+            }}
+          >
+            <Text>{item.duration}</Text>
+          </View>
+        ) : null}
       </Surface>
     </Pressable>
   );
@@ -356,6 +370,7 @@ const GalleryScreen = () => {
               <Pressable
                 onPress={() => {
                   const attachment = attachmentFiltered?.[index];
+                  handleSelectProfileItem(item);
                 }}
                 style={styles.itemWrapper}
               >

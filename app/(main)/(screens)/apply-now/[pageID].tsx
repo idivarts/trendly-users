@@ -478,13 +478,46 @@ const ApplyScreen = () => {
         </View>
       </ScrollView>
       {showDatePicker && (
-        <DateTimePicker
-          value={timelineData || new Date()} // Use the selected date or current date
-          mode="date" // Show the date picker
-          display="spinner" // Use spinner for iOS
-          onChange={onDateChange} // Handle date changes
-          themeVariant={theme.dark ? "dark" : "light"} // Use dark theme if
-        />
+        <View
+          style={{
+            position: "absolute",
+            bottom: 0,
+            width: "100%",
+            backgroundColor: theme.colors.background,
+          }}
+        >
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              padding: 10,
+            }}
+          >
+            <Button onPress={() => setShowDatePicker(false)}>Cancel</Button>
+            <Button
+              onPress={() => {
+                if (!timelineData) {
+                  setTimelineData(new Date());
+                }
+                setShowDatePicker(false);
+              }}
+            >
+              Done
+            </Button>
+          </View>
+          <DateTimePicker
+            value={timelineData || new Date()}
+            mode="date"
+            display={Platform.OS === "ios" ? "spinner" : "default"}
+            onChange={(event, selectedDate) => {
+              if (selectedDate) {
+                setTimelineData(selectedDate);
+              }
+            }}
+            themeVariant={theme.dark ? "dark" : "light"}
+            minimumDate={new Date()}
+          />
+        </View>
       )}
     </AppLayout>
   );

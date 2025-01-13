@@ -2,7 +2,7 @@ import AppLayout from "@/layouts/app-layout";
 import { View, Text, FlatList, Platform } from "react-native";
 import InfluencerCard from "@/components/InfluencerCard";
 import { router, useLocalSearchParams } from "expo-router";
-import { Button } from "react-native-paper";
+import { Button, Card } from "react-native-paper";
 import { FirestoreDB } from "@/utils/firestore";
 import { collection, doc, setDoc } from "firebase/firestore";
 import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
@@ -11,9 +11,18 @@ import ScreenHeader from "@/components/ui/screen-header";
 import { processRawAttachment } from "@/utils/attachments";
 import { useAuthContext } from "@/contexts";
 import { useBreakpoints } from "@/hooks";
+import { CardHeader } from "@/components/collaboration/card-components/secondary/card-header";
+import { Attachment } from "@/shared-libs/firestore/trendly-pro/constants/attachment";
+import { useTheme } from "@react-navigation/native";
+import Carousel from "@/shared-uis/components/carousel/carousel";
+import { CardActions } from "@/components/collaboration/card-components/secondary/card-actions";
+import { CardDescription } from "@/components/collaboration/card-components/secondary/card-description";
+import { CardFooter } from "@/components/collaboration/card-components/secondary/card-footer";
+import { convertToKUnits } from "@/utils/conversion";
 
 const Preview = () => {
   const params = useLocalSearchParams();
+  const theme = useTheme();
   const pageID = Array.isArray(params.pageID)
     ? params.pageID[0]
     : params.pageID;
@@ -142,14 +151,16 @@ const Preview = () => {
 
       // Application Id as userId
       const applicantDocRef = doc(applicantColRef, user?.id);
-      await setDoc(applicantDocRef, applicantData).then(() => {
-        setErrorMessage("Application submitted successfully");
-        setTimeout(() => {
-          router.navigate("/collaborations");
-        }, 1000); // Give user time to see success message
-      }).catch((e) => {
-        setErrorMessage("Failed to submit application");
-      });
+      await setDoc(applicantDocRef, applicantData)
+        .then(() => {
+          setErrorMessage("Application submitted successfully");
+          setTimeout(() => {
+            router.navigate("/collaborations");
+          }, 1000); // Give user time to see success message
+        })
+        .catch((e) => {
+          setErrorMessage("Failed to submit application");
+        });
     } catch (e) {
       console.error(e);
       setErrorMessage("Error submitting application");
@@ -165,24 +176,36 @@ const Preview = () => {
         data={[1]}
         renderItem={() => {
           return (
-            <InfluencerCard
-              ToggleModal={() => { }}
-              type="influencer"
-              influencer={{
-                //@ts-ignore
-                bio: "",
-                followers: 100,
-                name: user?.name || "John Doe",
-                profilePic:
-                  user?.profileImage || "https://randomuser.me/api/portraits",
-                handle: user?.email?.split("@")[0] || "john_doe",
-                jobsCompleted: 10,
-                rating: 5,
-                media: processedAttachments, // Using processed attachments
-                reach: 1000,
-                successRate: 100,
+            <Card
+              style={{
+                paddingVertical: 16,
               }}
-            />
+            >
+              <CardHeader
+                avatar={user?.profileImage || ""}
+                handle={user?.socials?.[0]}
+                isVerified={user?.isVerified}
+                name={user?.name || ""}
+              />
+              <Carousel
+                data={rawAttachments.map((attachment: Attachment) =>
+                  processRawAttachment(attachment)
+                )}
+                theme={theme}
+              />
+              <CardActions
+                metrics={{
+                  followers: 0,
+                  reach: 0,
+                  rating: 0,
+                }}
+              />
+              <CardDescription text={note} />
+              <CardFooter
+                quote={convertToKUnits(Number(quotation)) as string}
+                timeline={new Date(timeline).toLocaleDateString("en-US")}
+              />
+            </Card>
           );
         }}
         ListFooterComponent={
