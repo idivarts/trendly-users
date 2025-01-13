@@ -195,9 +195,9 @@ const Preview = () => {
               />
               <CardActions
                 metrics={{
-                  followers: 0,
-                  reach: 0,
-                  rating: 0,
+                  followers: user?.backend?.followers || 0,
+                  reach: user?.backend?.reach || 0,
+                  rating: user?.backend?.rating || 0,
                 }}
               />
               <CardDescription text={note} />
