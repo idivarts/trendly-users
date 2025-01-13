@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { View, Image, ScrollView } from "react-native";
+import { View, ScrollView } from "react-native";
 import { Text, Card, Portal } from "react-native-paper";
 import { useTheme } from "@react-navigation/native";
 import { stylesFn } from "@/styles/CollaborationDetails.styles";
 import Colors from "@/constants/Colors";
 import Carousel from "@/shared-uis/components/carousel/carousel";
 import { processRawAttachment } from "@/utils/attachments";
-import { formatDistanceToNow } from "date-fns";
 import {
   IApplications,
   ICollaboration,
@@ -24,8 +23,8 @@ import { useLocalSearchParams } from "expo-router";
 import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
 import { doc, getDoc } from "firebase/firestore";
 import { FirestoreDB } from "@/utils/firestore";
-import { imageUrl } from "@/utils/url";
 import ImageComponent from "@/shared-uis/components/image-component";
+import { formatTimeToNow } from "@/utils/date";
 
 export interface Application extends IApplications {
   id: string;
@@ -115,9 +114,7 @@ const ContractDetailsContent = (props: CollaborationDetailsContentProps) => {
                     paddingRight: 8,
                   }}
                 >
-                  {formatDistanceToNow(props.collaborationDetail.timeStamp, {
-                    addSuffix: true,
-                  })}
+                  {formatTimeToNow(props.collaborationDetail.timeStamp)}
                 </Text>
               ) : null}
             </View>
@@ -156,7 +153,7 @@ const ContractDetailsContent = (props: CollaborationDetailsContentProps) => {
             influencerQuestions={
               props?.collaborationDetail?.questionsToInfluencers
             }
-            setConfirmationModalVisible={() => {}}
+            setConfirmationModalVisible={() => { }}
           />
           <View
             style={{

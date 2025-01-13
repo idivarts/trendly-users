@@ -116,7 +116,11 @@ const ContractDetailsScreen = () => {
         title="Collaboration Status"
         rightAction
         action={() => {
-          router.navigate("/(tabs)/contracts");
+          if (router.canGoBack()) {
+            router.back();
+          } else {
+            router.navigate("/(tabs)/contracts");
+          }
         }}
         rightActionButton={
           <IconButton
