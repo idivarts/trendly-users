@@ -1,6 +1,6 @@
 import { View } from "@/components/theme/Themed";
 import ScreenHeader from "@/components/ui/screen-header";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Pressable } from "react-native";
 import { Channel as ChannelType } from "stream-chat";
@@ -25,6 +25,7 @@ const ChannelNative = () => {
   const { getContractById } = useContractContext();
   const { getBrandById } = useBrandContext();
 
+  const router = useRouter();
   const theme = useTheme();
 
   const fetchBrand = async (
@@ -86,7 +87,9 @@ const ChannelNative = () => {
           <Pressable
             style={{
               marginRight: 8,
-              marginLeft: 12,
+            }}
+            onPress={() => {
+              router.push(`/contract-details/${contract.streamChannelId}`);
             }}
           >
             <Avatar.Image
