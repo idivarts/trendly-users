@@ -25,7 +25,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import Colors from "@/constants/Colors";
 import Carousel from "@/shared-uis/components/carousel/carousel";
 import { processRawAttachment } from "@/utils/attachments";
-import { formatDistanceToNow } from "date-fns";
 import { truncateText } from "@/utils/profile";
 import ChipCard from "../card-components/ChipComponent";
 import {
@@ -46,6 +45,7 @@ import { imageUrl } from "@/utils/url";
 import ImageComponent from "@/shared-uis/components/image-component";
 import AuthModal from "@/components/modals/AuthModal";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { formatTimeToNow } from "@/utils/date";
 
 interface ApplicationData extends IApplications {
   id: string;
@@ -266,9 +266,7 @@ const CollborationDetailsContent = (
                     paddingRight: 8,
                   }}
                 >
-                  {formatDistanceToNow(props.collaborationDetail.timeStamp, {
-                    addSuffix: true,
-                  })}
+                  {formatTimeToNow(props.collaborationDetail.timeStamp)}
                 </Text>
               ) : null}
             </View>
@@ -521,19 +519,19 @@ const CollborationDetailsContent = (
             </Text>
             {props.collaborationDetail.promotionType ===
               PromotionType.PAID_COLLAB && (
-              <Text
-                style={{
-                  fontSize: 16,
-                  color: Colors(theme).text,
-                }}
-              >
-                Budget:
-                {props.collaborationDetail?.budget?.min ===
-                props.collaborationDetail?.budget?.max
-                  ? `$${props.collaborationDetail?.budget?.min}`
-                  : `$${props.collaborationDetail?.budget?.min} - $${props.collaborationDetail?.budget?.max}`}
-              </Text>
-            )}
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: Colors(theme).text,
+                  }}
+                >
+                  Budget:
+                  {props.collaborationDetail?.budget?.min ===
+                    props.collaborationDetail?.budget?.max
+                    ? `$${props.collaborationDetail?.budget?.min}`
+                    : `$${props.collaborationDetail?.budget?.min} - $${props.collaborationDetail?.budget?.max}`}
+                </Text>
+              )}
           </View>
           {/* chips */}
           <View
@@ -546,7 +544,7 @@ const CollborationDetailsContent = (
             <ChipCard
               chipText={
                 props.collaborationDetail.promotionType ===
-                PromotionType.PAID_COLLAB
+                  PromotionType.PAID_COLLAB
                   ? "Paid"
                   : "Unpaid"
               }
@@ -560,18 +558,18 @@ const CollborationDetailsContent = (
               chipText={
                 props.collaborationDetail.platform.length > 1
                   ? props.collaborationDetail.platform[0] +
-                    "+" +
-                    (props.collaborationDetail.platform.length - 1)
+                  "+" +
+                  (props.collaborationDetail.platform.length - 1)
                   : props.collaborationDetail.platform[0]
               }
               chipIcon={
                 props.collaborationDetail.platform[0] === "Instagram"
                   ? faInstagram
                   : props.collaborationDetail.platform[0] === "Facebook"
-                  ? faFacebook
-                  : props.collaborationDetail.platform[0] === "Youtube"
-                  ? faYoutube
-                  : faInstagram
+                    ? faFacebook
+                    : props.collaborationDetail.platform[0] === "Youtube"
+                      ? faYoutube
+                      : faInstagram
               }
             />
           </View>
@@ -618,8 +616,8 @@ const CollborationDetailsContent = (
                   latitudeDelta: 0.0922,
                   longitudeDelta: 0.042,
                 }}
-                onMapRegionChange={(region) => {}}
-                onFormattedAddressChange={(address) => {}}
+                onMapRegionChange={(region) => { }}
+                onFormattedAddressChange={(address) => { }}
               />
               <Text
                 style={{

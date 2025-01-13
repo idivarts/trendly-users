@@ -5,13 +5,13 @@ import { useTheme } from "@react-navigation/native";
 import { stylesFn } from "@/styles/CollaborationCard.styles";
 import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { router } from "expo-router";
-import { formatDistanceToNow } from "date-fns";
 import Colors from "@/constants/Colors";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
   faCircleExclamation,
   faEllipsis,
 } from "@fortawesome/free-solid-svg-icons";
+import { formatTimeToNow } from "@/utils/date";
 
 export interface CollaborationAdCardProps extends ICollaboration {
   name: string;
@@ -84,7 +84,7 @@ const JobCard = (props: CollaborationAdCardProps) => {
         {/* Posted Date and Cost */}
         <View style={styles.infoRow}>
           <Text style={styles.infoText}>
-            Posted: {formatDistanceToNow(datePosted, { addSuffix: true })}
+            Posted: {formatTimeToNow(datePosted)}
           </Text>
           <Text style={styles.infoText}>
             Cost: Rs {props.budget ? props.budget.min : ""}-
@@ -107,19 +107,19 @@ const JobCard = (props: CollaborationAdCardProps) => {
               icon={
                 props.paymentVerified
                   ? () => (
-                      <FontAwesomeIcon
-                        color="#28a745"
-                        icon={faCircleExclamation}
-                        size={16}
-                      />
-                    )
+                    <FontAwesomeIcon
+                      color="#28a745"
+                      icon={faCircleExclamation}
+                      size={16}
+                    />
+                  )
                   : () => (
-                      <FontAwesomeIcon
-                        color="#dc3545"
-                        icon={faCircleExclamation}
-                        size={16}
-                      />
-                    )
+                    <FontAwesomeIcon
+                      color="#dc3545"
+                      icon={faCircleExclamation}
+                      size={16}
+                    />
+                  )
               }
               mode={props.paymentVerified ? "outlined" : "flat"}
               selectedColor={props.paymentVerified ? "#28a745" : "#dc3545"}
