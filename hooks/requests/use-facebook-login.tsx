@@ -1,8 +1,20 @@
 import React, { useEffect } from "react";
 import axios from "axios";
 import * as AuthSession from "expo-auth-session";
-import { collection, doc, Firestore, getDoc, setDoc, updateDoc } from "firebase/firestore";
-import { Auth, FacebookAuthProvider, getAdditionalUserInfo, signInWithCredential } from "firebase/auth";
+import {
+  collection,
+  doc,
+  Firestore,
+  getDoc,
+  setDoc,
+  updateDoc,
+} from "firebase/firestore";
+import {
+  Auth,
+  FacebookAuthProvider,
+  getAdditionalUserInfo,
+  signInWithCredential,
+} from "firebase/auth";
 
 import { useAuthContext } from "@/contexts";
 import { FB_APP_ID } from "@/constants/Facebook";
@@ -12,43 +24,39 @@ import Toaster from "@/shared-uis/components/toaster/Toaster";
 interface useFacebookLoginType {
   facebookLogin: () => void;
   promptAsyncFacebook: (
-    options?: AuthSession.AuthRequestPromptOptions,
+    options?: AuthSession.AuthRequestPromptOptions
   ) => Promise<AuthSession.AuthSessionResult>;
-  requestFacebook: AuthSession.AuthRequest | null
-};
+  requestFacebook: AuthSession.AuthRequest | null;
+}
 
 const useFacebookLogin = (
   auth: Auth,
   firestore: Firestore,
   initialUserData: Partial<IUsers>,
   setLoading: React.Dispatch<React.SetStateAction<boolean>>,
-  setError: React.Dispatch<React.SetStateAction<string | null>>,
+  setError: React.Dispatch<React.SetStateAction<string | null>>
 ): useFacebookLoginType => {
-  const {
-    firebaseSignIn,
-    firebaseSignUp
-  } = useAuthContext();
+  const { firebaseSignIn, firebaseSignUp } = useAuthContext();
 
   const redirectUri = AuthSession.makeRedirectUri({
     native: `fb${FB_APP_ID}://authorize`,
   });
 
-  const [requestFacebook, responseFacebook, promptAsyncFacebook] = AuthSession.useAuthRequest(
-    {
-      clientId: FB_APP_ID,
-      redirectUri,
-      responseType: AuthSession.ResponseType.Token,
-      scopes: [
-        "public_profile",
-        "email",
-        "pages_show_list",
-        "pages_read_engagement",
-        "facebook_basic",
-        "facebook_manage_messages",
-      ],
-    },
-    { authorizationEndpoint: "https://www.facebook.com/v10.0/dialog/oauth" }
-  );
+  const [requestFacebook, responseFacebook, promptAsyncFacebook] =
+    AuthSession.useAuthRequest(
+      {
+        clientId: FB_APP_ID,
+        redirectUri,
+        responseType: AuthSession.ResponseType.Token,
+        scopes: [
+          "public_profile",
+          "email",
+          "pages_show_list",
+          "pages_read_engagement",
+        ],
+      },
+      { authorizationEndpoint: "https://www.facebook.com/v10.0/dialog/oauth" }
+    );
 
   const facebookLogin = async () => {
     await promptAsyncFacebook();
@@ -183,7 +191,7 @@ const useFacebookLogin = (
     facebookLogin,
     promptAsyncFacebook,
     requestFacebook,
-  }
+  };
 };
 
 export default useFacebookLogin;

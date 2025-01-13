@@ -468,7 +468,11 @@ const CollborationDetailsContent = (
                       style={{
                         flexBasis: 1,
                         flexGrow: 1,
+                        backgroundColor: Colors(theme).background,
+                        borderColor: Colors(theme).primary,
+                        borderWidth: 0.3,
                       }}
+                      textColor={Colors(theme).text}
                       onPress={() => {
                         Linking.openURL(item.link);
                       }}
@@ -541,6 +545,7 @@ const CollborationDetailsContent = (
               flexDirection: "row",
               flexWrap: "wrap",
               width: "100%",
+              rowGap: 16,
             }}
           >
             <ChipCard
@@ -556,46 +561,31 @@ const CollborationDetailsContent = (
               chipText={props.collaborationDetail.location.type}
               chipIcon={faHouseLaptop}
             />
-            <ChipCard
-              chipText={
-                props.collaborationDetail.platform.length > 1
-                  ? props.collaborationDetail.platform[0] +
-                    "+" +
-                    (props.collaborationDetail.platform.length - 1)
-                  : props.collaborationDetail.platform[0]
-              }
-              chipIcon={
-                props.collaborationDetail.platform[0] === "Instagram"
-                  ? faInstagram
-                  : props.collaborationDetail.platform[0] === "Facebook"
-                  ? faFacebook
-                  : props.collaborationDetail.platform[0] === "Youtube"
-                  ? faYoutube
-                  : faInstagram
-              }
-            />
+
+            {props.collaborationDetail.platform &&
+              props.collaborationDetail.platform.map((content, index) => (
+                <ChipCard
+                  key={index}
+                  chipText={content}
+                  chipIcon={
+                    content === "Instagram"
+                      ? faInstagram
+                      : content === "Facebook"
+                      ? faFacebook
+                      : content === "Youtube"
+                      ? faYoutube
+                      : faInstagram
+                  }
+                />
+              ))}
+
+            {props.collaborationDetail.contentFormat &&
+              props.collaborationDetail.contentFormat.map((content, index) => (
+                <ChipCard key={index} chipText={content} chipIcon={faCoins} />
+              ))}
           </View>
-          {props.collaborationDetail.contentFormat &&
-            props.collaborationDetail.contentFormat.length > 0 && (
-              <View
-                style={{
-                  flexDirection: "row",
-                  flexWrap: "wrap",
-                  width: "100%",
-                }}
-              >
-                {props.collaborationDetail.contentFormat.map(
-                  (content, index) => (
-                    <ChipCard
-                      key={index}
-                      chipText={content}
-                      chipIcon={faCoins}
-                    />
-                  )
-                )}
-              </View>
-            )}
-          {props.collaborationDetail.location.type === "Physical" && (
+
+          {props.collaborationDetail.location.type === "On-Site" && (
             <View
               style={{
                 width: "100%",
