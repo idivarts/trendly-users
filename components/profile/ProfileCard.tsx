@@ -1,6 +1,6 @@
 import { Platform, Pressable } from "react-native";
 import { Text, View } from "../theme/Themed";
-import { Avatar, Button } from "react-native-paper";
+import { Button } from "react-native-paper";
 import stylesFn from "@/styles/profile/ProfileCard.styles";
 import { User } from "@/types/User";
 import { PLACEHOLDER_PERSON_IMAGE } from "@/constants/Placeholder";
@@ -9,10 +9,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faChevronRight, faPen } from "@fortawesome/free-solid-svg-icons";
 import Colors from "@/constants/Colors";
 import ImageUploadModal from "../ui/modal/ImageUploadModal";
-import { useAuthContext, useFirebaseStorageContext } from "@/contexts";
+import { useAuthContext } from "@/contexts";
 import { useEffect, useState } from "react";
 import { ResizeMode, Video } from "expo-av";
 import ImageComponent from "@/shared-uis/components/image-component";
+import { useAWSContext } from "@/contexts/aws-context.provider";
 
 interface ProfileCardProps {
   item: User;
@@ -23,7 +24,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ item, onPress }) => {
   const theme = useTheme();
   const styles = stylesFn(theme);
 
-  const { uploadImageBytes } = useFirebaseStorageContext();
+  const { uploadFileUri } = useAWSContext();
   const { updateUser } = useAuthContext();
 
   const [isSaving, setIsSaving] = useState(false);
@@ -35,18 +36,20 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ item, onPress }) => {
   const handleSave = async () => {
     setIsSaving(true);
 
-    let uploadedImage: string | null = null;
+    let imageUrl = '';
 
     if (capturedImage) {
-      const blob = await fetch(capturedImage).then((r) => r.blob());
-      uploadedImage = await uploadImageBytes(
-        blob,
-        `users/${item.id}-profile-image`
-      );
+      const uploadedImage = await uploadFileUri({
+        id: capturedImage,
+        localUri: capturedImage,
+        uri: capturedImage,
+        type: "image",
+      });
+      imageUrl = uploadedImage.imageUrl;
     }
 
     await updateUser(item.id, {
-      profileImage: uploadedImage || item.profileImage,
+      profileImage: imageUrl || item.profileImage,
     });
 
     setIsSaving(false);
