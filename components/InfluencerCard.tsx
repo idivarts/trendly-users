@@ -27,9 +27,18 @@ import CarouselNative from "./ui/carousel/carousel";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faStar } from "@fortawesome/free-regular-svg-icons";
 import { convertToKUnits } from "@/utils/conversion";
-import { faArrowTrendUp, faCheck, faEllipsis, faMessage, faPeopleGroup, faPlus } from "@fortawesome/free-solid-svg-icons";
+import {
+  faArrowTrendUp,
+  faCheck,
+  faEllipsis,
+  faMessage,
+  faPeopleGroup,
+  faPlus,
+} from "@fortawesome/free-solid-svg-icons";
 import Tag from "./ui/tag";
 import { MediaItem } from "./ui/carousel/render-media-item";
+import Carousel from "@/shared-uis/components/carousel/carousel";
+import ImageComponent from "@/shared-uis/components/image-component";
 
 const { width } = Dimensions.get("window");
 
@@ -98,7 +107,7 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
   const onImagePress = (data: MediaItem) => {
     setSelectedImage(data.url);
     setIsZoomed(true);
-  }
+  };
 
   useEffect(() => {
     // we need to set a timer before loading the media
@@ -119,17 +128,19 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
 
   return (
     <>
-      <Card
-        style={styles.card}
-      >
+      <Card style={styles.card}>
         <View style={styles.header}>
-          <Avatar.Image size={50} source={{ uri: influencer.profilePic }} />
+          <ImageComponent
+            size="small"
+            url={influencer.profilePic}
+            altText="Profile Picture"
+            initials={influencer.name}
+          />
           <View style={styles.nameContainer}>
             <Text style={styles.name}>{influencer.name}</Text>
             <Text style={styles.handle}>{influencer.handle}</Text>
           </View>
-          {
-            props.type === "invitation" &&
+          {props.type === "invitation" &&
             (props.alreadyInvited ? (
               <Tag
                 icon={() => (
@@ -159,8 +170,7 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
               >
                 Invite
               </Tag>
-            ))
-          }
+            ))}
           <Pressable
             onPress={() => {
               props.ToggleModal();
@@ -174,20 +184,14 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
           </Pressable>
         </View>
 
-        <CarouselNative
-          data={influencer.media}
-          onImagePress={onImagePress}
-        />
-
+        <Carousel data={influencer.media} theme={theme} />
         <TouchableOpacity onPress={() => setBioExpanded(!bioExpanded)}>
           <Text numberOfLines={bioExpanded ? undefined : 2} style={styles.bio}>
             {influencer.bio}
           </Text>
         </TouchableOpacity>
 
-        <View
-          style={styles.content}
-        >
+        <View style={styles.content}>
           <View style={styles.stats}>
             <View style={styles.statsContainer}>
               <View style={styles.statItem}>
@@ -216,9 +220,7 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
                   color={Colors(theme).primary}
                   size={20}
                 />
-                <Text style={styles.statsText}>
-                  {influencer.rating}
-                </Text>
+                <Text style={styles.statsText}>{influencer.rating}</Text>
               </View>
             </View>
             <View style={styles.statItem}>
@@ -229,19 +231,6 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
               />
             </View>
           </View>
-        </View>
-
-        <View style={styles.content}>
-          <TouchableOpacity
-            onPress={() => {
-              console.log("View job history");
-            }}
-          >
-            <Text style={styles.jobHistory}>
-              {influencer.jobsCompleted} Jobs completed ({influencer.successRate}{" "}
-              success rate)
-            </Text>
-          </TouchableOpacity>
         </View>
       </Card>
 

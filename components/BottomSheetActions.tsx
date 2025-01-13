@@ -8,11 +8,11 @@ import { useAuthContext } from "@/contexts";
 
 interface BottomSheetActionsProps {
   cardType:
-  | "collaboration"
-  | "proposal"
-  | "invitation"
-  | "details"
-  | "pre-signin";
+    | "collaboration"
+    | "proposal"
+    | "invitation"
+    | "details"
+    | "pre-signin";
   cardId?: string;
   invitationId?: string | null;
   isVisible: boolean;
@@ -73,13 +73,6 @@ const BottomSheetActions = ({
                 handleClose();
               }}
             />
-            <List.Item
-              title="Report"
-              onPress={() => {
-                router.push("/report" as Href);
-                handleClose();
-              }}
-            />
           </List.Section>
         );
       case "proposal":
@@ -116,13 +109,6 @@ const BottomSheetActions = ({
               title="Apply Now"
               onPress={() => {
                 router.push(`/apply-now/${cardId}`);
-                handleClose();
-              }}
-            />
-            <List.Item
-              title="Report"
-              onPress={() => {
-                router.push("/report" as Href);
                 handleClose();
               }}
             />
