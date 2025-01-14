@@ -256,7 +256,9 @@ const GalleryScreen = () => {
               borderRadius: 4,
             }}
           >
-            <Text>{item.duration}</Text>
+            <Text>
+              {new Date(item.duration * 1000).toISOString().substr(14, 5)}
+            </Text>
           </View>
         ) : null}
       </Surface>
@@ -372,7 +374,9 @@ const GalleryScreen = () => {
                   const attachment = attachmentFiltered?.[index];
                   handleSelectProfileItem(item);
                 }}
-                style={styles.itemWrapper}
+                style={{
+                  margin: 4,
+                }}
               >
                 <Surface style={styles.itemContainer}>
                   <RenderMediaItem

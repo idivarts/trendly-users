@@ -4,7 +4,10 @@ import Colors from "@/constants/Colors";
 import stylesFn from "@/styles/profile/ProfileItemCard.styles";
 import { useTheme } from "@react-navigation/native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faCaretRight, faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCaretRight,
+  faChevronRight,
+} from "@fortawesome/free-solid-svg-icons";
 import { useAuthContext } from "@/contexts";
 import { COMPLETION_PERCENTAGE } from "@/constants/CompletionPercentage";
 
@@ -35,9 +38,9 @@ const ProfileItemCard: React.FC<ProfileItemCardProps> = ({ item, onPress }) => {
               <View
                 style={{
                   backgroundColor: Colors(theme).yellow,
-                  width: 20,
-                  height: 20,
-                  borderRadius: 40,
+                  width: 10,
+                  height: 10,
+                  borderRadius: 20,
                 }}
               ></View>
             )}

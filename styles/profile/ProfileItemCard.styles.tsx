@@ -19,6 +19,7 @@ const styles = (theme: Theme) =>
     textContainer: {
       flexDirection: "row",
       gap: 10,
+      alignItems: "center",
       flex: 1,
     },
     titleText: {
