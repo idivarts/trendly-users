@@ -113,7 +113,19 @@ const ListItem: React.FC<ContentItemProps> = ({
               fontSize: 18,
             }}
           >
-            {content}
+            {/* {content} */}
+            <List.Item
+              title={content}
+              style={{
+                paddingHorizontal: 0,
+                paddingVertical: 0,
+                marginVertical: 0,
+              }}
+              titleStyle={{
+                fontSize: 18,
+                color: Colors(theme).gray300,
+              }}
+            />
           </Text>
         )}
         {attachments && attachments.length > 0 ? (
@@ -124,8 +136,6 @@ const ListItem: React.FC<ContentItemProps> = ({
                 title={attachment.id || attachment.name}
                 description={attachment.type}
                 style={{
-                  paddingHorizontal: 0,
-                  paddingVertical: 0,
                   marginVertical: 0,
                 }}
                 left={(props) => <List.Icon {...props} icon="file" />}

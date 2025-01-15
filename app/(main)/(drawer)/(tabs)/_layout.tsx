@@ -130,12 +130,12 @@ const TabLayout = () => {
                 <View
                   style={{
                     backgroundColor: Colors(theme).yellow,
-                    width: 15,
-                    height: 15,
+                    width: 10,
+                    height: 10,
                     position: "absolute",
                     top: 5,
                     right: 20,
-                    borderRadius: 40,
+                    borderRadius: 20,
                   }}
                 />
               )}

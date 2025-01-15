@@ -73,13 +73,6 @@ const BottomSheetActions = ({
                 handleClose();
               }}
             />
-            <List.Item
-              title="Report"
-              onPress={() => {
-                router.push("/report" as Href);
-                handleClose();
-              }}
-            />
           </List.Section>
         );
       case "proposal":
@@ -116,13 +109,6 @@ const BottomSheetActions = ({
               title="Apply Now"
               onPress={() => {
                 router.push(`/apply-now/${cardId}`);
-                handleClose();
-              }}
-            />
-            <List.Item
-              title="Report"
-              onPress={() => {
-                router.push("/report" as Href);
                 handleClose();
               }}
             />

@@ -20,6 +20,9 @@ import ScreenHeader from "@/components/ui/screen-header";
 import { useAWSContext } from "@/contexts/aws-context.provider";
 import * as DocumentPicker from "expo-document-picker";
 import {
+  faClapperboard,
+  faClockRotateLeft,
+  faDollarSign,
   faLink,
   faLocationDot,
   faPaperclip,
@@ -41,6 +44,7 @@ import {
 } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import ContentItem from "@/components/basic-profile/edit-profile/ContentItem";
 import Toast from "react-native-toast-message";
+import { faCircleQuestion } from "@fortawesome/free-regular-svg-icons";
 
 const EditApplicationScreen = () => {
   const params = useLocalSearchParams();
@@ -281,8 +285,8 @@ const EditApplicationScreen = () => {
             file.type === "image"
               ? file.imageUrl
               : Platform.OS === "ios"
-              ? file.appleUrl
-              : file.playUrl,
+                ? file.appleUrl
+                : file.playUrl,
           type: file.type,
           imageUrl: file.imageUrl,
           playUrl: file.playUrl,
@@ -491,7 +495,7 @@ const EditApplicationScreen = () => {
                     color={
                       theme.dark ? Colors(theme).text : Colors(theme).primary
                     }
-                    icon={faPhotoFilm}
+                    icon={faClapperboard}
                     size={36}
                   />
                 )}
@@ -566,7 +570,7 @@ const EditApplicationScreen = () => {
           >
             <ListItem
               title="Your Quote"
-              leftIcon={faQuoteLeft}
+              leftIcon={faDollarSign}
               content={quotation === "" ? "Add now" : "Rs. " + quotation}
               rightContent={true}
               onAction={() => {
@@ -595,7 +599,7 @@ const EditApplicationScreen = () => {
             />
             <ListItem
               title="Timeline"
-              leftIcon={faPaperclip}
+              leftIcon={faClockRotateLeft}
               rightContent={true}
               content={
                 timelineData
@@ -620,7 +624,7 @@ const EditApplicationScreen = () => {
               <ListItem
                 key={index}
                 title={question}
-                leftIcon={faLink}
+                leftIcon={faCircleQuestion}
                 content={answers[index] || "Add now"}
                 onAction={() => {
                   router.push({
@@ -688,12 +692,46 @@ const EditApplicationScreen = () => {
         </View>
       </ScrollView>
       {showDatePicker && (
-        <DateTimePicker
-          value={timelineData || new Date()} // Use the selected date or current date
-          mode="date" // Show the date picker
-          display="spinner" // Use spinner for iOS
-          onChange={onDateChange} // Handle date changes
-        />
+        <View
+          style={{
+            position: "absolute",
+            bottom: 0,
+            width: "100%",
+            backgroundColor: theme.colors.background,
+          }}
+        >
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              padding: 10,
+            }}
+          >
+            <Button onPress={() => setShowDatePicker(false)}>Cancel</Button>
+            <Button
+              onPress={() => {
+                if (!timelineData) {
+                  setTimelineData(new Date());
+                }
+                setShowDatePicker(false);
+              }}
+            >
+              Done
+            </Button>
+          </View>
+          <DateTimePicker
+            value={timelineData || new Date()}
+            mode="date"
+            display={Platform.OS === "ios" ? "spinner" : "default"}
+            onChange={(event, selectedDate) => {
+              if (selectedDate) {
+                setTimelineData(selectedDate);
+              }
+            }}
+            themeVariant={theme.dark ? "dark" : "light"}
+            minimumDate={new Date()}
+          />
+        </View>
       )}
     </AppLayout>
   );
