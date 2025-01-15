@@ -12,7 +12,12 @@ import {
 import { router, useLocalSearchParams } from "expo-router";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useTheme } from "@react-navigation/native";
-import { faUpload } from "@fortawesome/free-solid-svg-icons";
+import {
+  faClapperboard,
+  faClockRotateLeft,
+  faDollarSign,
+  faUpload,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import * as DocumentPicker from "expo-document-picker";
 import ScreenHeader from "@/components/ui/screen-header";
@@ -38,6 +43,7 @@ import {
   ICollaboration,
 } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { FirestoreDB } from "@/utils/firestore";
+import { faCircleQuestion } from "@fortawesome/free-regular-svg-icons";
 
 const ApplyScreenWeb = () => {
   const params = useLocalSearchParams();
@@ -382,7 +388,7 @@ const ApplyScreenWeb = () => {
             <IconButton
               icon={() => (
                 <FontAwesomeIcon
-                  icon={faUpload}
+                  icon={faClapperboard}
                   size={20}
                   color={Colors(theme).text}
                 />
@@ -435,7 +441,7 @@ const ApplyScreenWeb = () => {
           <List.Section>
             <ListItem
               title="Your Quote"
-              leftIcon={faQuoteLeft}
+              leftIcon={faDollarSign}
               content={quotation === "" ? "Add now" : "Rs. " + quotation}
               rightContent={true}
               onAction={() => {
@@ -453,7 +459,7 @@ const ApplyScreenWeb = () => {
             />
             <ListItem
               title="Timeline"
-              leftIcon={faPaperclip}
+              leftIcon={faClockRotateLeft}
               rightContent={true}
               content=""
               onAction={() => setShowDatePicker(true)}
@@ -495,7 +501,7 @@ const ApplyScreenWeb = () => {
               <ListItem
                 key={index}
                 title={question}
-                leftIcon={faLink}
+                leftIcon={faCircleQuestion}
                 content={answers[index] || "Add now"}
                 onAction={() => {
                   handleModalOrInputPage({
