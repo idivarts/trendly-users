@@ -15,6 +15,15 @@ import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
 import { Avatar } from "react-native-paper";
 import { imageUrl } from "@/utils/url";
 
+import {
+  AttachButton,
+  AttachmentPickerSelectionBar,
+  AudioRecordingButton,
+  CommandsButton,
+  MoreOptionsButton,
+  SendButton,
+} from "./components";
+
 const ChannelNative = () => {
   const [channel, setChannel] = useState<ChannelType | null>(null);
   const [contract, setContract] = useState<IContracts | null>(null);
@@ -79,7 +88,15 @@ const ChannelNative = () => {
   }
 
   return (
-    <Channel channel={channel} audioRecordingEnabled>
+    <Channel
+      AttachButton={AttachButton}
+      audioRecordingEnabled
+      channel={channel}
+      CommandsButton={CommandsButton}
+      MoreOptionsButton={MoreOptionsButton}
+      SendButton={SendButton}
+      StartAudioRecordingButton={AudioRecordingButton}
+    >
       <ScreenHeader
         title={channel?.data?.name || 'Chat'}
         rightAction
@@ -109,7 +126,9 @@ const ChannelNative = () => {
         }}
       />
       <MessageList />
-      <MessageInput />
+      <MessageInput
+        AttachmentPickerSelectionBar={AttachmentPickerSelectionBar}
+      />
     </Channel>
   );
 }

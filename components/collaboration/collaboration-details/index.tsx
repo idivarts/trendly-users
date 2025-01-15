@@ -24,6 +24,7 @@ import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
 import { useIsFocused } from "@react-navigation/native";
 
 export interface CollaborationDetail extends ICollaboration {
+  id: string;
   brandDescription: string;
   brandName: string;
   paymentVerified: boolean;
@@ -108,6 +109,7 @@ const CollaborationDetails: React.FC<CollaborationDetailsProps> = ({
       }
 
       setCollaboration({
+        id: snapshot.id,
         ...data,
         brandDescription: brandData?.profile
           ? brandData?.profile?.about || ""
