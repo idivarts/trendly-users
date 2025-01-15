@@ -39,9 +39,8 @@ const useInstagramLogin = (
         redirectUri,
       },
       {
-        authorizationEndpoint: `${authUrl}?redirect_type=${
-          Platform.OS === "web" ? 2 : 3
-        }&`,
+        authorizationEndpoint: `${authUrl}?redirect_type=${Platform.OS === "web" ? 2 : 3
+          }&`,
       }
     );
 

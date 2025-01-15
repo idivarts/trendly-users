@@ -79,10 +79,10 @@ const CollaborationDetails: FC<CollaborationDetailsProps> = ({
                 content === "Instagram"
                   ? faInstagram
                   : content === "Facebook"
-                  ? faFacebook
-                  : content === "Youtube"
-                  ? faYoutube
-                  : faInstagram
+                    ? faFacebook
+                    : content === "Youtube"
+                      ? faYoutube
+                      : faInstagram
               }
             />
           ))}
@@ -95,8 +95,8 @@ const CollaborationDetails: FC<CollaborationDetailsProps> = ({
                 content === "Posts"
                   ? faPanorama
                   : content === "Reels"
-                  ? faFilm
-                  : faCoins
+                    ? faFilm
+                    : faCoins
               }
             />
           ))}

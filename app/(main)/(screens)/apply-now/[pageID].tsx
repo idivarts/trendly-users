@@ -197,8 +197,8 @@ const ApplyScreen = () => {
             file.type === "image"
               ? file.imageUrl
               : Platform.OS === "ios"
-              ? file.appleUrl
-              : file.playUrl,
+                ? file.appleUrl
+                : file.playUrl,
           type: file.type,
         },
       ]);
