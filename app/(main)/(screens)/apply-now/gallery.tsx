@@ -183,11 +183,23 @@ const GalleryScreen = () => {
     if (cameraRef.current) {
       const photo = await cameraRef.current.takePictureAsync();
       if (photo && photo.uri) {
-        await MediaLibrary.createAssetAsync(photo.uri);
-        fetchAssets();
-        setIsCameraVisible(false);
-      } else {
-        console.error("Failed to take photo");
+        try {
+          const asset = await MediaLibrary.createAssetAsync(photo.uri);
+
+          const newItem: AssetItem = {
+            id: asset.id.toString(),
+            localUri: asset.uri,
+            type: "image",
+            uri: asset.uri,
+          };
+          setSelectedItems((prev: AssetItem[]) => [...prev, newItem]);
+
+          // Fetch the updated assets from the library
+          fetchAssets();
+          setIsCameraVisible(false);
+        } catch (error) {
+          console.error("Failed to save photo:", error);
+        }
       }
     }
   };
@@ -195,13 +207,30 @@ const GalleryScreen = () => {
   const startRecording = async () => {
     if (cameraRef.current) {
       setIsRecording(true);
-      const video = await cameraRef.current.recordAsync();
+      try {
+        const video = await cameraRef.current.recordAsync();
+        if (video && video.uri) {
+          const asset = await MediaLibrary.createAssetAsync(video.uri);
+          const newItem: AssetItem = {
+            id: asset.id.toString(),
+            localUri: asset.uri,
+            type: "video",
+            uri: asset.uri,
+          };
+          setSelectedItems((prev: AssetItem[]) => [...prev, newItem]);
+
+          fetchAssets();
+        }
+      } catch (error) {
+        console.error("Failed to record video:", error);
+      } finally {
+        setIsRecording(false);
+      }
     }
   };
 
   const stopRecording = async () => {
     if (cameraRef.current) {
-      setIsRecording(false);
       cameraRef.current.stopRecording();
     }
   };
@@ -256,7 +285,9 @@ const GalleryScreen = () => {
               borderRadius: 4,
             }}
           >
-            <Text>{item.duration}</Text>
+            <Text>
+              {new Date(item.duration * 1000).toISOString().substr(14, 5)}
+            </Text>
           </View>
         ) : null}
       </Surface>
@@ -372,7 +403,9 @@ const GalleryScreen = () => {
                   const attachment = attachmentFiltered?.[index];
                   handleSelectProfileItem(item);
                 }}
-                style={styles.itemWrapper}
+                style={{
+                  margin: 4,
+                }}
               >
                 <Surface style={styles.itemContainer}>
                   <RenderMediaItem

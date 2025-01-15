@@ -20,6 +20,9 @@ import ScreenHeader from "@/components/ui/screen-header";
 import { useAWSContext } from "@/contexts/aws-context.provider";
 import * as DocumentPicker from "expo-document-picker";
 import {
+  faClapperboard,
+  faClockRotateLeft,
+  faDollarSign,
   faLink,
   faLocationDot,
   faPaperclip,
@@ -37,6 +40,7 @@ import { FirestoreDB } from "@/utils/firestore";
 import { doc, getDoc } from "firebase/firestore";
 import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import ContentItem from "@/components/basic-profile/edit-profile/ContentItem";
+import { faCircleQuestion } from "@fortawesome/free-regular-svg-icons";
 
 const ApplyScreen = () => {
   const params = useLocalSearchParams();
@@ -315,7 +319,7 @@ const ApplyScreen = () => {
                     color={
                       theme.dark ? Colors(theme).text : Colors(theme).primary
                     }
-                    icon={faPhotoFilm}
+                    icon={faClapperboard}
                     size={36}
                   />
                 )}
@@ -367,7 +371,7 @@ const ApplyScreen = () => {
           >
             <ListItem
               title="Your Quote"
-              leftIcon={faQuoteLeft}
+              leftIcon={faDollarSign}
               content={quotation === "" ? "" : "Rs. " + quotation}
               rightContent={true}
               onAction={() => {
@@ -391,7 +395,7 @@ const ApplyScreen = () => {
             />
             <ListItem
               title="Timeline"
-              leftIcon={faPaperclip}
+              leftIcon={faClockRotateLeft}
               rightContent={true}
               content={timelineData ? timelineData.toLocaleDateString() : ""}
               onAction={() => setShowDatePicker(true)}
@@ -412,7 +416,7 @@ const ApplyScreen = () => {
               <ListItem
                 key={index}
                 title={question}
-                leftIcon={faLink}
+                leftIcon={faCircleQuestion}
                 content={answers[index]}
                 onAction={() => {
                   router.push({

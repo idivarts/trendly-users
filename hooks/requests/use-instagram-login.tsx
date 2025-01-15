@@ -12,22 +12,19 @@ import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 interface useInstagramLoginType {
   instagramLogin: () => void;
   promptAsyncInstagram: (
-    options?: AuthSession.AuthRequestPromptOptions,
+    options?: AuthSession.AuthRequestPromptOptions
   ) => Promise<AuthSession.AuthSessionResult>;
-  requestInstagram: AuthSession.AuthRequest | null
-};
+  requestInstagram: AuthSession.AuthRequest | null;
+}
 
 const useInstagramLogin = (
   auth: Auth,
   firestore: Firestore,
   initialUserData: Partial<IUsers>,
   setLoading: React.Dispatch<React.SetStateAction<boolean>>,
-  setError: React.Dispatch<React.SetStateAction<string | null>>,
+  setError: React.Dispatch<React.SetStateAction<string | null>>
 ): useInstagramLoginType => {
-  const {
-    firebaseSignIn,
-    firebaseSignUp
-  } = useAuthContext();
+  const { firebaseSignIn, firebaseSignUp } = useAuthContext();
 
   const redirectUri = AuthSession.makeRedirectUri({
     native: `fb${FB_APP_ID}://authorize`,
@@ -42,18 +39,18 @@ const useInstagramLogin = (
         redirectUri,
       },
       {
-        authorizationEndpoint: `${authUrl}?redirect_type=${Platform.OS === "web" ? 2 : 3
-          }&`,
+        authorizationEndpoint: `${authUrl}?redirect_type=${
+          Platform.OS === "web" ? 2 : 3
+        }&`,
       }
     );
 
   const instagramLogin = async () => {
     await promptAsyncInstagram();
-  }
+  };
 
-  const handleInstagramSignIn = async (
-    accessToken: string,
-  ) => {
+  const handleInstagramSignIn = async (accessToken: string) => {
+    setLoading(true);
     await axios
       .post("https://be.trendly.pro/instagram/auth", {
         code: accessToken,
@@ -103,7 +100,7 @@ const useInstagramLogin = (
     instagramLogin,
     promptAsyncInstagram,
     requestInstagram,
-  }
+  };
 };
 
 export default useInstagramLogin;

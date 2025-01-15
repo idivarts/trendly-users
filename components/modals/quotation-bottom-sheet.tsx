@@ -14,6 +14,7 @@ import { Pressable, StyleSheet } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
   faClose,
+  faDollarSign,
   faPaperclip,
   faQuoteLeft,
 } from "@fortawesome/free-solid-svg-icons";
@@ -118,7 +119,7 @@ const QuotationBottomSheet: React.FC<QuotationBottomSheetProps> = ({
             >
               <ListItem
                 title="Your Quote"
-                leftIcon={faQuoteLeft}
+                leftIcon={faDollarSign}
                 rightContent
                 content={state.quotation === "" ? "" : "Rs. " + state.quotation}
                 onAction={() => {

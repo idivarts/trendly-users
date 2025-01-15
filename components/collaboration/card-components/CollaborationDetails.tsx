@@ -7,8 +7,10 @@ import ChipCard from "./ChipComponent";
 import {
   faCoins,
   faDollarSign,
+  faFilm,
   faHouseLaptop,
   faMap,
+  faPanorama,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   faFacebook,
@@ -86,7 +88,17 @@ const CollaborationDetails: FC<CollaborationDetailsProps> = ({
           ))}
         {contentType &&
           contentType.map((content, index) => (
-            <ChipCard key={index} chipText={content} chipIcon={faCoins} />
+            <ChipCard
+              key={index}
+              chipText={content}
+              chipIcon={
+                content === "Posts"
+                  ? faPanorama
+                  : content === "Reels"
+                  ? faFilm
+                  : faCoins
+              }
+            />
           ))}
       </View>
     </View>

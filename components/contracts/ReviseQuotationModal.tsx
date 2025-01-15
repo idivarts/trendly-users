@@ -1,5 +1,6 @@
 import Colors from "@/constants/Colors";
 import {
+  faDollarSign,
   faPaperclip,
   faPlus,
   faQuoteLeft,
@@ -115,7 +116,7 @@ const ReviseQuotationModal: FC<ReviseQuotationModalProps> = ({
         <Text style={styles.modalTitle}>Your Quotation</Text>
         <ListItem
           title="Your Quote"
-          leftIcon={faQuoteLeft}
+          leftIcon={faDollarSign}
           rightContent
           content={quotation === "" ? "" : "Rs. " + quotation}
           onAction={() => {

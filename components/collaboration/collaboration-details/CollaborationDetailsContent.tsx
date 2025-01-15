@@ -15,9 +15,11 @@ import {
   faCoins,
   faDollar,
   faDollarSign,
+  faFilm,
   faHouseLaptop,
   faMap,
   faNoteSticky,
+  faPanorama,
   faStar,
   faStarHalfStroke,
 } from "@fortawesome/free-solid-svg-icons";
@@ -579,7 +581,17 @@ const CollborationDetailsContent = (
 
             {props.collaborationDetail.contentFormat &&
               props.collaborationDetail.contentFormat.map((content, index) => (
-                <ChipCard key={index} chipText={content} chipIcon={faCoins} />
+                <ChipCard
+                  key={index}
+                  chipText={content}
+                  chipIcon={
+                    content === "Posts"
+                      ? faPanorama
+                      : content === "Reels"
+                      ? faFilm
+                      : faCoins
+                  }
+                />
               ))}
           </View>
 

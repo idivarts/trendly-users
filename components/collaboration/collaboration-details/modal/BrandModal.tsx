@@ -6,7 +6,7 @@ import stylesFn from "@/styles/modal/UploadModal.styles";
 import { Chip, Modal } from "react-native-paper";
 import Colors from "@/constants/Colors";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faCheckCircle } from "@fortawesome/free-solid-svg-icons";
+import { faChain, faCheckCircle } from "@fortawesome/free-solid-svg-icons";
 import ImageComponent from "@/shared-uis/components/image-component";
 
 interface BrandModalProps {
@@ -74,15 +74,17 @@ const BrandModal: React.FC<BrandModalProps> = ({
         </Text>
 
         {/* Brand Description */}
-        <Text
-          style={{
-            fontSize: 16,
-            color: Colors(theme).text,
-            textAlign: "center",
-          }}
-        >
-          {brand.description}
-        </Text>
+        {brand.description && (
+          <Text
+            style={{
+              fontSize: 16,
+              color: Colors(theme).text,
+              textAlign: "center",
+            }}
+          >
+            {brand.description}
+          </Text>
+        )}
 
         <View
           style={{
@@ -113,6 +115,7 @@ const BrandModal: React.FC<BrandModalProps> = ({
             borderRadius: 5,
             paddingVertical: 10,
             paddingHorizontal: 20,
+            alignItems: "center",
           }}
         >
           <Text
@@ -122,7 +125,8 @@ const BrandModal: React.FC<BrandModalProps> = ({
               fontWeight: "bold",
             }}
           >
-            Visit Website
+            <FontAwesomeIcon icon={faChain} color="white" size={16} /> Visit
+            Website
           </Text>
         </Pressable>
       </View>
