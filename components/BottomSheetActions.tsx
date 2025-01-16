@@ -8,11 +8,11 @@ import { useAuthContext } from "@/contexts";
 
 interface BottomSheetActionsProps {
   cardType:
-    | "collaboration"
-    | "proposal"
-    | "invitation"
-    | "details"
-    | "pre-signin";
+  | "collaboration"
+  | "proposal"
+  | "invitation"
+  | "details"
+  | "pre-signin";
   cardId?: string;
   invitationId?: string | null;
   isVisible: boolean;

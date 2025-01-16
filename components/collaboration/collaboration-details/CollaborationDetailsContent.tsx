@@ -1,19 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
-import { View, Image, ScrollView, Pressable, Linking } from "react-native";
-import { Text, Card, Paragraph, Button, Portal } from "react-native-paper";
+import { View, ScrollView, Pressable, Linking } from "react-native";
+import { Text, Card, Button, Portal } from "react-native-paper";
 import { router } from "expo-router";
 import { useTheme } from "@react-navigation/native";
 import { stylesFn } from "@/styles/CollaborationDetails.styles";
 import { FirestoreDB } from "@/utils/firestore";
 import { deleteDoc, doc, getDoc, updateDoc } from "firebase/firestore";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
-import { useAuthContext, useNotificationContext } from "@/contexts";
+import { useAuthContext, useContractContext, useNotificationContext } from "@/contexts";
 import { CollaborationDetail } from ".";
 import { Invitation } from "@/types/Collaboration";
 import {
   faCheckCircle,
   faCoins,
-  faDollar,
   faDollarSign,
   faFilm,
   faHouseLaptop,
@@ -29,7 +28,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import Colors from "@/constants/Colors";
 import Carousel from "@/shared-uis/components/carousel/carousel";
 import { processRawAttachment } from "@/utils/attachments";
-import { formatDistanceToNow } from "date-fns";
 import { truncateText } from "@/utils/profile";
 import ChipCard from "../card-components/ChipComponent";
 import {
@@ -39,18 +37,19 @@ import {
 } from "@fortawesome/free-brands-svg-icons";
 import CreateCollaborationMap from "@/components/create-collaboration/CreateCollaborationMap";
 import { IManagers } from "@/shared-libs/firestore/trendly-pro/models/managers";
-import { PLACEHOLDER_IMAGE } from "@/constants/PlaceholderImage";
 import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import UserResponse from "../UserResponse";
 import BrandModal from "./modal/BrandModal";
 import ManagerModal from "./modal/ManagerModal";
 import { PromotionType } from "@/shared-libs/firestore/trendly-pro/constants/promotion-type";
 import ConfirmationModal from "@/components/ui/modal/ConfirmationModal";
-import { imageUrl } from "@/utils/url";
 import ImageComponent from "@/shared-uis/components/image-component";
 import AuthModal from "@/components/modals/AuthModal";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { faHeart } from "@fortawesome/free-regular-svg-icons";
+import { formatTimeToNow } from "@/utils/date";
+import { Contract } from "@/types/Contract";
+import RatingSection from "@/shared-uis/components/rating-section";
 
 interface ApplicationData extends IApplications {
   id: string;
@@ -79,10 +78,14 @@ const CollborationDetailsContent = (
   const [confirmationModalVisible, setConfirmationModalVisible] =
     useState(false);
   const [cardType, setCardType] = useState(props.cardType);
+  const [contracts, setContracts] = useState<Contract[]>([]);
 
   const authModalBottomSheetModalRef = useRef<BottomSheetModal>(null);
   const { createNotification } = useNotificationContext();
   const { user } = useAuthContext();
+  const {
+    getContractsByCollaborationId,
+  } = useContractContext();
 
   const fetchManagerDetails = async () => {
     const managerRef = doc(
@@ -113,29 +116,12 @@ const CollborationDetailsContent = (
     });
   };
 
-  const renderStars = (rating: number) => {
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 !== 0;
-
-    return (
-      <>
-        {Array.from({ length: fullStars }, (_, i) => (
-          <FontAwesomeIcon
-            key={i}
-            icon={faStar}
-            size={16}
-            color={Colors(theme).yellow}
-          />
-        ))}
-        {hasHalfStar && (
-          <FontAwesomeIcon
-            icon={faStarHalfStroke}
-            size={16}
-            color={Colors(theme).yellow}
-          />
-        )}
-      </>
+  const fetchContracts = async () => {
+    const fetchedContracts = await getContractsByCollaborationId(
+      props.collaborationDetail.id,
     );
+
+    setContracts(fetchedContracts);
   };
 
   const acceptInvitation = async () => {
@@ -220,8 +206,37 @@ const CollborationDetailsContent = (
     }
   };
 
+  const getFeedbacks = (contract: Contract[]) => {
+    let feedbacks: {
+      ratings?: number;
+      review?: string;
+    }[] = [];
+
+    contract.forEach((contract) => {
+      if (contract.feedbackFromInfluencer) {
+        feedbacks.push({
+          ratings: contract.feedbackFromInfluencer.ratings,
+          review: contract.feedbackFromInfluencer.feedbackReview,
+        });
+      }
+
+      if (contract.feedbackFromBrand) {
+        feedbacks.push({
+          ratings: contract.feedbackFromBrand.ratings,
+          review: contract.feedbackFromBrand.feedbackReview,
+        });
+      }
+    });
+
+    return feedbacks;
+  }
+
   useEffect(() => {
     fetchManagerDetails();
+  }, []);
+
+  useEffect(() => {
+    fetchContracts();
   }, []);
 
   return (
@@ -271,9 +286,7 @@ const CollborationDetailsContent = (
                     paddingRight: 8,
                   }}
                 >
-                  {formatDistanceToNow(props.collaborationDetail.timeStamp, {
-                    addSuffix: true,
-                  })}
+                  {formatTimeToNow(props.collaborationDetail.timeStamp)}
                 </Text>
               ) : null}
             </View>
@@ -300,11 +313,13 @@ const CollborationDetailsContent = (
             }}
           >
             <Card.Content>
+              <RatingSection
+                feedbacks={getFeedbacks(contracts)}
+              />
               <Pressable
                 style={{ flex: 1, flexDirection: "column", gap: 16 }}
                 onPress={() => setBrandModalVisible(true)}
               >
-                <View style={{ flexDirection: "row" }}>{renderStars(4.5)}</View>
                 <View
                   style={{
                     flexDirection: "row",
@@ -530,19 +545,19 @@ const CollborationDetailsContent = (
             </Text>
             {props.collaborationDetail.promotionType ===
               PromotionType.PAID_COLLAB && (
-              <Text
-                style={{
-                  fontSize: 16,
-                  color: Colors(theme).text,
-                }}
-              >
-                Budget:
-                {props.collaborationDetail?.budget?.min ===
-                props.collaborationDetail?.budget?.max
-                  ? `$${props.collaborationDetail?.budget?.min}`
-                  : `$${props.collaborationDetail?.budget?.min} - $${props.collaborationDetail?.budget?.max}`}
-              </Text>
-            )}
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: Colors(theme).text,
+                  }}
+                >
+                  Budget:
+                  {props.collaborationDetail?.budget?.min ===
+                    props.collaborationDetail?.budget?.max
+                    ? `$${props.collaborationDetail?.budget?.min}`
+                    : `$${props.collaborationDetail?.budget?.min} - $${props.collaborationDetail?.budget?.max}`}
+                </Text>
+              )}
           </View>
           {/* chips */}
           <View
@@ -556,7 +571,7 @@ const CollborationDetailsContent = (
             <ChipCard
               chipText={
                 props.collaborationDetail.promotionType ===
-                PromotionType.PAID_COLLAB
+                  PromotionType.PAID_COLLAB
                   ? "Paid"
                   : "Unpaid"
               }
@@ -580,10 +595,10 @@ const CollborationDetailsContent = (
                     content === "Instagram"
                       ? faInstagram
                       : content === "Facebook"
-                      ? faFacebook
-                      : content === "Youtube"
-                      ? faYoutube
-                      : faInstagram
+                        ? faFacebook
+                        : content === "Youtube"
+                          ? faYoutube
+                          : faInstagram
                   }
                 />
               ))}
@@ -596,7 +611,7 @@ const CollborationDetailsContent = (
                   chipIcon={
                     content === "Posts"
                       ? faPanorama
-                      : content === "Reels"
+                      : content === "Reels"       
                       ? faFilm
                       : content === "Stories"
                       ? faHeart
@@ -633,8 +648,8 @@ const CollborationDetailsContent = (
                   latitudeDelta: 0.0922,
                   longitudeDelta: 0.042,
                 }}
-                onMapRegionChange={(region) => {}}
-                onFormattedAddressChange={(address) => {}}
+                onMapRegionChange={(region) => { }}
+                onFormattedAddressChange={(address) => { }}
               />
               <Text
                 style={{

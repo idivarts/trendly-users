@@ -85,10 +85,10 @@ const CollaborationDetails: FC<CollaborationDetailsProps> = ({
                 content === "Instagram"
                   ? faInstagram
                   : content === "Facebook"
-                  ? faFacebook
-                  : content === "Youtube"
-                  ? faYoutube
-                  : faInstagram
+                    ? faFacebook
+                    : content === "Youtube"
+                      ? faYoutube
+                      : faInstagram
               }
             />
           ))}

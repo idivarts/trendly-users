@@ -55,6 +55,7 @@ const FirstPhase: React.FC<FirstPhaseProps> = ({
       data
     ).then(() => {
       fetchApplication();
+      sendSystemMessage(contract.id, "The Quotation for this collaboration is revised.");
       bottomSheetModalRef.current?.close();
     });
   }

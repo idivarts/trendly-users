@@ -3,13 +3,14 @@ import { Text, View } from "../theme/Themed";
 import { Pressable } from "react-native";
 import Colors from "@/constants/Colors";
 import { useState } from "react";
-import { useAuthContext, useFirebaseStorageContext } from "@/contexts";
+import { useAuthContext } from "@/contexts";
 import { User } from "@/types/User";
 import { useBreakpoints } from "@/hooks";
 import stylesFn from "@/styles/basic-profile/BasicProfile.styles";
 import { useTheme } from "@react-navigation/native";
 import { DUMMY_IMAGE } from "@/constants/User";
 import ImageUploadModal from "../ui/modal/ImageUploadModal";
+import { useAWSContext } from "@/contexts/aws-context.provider";
 
 interface BasicProfileProps {
   user: User;
@@ -28,7 +29,7 @@ const BasicProfile: React.FC<BasicProfileProps> = ({ user }) => {
 
   const { lg } = useBreakpoints();
 
-  const { uploadImageBytes } = useFirebaseStorageContext();
+  const { uploadFileUri } = useAWSContext();
   const { updateUser } = useAuthContext();
 
   const handleSave = async () => {
@@ -38,21 +39,23 @@ const BasicProfile: React.FC<BasicProfileProps> = ({ user }) => {
 
     setIsSaving(true);
 
-    let uploadedImage: string | null = null;
+    let imageUrl = "";
 
     if (capturedImage) {
-      const blob = await fetch(capturedImage).then((r) => r.blob());
-      uploadedImage = await uploadImageBytes(
-        blob,
-        `users/${user.id}-profile-image`
-      );
+      const uploadedImage = await uploadFileUri({
+        id: capturedImage,
+        localUri: capturedImage,
+        uri: capturedImage,
+        type: "image",
+      });
+      imageUrl = uploadedImage.imageUrl;
     }
 
     await updateUser(user.id, {
       name,
       email,
       phoneNumber,
-      profileImage: uploadedImage || user.profileImage,
+      profileImage: imageUrl || user.profileImage,
     });
 
     setIsSaving(false);

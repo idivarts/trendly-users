@@ -68,7 +68,7 @@ const ApplyScreenWeb = () => {
     title: "",
     placeholder: "",
     value: "",
-    onSubmit: (value: string) => {},
+    onSubmit: (value: string) => { },
   });
 
   const openModal = (
@@ -466,7 +466,7 @@ const ApplyScreenWeb = () => {
             />
             <TextInput
               mode="outlined"
-              onFocus={() => {}}
+              onFocus={() => { }}
               render={(props) => (
                 //@ts-ignore
                 <input
