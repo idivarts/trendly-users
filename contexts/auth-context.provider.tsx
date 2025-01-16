@@ -7,7 +7,6 @@ import {
   type PropsWithChildren,
 } from "react";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
-import { useRouter } from "expo-router";
 import {
   collection,
   deleteDoc,
@@ -41,6 +40,7 @@ interface AuthContextProps {
   firebaseSignUp: (token: string, hasSocials?: boolean) => void;
   getUser: (userId: string) => Promise<User | null>;
   isLoading: boolean;
+  isUserLoading: boolean;
   session?: string | null;
   signIn: (email: string, password: string) => void;
   signOutUser: () => void;
@@ -56,6 +56,7 @@ const AuthContext = createContext<AuthContextProps>({
   firebaseSignUp: (token: string, hasSocials?: boolean) => null,
   getUser: () => Promise.resolve(null),
   isLoading: false,
+  isUserLoading: false,
   session: null,
   signIn: (email: string, password: string) => null,
   signOutUser: () => null,
@@ -72,10 +73,11 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
 }) => {
   const [[isLoading, session], setSession] = useStorageState("id");
   const [user, setUser] = useState<User | null>(null);
-  const router = useRouter();
+  const [isUserLoading, setIsUserLoading] = useState(false);
 
   const fetchUser = async () => {
     if (session) {
+      setIsUserLoading(true);
       const userDocRef = doc(FirestoreDB, "users", session);
 
       const unsubscribe = onSnapshot(userDocRef, (userSnap) => {
@@ -85,8 +87,10 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
             id: userSnap.id as string,
           };
           setUser(userData);
+          setIsUserLoading(false);
         } else {
           console.error("User not found");
+          setIsUserLoading(false);
         }
       });
 
@@ -153,8 +157,8 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
         },
       });
 
-      // For non-existing users, redirect to the onboarding screen.
-      resetAndNavigate("/questions");
+      // After signup, redirect user to the no-social-connected.
+      resetAndNavigate("/no-social-connected");
       Toaster.success("Signed Up Successfully!");
     } catch (error) {
       console.error("Error signing up: ", error);
@@ -342,6 +346,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
         firebaseSignUp,
         getUser,
         isLoading,
+        isUserLoading,
         session,
         signIn,
         signOutUser,
