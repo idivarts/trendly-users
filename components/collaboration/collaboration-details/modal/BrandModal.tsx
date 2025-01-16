@@ -1,4 +1,4 @@
-import { Image, Pressable, Linking } from "react-native";
+import { Pressable, Linking } from "react-native";
 import { useTheme } from "@react-navigation/native";
 
 import { Text, View } from "@/components/theme/Themed";
@@ -6,7 +6,7 @@ import stylesFn from "@/styles/modal/UploadModal.styles";
 import { Chip, Modal } from "react-native-paper";
 import Colors from "@/constants/Colors";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faChain, faCheckCircle } from "@fortawesome/free-solid-svg-icons";
+import { faChain, faCheck, faCheckCircle } from "@fortawesome/free-solid-svg-icons";
 import ImageComponent from "@/shared-uis/components/image-component";
 
 interface BrandModalProps {
@@ -101,6 +101,13 @@ const BrandModal: React.FC<BrandModalProps> = ({
                 margin: 5,
               }}
               mode="outlined"
+              icon={() => (
+                <FontAwesomeIcon
+                  icon={faCheck}
+                  color={Colors(theme).primary}
+                  size={16}
+                />
+              )}
             >
               {cat}
             </Chip>

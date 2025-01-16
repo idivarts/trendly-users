@@ -23,11 +23,7 @@ import {
   faClapperboard,
   faClockRotateLeft,
   faDollarSign,
-  faLink,
-  faLocationDot,
   faPaperclip,
-  faPhotoFilm,
-  faQuoteLeft,
 } from "@fortawesome/free-solid-svg-icons";
 import ListItem from "@/components/ui/list-item/ListItem";
 import Colors from "@/constants/Colors";
@@ -35,7 +31,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import * as MediaLibrary from "expo-media-library";
 import { AssetItem } from "@/types/Asset";
 import AssetsPreview from "@/components/ui/assets-preview";
-import { Attachment } from "@/shared-libs/firestore/trendly-pro/constants/attachment";
 import { FirestoreDB } from "@/utils/firestore";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import {

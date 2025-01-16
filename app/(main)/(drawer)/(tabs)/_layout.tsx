@@ -17,7 +17,7 @@ import {
 import {
   faComment as faCommentSolid,
   faFileLines as faFileLinesSolid,
-  faGear,
+  faGears,
   faHandshake as faHandshakeSolid,
   faStar as faStarSolid,
   faUser as faUserSolid,
@@ -127,18 +127,18 @@ const TabLayout = () => {
               />
               {(!user?.profile?.completionPercentage ||
                 user.profile.completionPercentage < COMPLETION_PERCENTAGE) && (
-                <View
-                  style={{
-                    backgroundColor: Colors(theme).yellow,
-                    width: 10,
-                    height: 10,
-                    position: "absolute",
-                    top: 5,
-                    right: 20,
-                    borderRadius: 20,
-                  }}
-                />
-              )}
+                  <View
+                    style={{
+                      backgroundColor: Colors(theme).yellow,
+                      width: 10,
+                      height: 10,
+                      position: "absolute",
+                      top: 5,
+                      right: 20,
+                      borderRadius: 20,
+                    }}
+                  />
+                )}
             </>
           ),
 
@@ -152,7 +152,7 @@ const TabLayout = () => {
               }}
             >
               <FontAwesomeIcon
-                icon={faGear}
+                icon={faGears}
                 size={24}
                 color={Colors(theme).text}
               />

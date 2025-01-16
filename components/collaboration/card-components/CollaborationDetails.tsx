@@ -2,14 +2,12 @@ import { Text, View } from "@/components/theme/Themed";
 import Colors from "@/constants/Colors";
 import { useTheme } from "@react-navigation/native";
 import { FC } from "react";
-import { Chip } from "react-native-paper";
 import ChipCard from "./ChipComponent";
 import {
   faCoins,
   faDollarSign,
   faFilm,
   faHouseLaptop,
-  faMap,
   faPanorama,
 } from "@fortawesome/free-solid-svg-icons";
 import {
