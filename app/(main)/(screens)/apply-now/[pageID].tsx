@@ -23,11 +23,7 @@ import {
   faClapperboard,
   faClockRotateLeft,
   faDollarSign,
-  faLink,
-  faLocationDot,
   faPaperclip,
-  faPhotoFilm,
-  faQuoteLeft,
 } from "@fortawesome/free-solid-svg-icons";
 import ListItem from "@/components/ui/list-item/ListItem";
 import Colors from "@/constants/Colors";
@@ -39,7 +35,6 @@ import { Attachment } from "@/shared-libs/firestore/trendly-pro/constants/attach
 import { FirestoreDB } from "@/utils/firestore";
 import { doc, getDoc } from "firebase/firestore";
 import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
-import ContentItem from "@/components/basic-profile/edit-profile/ContentItem";
 import { faCircleQuestion } from "@fortawesome/free-regular-svg-icons";
 
 const ApplyScreen = () => {

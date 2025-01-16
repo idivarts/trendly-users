@@ -4,7 +4,7 @@ import stylesFn from "@/styles/settings/Settings.styles";
 import { useTheme } from "@react-navigation/native";
 import ContentWrapper from "../ui/content-wrapper";
 import { Selector } from "../ui/select/selector";
-import { faDollarSign, faTrash, faVideo } from "@fortawesome/free-solid-svg-icons";
+import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import SelectGroup from "../ui/select/select-group";
 import { ScrollView } from "react-native";
 import Button from "../ui/button";
@@ -14,6 +14,7 @@ import { User } from "@/types/User";
 import { AccountStatus } from "@/shared-libs/firestore/trendly-pro/models/users";
 import ConfirmationModal from "../ui/modal/ConfirmationModal";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
+import { faCalendarXmark, faThumbsUp } from "@fortawesome/free-regular-svg-icons";
 
 interface SettingsProps {
   handleDeactivate: () => Promise<void>;
@@ -75,12 +76,12 @@ const Settings: React.FC<SettingsProps> = ({
         <Selector
           options={[
             {
-              icon: faVideo,
+              icon: faThumbsUp,
               label: 'Open to Collaborate',
               value: 'Open to Collaborate',
             },
             {
-              icon: faDollarSign,
+              icon: faCalendarXmark,
               label: 'Not Available',
               value: 'Not Available',
             },
@@ -189,7 +190,7 @@ const Settings: React.FC<SettingsProps> = ({
           {
             !isDeleting && (
               <FontAwesomeIcon
-                icon={faTrash}
+                icon={faTrashCan}
                 style={{
                   marginRight: 8,
                 }}
