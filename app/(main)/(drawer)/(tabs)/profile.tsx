@@ -37,6 +37,9 @@ const ProfileScreen = () => {
           backgroundColor: Colors(theme).background,
           padding: 16,
         }}
+        contentContainerStyle={{
+          paddingBottom: 16,
+        }}
       >
         {user && (
           <ProfileCard
@@ -80,7 +83,7 @@ const ProfileScreen = () => {
           }
           ListHeaderComponent={
             !user?.profile?.completionPercentage ||
-            user?.profile?.completionPercentage < COMPLETION_PERCENTAGE ? (
+              user?.profile?.completionPercentage < COMPLETION_PERCENTAGE ? (
               <View
                 style={{
                   backgroundColor: Colors(theme).yellow,
