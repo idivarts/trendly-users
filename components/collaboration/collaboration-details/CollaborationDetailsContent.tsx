@@ -17,9 +17,11 @@ import {
   faDollarSign,
   faFilm,
   faHouseLaptop,
+  faLocationDot,
   faMap,
   faNoteSticky,
   faPanorama,
+  faRecordVinyl,
   faStar,
   faStarHalfStroke,
 } from "@fortawesome/free-solid-svg-icons";
@@ -48,6 +50,7 @@ import { imageUrl } from "@/utils/url";
 import ImageComponent from "@/shared-uis/components/image-component";
 import AuthModal from "@/components/modals/AuthModal";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { faHeart } from "@fortawesome/free-regular-svg-icons";
 
 interface ApplicationData extends IApplications {
   id: string;
@@ -561,7 +564,11 @@ const CollborationDetailsContent = (
             />
             <ChipCard
               chipText={props.collaborationDetail.location.type}
-              chipIcon={faHouseLaptop}
+              chipIcon={
+                props.collaborationDetail.location.type === "On-Site"
+                  ? faLocationDot
+                  : faHouseLaptop
+              }
             />
 
             {props.collaborationDetail.platform &&
@@ -591,7 +598,13 @@ const CollborationDetailsContent = (
                       ? faPanorama
                       : content === "Reels"
                       ? faFilm
-                      : faCoins
+                      : content === "Stories"
+                      ? faHeart
+                      : content === "Live"
+                      ? faRecordVinyl
+                      : content === "Product Reviews"
+                      ? faStarHalfStroke
+                      : faPanorama
                   }
                 />
               ))}

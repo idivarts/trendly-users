@@ -9,8 +9,10 @@ import {
   faDollarSign,
   faFilm,
   faHouseLaptop,
+  faLocationDot,
   faMap,
   faPanorama,
+  faRecordVinyl,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   faFacebook,
@@ -18,6 +20,7 @@ import {
   faYoutube,
 } from "@fortawesome/free-brands-svg-icons";
 import { PromotionType } from "@/shared-libs/firestore/trendly-pro/constants/promotion-type";
+import { faHeart, faStarHalfStroke } from "@fortawesome/free-regular-svg-icons";
 
 interface CollaborationDetailsProps {
   collaborationDetails: {
@@ -69,7 +72,10 @@ const CollaborationDetails: FC<CollaborationDetailsProps> = ({
           }
           chipIcon={faDollarSign}
         />
-        <ChipCard chipText={location.type} chipIcon={faHouseLaptop} />
+        <ChipCard
+          chipText={location.type}
+          chipIcon={location.type === "On-Site" ? faLocationDot : faHouseLaptop}
+        />
         {platform &&
           platform.map((content, index) => (
             <ChipCard
@@ -96,7 +102,13 @@ const CollaborationDetails: FC<CollaborationDetailsProps> = ({
                   ? faPanorama
                   : content === "Reels"
                   ? faFilm
-                  : faCoins
+                  : content === "Stories"
+                  ? faHeart
+                  : content === "Live"
+                  ? faRecordVinyl
+                  : content === "Product Reviews"
+                  ? faStarHalfStroke
+                  : faPanorama
               }
             />
           ))}
