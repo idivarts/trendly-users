@@ -12,11 +12,11 @@ import { CollaborationDetail } from ".";
 import { Invitation } from "@/types/Collaboration";
 import {
   faCheckCircle,
+  faCircleInfo,
   faCoins,
   faDollarSign,
   faFilm,
   faHouseLaptop,
-  faNoteSticky,
   faPanorama,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -393,7 +393,7 @@ const CollborationDetailsContent = (
                 }}
               >
                 <FontAwesomeIcon
-                  icon={faNoteSticky}
+                  icon={faCircleInfo}
                   size={20}
                   color={Colors(theme).primary}
                 />
