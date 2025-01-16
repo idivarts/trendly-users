@@ -12,7 +12,7 @@ import InstagramLoginButton from "@/components/profile/ConnectWithInstagram";
 import { useAuthContext, useSocialContext } from "@/contexts";
 
 const ConnectedSocials: React.FC = () => {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const { user } = useAuthContext();
   const { socials } = useSocialContext();
 
@@ -23,7 +23,7 @@ const ConnectedSocials: React.FC = () => {
         paddingHorizontal: 16,
       }}
     >
-      {!loading ? (
+      {loading ? (
         <ActivityIndicator />
       ) : (
         <>
