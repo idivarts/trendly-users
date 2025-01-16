@@ -187,19 +187,12 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
   const verifyEmail = async () => {
     const userCredential = AuthApp.currentUser;
 
-    await userCredential?.reload();
-
     if (userCredential?.emailVerified) {
       Toaster.error("Email is already verified.");
-      if (!user?.emailVerified) {
-        await updateUser(user?.id as string, {
-          emailVerified: true,
-        });
-      }
       return;
     }
 
-    if (!userCredential) {
+    if (!userCredential || !user) {
       Toaster.error("User not found.");
       return;
     }
@@ -207,6 +200,23 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
     await sendEmailVerification(userCredential).then(() => {
       Toaster.success("Verification email sent successfully.");
     });
+
+    const checkVerification = async () => {
+      await userCredential.reload();
+      if (userCredential.emailVerified) {
+        await updateUser(user?.id as string, {
+          emailVerified: true,
+          profile: {
+            completionPercentage: (user?.profile?.completionPercentage || 0) + 10,
+          }
+        });
+        Toaster.success("Email verified successfully.");
+      } else {
+        setTimeout(checkVerification, 2000);
+      }
+    }
+
+    checkVerification();
   };
 
   const verifyPhoneNumber = async (phoneNumber: string) => {
