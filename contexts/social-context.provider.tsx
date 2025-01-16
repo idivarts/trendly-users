@@ -65,23 +65,17 @@ export const SocialContextProvider = ({ children }: PropsWithChildren<{}>) => {
           return;
         }
 
-        if (user.primarySocial && socialData.length > 0) {
-          const primary = socialData.find(
-            //@ts-ignore
-            (social: ISocials) => social.id === user.primarySocial
-          );
+        const primary = user.primarySocial
+          // @ts-ignore
+          ? socialData.find((social: ISocials) => social.id === user.primarySocial)
+          : null;
 
-          if (!primary) {
-            setPrimarySocial(null);
-            router.replace("/primary-social-select");
-          } else {
-            //@ts-ignore
-            setPrimarySocial(primary);
-          }
-        }
-
-        if (!user.primarySocial) {
+        if (!primary) {
+          setPrimarySocial(null);
           router.replace("/primary-social-select");
+        } else {
+          // @ts-ignore
+          setPrimarySocial(primary);
         }
       });
 
