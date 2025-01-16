@@ -1,10 +1,6 @@
 import React, { useState } from "react";
 import { Linking } from "react-native";
-import {
-  Card,
-  IconButton,
-  Menu,
-} from "react-native-paper";
+import { Card, IconButton, Menu } from "react-native-paper";
 import { stylesFn } from "@/styles/profile/SocialPage.styles";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { useTheme } from "@react-navigation/native";
@@ -54,7 +50,7 @@ const SocialPage: React.FC<SocialPageProps> = ({
   };
 
   const makePrimary = async () => {
-    const userId = AuthApp.currentUser?.uid;
+    const userId = user?.id;
     if (!userId) return;
 
     const userDocRef = doc(FirestoreDB, "users", userId);
@@ -81,8 +77,6 @@ const SocialPage: React.FC<SocialPageProps> = ({
               url={image}
               altText="Profile Photo"
               shape="square"
-              width={50}
-              height={50}
               size="small"
             />
             <View
@@ -169,7 +163,7 @@ const SocialPage: React.FC<SocialPageProps> = ({
                 titleStyle={styles.menuTitleStyle}
               />
               <Menu.Item
-                onPress={() => { }}
+                onPress={() => {}}
                 title="Disconnect"
                 style={styles.menuStyle}
                 titleStyle={styles.menuTitleStyle}

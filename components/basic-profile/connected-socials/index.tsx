@@ -9,27 +9,31 @@ import { FirestoreDB } from "@/utils/firestore";
 import { AuthApp } from "@/utils/auth";
 import { ActivityIndicator } from "react-native-paper";
 import InstagramLoginButton from "@/components/profile/ConnectWithInstagram";
+import { useAuthContext } from "@/contexts";
 
 const ConnectedSocials: React.FC = () => {
   const [socials, setSocials] = useState<any>();
   const [loading, setLoading] = useState(true);
+  const { user } = useAuthContext();
 
   const fetchSocials = async () => {
     try {
       const userID = AuthApp.currentUser?.uid;
-      if (!userID) {
+      if (!user?.id) {
         return;
       }
       const socialProfileRef = collection(
         FirestoreDB,
         "users",
-        userID,
+        user?.id,
         "socials"
       );
+
       const socialProfileSnapshot = await getDocs(socialProfileRef);
       const socialProfileData = socialProfileSnapshot.docs.map((doc) =>
         doc.data()
       );
+
       setSocials(socialProfileData);
     } catch (error) {
       console.error("Error fetching socials", error);
@@ -74,8 +78,8 @@ const ConnectedSocials: React.FC = () => {
               flexGrow: 1,
             }}
           />
-          <FacebookLoginButton onFacebookLogin={() => { }} />
-          <InstagramLoginButton onFacebookLogin={() => { }} />
+          <FacebookLoginButton onFacebookLogin={() => {}} />
+          <InstagramLoginButton onFacebookLogin={() => {}} />
         </>
       )}
     </View>
