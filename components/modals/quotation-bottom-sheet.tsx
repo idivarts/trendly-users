@@ -13,10 +13,9 @@ import Colors from "@/constants/Colors";
 import { Pressable, StyleSheet } from "react-native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
+  faClockRotateLeft,
   faClose,
   faDollarSign,
-  faPaperclip,
-  faQuoteLeft,
 } from "@fortawesome/free-solid-svg-icons";
 import Button from "../ui/button";
 import ListItem from "../ui/list-item/ListItem";
@@ -130,7 +129,7 @@ const QuotationBottomSheet: React.FC<QuotationBottomSheetProps> = ({
                 content={
                   state.timeline ? state.timeline.toLocaleDateString() : ""
                 }
-                leftIcon={faPaperclip}
+                leftIcon={faClockRotateLeft}
                 rightContent
                 onAction={() => setIsTimelineModalVisible(true)}
                 title="Timeline"

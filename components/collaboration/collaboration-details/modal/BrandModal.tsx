@@ -1,4 +1,4 @@
-import { Image, Pressable, Linking } from "react-native";
+import { Pressable, Linking } from "react-native";
 import { useTheme } from "@react-navigation/native";
 
 import { Text, View } from "@/components/theme/Themed";
@@ -108,6 +108,13 @@ const BrandModal: React.FC<BrandModalProps> = ({
                 alignItems: "center",
               }}
               mode="outlined"
+              icon={() => (
+                <FontAwesomeIcon
+                  icon={faCheck}
+                  color={Colors(theme).primary}
+                  size={16}
+                />
+              )}
             >
               <FontAwesomeIcon
                 icon={faCheck}

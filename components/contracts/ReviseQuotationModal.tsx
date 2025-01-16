@@ -1,28 +1,20 @@
 import Colors from "@/constants/Colors";
 import {
+  faClockRotateLeft,
   faDollarSign,
-  faPaperclip,
-  faPlus,
-  faQuoteLeft,
 } from "@fortawesome/free-solid-svg-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
 import React, { FC, useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
-  FlatList,
   Modal,
   TouchableOpacity,
-  Pressable,
 } from "react-native";
-import { Text, Button, Avatar, Card } from "react-native-paper";
+import { Text, Button } from "react-native-paper";
 import {
-  collection,
   doc,
-  getDoc,
-  getDocs,
   updateDoc,
 } from "firebase/firestore";
 import { FirestoreDB } from "@/utils/firestore";
@@ -134,7 +126,7 @@ const ReviseQuotationModal: FC<ReviseQuotationModalProps> = ({
         />
         <ListItem
           title="Timeline"
-          leftIcon={faPaperclip}
+          leftIcon={faClockRotateLeft}
           rightContent
           content={timeline ? timeline.toLocaleDateString() : ""}
           onAction={() => setShowDatePicker(true)}

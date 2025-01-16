@@ -56,7 +56,7 @@ const ConnectedSocials: React.FC = () => {
           <FlatList
             data={socials}
             renderItem={({ item }) => (
-              //@ts-ignore
+              // @ts-ignore
               <SocialPage
                 handle={item.isInstagram ? item.instaProfile.username : ""}
                 profile={item.isInstagram ? item.instaProfile : item.fbProfile}
@@ -74,8 +74,8 @@ const ConnectedSocials: React.FC = () => {
               flexGrow: 1,
             }}
           />
-          <FacebookLoginButton onFacebookLogin={() => {}} />
-          <InstagramLoginButton onFacebookLogin={() => {}} />
+          <FacebookLoginButton onFacebookLogin={() => { }} />
+          <InstagramLoginButton onFacebookLogin={() => { }} />
         </>
       )}
     </View>
