@@ -12,7 +12,6 @@ interface SocialsProtectedScreenProps extends PropsWithChildren { }
 const SocialsProtectedScreen: React.FC<SocialsProtectedScreenProps> = ({
   children,
 }) => {
-
   const {
     isUserLoading,
   } = useAuthContext();
