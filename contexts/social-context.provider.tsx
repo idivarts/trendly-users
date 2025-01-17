@@ -1,5 +1,5 @@
 import { FirestoreDB } from "@/utils/firestore";
-import { collection, getDocs, onSnapshot } from "firebase/firestore";
+import { collection, onSnapshot } from "firebase/firestore";
 import {
   createContext,
   useContext,
@@ -9,7 +9,6 @@ import {
 } from "react";
 import { useAuthContext } from "./auth-context.provider";
 import { ISocials } from "@/shared-libs/firestore/trendly-pro/models/socials";
-import { useStorageState } from "@/hooks";
 import { router } from "expo-router";
 
 interface SocialContextProps {
@@ -23,19 +22,20 @@ const SocialContext = createContext<SocialContextProps>({
   socials: [],
   primarySocial: null,
   isFetchingSocials: false,
-  setPrimarySocial: (social: ISocials) => {},
+  setPrimarySocial: (social: ISocials) => { },
 });
 
 export const SocialContextProvider = ({ children }: PropsWithChildren<{}>) => {
-  const { user, session, isLoading } = useAuthContext();
+  const { user } = useAuthContext();
   const [socials, setSocials] = useState<any[]>([]);
   const [primarySocial, setPrimarySocial] = useState<ISocials | null>(null);
   const [isFetchingSocials, setIsFetchingSocials] = useState(false);
 
   const fetchSocials = () => {
-    if (!user || !user.id || isFetchingSocials) return;
-
-    setIsFetchingSocials(true);
+    if (!user || !user.id) {
+      setIsFetchingSocials(false);
+      return;
+    };
 
     try {
       const socialProfileRef = collection(
@@ -60,31 +60,22 @@ export const SocialContextProvider = ({ children }: PropsWithChildren<{}>) => {
 
         setSocials(socialData);
 
-        if (user.primarySocial) {
-          const primary = socialData.find(
-            //@ts-ignore
-            (social: ISocials) => social.id === user.primarySocial
-          );
-          //@ts-ignore
-          setPrimarySocial(primary || null);
-        }
-
         if (socialData.length === 0) {
           router.replace("/no-social-connected");
+          return;
         }
 
-        if (!user.primarySocial && socialData.length > 0) {
+        const primary = user.primarySocial
+          // @ts-ignore
+          ? socialData.find((social: ISocials) => social.id === user.primarySocial)
+          : null;
+
+        if (!primary) {
+          setPrimarySocial(null);
           router.replace("/primary-social-select");
-        }
-
-        if (user.primarySocial && socialData.length > 0) {
-          const primary = socialData.find(
-            //@ts-ignore
-            (social: ISocials) => social.id === user.primarySocial
-          );
-          if (!primary) router.replace("/primary-social-select");
-          //@ts-ignore
-          setPrimarySocial(primary || null);
+        } else {
+          // @ts-ignore
+          setPrimarySocial(primary);
         }
       });
 
@@ -99,7 +90,8 @@ export const SocialContextProvider = ({ children }: PropsWithChildren<{}>) => {
   useEffect(() => {
     let unsubscribe: (() => void) | undefined;
 
-    if (user && user.id && !isLoading) {
+    if (user && user.id) {
+      setIsFetchingSocials(true);
       unsubscribe = fetchSocials();
     }
 

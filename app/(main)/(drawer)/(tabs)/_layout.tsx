@@ -17,7 +17,7 @@ import {
 import {
   faComment as faCommentSolid,
   faFileLines as faFileLinesSolid,
-  faGear,
+  faGears,
   faHandshake as faHandshakeSolid,
   faStar as faStarSolid,
   faUser as faUserSolid,
@@ -152,7 +152,7 @@ const TabLayout = () => {
               }}
             >
               <FontAwesomeIcon
-                icon={faGear}
+                icon={faGears}
                 size={24}
                 color={Colors(theme).text}
               />

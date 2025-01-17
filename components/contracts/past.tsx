@@ -1,6 +1,4 @@
-import BottomSheetActions from "@/components/BottomSheetActions";
-import JobCard from "@/components/collaboration/CollaborationCard";
-import { Text, View } from "@/components/theme/Themed";
+import { View } from "@/components/theme/Themed";
 import Colors from "@/constants/Colors";
 import AppLayout from "@/layouts/app-layout";
 import { useTheme } from "@react-navigation/native";
@@ -11,7 +9,6 @@ import {
   getDocs,
   query,
   where,
-  orderBy,
   collectionGroup,
   doc,
   getDoc,
@@ -23,17 +20,15 @@ import { RefreshControl } from "react-native";
 import { stylesFn } from "@/styles/Proposal.styles";
 import EmptyState from "../ui/empty-state";
 import { useBreakpoints } from "@/hooks";
-import { Card } from "react-native-paper";
 import { IContracts } from "@/shared-libs/firestore/trendly-pro/models/contracts";
-import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import {
   IApplications,
   ICollaboration,
 } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
-import ContractHeader from "../contract-card/ContractHeader";
 import ContractDetails from "../contract-card/ContractDetails";
 import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
 import CollaborationHeader from "../collaboration/card-components/CollaborationHeader";
+import { useAuthContext } from "@/contexts";
 
 interface ICollaborationCard extends IContracts {
   brandData: IBrands;
@@ -50,7 +45,7 @@ const PastContracts = () => {
 
   const theme = useTheme();
   const styles = stylesFn(theme);
-  const user = AuthApp.currentUser;
+  const { user } = useAuthContext();
 
   const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -66,14 +61,13 @@ const PastContracts = () => {
   const fetchProposals = async () => {
     try {
       setIsLoading(true);
-      const user = AuthApp.currentUser;
 
-      if (!user?.uid) {
+      if (!user?.id) {
         throw new Error("User not authenticated");
       }
 
       const contractsCol = collection(FirestoreDB, "contracts");
-      const querySnap = query(contractsCol, where("userId", "==", user.uid));
+      const querySnap = query(contractsCol, where("userId", "==", user.id));
       const contractsSnapshot = await getDocs(querySnap);
 
       const contracts = await Promise.all(
@@ -83,7 +77,7 @@ const PastContracts = () => {
 
           const hasAppliedQuery = query(
             collectionGroup(FirestoreDB, "applications"),
-            where("userId", "==", user.uid),
+            where("userId", "==", user.id),
             where("collaborationId", "==", collaborationId)
           );
 

@@ -13,7 +13,7 @@ import Colors from "@/constants/Colors";
 import { Pressable, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faClose, faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
+import { faCircleDown, faClose } from "@fortawesome/free-solid-svg-icons";
 import Button from "../ui/button";
 import { useBreakpoints } from "@/hooks";
 import { handleDeepLink } from "@/utils/deeplink";
@@ -80,7 +80,7 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
           >
             <FontAwesomeIcon
               color={Colors(theme).primary}
-              icon={faExclamationCircle}
+              icon={faCircleDown}
               size={24}
             />
             <Text

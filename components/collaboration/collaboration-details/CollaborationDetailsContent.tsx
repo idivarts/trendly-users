@@ -7,17 +7,27 @@ import { stylesFn } from "@/styles/CollaborationDetails.styles";
 import { FirestoreDB } from "@/utils/firestore";
 import { deleteDoc, doc, getDoc, updateDoc } from "firebase/firestore";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
-import { useAuthContext, useContractContext, useNotificationContext } from "@/contexts";
+import {
+  useAuthContext,
+  useContractContext,
+  useNotificationContext,
+} from "@/contexts";
 import { CollaborationDetail } from ".";
 import { Invitation } from "@/types/Collaboration";
 import {
   faCheckCircle,
+  faCircleInfo,
   faCoins,
   faDollarSign,
   faFilm,
   faHouseLaptop,
+  faLocationDot,
+  faMap,
   faNoteSticky,
   faPanorama,
+  faRecordVinyl,
+  faStar,
+  faStarHalfStroke,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import Colors from "@/constants/Colors";
@@ -41,6 +51,7 @@ import ConfirmationModal from "@/components/ui/modal/ConfirmationModal";
 import ImageComponent from "@/shared-uis/components/image-component";
 import AuthModal from "@/components/modals/AuthModal";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { faHeart } from "@fortawesome/free-regular-svg-icons";
 import { formatTimeToNow } from "@/utils/date";
 import { Contract } from "@/types/Contract";
 import RatingSection from "@/shared-uis/components/rating-section";
@@ -77,9 +88,7 @@ const CollborationDetailsContent = (
   const authModalBottomSheetModalRef = useRef<BottomSheetModal>(null);
   const { createNotification } = useNotificationContext();
   const { user } = useAuthContext();
-  const {
-    getContractsByCollaborationId,
-  } = useContractContext();
+  const { getContractsByCollaborationId } = useContractContext();
 
   const fetchManagerDetails = async () => {
     const managerRef = doc(
@@ -112,7 +121,7 @@ const CollborationDetailsContent = (
 
   const fetchContracts = async () => {
     const fetchedContracts = await getContractsByCollaborationId(
-      props.collaborationDetail.id,
+      props.collaborationDetail.id
     );
 
     setContracts(fetchedContracts);
@@ -223,7 +232,7 @@ const CollborationDetailsContent = (
     });
 
     return feedbacks;
-  }
+  };
 
   useEffect(() => {
     fetchManagerDetails();
@@ -307,9 +316,7 @@ const CollborationDetailsContent = (
             }}
           >
             <Card.Content>
-              <RatingSection
-                feedbacks={getFeedbacks(contracts)}
-              />
+              <RatingSection feedbacks={getFeedbacks(contracts)} />
               <Pressable
                 style={{ flex: 1, flexDirection: "column", gap: 16 }}
                 onPress={() => setBrandModalVisible(true)}
@@ -393,7 +400,7 @@ const CollborationDetailsContent = (
                 }}
               >
                 <FontAwesomeIcon
-                  icon={faNoteSticky}
+                  icon={faCircleInfo}
                   size={20}
                   color={Colors(theme).primary}
                 />
@@ -539,19 +546,19 @@ const CollborationDetailsContent = (
             </Text>
             {props.collaborationDetail.promotionType ===
               PromotionType.PAID_COLLAB && (
-                <Text
-                  style={{
-                    fontSize: 16,
-                    color: Colors(theme).text,
-                  }}
-                >
-                  Budget:
-                  {props.collaborationDetail?.budget?.min ===
-                    props.collaborationDetail?.budget?.max
-                    ? `$${props.collaborationDetail?.budget?.min}`
-                    : `$${props.collaborationDetail?.budget?.min} - $${props.collaborationDetail?.budget?.max}`}
-                </Text>
-              )}
+              <Text
+                style={{
+                  fontSize: 16,
+                  color: Colors(theme).text,
+                }}
+              >
+                Budget:
+                {props.collaborationDetail?.budget?.min ===
+                props.collaborationDetail?.budget?.max
+                  ? `$${props.collaborationDetail?.budget?.min}`
+                  : `$${props.collaborationDetail?.budget?.min} - $${props.collaborationDetail?.budget?.max}`}
+              </Text>
+            )}
           </View>
           {/* chips */}
           <View
@@ -565,7 +572,7 @@ const CollborationDetailsContent = (
             <ChipCard
               chipText={
                 props.collaborationDetail.promotionType ===
-                  PromotionType.PAID_COLLAB
+                PromotionType.PAID_COLLAB
                   ? "Paid"
                   : "Unpaid"
               }
@@ -573,7 +580,11 @@ const CollborationDetailsContent = (
             />
             <ChipCard
               chipText={props.collaborationDetail.location.type}
-              chipIcon={faHouseLaptop}
+              chipIcon={
+                props.collaborationDetail.location.type === "On-Site"
+                  ? faLocationDot
+                  : faHouseLaptop
+              }
             />
 
             {props.collaborationDetail.platform &&
@@ -585,10 +596,10 @@ const CollborationDetailsContent = (
                     content === "Instagram"
                       ? faInstagram
                       : content === "Facebook"
-                        ? faFacebook
-                        : content === "Youtube"
-                          ? faYoutube
-                          : faInstagram
+                      ? faFacebook
+                      : content === "Youtube"
+                      ? faYoutube
+                      : faInstagram
                   }
                 />
               ))}
@@ -602,8 +613,14 @@ const CollborationDetailsContent = (
                     content === "Posts"
                       ? faPanorama
                       : content === "Reels"
-                        ? faFilm
-                        : faCoins
+                      ? faFilm
+                      : content === "Stories"
+                      ? faHeart
+                      : content === "Live"
+                      ? faRecordVinyl
+                      : content === "Product Reviews"
+                      ? faStarHalfStroke
+                      : faPanorama
                   }
                 />
               ))}
@@ -632,8 +649,8 @@ const CollborationDetailsContent = (
                   latitudeDelta: 0.0922,
                   longitudeDelta: 0.042,
                 }}
-                onMapRegionChange={(region) => { }}
-                onFormattedAddressChange={(address) => { }}
+                onMapRegionChange={(region) => {}}
+                onFormattedAddressChange={(address) => {}}
               />
               <Text
                 style={{

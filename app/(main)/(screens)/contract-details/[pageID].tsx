@@ -30,6 +30,7 @@ import {
 } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { View } from "@/components/theme/Themed";
 import { ActivityIndicator } from "react-native";
+import { useAuthContext } from "@/contexts";
 
 interface ICollaborationCard extends IContracts {
   userData: IUsers;
@@ -44,12 +45,11 @@ const ContractDetailsScreen = () => {
 
   const { pageID } = useLocalSearchParams();
   const [contract, setContract] = useState<ICollaborationCard>();
+  const { user } = useAuthContext();
 
   const fetchProposals = async () => {
     try {
-      const user = AuthApp.currentUser;
-
-      if (!user?.uid) {
+      if (!user?.id) {
         throw new Error("User not authenticated");
       }
 
@@ -65,7 +65,7 @@ const ContractDetailsScreen = () => {
 
       const hasAppliedQuery = query(
         collectionGroup(FirestoreDB, "applications"),
-        where("userId", "==", user.uid),
+        where("userId", "==", user.id),
         where("collaborationId", "==", collaborationId)
       );
 

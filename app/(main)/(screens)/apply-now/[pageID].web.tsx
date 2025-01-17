@@ -28,10 +28,7 @@ import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { doc, getDoc } from "firebase/firestore";
 import { stylesFn } from "@/styles/ApplyNow.styles";
 import {
-  faLink,
-  faLocationDot,
   faPaperclip,
-  faQuoteLeft,
 } from "@fortawesome/free-solid-svg-icons";
 import ListItem from "@/components/ui/list-item/ListItem";
 import AssetsPreview from "@/components/ui/assets-preview";

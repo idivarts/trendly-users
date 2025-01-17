@@ -1,12 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { Linking, Image } from "react-native";
-import {
-  Card,
-  IconButton,
-  Menu,
-  ActivityIndicator,
-  Avatar,
-} from "react-native-paper";
+import React, { useState } from "react";
+import { Linking } from "react-native";
+import { Card, IconButton, Menu } from "react-native-paper";
 import { stylesFn } from "@/styles/profile/SocialPage.styles";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { useTheme } from "@react-navigation/native";
@@ -18,7 +12,7 @@ import { faFacebook, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import { faStar } from "@fortawesome/free-regular-svg-icons";
 import { AuthApp } from "@/utils/auth";
 import { FirestoreDB } from "@/utils/firestore";
-import { collection, doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { useAuthContext } from "@/contexts";
 import ImageComponent from "@/shared-uis/components/image-component";
@@ -56,7 +50,7 @@ const SocialPage: React.FC<SocialPageProps> = ({
   };
 
   const makePrimary = async () => {
-    const userId = AuthApp.currentUser?.uid;
+    const userId = user?.id;
     if (!userId) return;
 
     const userDocRef = doc(FirestoreDB, "users", userId);
@@ -83,8 +77,6 @@ const SocialPage: React.FC<SocialPageProps> = ({
               url={image}
               altText="Profile Photo"
               shape="square"
-              width={50}
-              height={50}
               size="small"
             />
             <View

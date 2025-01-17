@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { View, FlatList, RefreshControl, Pressable } from "react-native";
+import { View, FlatList, RefreshControl, Pressable, ActivityIndicator } from "react-native";
 import SearchComponent from "@/components/SearchComponent";
-import JobCard, { CollaborationAdCardProps } from "./CollaborationCard";
 import CollaborationFilter from "@/components/FilterModal";
 import AppLayout from "@/layouts/app-layout";
 import { useTheme } from "@react-navigation/native";
@@ -10,7 +9,6 @@ import { collection, getDocs, orderBy, query } from "firebase/firestore";
 import { FirestoreDB } from "@/utils/firestore";
 import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
-import { ActivityIndicator, Card } from "react-native-paper";
 import Colors from "@/constants/Colors";
 import BottomSheetActions from "../BottomSheetActions";
 import EmptyState from "../ui/empty-state";
@@ -18,10 +16,8 @@ import CollaborationHeader from "./card-components/CollaborationHeader";
 import Carousel from "@/shared-uis/components/carousel/carousel";
 import CollaborationDetails from "./card-components/CollaborationDetails";
 import CollaborationStats from "./card-components/CollaborationStats";
-import { useAuthContext } from "@/contexts";
 import { processRawAttachment } from "@/utils/attachments";
 import { router } from "expo-router";
-import Toast from "react-native-toast-message";
 
 interface ICollaborationAddCardProps extends ICollaboration {
   name: string;
@@ -38,7 +34,6 @@ const Collaboration = () => {
   const getUniqueValues = (array: any[], key: string) => {
     return ["All", ...new Set(array.map((item) => item[key]))];
   };
-  const { user } = useAuthContext();
   const [filterVisible, setFilterVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -150,8 +145,8 @@ const Collaboration = () => {
       job.budget.min
       ? job.budget.min >= salaryRange[0]
       : true && job.budget && job.budget.max
-      ? job.budget.max <= salaryRange[1]
-      : true;
+        ? job.budget.max <= salaryRange[1]
+        : true;
   });
 
   const styles = stylesFn(theme);
@@ -166,11 +161,18 @@ const Collaboration = () => {
               setSearchQuery={setSearchQuery}
             />
           </View>
-          <ActivityIndicator
-            animating={true}
-            color={Colors(theme).primary}
-            size="large"
-          />
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <ActivityIndicator
+              color={Colors(theme).primary}
+              size="large"
+            />
+          </View>
         </View>
       </AppLayout>
     );

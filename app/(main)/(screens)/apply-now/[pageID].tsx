@@ -26,8 +26,6 @@ import {
   faLink,
   faLocationDot,
   faPaperclip,
-  faPhotoFilm,
-  faQuoteLeft,
 } from "@fortawesome/free-solid-svg-icons";
 import ListItem from "@/components/ui/list-item/ListItem";
 import Colors from "@/constants/Colors";
@@ -197,8 +195,8 @@ const ApplyScreen = () => {
             file.type === "image"
               ? file.imageUrl
               : Platform.OS === "ios"
-                ? file.appleUrl
-                : file.playUrl,
+              ? file.appleUrl
+              : file.playUrl,
           type: file.type,
         },
       ]);

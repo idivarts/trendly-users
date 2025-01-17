@@ -4,7 +4,7 @@ import Select from "@/components/ui/select";
 import SelectGroup from "@/components/ui/select/select-group";
 import { MultiRangeSlider } from "@/components/ui/multislider";
 import { Selector } from "@/components/ui/select/selector";
-import { faDollarSign, faVideo } from "@fortawesome/free-solid-svg-icons";
+import { faGift, faHandHoldingDollar } from "@fortawesome/free-solid-svg-icons";
 import { useTheme } from "@react-navigation/native";
 import { BRAND_INDUSTRIES, INITIAL_BRAND_INDUSTRIES, INITIAL_LANGUAGES, LANGUAGES } from "@/constants/ItemsList";
 import { includeSelectedItems } from "@/utils/items-list";
@@ -66,12 +66,12 @@ const Preferences: React.FC<PreferencesProps> = ({
         <Selector
           options={[
             {
-              icon: faVideo,
+              icon: faGift,
               label: 'Barter & Paid Both',
               value: 'Barter & Paid Both',
             },
             {
-              icon: faDollarSign,
+              icon: faHandHoldingDollar,
               label: 'Just Paid Collabs',
               value: 'Just Paid Collabs',
             },
