@@ -6,6 +6,7 @@ import Colors from "@/constants/Colors";
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
+  faCircleInfo,
   faFaceSmile,
   faSmile,
   faSmileBeam,
@@ -310,7 +311,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
           gap: 10,
         }}
       >
-        <FontAwesomeIcon icon={faNoteSticky} size={20} />
+        <FontAwesomeIcon icon={faCircleInfo} size={20} />
         <Text style={{ fontSize: 16, width: "95%" }}>
           {contract.status === 0
             ? "Please make sure to use this chat to first understand the the influencer. Post that, you can start your collaboration here"

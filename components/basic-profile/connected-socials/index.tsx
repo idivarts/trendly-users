@@ -9,38 +9,12 @@ import { FirestoreDB } from "@/utils/firestore";
 import { AuthApp } from "@/utils/auth";
 import { ActivityIndicator } from "react-native-paper";
 import InstagramLoginButton from "@/components/profile/ConnectWithInstagram";
+import { useAuthContext, useSocialContext } from "@/contexts";
 
 const ConnectedSocials: React.FC = () => {
-  const [socials, setSocials] = useState<any>();
-  const [loading, setLoading] = useState(true);
-
-  const fetchSocials = async () => {
-    try {
-      const userID = AuthApp.currentUser?.uid;
-      if (!userID) {
-        return;
-      }
-      const socialProfileRef = collection(
-        FirestoreDB,
-        "users",
-        userID,
-        "socials"
-      );
-      const socialProfileSnapshot = await getDocs(socialProfileRef);
-      const socialProfileData = socialProfileSnapshot.docs.map((doc) =>
-        doc.data()
-      );
-      setSocials(socialProfileData);
-    } catch (error) {
-      console.error("Error fetching socials", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchSocials();
-  }, []);
+  const [loading, setLoading] = useState(false);
+  const { user } = useAuthContext();
+  const { socials } = useSocialContext();
 
   return (
     <View
@@ -58,7 +32,9 @@ const ConnectedSocials: React.FC = () => {
             renderItem={({ item }) => (
               // @ts-ignore
               <SocialPage
-                handle={item.isInstagram ? item.instaProfile.username : ""}
+                handle={
+                  item.isInstagram ? item.instaProfile?.username || "" : ""
+                }
                 profile={item.isInstagram ? item.instaProfile : item.fbProfile}
                 platform={
                   item.isInstagram
@@ -74,8 +50,8 @@ const ConnectedSocials: React.FC = () => {
               flexGrow: 1,
             }}
           />
-          <FacebookLoginButton onFacebookLogin={() => { }} />
-          <InstagramLoginButton onFacebookLogin={() => { }} />
+          <FacebookLoginButton onFacebookLogin={() => {}} />
+          <InstagramLoginButton onFacebookLogin={() => {}} />
         </>
       )}
     </View>

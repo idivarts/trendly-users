@@ -34,6 +34,7 @@ import ContractHeader from "../contract-card/ContractHeader";
 import ContractDetails from "../contract-card/ContractDetails";
 import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
 import CollaborationHeader from "../collaboration/card-components/CollaborationHeader";
+import { useAuthContext } from "@/contexts";
 
 interface ICollaborationCard extends IContracts {
   brandData: IBrands;
@@ -45,12 +46,12 @@ const ActiveContracts = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [proposals, setProposals] = useState<ICollaborationCard[]>([]);
   const [selectedCollabId, setSelectedCollabId] = useState<string | null>(null);
+  const { user } = useAuthContext();
 
   const closeBottomSheet = () => setIsVisible(false);
 
   const theme = useTheme();
   const styles = stylesFn(theme);
-  const user = AuthApp.currentUser;
 
   const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -66,14 +67,13 @@ const ActiveContracts = () => {
   const fetchProposals = async () => {
     try {
       setIsLoading(true);
-      const user = AuthApp.currentUser;
 
-      if (!user?.uid) {
+      if (!user?.id) {
         throw new Error("User not authenticated");
       }
 
       const contractsCol = collection(FirestoreDB, "contracts");
-      const querySnap = query(contractsCol, where("userId", "==", user.uid));
+      const querySnap = query(contractsCol, where("userId", "==", user.id));
       const contractsSnapshot = await getDocs(querySnap);
 
       const contracts = await Promise.all(
@@ -83,7 +83,7 @@ const ActiveContracts = () => {
 
           const hasAppliedQuery = query(
             collectionGroup(FirestoreDB, "applications"),
-            where("userId", "==", user.uid),
+            where("userId", "==", user.id),
             where("collaborationId", "==", collaborationId)
           );
 
