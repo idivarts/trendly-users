@@ -31,14 +31,6 @@ const EditTextArea: React.FC = () => {
 
   const [value, setValue] = useState(initialValue || "");
 
-  const handleNavigate = () => {
-    navigation.navigate({
-      //@ts-ignore
-      pathname: path as string,
-      params: { title, value: initialValue },
-    });
-  };
-
   const { user, updateUser } = useAuthContext();
 
   const handleUpdateProfileContent = async () => {
@@ -72,7 +64,7 @@ const EditTextArea: React.FC = () => {
 
     await updateUser(user.id, updatedContent).then(() => {
       navigation.navigate("/edit-profile");
-      Toaster.success(`${title ? title : 'Profile'} updated successfully`);
+      Toaster.success(`${title ? title : "Profile"} updated successfully`);
     });
   };
 

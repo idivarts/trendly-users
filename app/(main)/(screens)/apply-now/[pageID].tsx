@@ -4,7 +4,7 @@ import { useTheme } from "@react-navigation/native";
 import { router, useLocalSearchParams } from "expo-router";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import React, { useEffect, useState } from "react";
-import { Keyboard, Platform, ScrollView, View } from "react-native";
+import { Platform, ScrollView, View } from "react-native";
 import {
   Button,
   Card,

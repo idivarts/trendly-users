@@ -1,5 +1,4 @@
 import BottomSheetActions from "@/components/BottomSheetActions";
-import JobCard from "@/components/collaboration/CollaborationCard";
 import { Text, View } from "@/components/theme/Themed";
 import Colors from "@/constants/Colors";
 import AppLayout from "@/layouts/app-layout";
@@ -13,6 +12,7 @@ import {
   where,
   doc as firebaseDoc,
   getDoc,
+  collectionGroup,
 } from "firebase/firestore";
 import {
   ActivityIndicator,
@@ -53,78 +53,59 @@ const Invitations = () => {
   const [isLoading, setIsLoading] = useState(true);
   const fetchInvitations = async () => {
     try {
-      const collaborationCol = collection(FirestoreDB, "collaborations");
-      const collabSnapshot = await getDocs(collaborationCol);
-      let totalNotPendingInvitations = 0;
+      const invitationCol = collectionGroup(FirestoreDB, "invitations");
+      const querySnap = query(invitationCol, where("userId", "==", user?.id));
+      const invitationSnapshot = await getDocs(querySnap);
+      const invitationData = invitationSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        status: doc.data().status,
+        collaborationId: doc.data().collaborationId,
+        ...doc.data(),
+      }));
 
-      // Map over the collaborations to fetch applications for each collaboration
-      const invitationsWithApplications = await Promise.all(
-        collabSnapshot.docs.map(async (doc) => {
-          const collab = {
-            id: doc.id,
-            brandId: doc.data().brandId,
-            ...doc.data(),
-          };
+      let totalNotPendingApplications = 0;
+
+      const applicationWithCollab = await Promise.all(
+        invitationData.map(async (application) => {
+          const collabDoc = firebaseDoc(
+            collection(FirestoreDB, "collaborations"),
+            application.collaborationId
+          );
+          const collabData = await getDoc(collabDoc);
+          if (!collabData.exists()) {
+            return null;
+          }
+
           const brandDoc = firebaseDoc(
             collection(FirestoreDB, "brands"),
-            collab.brandId
+            collabData.data().brandId
           );
           const brandData = await getDoc(brandDoc);
           if (!brandData.exists()) {
             return null;
           }
 
-          // Fetch applications for the current collaboration
-          const applicationCol = collection(
-            FirestoreDB,
-            "collaborations",
-            collab.id,
-            "invitations"
-          );
-          const applicationSnapshot = query(
-            applicationCol,
-            where("userId", "==", user?.id)
-          );
-
-          const applicationData = await getDocs(applicationSnapshot).then(
-            (querySnapshot) => {
-              return querySnapshot.docs.map((doc) => ({
-                id: doc.id,
-                userId: doc.data().userId,
-                status: doc.data().status,
-                ...doc.data(),
-              }));
-            }
-          );
-
-          const userApplications = applicationData.filter(
-            (application) => application.userId === user?.id
-          );
-
-          const notPendingApplications = userApplications.filter(
-            (application) => application.status !== "pending"
-          ).length;
-
-          totalNotPendingInvitations += notPendingApplications;
-
-          if (applicationData.length === 0) {
-            return null;
+          if (application.status !== "pending") {
+            totalNotPendingApplications += 1;
           }
 
           return {
-            ...collab,
-            applications: applicationData[0],
+            ...collabData.data(),
+            id: collabData.id,
             brandName: brandData.data().name,
+            brandImage: brandData.data().image,
+            paymentVerified: brandData.data().paymentMethodVerified,
+            applications: application,
           };
         })
       );
 
-      const validProposals = invitationsWithApplications.filter(
-        (proposal) => proposal !== null
-      );
+      const validProposals = applicationWithCollab.filter((proposal) => {
+        return proposal !== null;
+      });
 
       setInvitations(validProposals);
-      setNotPendingInvitations(totalNotPendingInvitations);
+      setNotPendingInvitations(totalNotPendingApplications);
     } catch (error) {
       console.error("Error fetching proposals: ", error);
     } finally {
