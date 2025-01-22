@@ -7,7 +7,11 @@ import { stylesFn } from "@/styles/CollaborationDetails.styles";
 import { FirestoreDB } from "@/utils/firestore";
 import { deleteDoc, doc, getDoc, updateDoc } from "firebase/firestore";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
-import { useAuthContext, useContractContext, useNotificationContext } from "@/contexts";
+import {
+  useAuthContext,
+  useContractContext,
+  useNotificationContext,
+} from "@/contexts";
 import { CollaborationDetail } from ".";
 import { Invitation } from "@/types/Collaboration";
 import {
@@ -84,9 +88,7 @@ const CollborationDetailsContent = (
   const authModalBottomSheetModalRef = useRef<BottomSheetModal>(null);
   const { createNotification } = useNotificationContext();
   const { user } = useAuthContext();
-  const {
-    getContractsByCollaborationId,
-  } = useContractContext();
+  const { getContractsByCollaborationId } = useContractContext();
 
   const fetchManagerDetails = async () => {
     const managerRef = doc(
@@ -119,7 +121,7 @@ const CollborationDetailsContent = (
 
   const fetchContracts = async () => {
     const fetchedContracts = await getContractsByCollaborationId(
-      props.collaborationDetail.id,
+      props.collaborationDetail.id
     );
 
     setContracts(fetchedContracts);
@@ -230,7 +232,7 @@ const CollborationDetailsContent = (
     });
 
     return feedbacks;
-  }
+  };
 
   useEffect(() => {
     fetchManagerDetails();
@@ -314,9 +316,7 @@ const CollborationDetailsContent = (
             }}
           >
             <Card.Content>
-              <RatingSection
-                feedbacks={getFeedbacks(contracts)}
-              />
+              <RatingSection feedbacks={getFeedbacks(contracts)} />
               <Pressable
                 style={{ flex: 1, flexDirection: "column", gap: 16 }}
                 onPress={() => setBrandModalVisible(true)}
@@ -546,19 +546,19 @@ const CollborationDetailsContent = (
             </Text>
             {props.collaborationDetail.promotionType ===
               PromotionType.PAID_COLLAB && (
-                <Text
-                  style={{
-                    fontSize: 16,
-                    color: Colors(theme).text,
-                  }}
-                >
-                  Budget:
-                  {props.collaborationDetail?.budget?.min ===
-                    props.collaborationDetail?.budget?.max
-                    ? `$${props.collaborationDetail?.budget?.min}`
-                    : `$${props.collaborationDetail?.budget?.min} - $${props.collaborationDetail?.budget?.max}`}
-                </Text>
-              )}
+              <Text
+                style={{
+                  fontSize: 16,
+                  color: Colors(theme).text,
+                }}
+              >
+                Budget:
+                {props.collaborationDetail?.budget?.min ===
+                props.collaborationDetail?.budget?.max
+                  ? `$${props.collaborationDetail?.budget?.min}`
+                  : `$${props.collaborationDetail?.budget?.min} - $${props.collaborationDetail?.budget?.max}`}
+              </Text>
+            )}
           </View>
           {/* chips */}
           <View
@@ -572,7 +572,7 @@ const CollborationDetailsContent = (
             <ChipCard
               chipText={
                 props.collaborationDetail.promotionType ===
-                  PromotionType.PAID_COLLAB
+                PromotionType.PAID_COLLAB
                   ? "Paid"
                   : "Unpaid"
               }
@@ -596,10 +596,10 @@ const CollborationDetailsContent = (
                     content === "Instagram"
                       ? faInstagram
                       : content === "Facebook"
-                        ? faFacebook
-                        : content === "Youtube"
-                          ? faYoutube
-                          : faInstagram
+                      ? faFacebook
+                      : content === "Youtube"
+                      ? faYoutube
+                      : faInstagram
                   }
                 />
               ))}
@@ -612,7 +612,7 @@ const CollborationDetailsContent = (
                   chipIcon={
                     content === "Posts"
                       ? faPanorama
-                      : content === "Reels"       
+                      : content === "Reels"
                       ? faFilm
                       : content === "Stories"
                       ? faHeart
@@ -649,8 +649,8 @@ const CollborationDetailsContent = (
                   latitudeDelta: 0.0922,
                   longitudeDelta: 0.042,
                 }}
-                onMapRegionChange={(region) => { }}
-                onFormattedAddressChange={(address) => { }}
+                onMapRegionChange={(region) => {}}
+                onFormattedAddressChange={(address) => {}}
               />
               <Text
                 style={{

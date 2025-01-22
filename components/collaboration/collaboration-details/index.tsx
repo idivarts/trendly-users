@@ -103,7 +103,7 @@ const CollaborationDetails: React.FC<CollaborationDetailsProps> = ({
         setHasApplied(hasAppliedData.length > 0);
         setApplication(hasAppliedData[0]);
 
-        if (hasAppliedData.length > 0) {
+        if (hasAppliedData.length > 0 && cardType !== "invitation") {
           setCardTypeDetails("application");
         }
       }

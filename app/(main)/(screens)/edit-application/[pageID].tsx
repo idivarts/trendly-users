@@ -23,6 +23,8 @@ import {
   faClapperboard,
   faClockRotateLeft,
   faDollarSign,
+  faLink,
+  faLocationDot,
   faPaperclip,
 } from "@fortawesome/free-solid-svg-icons";
 import ListItem from "@/components/ui/list-item/ListItem";
@@ -280,8 +282,8 @@ const EditApplicationScreen = () => {
             file.type === "image"
               ? file.imageUrl
               : Platform.OS === "ios"
-                ? file.appleUrl
-                : file.playUrl,
+              ? file.appleUrl
+              : file.playUrl,
           type: file.type,
           imageUrl: file.imageUrl,
           playUrl: file.playUrl,

@@ -4,7 +4,7 @@ import { useTheme } from "@react-navigation/native";
 import { router, useLocalSearchParams } from "expo-router";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import React, { useEffect, useState } from "react";
-import { Keyboard, Platform, ScrollView, View } from "react-native";
+import { Platform, ScrollView, View } from "react-native";
 import {
   Button,
   Card,
@@ -23,6 +23,8 @@ import {
   faClapperboard,
   faClockRotateLeft,
   faDollarSign,
+  faLink,
+  faLocationDot,
   faPaperclip,
 } from "@fortawesome/free-solid-svg-icons";
 import ListItem from "@/components/ui/list-item/ListItem";
@@ -35,6 +37,7 @@ import { Attachment } from "@/shared-libs/firestore/trendly-pro/constants/attach
 import { FirestoreDB } from "@/utils/firestore";
 import { doc, getDoc } from "firebase/firestore";
 import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
+import ContentItem from "@/components/basic-profile/edit-profile/ContentItem";
 import { faCircleQuestion } from "@fortawesome/free-regular-svg-icons";
 
 const ApplyScreen = () => {
@@ -192,8 +195,8 @@ const ApplyScreen = () => {
             file.type === "image"
               ? file.imageUrl
               : Platform.OS === "ios"
-                ? file.appleUrl
-                : file.playUrl,
+              ? file.appleUrl
+              : file.playUrl,
           type: file.type,
         },
       ]);

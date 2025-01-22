@@ -1,20 +1,16 @@
 import React, { useEffect } from "react";
 import { View, FlatList } from "react-native";
 import AppLayout from "@/layouts/app-layout";
-import JobCard from "@/components/collaboration/CollaborationCard";
-import { CollaborationType } from "@/shared-libs/firestore/trendly-pro/constants/collaboration-type";
-import { SocialPlatform } from "@/shared-libs/firestore/trendly-pro/constants/social-platform";
-import { PromotionType } from "@/shared-libs/firestore/trendly-pro/constants/promotion-type";
 import {
   collection,
   query,
   where,
   doc as firebaseDoc,
   getDoc,
+  collectionGroup,
 } from "firebase/firestore";
 import { FirestoreDB } from "@/utils/firestore";
 import { getDocs } from "firebase/firestore";
-import { AuthApp } from "@/utils/auth";
 import BottomSheetActions from "@/components/BottomSheetActions";
 import ScreenHeader from "@/components/ui/screen-header";
 import CollaborationDetails from "@/components/collaboration/card-components/CollaborationDetails";
@@ -22,7 +18,6 @@ import Colors from "@/constants/Colors";
 import { processRawAttachment } from "@/utils/attachments";
 import Carousel from "@/shared-uis/components/carousel/carousel";
 import CollaborationHeader from "@/components/collaboration/card-components/CollaborationHeader";
-import { Card } from "react-native-paper";
 import { useTheme } from "@react-navigation/native";
 import { useAuthContext } from "@/contexts";
 
@@ -41,78 +36,61 @@ const PastApplicationPage = (props: any) => {
   };
   const closeBottomSheet = () => setIsVisible(false);
 
-  const fetchProposals = async () => {
+  const fetchInvitations = async () => {
     try {
-      const collaborationCol = collection(FirestoreDB, "collaborations");
-      const collabSnapshot = await getDocs(collaborationCol);
+      const invitationCol = collectionGroup(FirestoreDB, "invitations");
+      const querySnap = query(invitationCol, where("userId", "==", user?.id));
+      const invitationSnapshot = await getDocs(querySnap);
+      const invitationData = invitationSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        status: doc.data().status,
+        collaborationId: doc.data().collaborationId,
+        ...doc.data(),
+      }));
 
-      // Map over the collaborations to fetch applications for each collaboration
-      const proposalsWithApplications = await Promise.all(
-        collabSnapshot.docs.map(async (doc) => {
-          const collab = {
-            id: doc.id,
-            brandId: doc.data().brandId,
-            ...doc.data(),
-          };
+      let totalNotPendingApplications = 0;
+
+      const applicationWithCollab = await Promise.all(
+        invitationData.map(async (application) => {
+          const collabDoc = firebaseDoc(
+            collection(FirestoreDB, "collaborations"),
+            application.collaborationId
+          );
+          const collabData = await getDoc(collabDoc);
+          if (!collabData.exists()) {
+            return null;
+          }
+
           const brandDoc = firebaseDoc(
             collection(FirestoreDB, "brands"),
-            collab.brandId
+            collabData.data().brandId
           );
           const brandData = await getDoc(brandDoc);
           if (!brandData.exists()) {
             return null;
           }
 
-          // Fetch applications for the current collaboration
-          const applicationCol = collection(
-            FirestoreDB,
-            "collaborations",
-            collab.id,
-            "invitations"
-          );
-
-          const applicationSnapshot = query(
-            applicationCol,
-            where("userId", "==", user?.id),
-            where("status", "in", ["accepted", "rejected"])
-          );
-
-          const applicationData = await getDocs(applicationSnapshot).then(
-            (querySnapshot) => {
-              return querySnapshot.docs.map((doc) => ({
-                id: doc.id,
-                userId: doc.data().userId,
-                status: doc.data().status,
-                ...doc.data(),
-              }));
-            }
-          );
-
-          if (applicationData.length === 0) {
-            return null;
+          if (application.status !== "pending") {
+            totalNotPendingApplications += 1;
           }
 
           return {
-            ...collab,
-            applications: applicationData[0],
+            ...collabData.data(),
+            id: collabData.id,
             brandName: brandData.data().name,
             brandImage: brandData.data().image,
+            paymentVerified: brandData.data().paymentMethodVerified,
+            applications: application,
           };
         })
       );
 
-      const validProposals = proposalsWithApplications.filter(
-        (proposal: any) => {
-          if (proposal === null) {
-            return false;
-          }
-          return (
-            proposal !== null ||
-            proposal.applications.status === "accepted" ||
-            proposal.applications.status === "rejected"
-          );
-        }
-      );
+      const validProposals = applicationWithCollab.filter((proposal: any) => {
+        return (
+          proposal !== null ||
+          (proposal && proposal?.applications.status !== "pending")
+        );
+      });
 
       setProposals(validProposals);
     } catch (error) {
@@ -121,9 +99,8 @@ const PastApplicationPage = (props: any) => {
       setIsLoading(false);
     }
   };
-
   useEffect(() => {
-    fetchProposals();
+    fetchInvitations();
   }, []);
 
   return (
