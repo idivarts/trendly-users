@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { View, ScrollView, Pressable, Linking } from "react-native";
-import { Text, Card, Button, Portal } from "react-native-paper";
+import { Text, Card, Portal } from "react-native-paper";
 import { router } from "expo-router";
 import { useTheme } from "@react-navigation/native";
 import { stylesFn } from "@/styles/CollaborationDetails.styles";
@@ -51,6 +51,7 @@ import { faHeart } from "@fortawesome/free-regular-svg-icons";
 import { formatTimeToNow } from "@/utils/date";
 import { Contract } from "@/types/Contract";
 import RatingSection from "@/shared-uis/components/rating-section";
+import Button from "@/components/ui/button";
 
 interface ApplicationData extends IApplications {
   id: string;
@@ -612,15 +613,15 @@ const CollborationDetailsContent = (
                   chipIcon={
                     content === "Posts"
                       ? faPanorama
-                      : content === "Reels"       
-                      ? faFilm
-                      : content === "Stories"
-                      ? faHeart
-                      : content === "Live"
-                      ? faRecordVinyl
-                      : content === "Product Reviews"
-                      ? faStarHalfStroke
-                      : faPanorama
+                      : content === "Reels"
+                        ? faFilm
+                        : content === "Stories"
+                          ? faHeart
+                          : content === "Live"
+                            ? faRecordVinyl
+                            : content === "Product Reviews"
+                              ? faStarHalfStroke
+                              : faPanorama
                   }
                 />
               ))}

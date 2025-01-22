@@ -9,7 +9,7 @@ import {
   ScrollView,
 } from "react-native";
 import * as MediaLibrary from "expo-media-library";
-import { Button, Surface, Text, Checkbox } from "react-native-paper";
+import { Surface, Text, Checkbox } from "react-native-paper";
 import { CameraView, useCameraPermissions, Camera } from "expo-camera";
 import { router, useLocalSearchParams } from "expo-router";
 import { stylesFn } from "@/styles/apply-now/gallery.styles";
@@ -22,7 +22,7 @@ import { AssetItem } from "@/types/Asset";
 import { useAuthContext } from "@/contexts";
 import { processRawAttachment } from "@/utils/attachments";
 import RenderMediaItem from "@/components/ui/carousel/render-media-item";
-import { Attachment } from "@/shared-libs/firestore/trendly-pro/constants/attachment";
+import Button from "@/components/ui/button";
 
 const GalleryScreen = () => {
   const { pageID } = useLocalSearchParams();
@@ -409,7 +409,7 @@ const GalleryScreen = () => {
               >
                 <Surface style={styles.itemContainer}>
                   <RenderMediaItem
-                    handleImagePress={() => {}}
+                    handleImagePress={() => { }}
                     index={item.id}
                     item={item.attachment}
                     height={120}

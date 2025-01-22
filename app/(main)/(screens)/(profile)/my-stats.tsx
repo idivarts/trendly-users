@@ -3,8 +3,8 @@ import { Text, View } from "@/components/theme/Themed";
 import ScreenHeader from "@/components/ui/screen-header";
 import AppLayout from "@/layouts/app-layout";
 import { ScrollView, Dimensions, StyleSheet, Platform } from "react-native";
-import { Button, Card } from "react-native-paper";
-import { BarChart, LineChart, PieChart } from "react-native-gifted-charts";
+import { Card } from "react-native-paper";
+import { LineChart, PieChart } from "react-native-gifted-charts";
 import Colors from "@/constants/Colors";
 import { Theme, useTheme } from "@react-navigation/native";
 import { TopBrandCard } from "@/components/basic-profile/stats/TopBrand";
@@ -17,6 +17,7 @@ import {
   FUNNEL_DATA as demo_data,
 } from "@/constants/Chart";
 import FunnelChartWeb from "@/components/basic-profile/stats/funnel-chart/FunnelChart";
+import Button from "@/components/ui/button";
 
 const MyStatsScreen = () => {
   const screenWidth = Dimensions.get("window").width;
@@ -32,10 +33,7 @@ const MyStatsScreen = () => {
           //export button
           <Button
             mode="contained"
-            onPress={() => {}}
-            style={{
-              backgroundColor: Colors(theme).primary,
-            }}
+            onPress={() => { }}
           >
             Export
           </Button>

@@ -1,5 +1,6 @@
 import FacebookLoginButton from "@/components/profile/ConnectWithFacebook";
 import InstagramLoginButton from "@/components/profile/ConnectWithInstagram";
+import Button from "@/components/ui/button";
 import Colors from "@/constants/Colors";
 import { useAuthContext } from "@/contexts";
 import { useSocialContext } from "@/contexts";
@@ -9,7 +10,7 @@ import { useTheme } from "@react-navigation/native";
 import { router } from "expo-router";
 import React, { useEffect } from "react";
 import { View, StyleSheet, Image } from "react-native";
-import { Button, Text } from "react-native-paper";
+import { Text } from "react-native-paper";
 
 const TrendlyScreen = () => {
   const { signOutUser } = useAuthContext();

@@ -1,4 +1,4 @@
-import { FlatList, Platform, ScrollView, StyleSheet, Text } from "react-native";
+import { Platform, ScrollView, StyleSheet, Text } from "react-native";
 
 import { View } from "@/components/theme/Themed";
 import { useAuthContext } from "@/contexts";
@@ -41,17 +41,45 @@ const ProfileScreen = () => {
           paddingBottom: 16,
         }}
       >
-        {user && (
-          <ProfileCard
-            item={user}
-            onPress={() => router.push("/edit-profile")}
-          />
-        )}
-        <FlatList
-          data={PROFILE_ITEMS}
-          showsVerticalScrollIndicator={false}
-          renderItem={({ item }) => (
+        {
+          user && (
+            <ProfileCard
+              item={user}
+              onPress={() => router.push("/edit-profile")}
+            />
+          )
+        }
+        {
+          !user?.profile?.completionPercentage ||
+            user?.profile?.completionPercentage < COMPLETION_PERCENTAGE ? (
+            <View
+              style={{
+                backgroundColor: Colors(theme).yellow,
+                flexDirection: "row",
+                alignItems: "center",
+                padding: 10,
+                paddingHorizontal: 16,
+                borderRadius: 10,
+              }}
+            >
+              <FontAwesomeIcon icon={faWarning} color="#fff" size={22} />
+              <Text
+                style={{
+                  fontSize: 16,
+                  color: Colors(theme).white,
+                  padding: 16,
+                }}
+              >
+                We only advertise you to our brands if your profile is more
+                than {COMPLETION_PERCENTAGE}% complete
+              </Text>
+            </View>
+          ) : null
+        }
+        {
+          PROFILE_ITEMS.map((item) => (
             <ProfileItemCard
+              key={item.id}
               item={item}
               onPress={() => {
                 if (
@@ -67,47 +95,17 @@ const ProfileScreen = () => {
                 }
               }}
             />
-          )}
-          keyExtractor={(item) => item.id}
-          ListFooterComponent={
-            <ProfileItemCard
-              onPress={() => {
-                setLogoutModalVisible(true);
-              }}
-              item={{
-                id: "7",
-                title: "Logout",
-                icon: faRightFromBracket,
-              }}
-            />
-          }
-          ListHeaderComponent={
-            !user?.profile?.completionPercentage ||
-              user?.profile?.completionPercentage < COMPLETION_PERCENTAGE ? (
-              <View
-                style={{
-                  backgroundColor: Colors(theme).yellow,
-                  flexDirection: "row",
-                  alignItems: "center",
-                  padding: 10,
-                  paddingHorizontal: 16,
-                  borderRadius: 10,
-                }}
-              >
-                <FontAwesomeIcon icon={faWarning} color="#fff" size={22} />
-                <Text
-                  style={{
-                    fontSize: 16,
-                    color: Colors(theme).white,
-                    padding: 16,
-                  }}
-                >
-                  We only advertise you to our brands if your profile is more
-                  than {COMPLETION_PERCENTAGE}% complete
-                </Text>
-              </View>
-            ) : null
-          }
+          ))
+        }
+        <ProfileItemCard
+          onPress={() => {
+            setLogoutModalVisible(true);
+          }}
+          item={{
+            id: "7",
+            title: "Logout",
+            icon: faRightFromBracket,
+          }}
         />
         <ConfirmationModal
           cancelAction={() => setLogoutModalVisible(false)}

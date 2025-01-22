@@ -1,6 +1,8 @@
 import React, { FC, useEffect, useState } from "react";
 import { View, StyleSheet } from "react-native";
-import { Modal, Portal, TextInput, Button, Text } from "react-native-paper";
+import { Modal, Portal, Text } from "react-native-paper";
+import TextInput from "../ui/text-input";
+import Button from "../ui/button";
 
 interface TextModalProps {
   isOpen: boolean;

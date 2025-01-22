@@ -12,7 +12,7 @@ import {
   Modal,
   TouchableOpacity,
 } from "react-native";
-import { Text, Button } from "react-native-paper";
+import { Text } from "react-native-paper";
 import {
   doc,
   updateDoc,
@@ -22,6 +22,7 @@ import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collab
 import ListItem from "../ui/list-item/ListItem";
 import { router, useLocalSearchParams } from "expo-router";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
+import Button from "../ui/button";
 
 interface Application extends IApplications {
   id: string;

@@ -1,6 +1,5 @@
 import React from "react";
 import BottomSheetActions from "@/components/BottomSheetActions";
-import JobCard from "@/components/collaboration/CollaborationCard";
 import { Text, View } from "@/components/theme/Themed";
 import Colors from "@/constants/Colors";
 import AppLayout from "@/layouts/app-layout";
@@ -22,11 +21,8 @@ import {
   RefreshControl,
 } from "react-native";
 import { FirestoreDB } from "@/utils/firestore";
-import { AuthApp } from "@/utils/auth";
 import { stylesFn } from "@/styles/Proposal.styles";
-import { Button, Card } from "react-native-paper";
 import EmptyState from "../ui/empty-state";
-import CollaborationStats from "../collaboration/card-components/CollaborationStats";
 import Carousel from "@/shared-uis/components/carousel/carousel";
 import CollaborationHeader from "../collaboration/card-components/CollaborationHeader";
 import CollaborationDetails from "../collaboration/card-components/CollaborationDetails";

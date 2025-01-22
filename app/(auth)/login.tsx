@@ -1,16 +1,16 @@
 import { useAuthContext } from "@/contexts";
 import * as React from "react";
 import { View, Image, Text } from "react-native";
-import { TextInput, Button } from "react-native-paper";
 import { useRouter } from "expo-router";
 import { useTheme } from "@react-navigation/native";
 import fnStyles from "@/styles/login.styles";
 import Colors from "@/constants/Colors";
+import TextInput from "@/components/ui/text-input";
+import Button from "@/components/ui/button";
 
 const LoginScreen = () => {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
-  const [error, setError] = React.useState("");
   const router = useRouter();
   const { signIn } = useAuthContext();
   const theme = useTheme();
@@ -35,6 +35,7 @@ const LoginScreen = () => {
 
       {/* Email Input Field */}
       <TextInput
+        autoCapitalize="none"
         label="Email"
         value={email}
         onChangeText={setEmail}
