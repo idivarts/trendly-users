@@ -4,16 +4,14 @@ import { useTheme } from "@react-navigation/native";
 import { router, useLocalSearchParams } from "expo-router";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import React, { useEffect, useState } from "react";
-import { Keyboard, Platform, ScrollView, View } from "react-native";
+import { Platform, ScrollView, View } from "react-native";
 import {
-  Button,
   Card,
   HelperText,
   IconButton,
   List,
   Paragraph,
   ProgressBar,
-  TextInput,
 } from "react-native-paper";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import ScreenHeader from "@/components/ui/screen-header";
@@ -39,6 +37,8 @@ import { doc, getDoc } from "firebase/firestore";
 import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import ContentItem from "@/components/basic-profile/edit-profile/ContentItem";
 import { faCircleQuestion } from "@fortawesome/free-regular-svg-icons";
+import TextInput from "@/components/ui/text-input";
+import Button from "@/components/ui/button";
 
 const ApplyScreen = () => {
   const params = useLocalSearchParams();

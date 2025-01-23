@@ -6,7 +6,6 @@ import { useTheme } from "@react-navigation/native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
   faCaretRight,
-  faChevronRight,
 } from "@fortawesome/free-solid-svg-icons";
 import { useAuthContext } from "@/contexts";
 import { COMPLETION_PERCENTAGE } from "@/constants/CompletionPercentage";
@@ -42,7 +41,7 @@ const ProfileItemCard: React.FC<ProfileItemCardProps> = ({ item, onPress }) => {
                   height: 10,
                   borderRadius: 20,
                 }}
-              ></View>
+              />
             )}
         </View>
         <FontAwesomeIcon

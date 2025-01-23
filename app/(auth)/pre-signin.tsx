@@ -8,7 +8,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import Swiper from "react-native-swiper";
-import { Title, Paragraph, Button, Portal } from "react-native-paper";
+import { Title, Paragraph, Portal } from "react-native-paper";
 import stylesFn from "@/styles/tab1.styles";
 import { useTheme } from "@react-navigation/native";
 import AppLayout from "@/layouts/app-layout";
@@ -34,6 +34,7 @@ import SocialButton from "@/components/ui/button/social-button";
 import { faFacebook, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import { imageUrl } from "@/utils/url";
 import { useFacebookLogin, useInstagramLogin } from "@/hooks/requests";
+import Button from "@/components/ui/button";
 
 WebBrowser.maybeCompleteAuthSession();
 

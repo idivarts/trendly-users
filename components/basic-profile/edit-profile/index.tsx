@@ -166,6 +166,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
               style={styles.inputContainer}
             >
               <TextInput
+                autoCapitalize="none"
                 style={{
                   flex: 1,
                 }}

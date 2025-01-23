@@ -11,9 +11,7 @@ import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 import ContractDetailsContent, {
   Application,
 } from "@/components/contracts/ContractDetailContent";
-import { AuthApp } from "@/utils/auth";
 import {
-  collection,
   collectionGroup,
   doc,
   getDocs,
@@ -25,7 +23,6 @@ import { FirestoreDB } from "@/utils/firestore";
 import { IContracts } from "@/shared-libs/firestore/trendly-pro/models/contracts";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import {
-  IApplications,
   ICollaboration,
 } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { View } from "@/components/theme/Themed";

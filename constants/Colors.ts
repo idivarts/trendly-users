@@ -45,6 +45,7 @@ export default (theme: Theme) => ({
   gold: "#ECD694",
   green: "#9DD586",
   yellow: "#E8B931",
+  yellow100: "#A69F5BD6",
   pink: "#f8d7da",
   pinkForeground: "#dc3545",
   backdrop: "rgba(0, 0, 0, 0.5)",

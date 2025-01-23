@@ -1,11 +1,12 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Button, ActivityIndicator } from "react-native-paper";
+import { ActivityIndicator } from "react-native-paper";
 import * as WebBrowser from "expo-web-browser";
 import * as AuthSession from "expo-auth-session";
 import { Platform, View } from "react-native";
 import { FB_APP_ID as fbid } from "@/constants/Facebook";
 import { AuthApp } from "@/utils/auth";
+import Button from "../ui/button";
 
 interface FacebookLoginButtonProps {
   onFacebookLogin: (userId: string | null) => void;
@@ -29,9 +30,8 @@ const InstagramLoginButton: React.FC<FacebookLoginButtonProps> = () => {
       }),
     },
     {
-      authorizationEndpoint: `${authUrl}?redirect_type=${
-        Platform.OS === "web" ? 1 : 3
-      }&`,
+      authorizationEndpoint: `${authUrl}?redirect_type=${Platform.OS === "web" ? 1 : 3
+        }&`,
     }
   );
 
@@ -67,7 +67,7 @@ const InstagramLoginButton: React.FC<FacebookLoginButtonProps> = () => {
             },
           }
         )
-        .then(async (response) => {});
+        .then(async (response) => { });
       setIsLoading(false);
     } catch (error) {
       console.log("Error adding Instagram account: ", error);

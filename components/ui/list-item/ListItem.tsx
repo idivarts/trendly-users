@@ -8,7 +8,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
 import { Dimensions, Pressable } from "react-native";
-import { IconButton, List } from "react-native-paper";
+import { List } from "react-native-paper";
 
 interface ContentItemProps {
   content: string;

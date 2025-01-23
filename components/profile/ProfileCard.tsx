@@ -1,6 +1,5 @@
 import { Platform, Pressable } from "react-native";
 import { Text, View } from "../theme/Themed";
-import { Button } from "react-native-paper";
 import stylesFn from "@/styles/profile/ProfileCard.styles";
 import { User } from "@/types/User";
 import { PLACEHOLDER_PERSON_IMAGE } from "@/constants/Placeholder";
@@ -14,6 +13,7 @@ import { useEffect, useState } from "react";
 import { ResizeMode, Video } from "expo-av";
 import ImageComponent from "@/shared-uis/components/image-component";
 import { useAWSContext } from "@/contexts/aws-context.provider";
+import Button from "../ui/button";
 
 interface ProfileCardProps {
   item: User;
@@ -131,17 +131,27 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ item, onPress }) => {
           onPress={() => setIsModalVisible(true)}
           style={{
             position: "absolute",
-            top: 20,
-            right: 20,
+            top: 10,
+            right: 10,
+            padding: 10,
+            backgroundColor: theme.dark ? Colors(theme).card : Colors(theme).tag,
+            borderRadius: 100,
+            borderWidth: 1,
+            borderColor: theme.dark ? Colors(theme).white : Colors(theme).primary,
           }}
         >
-          <FontAwesomeIcon icon={faPen} color={Colors(theme).text} size={22} />
+          <FontAwesomeIcon
+            icon={faPen}
+            color={theme.dark ? Colors(theme).white : Colors(theme).primary}
+            size={22}
+          />
         </Pressable>
         <Pressable
           style={{
-            backgroundColor: "#A69F5BD6",
+            backgroundColor: Colors(theme).yellow100,
             alignItems: "center",
-            padding: 5,
+            paddingHorizontal: 12,
+            paddingVertical: 6,
             borderRadius: 20,
             position: "absolute",
             bottom: 0,
@@ -160,12 +170,10 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ item, onPress }) => {
       </View>
       <Pressable style={styles.textContainer} onPress={onPress}>
         <Text style={styles.titleText}>{item.name}</Text>
-        <FontAwesomeIcon icon={faChevronRight} size={20} />
+        <FontAwesomeIcon icon={faChevronRight} size={18} style={{ marginLeft: 6 }} />
       </Pressable>
       <Button
         onPress={onPress}
-        buttonColor={Colors(theme).primary}
-        textColor={Colors(theme).white}
         style={{
           marginVertical: 10,
         }}

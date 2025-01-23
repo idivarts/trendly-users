@@ -6,14 +6,23 @@ import {
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useTheme } from "@react-navigation/native";
 import React, { FC, useEffect, useState } from "react";
-import { View, StyleSheet, Modal, TouchableOpacity } from "react-native";
-import { Text, Button } from "react-native-paper";
-import { doc, updateDoc } from "firebase/firestore";
+import {
+  View,
+  StyleSheet,
+  Modal,
+  TouchableOpacity,
+} from "react-native";
+import { Text } from "react-native-paper";
+import {
+  doc,
+  updateDoc,
+} from "firebase/firestore";
 import { FirestoreDB } from "@/utils/firestore";
 import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import ListItem from "../ui/list-item/ListItem";
 import { router, useLocalSearchParams } from "expo-router";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
+import Button from "../ui/button";
 
 interface Application extends IApplications {
   id: string;

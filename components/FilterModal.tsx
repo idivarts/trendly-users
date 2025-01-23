@@ -1,6 +1,6 @@
 import React, { useState, useRef, useMemo } from "react";
 import { Modal, TouchableOpacity } from "react-native";
-import { Chip, Button } from "react-native-paper";
+import { Chip } from "react-native-paper";
 import Slider from "@react-native-community/slider";
 import BottomSheet, {
   BottomSheetView,
@@ -12,6 +12,7 @@ import Colors from "@/constants/Colors";
 import { Text, View } from "./theme/Themed";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faCheckDouble, faClose } from "@fortawesome/free-solid-svg-icons";
+import Button from "./ui/button";
 
 interface CollaborationFilterProps {
   onClose: () => void;

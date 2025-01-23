@@ -14,6 +14,7 @@ import {
   faLink,
 } from "@fortawesome/free-solid-svg-icons";
 import ImageComponent from "@/shared-uis/components/image-component";
+import Button from "@/components/ui/button";
 
 interface BrandModalProps {
   brand: {
@@ -127,15 +128,8 @@ const BrandModal: React.FC<BrandModalProps> = ({
         </View>
 
         {/* Brand Website */}
-        <Pressable
+        <Button
           onPress={() => Linking.openURL(brand.website)}
-          style={{
-            backgroundColor: Colors(theme).primary,
-            borderRadius: 5,
-            paddingVertical: 10,
-            paddingHorizontal: 20,
-            alignItems: "center",
-          }}
         >
           <Text
             style={{
@@ -148,10 +142,11 @@ const BrandModal: React.FC<BrandModalProps> = ({
               icon={faLink}
               color={Colors(theme).white}
               size={16}
-            />{" "}
+              style={{ marginRight: 5 }}
+            />
             Visit Website
           </Text>
-        </Pressable>
+        </Button>
       </View>
     </Modal>
   );

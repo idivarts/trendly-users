@@ -1,7 +1,6 @@
 import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { FC } from "react";
 import { Text, View } from "../theme/Themed";
-import { Button } from "react-native-paper";
 import { Pressable, ScrollView } from "react-native";
 import RenderMediaItem from "../ui/carousel/render-media-item";
 import { processRawAttachment } from "@/utils/attachments";
@@ -10,6 +9,7 @@ import { faPaperclip } from "@fortawesome/free-solid-svg-icons";
 import { router } from "expo-router";
 import Colors from "@/constants/Colors";
 import { useTheme } from "@react-navigation/native";
+import Button from "../ui/button";
 
 interface UserResponseProps {
   application?: IApplications;

@@ -168,7 +168,7 @@ const Settings: React.FC<SettingsProps> = ({
           onPress={() => {
             setDeactivationModalVisible(true);
           }}
-          customStyles={{
+          style={{
             borderColor: Colors(theme).danger,
           }}
           loading={isDeactivating}
@@ -183,7 +183,7 @@ const Settings: React.FC<SettingsProps> = ({
             setDeletionModalVisible(true);
           }}
           loading={isDeleting}
-          customStyles={{
+          style={{
             backgroundColor: Colors(theme).danger,
           }}
         >

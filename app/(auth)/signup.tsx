@@ -2,7 +2,6 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
   View,
-  StyleSheet,
   Image,
   Text,
   ScrollView,
@@ -10,11 +9,12 @@ import {
   Platform,
   Dimensions,
 } from "react-native";
-import { TextInput, Button } from "react-native-paper";
 import fnStyles from "@/styles/signup.styles";
 import { useTheme } from "@react-navigation/native";
 import { useAuthContext } from "@/contexts";
 import Colors from "@/constants/Colors";
+import TextInput from "@/components/ui/text-input";
+import Button from "@/components/ui/button";
 
 const SignUpScreen = () => {
   const [name, setName] = useState("");
@@ -63,6 +63,7 @@ const SignUpScreen = () => {
           />
           {/* Email Field */}
           <TextInput
+            autoCapitalize="none"
             label="Email"
             value={email}
             onChangeText={setEmail}
