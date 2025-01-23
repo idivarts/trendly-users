@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { IconButton } from "react-native-paper";
 import { useLocalSearchParams } from "expo-router";
 

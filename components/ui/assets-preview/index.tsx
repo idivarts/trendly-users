@@ -6,8 +6,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
 import { ResizeMode, Video } from "expo-av";
 import { Image, Platform, ScrollView } from "react-native";
-import { Button, IconButton } from "react-native-paper";
+import { IconButton } from "react-native-paper";
 import stylesFn from "@/styles/assets-preview/AssetsPreview.styles";
+import Button from "../button";
 
 interface FileAsset {
   id: string;

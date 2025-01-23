@@ -1,8 +1,7 @@
 import AppLayout from "@/layouts/app-layout";
 import { View, Text, FlatList, Platform } from "react-native";
-import InfluencerCard from "@/components/InfluencerCard";
 import { router, useLocalSearchParams } from "expo-router";
-import { Button, Card } from "react-native-paper";
+import { Card } from "react-native-paper";
 import { FirestoreDB } from "@/utils/firestore";
 import { collection, doc, setDoc } from "firebase/firestore";
 import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
@@ -19,6 +18,7 @@ import { CardActions } from "@/components/collaboration/card-components/secondar
 import { CardDescription } from "@/components/collaboration/card-components/secondary/card-description";
 import { CardFooter } from "@/components/collaboration/card-components/secondary/card-footer";
 import { convertToKUnits } from "@/utils/conversion";
+import Button from "@/components/ui/button";
 import Colors from "@/constants/Colors";
 
 const Preview = () => {

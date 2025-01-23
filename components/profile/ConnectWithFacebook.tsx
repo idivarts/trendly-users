@@ -1,13 +1,14 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Button, ActivityIndicator } from "react-native-paper";
+import { ActivityIndicator } from "react-native-paper";
 import * as WebBrowser from "expo-web-browser";
 import * as AuthSession from "expo-auth-session";
 import { View } from "react-native";
 import { FB_APP_ID as fbid } from "@/constants/Facebook";
 import { FirestoreDB } from "@/utils/firestore";
 import { AuthApp } from "@/utils/auth";
-import { collection, doc, setDoc } from "firebase/firestore";
+import { collection, doc } from "firebase/firestore";
+import Button from "../ui/button";
 
 interface FacebookLoginButtonProps {
   onFacebookLogin: (userId: string | null) => void;
@@ -96,7 +97,7 @@ const FacebookLoginButton: React.FC<FacebookLoginButtonProps> = ({
             },
           }
         )
-        .then((res) => {});
+        .then((res) => { });
     } catch (error) {
       console.error(error);
     }

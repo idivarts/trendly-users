@@ -22,7 +22,9 @@ import {
 import { FirestoreDB } from "@/utils/firestore";
 import { IContracts } from "@/shared-libs/firestore/trendly-pro/models/contracts";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
-import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
+import {
+  ICollaboration,
+} from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { View } from "@/components/theme/Themed";
 import { ActivityIndicator } from "react-native";
 import { useAuthContext } from "@/contexts";

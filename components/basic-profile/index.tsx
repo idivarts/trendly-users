@@ -1,4 +1,4 @@
-import { Avatar, Button, TextInput } from "react-native-paper";
+import { Avatar } from "react-native-paper";
 import { Text, View } from "../theme/Themed";
 import { Pressable } from "react-native";
 import Colors from "@/constants/Colors";
@@ -11,6 +11,8 @@ import { useTheme } from "@react-navigation/native";
 import { DUMMY_IMAGE } from "@/constants/User";
 import ImageUploadModal from "../ui/modal/ImageUploadModal";
 import { useAWSContext } from "@/contexts/aws-context.provider";
+import TextInput from "../ui/text-input";
+import Button from "../ui/button";
 
 interface BasicProfileProps {
   user: User;
@@ -111,6 +113,7 @@ const BasicProfile: React.FC<BasicProfileProps> = ({ user }) => {
           value={name}
         />
         <TextInput
+          autoCapitalize="none"
           style={{
             backgroundColor: Colors(theme).background,
           }}

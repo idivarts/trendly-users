@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Platform, ScrollView, View } from "react-native";
 import {
-  Button,
   Card,
   IconButton,
-  TextInput,
   HelperText,
   List,
   ProgressBar,
@@ -16,7 +14,6 @@ import {
   faClapperboard,
   faClockRotateLeft,
   faDollarSign,
-  faUpload,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import * as DocumentPicker from "expo-document-picker";
@@ -41,6 +38,8 @@ import {
 } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { FirestoreDB } from "@/utils/firestore";
 import { faCircleQuestion } from "@fortawesome/free-regular-svg-icons";
+import TextInput from "@/components/ui/text-input";
+import Button from "@/components/ui/button";
 
 const ApplyScreenWeb = () => {
   const params = useLocalSearchParams();
@@ -283,24 +282,6 @@ const ApplyScreenWeb = () => {
       setTimeout(() => {
         router.push("/collaborations");
       }, 1000);
-
-      //   setTimeout(() => {
-      //     setLoading(false);
-      //     setProcessMessage("");
-      //     setProcessPercentage(0);
-      //     router.navigate({
-      //       pathname: "/apply-now/preview",
-      //       params: {
-      //         pageID,
-      //         note,
-      //         attachments: JSON.stringify(uploadedFilesResponse),
-      //         quotation: quotation,
-      //         timeline: timelineTimestamp,
-      //         fileAttachments: JSON.stringify(uploadedFiles),
-      //         answers: JSON.stringify(answers),
-      //       },
-      //     });
-      //   }, 5000);
     } catch (error) {
       console.error(error);
       setErrorMessage("Error uploading files");
