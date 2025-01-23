@@ -21,6 +21,8 @@ import {
   faClapperboard,
   faClockRotateLeft,
   faDollarSign,
+  faLink,
+  faLocationDot,
   faPaperclip,
 } from "@fortawesome/free-solid-svg-icons";
 import ListItem from "@/components/ui/list-item/ListItem";
@@ -33,6 +35,7 @@ import { Attachment } from "@/shared-libs/firestore/trendly-pro/constants/attach
 import { FirestoreDB } from "@/utils/firestore";
 import { doc, getDoc } from "firebase/firestore";
 import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
+import ContentItem from "@/components/basic-profile/edit-profile/ContentItem";
 import { faCircleQuestion } from "@fortawesome/free-regular-svg-icons";
 import TextInput from "@/components/ui/text-input";
 import Button from "@/components/ui/button";
@@ -192,8 +195,8 @@ const ApplyScreen = () => {
             file.type === "image"
               ? file.imageUrl
               : Platform.OS === "ios"
-                ? file.appleUrl
-                : file.playUrl,
+              ? file.appleUrl
+              : file.playUrl,
           type: file.type,
         },
       ]);

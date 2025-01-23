@@ -1,4 +1,5 @@
 import { View } from "@/components/theme/Themed";
+import React from "react";
 import ScreenHeader from "@/components/ui/screen-header";
 import Colors from "@/constants/Colors";
 import AppLayout from "@/layouts/app-layout";

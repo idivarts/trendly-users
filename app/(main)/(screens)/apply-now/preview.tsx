@@ -19,6 +19,7 @@ import { CardDescription } from "@/components/collaboration/card-components/seco
 import { CardFooter } from "@/components/collaboration/card-components/secondary/card-footer";
 import { convertToKUnits } from "@/utils/conversion";
 import Button from "@/components/ui/button";
+import Colors from "@/constants/Colors";
 
 const Preview = () => {
   const params = useLocalSearchParams();
@@ -212,7 +213,9 @@ const Preview = () => {
           <View style={{ padding: 16 }}>
             <Text
               style={{
-                color: errorMessage.includes("successfully") ? "green" : "red",
+                color: errorMessage.includes("successfully")
+                  ? Colors(theme).green
+                  : Colors(theme).red,
                 marginBottom: 8,
                 textAlign: "center",
               }}

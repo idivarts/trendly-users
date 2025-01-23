@@ -1,5 +1,3 @@
-import BottomSheetActions from "@/components/BottomSheetActions";
-import JobCard from "@/components/collaboration/CollaborationCard";
 import { Text, View } from "@/components/theme/Themed";
 import Colors from "@/constants/Colors";
 import AppLayout from "@/layouts/app-layout";
