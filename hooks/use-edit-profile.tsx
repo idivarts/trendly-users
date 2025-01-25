@@ -174,8 +174,8 @@ const useEditProfile = ({
       },
     })
       .then(() => {
-        setUnsavedChanges && setUnsavedChanges(false);
         Toaster.success("Profile saved successfully");
+        setUnsavedChanges && setUnsavedChanges(false);
       })
       .catch((error) => {
         Toaster.error("Failed to save profile");
