@@ -1,6 +1,6 @@
 import { Appbar } from "react-native-paper";
 import { useTheme } from "@react-navigation/native";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams, usePathname, useRouter } from "expo-router";
 
 import { Text } from "@/components/theme/Themed";
 import Button from "@/components/ui/button";
@@ -21,6 +21,7 @@ const CollaborationDetailsScreen = () => {
   const {
     collaborationId,
   } = useLocalSearchParams();
+  const pathname = usePathname();
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const authModalBottomSheetModalRef = useRef<BottomSheetModal>(null);
@@ -37,7 +38,7 @@ const CollaborationDetailsScreen = () => {
   } = useAuthContext();
 
   const renderBottomSheet = useCallback(() => {
-    if (Platform.OS === "web" && !lg) {
+    if (Platform.OS === "web" && !lg && pathname.includes("collaboration")) {
       bottomSheetModalRef.current?.present();
     }
   }, []);
