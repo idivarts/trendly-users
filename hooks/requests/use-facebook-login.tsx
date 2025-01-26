@@ -40,6 +40,7 @@ const useFacebookLogin = (
 
   const redirectUri = AuthSession.makeRedirectUri({
     native: `fb${FB_APP_ID}://authorize`,
+    path: "redirect",
   });
 
   const [requestFacebook, responseFacebook, promptAsyncFacebook] =
