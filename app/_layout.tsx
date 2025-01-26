@@ -141,7 +141,7 @@ const RootLayoutStack = () => {
       resetAndNavigate(pathname as Href);
     }
     // Redirect user to respective screen
-  }, [session, isLoading, user]);
+  }, [session, isLoading]);
 
   return (
     <ThemeProvider value={appTheme === "dark" ? DarkTheme : ExpoDefaultTheme}>
