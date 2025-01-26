@@ -22,6 +22,19 @@ export const queryParams = (
   Object.entries(params).map(([key, value]) => {
     values.push(`${key}=${value}`);
   });
+  Object.entries(params).forEach(([key, value]) => {
+    if (value == null) return;
+
+    if (Array.isArray(value)) {
+      value.forEach((v) => {
+        if (v != null) {
+          values.push(`${encodeURIComponent(key)}=${encodeURIComponent(v)}`);
+        }
+      });
+    } else {
+      values.push(`${encodeURIComponent(key)}=${encodeURIComponent(value)}`);
+    }
+  });
 
   return values.length === 0 ? "" : `?${values.join("&")}`;
 };
