@@ -7,7 +7,7 @@ import {
 } from "@react-navigation/native";
 import { Provider } from "react-native-paper";
 import { useFonts } from "expo-font";
-import { Href, Stack, usePathname, useRouter, useSegments } from "expo-router";
+import { Href, Stack, useLocalSearchParams, usePathname, useRouter, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -30,6 +30,7 @@ import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { SocialContextProvider } from "@/contexts/social-context.provider";
 import { APP_SCHEME } from "@/constants/App";
 import { resetAndNavigate } from "@/utils/router";
+import { queryParams } from "@/utils/url";
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
@@ -97,6 +98,7 @@ const RootLayoutStack = () => {
   const router = useRouter();
   const pathname = usePathname();
   const segments = useSegments();
+  const localSearchParams = useLocalSearchParams();
   const { isLoading, session, user } = useAuthContext();
 
   const appTheme = user?.settings?.theme || colorScheme;
@@ -130,7 +132,7 @@ const RootLayoutStack = () => {
       && (inAuthGroup || pathname === "/")
     ) {
       // On boot up, session exist and user is in auth group or /, redirect to collaborations
-      resetAndNavigate("/collaborations");
+      resetAndNavigate(`/collaborations${queryParams(localSearchParams)}` as Href);
     } else if (
       !session
       && (inMainGroup || pathname === "/")
@@ -138,7 +140,7 @@ const RootLayoutStack = () => {
       // On boot up, session doesn't exist and user is in main group or /, redirect to pre-signin
       resetAndNavigate("/pre-signin");
     } else if (inPublicGroup) {
-      resetAndNavigate(pathname as Href);
+      resetAndNavigate(`pathname${queryParams(localSearchParams)}` as Href);
     }
     // Redirect user to respective screen
   }, [session, isLoading, user]);
