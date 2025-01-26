@@ -19,10 +19,9 @@ export const queryParams = (
 ) => {
   let values: string[] = [];
 
-  Object.entries(params).map(([key, value]) => {
-    values.push(`${key}=${value}`);
-  });
   Object.entries(params).forEach(([key, value]) => {
+    if (key === "not-found") return;
+
     if (value == null) return;
 
     if (Array.isArray(value)) {
