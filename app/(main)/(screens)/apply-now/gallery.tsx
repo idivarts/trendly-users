@@ -23,6 +23,8 @@ import { useAuthContext } from "@/contexts";
 import { processRawAttachment } from "@/utils/attachments";
 import RenderMediaItem from "@/components/ui/carousel/render-media-item";
 import Button from "@/components/ui/button";
+import Toaster from "@/shared-uis/components/toaster/Toaster";
+import Toast from "react-native-toast-message";
 
 const GalleryScreen = () => {
   const { pageID } = useLocalSearchParams();
@@ -35,6 +37,7 @@ const GalleryScreen = () => {
   const [isCameraVisible, setIsCameraVisible] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const { user } = useAuthContext();
+  const [isSaving, setIsSaving] = useState(false);
 
   const attachmentFiltered = user?.profile?.attachments?.map(
     (attachment, index) => {
@@ -143,6 +146,10 @@ const GalleryScreen = () => {
 
   const handleSelectionComplete = () => {
     try {
+      if (selectedItems.length + profileAttachments.length > 6) {
+        Toaster.error("You can only select up to 6 files");
+        return;
+      }
       router.back();
       router.replace({
         //@ts-ignore
@@ -206,31 +213,35 @@ const GalleryScreen = () => {
 
   const startRecording = async () => {
     if (cameraRef.current) {
-      setIsRecording(true);
       try {
+        setIsRecording(true);
         const video = await cameraRef.current.recordAsync();
-        if (video && video.uri) {
+
+        if (video?.uri) {
+          setIsSaving(true);
           const asset = await MediaLibrary.createAssetAsync(video.uri);
+
           const newItem: AssetItem = {
             id: asset.id.toString(),
             localUri: asset.uri,
             type: "video",
             uri: asset.uri,
           };
-          setSelectedItems((prev: AssetItem[]) => [...prev, newItem]);
 
-          fetchAssets();
+          setSelectedItems((prev) => [...prev, newItem]);
+          await fetchAssets();
         }
       } catch (error) {
-        console.error("Failed to record video:", error);
+        Toaster.error("Failed to save video");
       } finally {
         setIsRecording(false);
+        setIsSaving(false);
       }
     }
   };
 
-  const stopRecording = async () => {
-    if (cameraRef.current) {
+  const stopRecording = () => {
+    if (cameraRef.current && isRecording) {
       cameraRef.current.stopRecording();
     }
   };
@@ -305,7 +316,13 @@ const GalleryScreen = () => {
   return (
     <View style={styles.container}>
       <ScreenHeader title="Select Photos and Videos" />
-
+      <View
+        style={{
+          zIndex: 1000,
+        }}
+      >
+        <Toast />
+      </View>
       {/* Action Buttons */}
       <View style={styles.actionButtons}>
         <Button

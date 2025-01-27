@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, FlatList, RefreshControl, Pressable, ActivityIndicator } from "react-native";
+import { FlatList, RefreshControl, Pressable, ActivityIndicator } from "react-native";
 import SearchComponent from "@/components/SearchComponent";
 import CollaborationFilter from "@/components/FilterModal";
 import AppLayout from "@/layouts/app-layout";
@@ -18,6 +18,9 @@ import CollaborationDetails from "./card-components/CollaborationDetails";
 import CollaborationStats from "./card-components/CollaborationStats";
 import { processRawAttachment } from "@/utils/attachments";
 import { router } from "expo-router";
+import { useBreakpoints } from "@/hooks";
+import { MAX_WIDTH_WEB } from "@/constants/Container";
+import { View } from "../theme/Themed";
 
 interface ICollaborationAddCardProps extends ICollaboration {
   name: string;
@@ -51,6 +54,10 @@ const Collaboration = () => {
 
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+
+  const {
+    xl,
+  } = useBreakpoints();
 
   const fetchData = async () => {
     const fetchedBrands = await fetchBrands(); // Fetch brands and store in a variable
@@ -154,8 +161,22 @@ const Collaboration = () => {
   if (loading) {
     return (
       <AppLayout>
-        <View style={styles.container}>
-          <View style={styles.searchContainer}>
+        <View
+          style={[
+            styles.container,
+            {
+              width: xl ? MAX_WIDTH_WEB : "100%",
+            }
+          ]}
+        >
+          <View
+            style={[
+              styles.searchContainer,
+              {
+                paddingHorizontal: xl ? 0 : 16,
+              }
+            ]}
+          >
             <SearchComponent
               ToggleModal={toggleFilterModal}
               setSearchQuery={setSearchQuery}
@@ -180,8 +201,22 @@ const Collaboration = () => {
 
   return (
     <AppLayout>
-      <View style={styles.container}>
-        <View style={styles.searchContainer}>
+      <View
+        style={[
+          styles.container,
+          {
+            width: xl ? MAX_WIDTH_WEB : "100%",
+          }
+        ]}
+      >
+        <View
+          style={[
+            styles.searchContainer,
+            {
+              paddingHorizontal: xl ? 0 : 16,
+            }
+          ]}
+        >
           <SearchComponent
             ToggleModal={toggleFilterModal}
             setSearchQuery={setSearchQuery}

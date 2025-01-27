@@ -329,35 +329,41 @@ const EditProfile: React.FC<EditProfileProps> = ({
           </View>
         </View>
       </Wrapper>
-      <Animated.View style={[
-        styles.saveButtonContainer,
-        {
-          bottom: keyboardHeight,
-          backgroundColor: keyboardVisible ? Colors(theme).primary : 'transparent',
-          paddingHorizontal: keyboardVisible ? 0 : 16,
-          paddingBottom: keyboardVisible ? 0 : 16,
-        }
-      ]}>
+      <Animated.View
+        style={[
+          styles.saveButtonContainer,
+          {
+            bottom: keyboardHeight,
+            backgroundColor: keyboardVisible ? Colors(theme).primary : 'transparent',
+            paddingHorizontal: keyboardVisible ? 0 : 16,
+            paddingBottom: keyboardVisible ? 0 : 16,
+          }
+        ]}
+      >
         <ProgressBar
           progress={processPercentage / 100}
           color={Colors(theme).aliceBlue}
           style={styles.processPercentage}
         />
-        <Button
-          mode="contained"
-          loading={isProcessing}
+        <Pressable
           onPress={handleSave}
-          style={[
-            styles.saveButton,
-            {
-              marginBottom: keyboardVisible ? -36 : 0,
-              height: keyboardVisible ? 60 : 'auto',
-              borderRadius: keyboardVisible ? 0 : 100,
-            }
-          ]}
         >
-          {isProcessing ? 'Saving...' : 'Save'}
-        </Button>
+          <Button
+            mode="contained"
+            loading={isProcessing}
+            onPress={handleSave}
+            style={[
+              styles.saveButton,
+              {
+                marginBottom: keyboardVisible ? -36 : 0,
+                height: keyboardVisible ? 60 : 'auto',
+                borderRadius: keyboardVisible ? 0 : 100,
+              }
+            ]}
+          >
+            {isProcessing ? 'Saving...' : 'Save'}
+          </Button>
+        </Pressable>
       </Animated.View>
     </View>
   );

@@ -38,7 +38,7 @@ const CollaborationDetailsScreen = () => {
   } = useAuthContext();
 
   const renderBottomSheet = useCallback(() => {
-    if (Platform.OS === "web" && !lg && pathname.includes("collaboration")) {
+    if (Platform.OS === "web" && !lg && pathname.includes("collaboration") && collaborationId) {
       bottomSheetModalRef.current?.present();
     }
   }, []);
@@ -48,6 +48,8 @@ const CollaborationDetailsScreen = () => {
   }, []);
 
   useEffect(() => {
+    if (!pathname.includes("collaboration") && !collaborationId) return;
+
     if (user) {
       router.replace(`/collaboration-details/${collaborationId}`);
     } else {

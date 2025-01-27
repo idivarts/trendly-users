@@ -16,9 +16,7 @@ import { slides } from "@/constants/Slides";
 import * as WebBrowser from "expo-web-browser";
 import { AuthApp } from "@/utils/auth";
 import { useRouter } from "expo-router";
-import {
-  INITIAL_USER_DATA,
-} from "@/constants/User";
+import { INITIAL_USER_DATA } from "@/constants/User";
 import Colors from "@/constants/Colors";
 import { FirestoreDB } from "@/utils/firestore";
 import BottomSheetActions from "@/components/BottomSheetActions";
@@ -26,6 +24,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
   faArrowRight,
   faArrowRightArrowLeft,
+  faChevronLeft,
   faChevronRight,
   faEllipsis,
   faEnvelope,
@@ -48,29 +47,23 @@ const PreSignIn = () => {
 
   const router = useRouter();
 
-  const {
-    instagramLogin,
-    promptAsyncInstagram,
-    requestInstagram,
-  } = useInstagramLogin(
-    AuthApp,
-    FirestoreDB,
-    INITIAL_USER_DATA,
-    setLoading,
-    setError,
-  );
+  const { instagramLogin, promptAsyncInstagram, requestInstagram } =
+    useInstagramLogin(
+      AuthApp,
+      FirestoreDB,
+      INITIAL_USER_DATA,
+      setLoading,
+      setError
+    );
 
-  const {
-    facebookLogin,
-    promptAsyncFacebook,
-    requestFacebook,
-  } = useFacebookLogin(
-    AuthApp,
-    FirestoreDB,
-    INITIAL_USER_DATA,
-    setLoading,
-    setError,
-  );
+  const { facebookLogin, promptAsyncFacebook, requestFacebook } =
+    useFacebookLogin(
+      AuthApp,
+      FirestoreDB,
+      INITIAL_USER_DATA,
+      setLoading,
+      setError
+    );
 
   const skipToConnect = () => {
     const connectSlideIndex = slides.findIndex(
@@ -97,6 +90,29 @@ const PreSignIn = () => {
           { backgroundColor: Colors(theme).primary },
         ]}
         paginationStyle={styles.pagination}
+        showsButtons={Platform.OS === "web"}
+        nextButton={
+          Platform.OS === "web" && (
+            <View style={styles.buttonWrapper}>
+              <FontAwesomeIcon
+                icon={faChevronRight}
+                size={20}
+                color={Colors(theme).black}
+              />
+            </View>
+          )
+        }
+        prevButton={
+          Platform.OS === "web" && (
+            <View style={styles.buttonWrapper}>
+              <FontAwesomeIcon
+                icon={faChevronLeft}
+                size={20}
+                color={Colors(theme).black}
+              />
+            </View>
+          )
+        }
       >
         {slides.map((slide) => (
           <View style={styles.slide} key={slide.key}>
@@ -138,9 +154,9 @@ const PreSignIn = () => {
                   onPress={
                     requestFacebook
                       ? () => {
-                        promptAsyncFacebook();
-                      }
-                      : () => { }
+                          promptAsyncFacebook();
+                        }
+                      : () => {}
                   }
                 />
                 <SocialButton
@@ -149,9 +165,9 @@ const PreSignIn = () => {
                   onPress={
                     requestInstagram
                       ? () => {
-                        promptAsyncInstagram();
-                      }
-                      : () => { }
+                          promptAsyncInstagram();
+                        }
+                      : () => {}
                   }
                 />
               </View>
@@ -175,7 +191,7 @@ const PreSignIn = () => {
                 />
               </View>
             )}
-            {slide.key !== "connect" && (
+            {slide.key !== "connect" && Platform.OS !== "web" && (
               <Pressable
                 style={{
                   flexDirection: "row",

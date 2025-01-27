@@ -54,8 +54,8 @@ const CollaborationStats: FC<CollaborationStatsProps> = (
         <Text style={styles.infoText}>
           Budget:{" "}
           {props.budget.min === props.budget.max
-            ? `$${props.budget.min}`
-            : `$${props.budget.min} - $${props.budget.max}`}
+            ? `Rs. ${props.budget.min}`
+            : `Rs. ${props.budget.min} - Rs. ${props.budget.max}`}
         </Text>
         <Text style={styles.infoText}>
           Brand Hire Rate: {props.brandHireRate || 75}%

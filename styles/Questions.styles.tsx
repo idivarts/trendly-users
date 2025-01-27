@@ -29,7 +29,7 @@ export const stylesFn = (theme: Theme) =>
     nextButton: {
       alignItems: "center",
       alignSelf: "flex-end",
-      backgroundColor: Colors(theme).amber,
+      backgroundColor: Colors(theme).primary,
       borderRadius: 50,
       justifyContent: "center",
       padding: 10,

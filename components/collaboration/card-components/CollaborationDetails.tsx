@@ -20,6 +20,7 @@ import {
 } from "@fortawesome/free-brands-svg-icons";
 import { PromotionType } from "@/shared-libs/firestore/trendly-pro/constants/promotion-type";
 import { faHeart, faStarHalfStroke } from "@fortawesome/free-regular-svg-icons";
+import { truncateText } from "@/utils/profile";
 
 interface CollaborationDetailsProps {
   collaborationDetails: {
@@ -54,7 +55,7 @@ const CollaborationDetails: FC<CollaborationDetailsProps> = ({
             fontSize: 16,
           }}
         >
-          {collabDescription}
+          {truncateText(collabDescription, 120)}
         </Text>
       )}
       <View

@@ -153,7 +153,7 @@ const TabLayout = () => {
             >
               <FontAwesomeIcon
                 icon={faGears}
-                size={24}
+                size={32}
                 color={Colors(theme).text}
               />
             </TouchableOpacity>

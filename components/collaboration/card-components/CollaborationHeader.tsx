@@ -69,7 +69,7 @@ const CollaborationHeader: FC<CollaborationHeaderProps> = ({
           flexDirection: "row",
           alignItems: "center",
           gap: 8,
-          width: "45%",
+          flex: 1,
         }}
       >
         <ImageComponent
@@ -94,7 +94,6 @@ const CollaborationHeader: FC<CollaborationHeaderProps> = ({
             style={{
               fontSize: 16,
               fontWeight: "bold",
-              width: 150,
             }}
           >
             {collaboration.collabName}
