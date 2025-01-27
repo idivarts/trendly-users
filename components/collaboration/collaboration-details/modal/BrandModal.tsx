@@ -117,20 +117,13 @@ const BrandModal: React.FC<BrandModalProps> = ({
                 />
               )}
             >
-              <FontAwesomeIcon
-                icon={faCheck}
-                color={Colors(theme).text}
-                size={16}
-              />{" "}
               {cat}
             </Chip>
           ))}
         </View>
 
         {/* Brand Website */}
-        <Button
-          onPress={() => Linking.openURL(brand.website)}
-        >
+        <Button onPress={() => Linking.openURL(brand.website)}>
           <Text
             style={{
               fontSize: 16,

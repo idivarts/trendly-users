@@ -67,11 +67,7 @@ const CollaborationFilter = ({
   const snapPoints = useMemo(() => ["25%", "50%", "75%", "100%"], []);
 
   return (
-    <Modal
-      visible={isVisible}
-      transparent
-      animationType="fade"
-    >
+    <Modal visible={isVisible} transparent animationType="fade">
       <BottomSheet
         ref={sheetRef}
         index={isVisible ? 1 : -1} // Controls visibility of BottomSheet
@@ -94,9 +90,7 @@ const CollaborationFilter = ({
           backgroundColor: Colors(theme).text,
         }}
       >
-        <BottomSheetView
-          style={styles.container}
-        >
+        <BottomSheetView style={styles.container}>
           <View style={styles.header}>
             <Text style={styles.title}>Filter</Text>
             <TouchableOpacity onPress={onClose}>
@@ -113,13 +107,17 @@ const CollaborationFilter = ({
           <View style={styles.chipContainer}>
             {categories.map((category) => (
               <Chip
-                icon={localSelectedCategory === category ? () => (
-                  <FontAwesomeIcon
-                    icon={faCheckDouble}
-                    size={16}
-                    color={Colors(theme).white}
-                  />
-                ) : undefined}
+                icon={
+                  localSelectedCategory === category
+                    ? () => (
+                        <FontAwesomeIcon
+                          icon={faCheckDouble}
+                          size={16}
+                          color={Colors(theme).white}
+                        />
+                      )
+                    : undefined
+                }
                 key={category}
                 selected={localSelectedCategory === category}
                 onPress={() => setLocalSelectedCategory(category)}
@@ -134,7 +132,7 @@ const CollaborationFilter = ({
           <Text style={styles.sectionTitle}>Salaries</Text>
           <View style={styles.salaryContainer}>
             <Text style={styles.salaryLabel}>
-              Min Salary: ${localSalaryRange[0].toLocaleString() || "0"}
+              Min Salary: Rs. {localSalaryRange[0].toLocaleString() || "0"}
             </Text>
             <Slider
               style={{ width: "100%", height: 40 }}
@@ -149,7 +147,7 @@ const CollaborationFilter = ({
           </View>
           <View style={styles.salaryContainer}>
             <Text style={styles.salaryLabel}>
-              Max Salary: ${localSalaryRange[1].toLocaleString() || "0"}
+              Max Salary: Rs. {localSalaryRange[1].toLocaleString() || "0"}
             </Text>
             <Slider
               style={{ width: "100%", height: 40 }}
@@ -171,13 +169,17 @@ const CollaborationFilter = ({
                 selected={localSelectedJobType === jobType}
                 onPress={() => setLocalSelectedJobType(jobType)}
                 style={styles.chip}
-                icon={localSelectedJobType === jobType ? () => (
-                  <FontAwesomeIcon
-                    icon={faCheckDouble}
-                    size={16}
-                    color={Colors(theme).white}
-                  />
-                ) : undefined}
+                icon={
+                  localSelectedJobType === jobType
+                    ? () => (
+                        <FontAwesomeIcon
+                          icon={faCheckDouble}
+                          size={16}
+                          color={Colors(theme).white}
+                        />
+                      )
+                    : undefined
+                }
               >
                 {jobType}
               </Chip>

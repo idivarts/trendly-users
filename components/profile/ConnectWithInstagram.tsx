@@ -30,8 +30,9 @@ const InstagramLoginButton: React.FC<FacebookLoginButtonProps> = () => {
       }),
     },
     {
-      authorizationEndpoint: `${authUrl}?redirect_type=${Platform.OS === "web" ? 1 : 3
-        }&`,
+      authorizationEndpoint: `${authUrl}?redirect_type=${
+        Platform.OS === "web" ? 2 : 3
+      }&`,
     }
   );
 
@@ -59,7 +60,7 @@ const InstagramLoginButton: React.FC<FacebookLoginButtonProps> = () => {
           "https://be.trendly.pro/api/v1/socials/instagram",
           {
             code: accessToken,
-            redirect_type: Platform.OS === "web" ? "1" : "3",
+            redirect_type: Platform.OS === "web" ? "2" : "3",
           },
           {
             headers: {
@@ -67,7 +68,7 @@ const InstagramLoginButton: React.FC<FacebookLoginButtonProps> = () => {
             },
           }
         )
-        .then(async (response) => { });
+        .then(async (response) => {});
       setIsLoading(false);
     } catch (error) {
       console.log("Error adding Instagram account: ", error);

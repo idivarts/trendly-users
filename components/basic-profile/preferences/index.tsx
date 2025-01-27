@@ -6,7 +6,12 @@ import { MultiRangeSlider } from "@/components/ui/multislider";
 import { Selector } from "@/components/ui/select/selector";
 import { faGift, faHandHoldingDollar } from "@fortawesome/free-solid-svg-icons";
 import { useTheme } from "@react-navigation/native";
-import { BRAND_INDUSTRIES, INITIAL_BRAND_INDUSTRIES, INITIAL_LANGUAGES, LANGUAGES } from "@/constants/ItemsList";
+import {
+  BRAND_INDUSTRIES,
+  INITIAL_BRAND_INDUSTRIES,
+  INITIAL_LANGUAGES,
+  LANGUAGES,
+} from "@/constants/ItemsList";
 import { includeSelectedItems } from "@/utils/items-list";
 import { User } from "@/types/User";
 import ContentWrapper from "@/components/ui/content-wrapper";
@@ -18,23 +23,32 @@ interface PreferencesProps {
   onSave: (user: User) => void;
 }
 
-const Preferences: React.FC<PreferencesProps> = ({
-  user,
-  onSave,
-}) => {
+const Preferences: React.FC<PreferencesProps> = ({ user, onSave }) => {
   const theme = useTheme();
   const dimensions = useWindowDimensions();
 
   const [preferences, setPreferences] = useState<IPreferences>({
     budgetForPaidCollabs: user.preferences?.budgetForPaidCollabs || [0, 100],
     contentCategory: user.preferences?.contentCategory || [],
-    contentWillingToPost: user.preferences?.contentWillingToPost || ['Post'],
-    goal: user.preferences?.goal || 'Long Term',
+    contentWillingToPost: user.preferences?.contentWillingToPost || ["Post"],
+    goal: user.preferences?.goal || "Long Term",
     maximumMonthlyCollabs: user.preferences?.maximumMonthlyCollabs || [0, 100],
-    preferredBrandIndustries: user.preferences?.preferredBrandIndustries || ['Fashion', 'Lifestyle', 'Food', 'Travel', 'Health'],
-    preferredCollaborationType: user.preferences?.preferredCollaborationType || 'Barter & Paid Both',
-    preferredLanguages: user.preferences?.preferredLanguages || ['English', 'Hindi', 'Bengali'],
-    preferredVideoType: user.preferences?.preferredVideoType || 'Integrated Video',
+    preferredBrandIndustries: user.preferences?.preferredBrandIndustries || [
+      "Fashion",
+      "Lifestyle",
+      "Food",
+      "Travel",
+      "Health",
+    ],
+    preferredCollaborationType:
+      user.preferences?.preferredCollaborationType || "Barter & Paid Both",
+    preferredLanguages: user.preferences?.preferredLanguages || [
+      "English",
+      "Hindi",
+      "Bengali",
+    ],
+    preferredVideoType:
+      user.preferences?.preferredVideoType || "Integrated Video",
   });
 
   const handleOnSave = () => {
@@ -43,7 +57,7 @@ const Preferences: React.FC<PreferencesProps> = ({
       preferences,
     };
     onSave(updatedUser);
-  }
+  };
 
   useEffect(() => {
     handleOnSave();
@@ -68,13 +82,13 @@ const Preferences: React.FC<PreferencesProps> = ({
           options={[
             {
               icon: faGift,
-              label: 'Barter & Paid Both',
-              value: 'Barter & Paid Both',
+              label: "Barter & Paid Both",
+              value: "Barter & Paid Both",
             },
             {
               icon: faHandHoldingDollar,
-              label: 'Just Paid Collabs',
-              value: 'Just Paid Collabs',
+              label: "Just Paid Collabs",
+              value: "Just Paid Collabs",
             },
           ]}
           onSelect={(value) => {
@@ -92,8 +106,14 @@ const Preferences: React.FC<PreferencesProps> = ({
       >
         <MultiSelectExtendable
           buttonLabel="Add Brand Industry"
-          initialItemsList={includeSelectedItems(BRAND_INDUSTRIES, preferences.preferredBrandIndustries || [])}
-          initialMultiselectItemsList={includeSelectedItems(INITIAL_BRAND_INDUSTRIES, preferences.preferredBrandIndustries || [])}
+          initialItemsList={includeSelectedItems(
+            BRAND_INDUSTRIES,
+            preferences.preferredBrandIndustries || []
+          )}
+          initialMultiselectItemsList={includeSelectedItems(
+            INITIAL_BRAND_INDUSTRIES,
+            preferences.preferredBrandIndustries || []
+          )}
           onSelectedItemsChange={(value) => {
             setPreferences({
               ...preferences,
@@ -107,7 +127,7 @@ const Preferences: React.FC<PreferencesProps> = ({
       <ContentWrapper
         title="Budget for Paid Collabs"
         description="This budget would help us understand your need hence show better suggestions."
-        rightText={`$${preferences?.budgetForPaidCollabs?.[0]}-${preferences.budgetForPaidCollabs?.[1]}`}
+        rightText={`Rs. ${preferences?.budgetForPaidCollabs?.[0]}-${preferences.budgetForPaidCollabs?.[1]}`}
       >
         <MultiRangeSlider
           containerStyle={{
@@ -131,13 +151,13 @@ const Preferences: React.FC<PreferencesProps> = ({
       >
         <SelectGroup
           items={[
-            { label: 'Long Term', value: 'Long Term' },
-            { label: 'Short Term', value: 'Short Term' },
-            { label: 'One Time', value: 'One Time' },
+            { label: "Long Term", value: "Long Term" },
+            { label: "Short Term", value: "Short Term" },
+            { label: "One Time", value: "One Time" },
           ]}
           selectedItem={{
-            label: preferences.goal || 'Long Term',
-            value: preferences.goal || 'Long Term',
+            label: preferences.goal || "Long Term",
+            value: preferences.goal || "Long Term",
           }}
           onValueChange={(item) => {
             setPreferences({
@@ -150,7 +170,9 @@ const Preferences: React.FC<PreferencesProps> = ({
       <ContentWrapper
         title="Maximum Monthly Collabs"
         description="Limit your monthly collab to have a good balance between your own content to campaign contents."
-        rightText={`${preferences.maximumMonthlyCollabs?.[0] || 0}-${preferences.maximumMonthlyCollabs?.[1] || 100}`}
+        rightText={`${preferences.maximumMonthlyCollabs?.[0] || 0}-${
+          preferences.maximumMonthlyCollabs?.[1] || 100
+        }`}
       >
         <MultiRangeSlider
           containerStyle={{
@@ -174,17 +196,19 @@ const Preferences: React.FC<PreferencesProps> = ({
       >
         <Select
           items={[
-            { label: 'Post', value: 'Post' },
-            { label: 'Reels', value: 'Reels' },
-            { label: 'Stories', value: 'Stories' },
-            { label: 'Videos', value: 'Videos' },
-            { label: 'Live', value: 'Live' },
+            { label: "Post", value: "Post" },
+            { label: "Reels", value: "Reels" },
+            { label: "Stories", value: "Stories" },
+            { label: "Videos", value: "Videos" },
+            { label: "Live", value: "Live" },
           ]}
           selectItemIcon={true}
-          value={preferences?.contentWillingToPost?.map((item) => ({
-            label: item,
-            value: item,
-          })) || []}
+          value={
+            preferences?.contentWillingToPost?.map((item) => ({
+              label: item,
+              value: item,
+            })) || []
+          }
           multiselect
           onSelect={(item) => {
             setPreferences({
@@ -200,12 +224,12 @@ const Preferences: React.FC<PreferencesProps> = ({
       >
         <SelectGroup
           items={[
-            { label: 'Integrated Video', value: 'Integrated Video' },
-            { label: 'Dedicated Video', value: 'Dedicated Video' },
+            { label: "Integrated Video", value: "Integrated Video" },
+            { label: "Dedicated Video", value: "Dedicated Video" },
           ]}
           selectedItem={{
-            label: preferences.preferredVideoType || 'Integrated Video',
-            value: preferences.preferredVideoType || 'Integrated Video',
+            label: preferences.preferredVideoType || "Integrated Video",
+            value: preferences.preferredVideoType || "Integrated Video",
           }}
           onValueChange={(item) => {
             setPreferences({
@@ -221,7 +245,10 @@ const Preferences: React.FC<PreferencesProps> = ({
       >
         <MultiSelectExtendable
           buttonLabel="Add Language"
-          initialItemsList={includeSelectedItems(LANGUAGES, preferences.preferredLanguages || [])}
+          initialItemsList={includeSelectedItems(
+            LANGUAGES,
+            preferences.preferredLanguages || []
+          )}
           initialMultiselectItemsList={INITIAL_LANGUAGES}
           onSelectedItemsChange={(value) => {
             setPreferences({

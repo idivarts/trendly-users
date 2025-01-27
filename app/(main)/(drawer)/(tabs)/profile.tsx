@@ -41,62 +41,51 @@ const ProfileScreen = () => {
           paddingBottom: 16,
         }}
       >
-        {
-          user && (
-            <ProfileCard
-              item={user}
-              onPress={() => router.push("/edit-profile")}
-            />
-          )
-        }
-        {
-          !user?.profile?.completionPercentage ||
-            user?.profile?.completionPercentage < COMPLETION_PERCENTAGE ? (
-            <View
+        {user && (
+          <ProfileCard
+            item={user}
+            onPress={() => router.push("/edit-profile")}
+          />
+        )}
+        {!user?.profile?.completionPercentage ||
+        user?.profile?.completionPercentage < COMPLETION_PERCENTAGE ? (
+          <View
+            style={{
+              backgroundColor: Colors(theme).yellow,
+              flexDirection: "row",
+              alignItems: "center",
+              padding: 10,
+              paddingHorizontal: 16,
+              marginHorizontal: 16,
+              borderRadius: 10,
+            }}
+          >
+            <FontAwesomeIcon icon={faWarning} color="#fff" size={22} />
+            <Text
               style={{
-                backgroundColor: Colors(theme).yellow,
-                flexDirection: "row",
-                alignItems: "center",
-                padding: 10,
-                paddingHorizontal: 16,
-                borderRadius: 10,
+                fontSize: 16,
+                color: Colors(theme).white,
+                padding: 16,
               }}
             >
-              <FontAwesomeIcon icon={faWarning} color="#fff" size={22} />
-              <Text
-                style={{
-                  fontSize: 16,
-                  color: Colors(theme).white,
-                  padding: 16,
-                }}
-              >
-                We only advertise you to our brands if your profile is more
-                than {COMPLETION_PERCENTAGE}% complete
-              </Text>
-            </View>
-          ) : null
-        }
-        {
-          PROFILE_ITEMS.map((item) => (
-            <ProfileItemCard
-              key={item.id}
-              item={item}
-              onPress={() => {
-                if (
-                  item.title === "Help and Support" &&
-                  Platform.OS === "web"
-                ) {
-                  window.open(
-                    "https://trendly.pro/help-and-support/",
-                    "_blank"
-                  );
-                } else {
-                  router.push(item.route as Href);
-                }
-              }}
-            />
-          ))
-        }
+              We only advertise you to our brands if your profile is more than{" "}
+              {COMPLETION_PERCENTAGE}% complete
+            </Text>
+          </View>
+        ) : null}
+        {PROFILE_ITEMS.map((item) => (
+          <ProfileItemCard
+            key={item.id}
+            item={item}
+            onPress={() => {
+              if (item.title === "Help and Support" && Platform.OS === "web") {
+                window.open("https://trendly.pro/help-and-support/", "_blank");
+              } else {
+                router.push(item.route as Href);
+              }
+            }}
+          />
+        ))}
         <ProfileItemCard
           onPress={() => {
             setLogoutModalVisible(true);
