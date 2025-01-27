@@ -6,7 +6,7 @@ export const stylesFn = (theme: Theme) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: Colors(theme).background,
+      marginHorizontal: "auto",
     },
     searchContainer: {
       flexDirection: "row",

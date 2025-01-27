@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ScrollView } from "react-native";
+import { Platform, ScrollView, useWindowDimensions } from "react-native";
 import Select from "@/components/ui/select";
 import SelectGroup from "@/components/ui/select/select-group";
 import { MultiRangeSlider } from "@/components/ui/multislider";
@@ -23,6 +23,7 @@ const Preferences: React.FC<PreferencesProps> = ({
   onSave,
 }) => {
   const theme = useTheme();
+  const dimensions = useWindowDimensions();
 
   const [preferences, setPreferences] = useState<IPreferences>({
     budgetForPaidCollabs: user.preferences?.budgetForPaidCollabs || [0, 100],
@@ -112,7 +113,7 @@ const Preferences: React.FC<PreferencesProps> = ({
           containerStyle={{
             paddingHorizontal: 8,
           }}
-          sliderLength={352}
+          sliderLength={Platform.OS === "web" ? dimensions.width - 48 : 352}
           maxValue={100}
           minValue={0}
           onValuesChange={(values) => {
@@ -155,7 +156,7 @@ const Preferences: React.FC<PreferencesProps> = ({
           containerStyle={{
             paddingHorizontal: 8,
           }}
-          sliderLength={352}
+          sliderLength={Platform.OS === "web" ? dimensions.width - 48 : 352}
           maxValue={100}
           minValue={0}
           onValuesChange={(values) => {
