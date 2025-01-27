@@ -37,6 +37,7 @@ const GalleryScreen = () => {
   const [isCameraVisible, setIsCameraVisible] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const { user } = useAuthContext();
+  const [isSaving, setIsSaving] = useState(false);
 
   const attachmentFiltered = user?.profile?.attachments?.map(
     (attachment, index) => {
@@ -212,31 +213,35 @@ const GalleryScreen = () => {
 
   const startRecording = async () => {
     if (cameraRef.current) {
-      setIsRecording(true);
       try {
+        setIsRecording(true);
         const video = await cameraRef.current.recordAsync();
-        if (video && video.uri) {
+
+        if (video?.uri) {
+          setIsSaving(true);
           const asset = await MediaLibrary.createAssetAsync(video.uri);
+
           const newItem: AssetItem = {
             id: asset.id.toString(),
             localUri: asset.uri,
             type: "video",
             uri: asset.uri,
           };
-          setSelectedItems((prev: AssetItem[]) => [...prev, newItem]);
 
-          fetchAssets();
+          setSelectedItems((prev) => [...prev, newItem]);
+          await fetchAssets();
         }
       } catch (error) {
-        console.error("Failed to record video:", error);
+        Toaster.error("Failed to save video");
       } finally {
         setIsRecording(false);
+        setIsSaving(false);
       }
     }
   };
 
-  const stopRecording = async () => {
-    if (cameraRef.current) {
+  const stopRecording = () => {
+    if (cameraRef.current && isRecording) {
       cameraRef.current.stopRecording();
     }
   };
