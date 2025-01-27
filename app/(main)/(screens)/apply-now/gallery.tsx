@@ -23,6 +23,8 @@ import { useAuthContext } from "@/contexts";
 import { processRawAttachment } from "@/utils/attachments";
 import RenderMediaItem from "@/components/ui/carousel/render-media-item";
 import Button from "@/components/ui/button";
+import Toaster from "@/shared-uis/components/toaster/Toaster";
+import Toast from "react-native-toast-message";
 
 const GalleryScreen = () => {
   const { pageID } = useLocalSearchParams();
@@ -143,6 +145,10 @@ const GalleryScreen = () => {
 
   const handleSelectionComplete = () => {
     try {
+      if (selectedItems.length + profileAttachments.length > 6) {
+        Toaster.error("You can only select up to 6 files");
+        return;
+      }
       router.back();
       router.replace({
         //@ts-ignore
@@ -305,7 +311,13 @@ const GalleryScreen = () => {
   return (
     <View style={styles.container}>
       <ScreenHeader title="Select Photos and Videos" />
-
+      <View
+        style={{
+          zIndex: 1000,
+        }}
+      >
+        <Toast />
+      </View>
       {/* Action Buttons */}
       <View style={styles.actionButtons}>
         <Button
@@ -409,7 +421,7 @@ const GalleryScreen = () => {
               >
                 <Surface style={styles.itemContainer}>
                   <RenderMediaItem
-                    handleImagePress={() => { }}
+                    handleImagePress={() => {}}
                     index={item.id}
                     item={item.attachment}
                     height={120}

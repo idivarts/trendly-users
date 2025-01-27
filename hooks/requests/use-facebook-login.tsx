@@ -20,6 +20,7 @@ import { useAuthContext } from "@/contexts";
 import { FB_APP_ID } from "@/constants/Facebook";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
+import * as WebBrowser from "expo-web-browser";
 
 interface useFacebookLoginType {
   facebookLogin: () => void;
@@ -28,6 +29,8 @@ interface useFacebookLoginType {
   ) => Promise<AuthSession.AuthSessionResult>;
   requestFacebook: AuthSession.AuthRequest | null;
 }
+
+WebBrowser.maybeCompleteAuthSession();
 
 const useFacebookLogin = (
   auth: Auth,

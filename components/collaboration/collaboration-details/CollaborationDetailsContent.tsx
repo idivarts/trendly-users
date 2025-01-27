@@ -277,6 +277,7 @@ const CollborationDetailsContent = (
                 justifyContent: "space-between",
                 width: "100%",
                 alignItems: "center",
+                marginTop: 4,
               }}
             >
               <Text variant="headlineMedium" style={styles.name}>
@@ -363,7 +364,7 @@ const CollborationDetailsContent = (
                     >
                       {truncateText(
                         props.collaborationDetail.brandDescription,
-                        120
+                        60
                       )}
                     </Text>
                   </View>
@@ -556,8 +557,8 @@ const CollborationDetailsContent = (
                 Budget:
                 {props.collaborationDetail?.budget?.min ===
                 props.collaborationDetail?.budget?.max
-                  ? `$${props.collaborationDetail?.budget?.min}`
-                  : `$${props.collaborationDetail?.budget?.min} - $${props.collaborationDetail?.budget?.max}`}
+                  ? `Rs. ${props.collaborationDetail?.budget?.min}`
+                  : `Rs. ${props.collaborationDetail?.budget?.min} - Rs. ${props.collaborationDetail?.budget?.max}`}
               </Text>
             )}
           </View>
@@ -614,14 +615,14 @@ const CollborationDetailsContent = (
                     content === "Posts"
                       ? faPanorama
                       : content === "Reels"
-                        ? faFilm
-                        : content === "Stories"
-                          ? faHeart
-                          : content === "Live"
-                            ? faRecordVinyl
-                            : content === "Product Reviews"
-                              ? faStarHalfStroke
-                              : faPanorama
+                      ? faFilm
+                      : content === "Stories"
+                      ? faHeart
+                      : content === "Live"
+                      ? faRecordVinyl
+                      : content === "Product Reviews"
+                      ? faStarHalfStroke
+                      : faPanorama
                   }
                 />
               ))}

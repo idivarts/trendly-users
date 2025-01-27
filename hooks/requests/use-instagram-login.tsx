@@ -8,6 +8,7 @@ import { Auth, signInWithCustomToken } from "firebase/auth";
 import { useAuthContext } from "@/contexts";
 import { FB_APP_ID } from "@/constants/Facebook";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
+import * as WebBrowser from "expo-web-browser";
 
 interface useInstagramLoginType {
   instagramLogin: () => void;
@@ -16,6 +17,8 @@ interface useInstagramLoginType {
   ) => Promise<AuthSession.AuthSessionResult>;
   requestInstagram: AuthSession.AuthRequest | null;
 }
+
+WebBrowser.maybeCompleteAuthSession();
 
 const useInstagramLogin = (
   auth: Auth,
@@ -39,8 +42,9 @@ const useInstagramLogin = (
         redirectUri,
       },
       {
-        authorizationEndpoint: `${authUrl}?redirect_type=${Platform.OS === "web" ? 2 : 3
-          }&`,
+        authorizationEndpoint: `${authUrl}?redirect_type=${
+          Platform.OS === "web" ? 2 : 3
+        }&`,
       }
     );
 
