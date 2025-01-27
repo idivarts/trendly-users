@@ -13,6 +13,18 @@ export const stylesFn = (theme: Theme) =>
       flex: 1,
       backgroundColor: Colors(theme).background,
     },
+    timerContainer: {
+      position: "absolute",
+      alignSelf: "center",
+      top: 0,
+      padding: 10,
+      borderRadius: 5,
+    },
+    timerText: {
+      color: Colors(theme).white,
+      fontSize: 24,
+      fontWeight: "bold",
+    },
     actionButtons: {
       flexDirection: "row",
       justifyContent: "space-around",
