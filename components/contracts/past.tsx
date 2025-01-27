@@ -15,7 +15,6 @@ import {
 } from "firebase/firestore";
 import { ActivityIndicator, FlatList, Pressable } from "react-native";
 import { FirestoreDB } from "@/utils/firestore";
-import { AuthApp } from "@/utils/auth";
 import { RefreshControl } from "react-native";
 import { stylesFn } from "@/styles/Proposal.styles";
 import EmptyState from "../ui/empty-state";
@@ -37,11 +36,7 @@ interface ICollaborationCard extends IContracts {
 }
 
 const PastContracts = () => {
-  const [isVisible, setIsVisible] = useState(false);
   const [proposals, setProposals] = useState<ICollaborationCard[]>([]);
-  const [selectedCollabId, setSelectedCollabId] = useState<string | null>(null);
-
-  const closeBottomSheet = () => setIsVisible(false);
 
   const theme = useTheme();
   const styles = stylesFn(theme);
@@ -171,7 +166,6 @@ const PastContracts = () => {
                   router.push(`/contract-details/${item.streamChannelId}`);
                 }}
                 style={{
-                  width: "100%",
                   borderWidth: 0.3,
                   borderColor: Colors(theme).gray300,
                   borderRadius: 5,
@@ -193,7 +187,7 @@ const PastContracts = () => {
                     collabName: item.collaborationData.name,
                     timePosted: item.collaborationData.timeStamp,
                   }}
-                  onOpenBottomSheet={() => {}}
+                  onOpenBottomSheet={() => { }}
                 />
                 <ContractDetails
                   application={
