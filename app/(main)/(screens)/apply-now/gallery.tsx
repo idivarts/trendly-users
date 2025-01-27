@@ -236,7 +236,6 @@ const GalleryScreen = () => {
             asset.duration <= 0
           ) {
             Toaster.error("Video too short - please record longer");
-            console.error("Video too short - please record longer");
             return;
           }
 
@@ -255,8 +254,6 @@ const GalleryScreen = () => {
         }
       } catch (error) {
         const errorMessage = (error as Error).message;
-        console.error("Failed to save video:", error);
-        // Handle specific early stop error
         if (
           errorMessage.includes(
             "Recording was stopped before any data could be produced"
@@ -265,7 +262,6 @@ const GalleryScreen = () => {
           Toaster.error("Please hold the record button longer");
         } else {
           Toaster.error("Failed to save video");
-          console.error("Failed to save video:", error);
         }
       } finally {
         setIsRecording(false);
@@ -282,7 +278,6 @@ const GalleryScreen = () => {
         console.error("Error stopping recording:", error);
       } finally {
         setIsRecording(false);
-        // Refresh camera preview by temporarily unmounting
         setIsCameraVisible(false);
       }
     }
