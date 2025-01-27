@@ -615,14 +615,14 @@ const CollborationDetailsContent = (
                     content === "Posts"
                       ? faPanorama
                       : content === "Reels"
-                      ? faFilm
-                      : content === "Stories"
-                      ? faHeart
-                      : content === "Live"
-                      ? faRecordVinyl
-                      : content === "Product Reviews"
-                      ? faStarHalfStroke
-                      : faPanorama
+                        ? faFilm
+                        : content === "Stories"
+                          ? faHeart
+                          : content === "Live"
+                            ? faRecordVinyl
+                            : content === "Product Reviews"
+                              ? faStarHalfStroke
+                              : faPanorama
                   }
                 />
               ))}

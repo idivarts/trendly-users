@@ -426,7 +426,7 @@ const GalleryScreen = () => {
               >
                 <Surface style={styles.itemContainer}>
                   <RenderMediaItem
-                    handleImagePress={() => {}}
+                    handleImagePress={() => { }}
                     index={item.id}
                     item={item.attachment}
                     height={120}

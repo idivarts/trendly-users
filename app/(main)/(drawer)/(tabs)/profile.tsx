@@ -48,7 +48,7 @@ const ProfileScreen = () => {
           />
         )}
         {!user?.profile?.completionPercentage ||
-        user?.profile?.completionPercentage < COMPLETION_PERCENTAGE ? (
+          user?.profile?.completionPercentage < COMPLETION_PERCENTAGE ? (
           <View
             style={{
               backgroundColor: Colors(theme).yellow,

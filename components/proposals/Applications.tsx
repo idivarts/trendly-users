@@ -30,6 +30,7 @@ import CollaborationDetails from "../collaboration/card-components/Collaboration
 import { useAuthContext } from "@/contexts";
 import { processRawAttachment } from "@/utils/attachments";
 import { MediaItem } from "../ui/carousel/render-media-item";
+import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 
 const Applications = () => {
   const [isVisible, setIsVisible] = useState(false);
