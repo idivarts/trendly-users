@@ -168,13 +168,7 @@ const Settings: React.FC<SettingsProps> = ({
           onPress={() => {
             setDeactivationModalVisible(true);
           }}
-          style={{
-            borderColor: Colors(theme).danger,
-          }}
           loading={isDeactivating}
-          labelStyle={{
-            color: Colors(theme).danger,
-          }}
         >
           Deactivate Account
         </Button>
@@ -183,9 +177,6 @@ const Settings: React.FC<SettingsProps> = ({
             setDeletionModalVisible(true);
           }}
           loading={isDeleting}
-          style={{
-            backgroundColor: Colors(theme).danger,
-          }}
         >
           {
             !isDeleting && (
