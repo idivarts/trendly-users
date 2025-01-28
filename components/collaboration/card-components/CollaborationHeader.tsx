@@ -69,6 +69,7 @@ const CollaborationHeader: FC<CollaborationHeaderProps> = ({
           flexDirection: "row",
           alignItems: "center",
           gap: 8,
+          paddingRight: 16,
           flex: 1,
         }}
       >
@@ -88,6 +89,7 @@ const CollaborationHeader: FC<CollaborationHeaderProps> = ({
             flexDirection: "column",
             justifyContent: "center",
             gap: 2,
+            flex: 1,
           }}
         >
           <Text

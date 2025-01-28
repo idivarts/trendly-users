@@ -100,7 +100,7 @@ const UserResponse: FC<UserResponseProps> = ({
               index={index}
               height={100}
               width={100}
-              handleImagePress={() => { }}
+              handleImagePress={() => {}}
             />
           ))}
         </ScrollView>
@@ -117,12 +117,12 @@ const UserResponse: FC<UserResponseProps> = ({
           <Text style={{ fontSize: 16 }}>
             Quote: {application?.quotation || "N/A"}
           </Text>
-          {application?.timeline && (
+          {application?.timeline ? (
             <Text style={{ fontSize: 16 }}>
               Timeline:{" "}
               {new Date(application?.timeline).toLocaleDateString() || "N/A"}
             </Text>
-          )}
+          ) : null}
         </View>
         {application?.fileAttachments &&
           application.fileAttachments.map((attachment, index) => {
@@ -153,34 +153,35 @@ const UserResponse: FC<UserResponseProps> = ({
             gap: 10,
           }}
         >
-          {application?.answersFromInfluencer &&
-            influencerQuestions &&
-            application?.answersFromInfluencer.map((answer, index) => {
-              return (
-                <View
-                  style={{
-                    flexDirection: "column",
-                    gap: 10,
-                  }}
-                >
-                  <Text
+          {application?.answersFromInfluencer
+            ? influencerQuestions &&
+              application?.answersFromInfluencer.map((answer, index) => {
+                return (
+                  <View
                     style={{
-                      fontSize: 16,
-                      fontWeight: "bold",
+                      flexDirection: "column",
+                      gap: 10,
                     }}
                   >
-                    {influencerQuestions[answer.question]}
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: 16,
-                    }}
-                  >
-                    {answer.answer}
-                  </Text>
-                </View>
-              );
-            })}
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {influencerQuestions[answer.question]}
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: 16,
+                      }}
+                    >
+                      {answer.answer}
+                    </Text>
+                  </View>
+                );
+              })
+            : null}
         </View>
       </View>
     </View>

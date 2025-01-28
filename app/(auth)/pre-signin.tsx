@@ -6,8 +6,8 @@ import {
   Platform,
   Pressable,
   ActivityIndicator,
+  Dimensions,
 } from "react-native";
-import Swiper from "react-native-swiper";
 import { Title, Paragraph, Portal } from "react-native-paper";
 import stylesFn from "@/styles/tab1.styles";
 import { useTheme } from "@react-navigation/native";
@@ -21,19 +21,18 @@ import Colors from "@/constants/Colors";
 import { FirestoreDB } from "@/utils/firestore";
 import BottomSheetActions from "@/components/BottomSheetActions";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import {
-  faArrowRight,
-  faArrowRightArrowLeft,
-  faChevronLeft,
-  faChevronRight,
-  faEllipsis,
-  faEnvelope,
-} from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import SocialButton from "@/components/ui/button/social-button";
 import { faFacebook, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import { imageUrl } from "@/utils/url";
 import { useFacebookLogin, useInstagramLogin } from "@/hooks/requests";
 import Button from "@/components/ui/button";
+import Carousel, {
+  ICarouselInstance,
+  Pagination,
+} from "react-native-reanimated-carousel";
+
+import { useSharedValue } from "react-native-reanimated";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -41,11 +40,12 @@ const PreSignIn = () => {
   const theme = useTheme();
   const styles = stylesFn(theme);
   const [error, setError] = useState<string | null>(null);
-  const swiperRef = useRef<Swiper>(null); // Use ref for Swiper
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
-
+  const [index, setIndex] = useState(0);
   const router = useRouter();
+  const swiperRef = useRef<ICarouselInstance>(null);
+  const progress = useSharedValue(0);
 
   const { instagramLogin, promptAsyncInstagram, requestInstagram } =
     useInstagramLogin(
@@ -70,53 +70,36 @@ const PreSignIn = () => {
       (slide) => slide.key === "connect"
     );
     if (connectSlideIndex !== -1) {
-      swiperRef.current?.scrollBy(connectSlideIndex);
+      swiperRef.current?.scrollTo({ index: connectSlideIndex });
     }
   };
 
-  const handleEmailSignIn = () => {
-    router.navigate("/login");
+  const onPressPagination = (index: number) => {
+    swiperRef.current?.scrollTo({
+      count: index - progress.value,
+      animated: true,
+    });
   };
 
   return (
     <AppLayout>
-      <Swiper
+      <Carousel
+        data={slides}
+        width={Dimensions.get("window").width}
+        pagingEnabled
         ref={swiperRef}
-        style={styles.wrapper}
-        dotStyle={styles.dotStyle}
         loop={false}
-        activeDotStyle={[
-          styles.dotStyle,
-          { backgroundColor: Colors(theme).primary },
-        ]}
-        paginationStyle={styles.pagination}
-        showsButtons={Platform.OS === "web"}
-        nextButton={
-          Platform.OS === "web" && (
-            <View style={styles.buttonWrapper}>
-              <FontAwesomeIcon
-                icon={faChevronRight}
-                size={20}
-                color={Colors(theme).black}
-              />
-            </View>
-          )
-        }
-        prevButton={
-          Platform.OS === "web" && (
-            <View style={styles.buttonWrapper}>
-              <FontAwesomeIcon
-                icon={faChevronLeft}
-                size={20}
-                color={Colors(theme).black}
-              />
-            </View>
-          )
-        }
-      >
-        {slides.map((slide) => (
-          <View style={styles.slide} key={slide.key}>
-            {slide.key !== "connect" && (
+        onProgressChange={(_, absoluteProgress) => {
+          progress.value = absoluteProgress;
+          setIndex(Math.round(absoluteProgress));
+        }}
+        withAnimation={{
+          type: "timing",
+          config: {},
+        }}
+        renderItem={({ item }) => (
+          <View style={styles.slide}>
+            {item.key !== "connect" && (
               <Button
                 mode="outlined"
                 style={styles.skipButton}
@@ -125,28 +108,14 @@ const PreSignIn = () => {
                 Skip
               </Button>
             )}
-            {slide.key === "connect" && Platform.OS !== "web" && (
-              <Pressable
-                style={[styles.skipButton]}
-                onPress={() => {
-                  setVisible(true);
-                }}
-              >
-                <FontAwesomeIcon
-                  icon={faEllipsis}
-                  size={24}
-                  color={Colors(theme).gray100}
-                />
-              </Pressable>
-            )}
             <View style={styles.imageContainer}>
-              <Image source={imageUrl(slide.image)} style={styles.image} />
+              <Image source={imageUrl(item.image)} style={styles.image} />
             </View>
             <Title style={[styles.title, { color: Colors(theme).primary }]}>
-              {slide.title}
+              {item.title}
             </Title>
-            <Paragraph style={styles.paragraph}>{slide.text}</Paragraph>
-            {slide.key === "connect" && Platform.OS !== "web" && (
+            <Paragraph style={styles.paragraph}>{item.text}</Paragraph>
+            {item.key === "connect" && Platform.OS !== "web" && (
               <View style={styles.socialContainer}>
                 <SocialButton
                   icon={faFacebook}
@@ -172,17 +141,12 @@ const PreSignIn = () => {
                 />
               </View>
             )}
-            {slide.key === "connect" && Platform.OS === "web" && (
+            {item.key === "connect" && Platform.OS === "web" && (
               <View style={styles.socialContainer}>
                 <SocialButton
                   icon={faFacebook}
                   label="Login with Facebook"
                   onPress={facebookLogin}
-                />
-                <SocialButton
-                  icon={faEnvelope}
-                  label="Login with Email"
-                  onPress={handleEmailSignIn}
                 />
                 <SocialButton
                   icon={faInstagram}
@@ -191,7 +155,7 @@ const PreSignIn = () => {
                 />
               </View>
             )}
-            {slide.key !== "connect" && Platform.OS !== "web" && (
+            {item.key !== "connect" && (
               <Pressable
                 style={{
                   flexDirection: "row",
@@ -205,7 +169,7 @@ const PreSignIn = () => {
                   gap: 10,
                 }}
                 onPress={() => {
-                  swiperRef.current?.scrollBy(1);
+                  swiperRef.current?.next();
                 }}
               >
                 <Text
@@ -223,7 +187,7 @@ const PreSignIn = () => {
                 />
               </Pressable>
             )}
-            {slide.key === "connect" && loading && (
+            {item.key === "connect" && loading && (
               <Portal>
                 <View
                   style={{
@@ -239,16 +203,32 @@ const PreSignIn = () => {
               </Portal>
             )}
           </View>
-        ))}
-      </Swiper>
+        )}
+      />
+      <Pagination.Basic
+        progress={progress}
+        data={slides}
+        size={12}
+        dotStyle={{
+          borderRadius: 100,
+          backgroundColor: Colors(theme).backdrop,
+        }}
+        activeDotStyle={{
+          borderRadius: 100,
+          overflow: "hidden",
+          backgroundColor: Colors(theme).primary,
+        }}
+        containerStyle={[
+          {
+            gap: 5,
+            marginBottom: 10,
+          },
+        ]}
+        horizontal
+        onPress={onPressPagination}
+      />
 
       {error && <Text style={{ color: "red" }}>Error: {error}</Text>}
-      <BottomSheetActions
-        isVisible={visible}
-        cardType="pre-signin"
-        onClose={() => setVisible(false)}
-        snapPointsRange={["25%", "40%"]}
-      />
     </AppLayout>
   );
 };
