@@ -34,6 +34,7 @@ const GalleryScreen = () => {
   const [profileAttachments, setProfileAttachments] = useState<any[]>([]);
   const [permissionGranted, setPermissionGranted] = useState(false);
   const [cameraPermission, setCameraPermission] = useCameraPermissions();
+  const [recordingDuration, setRecordingDuration] = useState(0);
   const [isCameraVisible, setIsCameraVisible] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const { user } = useAuthContext();
@@ -48,6 +49,15 @@ const GalleryScreen = () => {
       };
     }
   );
+
+  // Add this helper function to format the duration
+  const formatDuration = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, "0")}:${secs
+      .toString()
+      .padStart(2, "0")}`;
+  };
 
   const cameraRef = useRef<CameraView>(null);
   const {
@@ -221,10 +231,21 @@ const GalleryScreen = () => {
           setIsSaving(true);
           const asset = await MediaLibrary.createAssetAsync(video.uri);
 
+          if (
+            asset.mediaType === MediaLibrary.MediaType.video &&
+            asset.duration <= 0
+          ) {
+            Toaster.error("Video too short - please record longer");
+            return;
+          }
+
           const newItem: AssetItem = {
             id: asset.id.toString(),
             localUri: asset.uri,
-            type: "video",
+            type:
+              asset.mediaType === MediaLibrary.MediaType.video
+                ? "video"
+                : "image",
             uri: asset.uri,
           };
 
@@ -232,7 +253,16 @@ const GalleryScreen = () => {
           await fetchAssets();
         }
       } catch (error) {
-        Toaster.error("Failed to save video");
+        const errorMessage = (error as Error).message;
+        if (
+          errorMessage.includes(
+            "Recording was stopped before any data could be produced"
+          )
+        ) {
+          Toaster.error("Please hold the record button longer");
+        } else {
+          Toaster.error("Failed to save video");
+        }
       } finally {
         setIsRecording(false);
         setIsSaving(false);
@@ -240,9 +270,16 @@ const GalleryScreen = () => {
     }
   };
 
-  const stopRecording = () => {
+  const stopRecording = async () => {
     if (cameraRef.current && isRecording) {
-      cameraRef.current.stopRecording();
+      try {
+        await cameraRef.current.stopRecording();
+      } catch (error) {
+        console.error("Error stopping recording:", error);
+      } finally {
+        setIsRecording(false);
+        setIsCameraVisible(false);
+      }
     }
   };
 
@@ -261,6 +298,18 @@ const GalleryScreen = () => {
       setProfileAttachments(newFiles);
     }
   }, [profileAttachmentsRoute]);
+
+  useEffect(() => {
+    if (isRecording) {
+      const interval = setInterval(() => {
+        setRecordingDuration((prev) => prev + 1);
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+    if (!isRecording) {
+      setRecordingDuration(0);
+    }
+  }, [isRecording]);
 
   const renderItem = ({ item }: { item: MediaLibrary.AssetInfo }) => (
     <Pressable
@@ -359,10 +408,16 @@ const GalleryScreen = () => {
           style={styles.camera}
           ref={cameraRef}
           facing="back"
-          onCameraReady={() => {
-            console.log("Camera ready");
-          }}
+          onCameraReady={() => {}}
+          mode="video"
         >
+          {isRecording ? (
+            <View style={styles.timerContainer}>
+              <Text style={styles.timerText}>
+                {formatDuration(recordingDuration)}
+              </Text>
+            </View>
+          ) : null}
           <View style={styles.cameraButtons}>
             <Button
               mode="contained"
