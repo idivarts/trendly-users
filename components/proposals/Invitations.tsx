@@ -195,30 +195,6 @@ const Invitations = () => {
                       processRawAttachment(attachment)
                     ) || []
                   }
-                  dot={
-                    <View
-                      style={{
-                        backgroundColor: Colors(theme).primary,
-                        width: 8,
-                        height: 8,
-                        borderRadius: 4,
-                        marginLeft: 3,
-                        marginRight: 3,
-                      }}
-                    />
-                  }
-                  activeDot={
-                    <View
-                      style={{
-                        backgroundColor: Colors(theme).gray100,
-                        width: 8,
-                        height: 8,
-                        borderRadius: 4,
-                        marginLeft: 3,
-                        marginRight: 3,
-                      }}
-                    />
-                  }
                 />
               )}
               <Pressable
