@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { FlatList, RefreshControl, Pressable, ActivityIndicator } from "react-native";
+import {
+  FlatList,
+  RefreshControl,
+  Pressable,
+  ActivityIndicator,
+  Dimensions,
+} from "react-native";
 import SearchComponent from "@/components/SearchComponent";
 import CollaborationFilter from "@/components/FilterModal";
 import AppLayout from "@/layouts/app-layout";
@@ -55,9 +61,7 @@ const Collaboration = () => {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
-  const {
-    xl,
-  } = useBreakpoints();
+  const { xl } = useBreakpoints();
 
   const fetchData = async () => {
     const fetchedBrands = await fetchBrands(); // Fetch brands and store in a variable
@@ -152,8 +156,8 @@ const Collaboration = () => {
       job.budget.min
       ? job.budget.min >= salaryRange[0]
       : true && job.budget && job.budget.max
-        ? job.budget.max <= salaryRange[1]
-        : true;
+      ? job.budget.max <= salaryRange[1]
+      : true;
   });
 
   const styles = stylesFn(theme);
@@ -166,7 +170,7 @@ const Collaboration = () => {
             styles.container,
             {
               width: xl ? MAX_WIDTH_WEB : "100%",
-            }
+            },
           ]}
         >
           <View
@@ -174,7 +178,7 @@ const Collaboration = () => {
               styles.searchContainer,
               {
                 paddingHorizontal: xl ? 0 : 16,
-              }
+              },
             ]}
           >
             <SearchComponent
@@ -189,10 +193,7 @@ const Collaboration = () => {
               alignItems: "center",
             }}
           >
-            <ActivityIndicator
-              color={Colors(theme).primary}
-              size="large"
-            />
+            <ActivityIndicator color={Colors(theme).primary} size="large" />
           </View>
         </View>
       </AppLayout>
@@ -206,7 +207,7 @@ const Collaboration = () => {
           styles.container,
           {
             width: xl ? MAX_WIDTH_WEB : "100%",
-          }
+          },
         ]}
       >
         <View
@@ -214,7 +215,7 @@ const Collaboration = () => {
             styles.searchContainer,
             {
               paddingHorizontal: xl ? 0 : 16,
-            }
+            },
           ]}
         >
           <SearchComponent
@@ -266,6 +267,9 @@ const Collaboration = () => {
                       item.attachments?.map((attachment) =>
                         processRawAttachment(attachment)
                       ) || []
+                    }
+                    carouselWidth={
+                      xl ? MAX_WIDTH_WEB : Dimensions.get("window").width
                     }
                   />
                 )}

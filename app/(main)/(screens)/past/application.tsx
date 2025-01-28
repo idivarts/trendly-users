@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { View, FlatList, Pressable } from "react-native";
 import AppLayout from "@/layouts/app-layout";
 import {
@@ -42,7 +42,11 @@ const PastApplicationPage = (props: any) => {
   const fetchProposals = async () => {
     try {
       const applicationCol = collectionGroup(FirestoreDB, "applications");
-      const querySnap = query(applicationCol, where("userId", "==", user?.id));
+      const querySnap = query(
+        applicationCol,
+        where("userId", "==", user?.id),
+        where("status", "!=", "pending")
+      );
       const applicationSnapshot = await getDocs(querySnap);
       const applicationData = applicationSnapshot.docs.map((doc) => ({
         id: doc.id,
@@ -92,6 +96,7 @@ const PastApplicationPage = (props: any) => {
         if (proposal === null) {
           return false;
         }
+
         return (
           proposal !== null ||
           proposal.applications.status === "accepted" ||
@@ -121,7 +126,7 @@ const PastApplicationPage = (props: any) => {
       >
         <FlatList
           data={proposals}
-          renderItem={({ item }) => (
+          renderItem={({ item, index }) => (
             <View
               style={{
                 width: "100%",
@@ -151,8 +156,8 @@ const PastApplicationPage = (props: any) => {
               <Carousel
                 theme={theme}
                 data={
-                  (item.applications[0].attachments &&
-                    item.applications[0].attachments.map(
+                  (item.applications[index].attachments &&
+                    item.applications[index].attachments.map(
                       (attachment: MediaItem) =>
                         processRawAttachment(attachment)
                     )) ||
