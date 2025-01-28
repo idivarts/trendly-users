@@ -71,6 +71,8 @@ const Applications = () => {
 
       let totalNotPendingApplications = 0;
 
+      setProposals([]);
+
       const applicationWithCollab = await Promise.all(
         applicationData.map(async (application) => {
           const collabDoc = firebaseDoc(
@@ -95,6 +97,20 @@ const Applications = () => {
             totalNotPendingApplications += 1;
           }
 
+          if (application.status === "pending") {
+            setProposals((prev) => [
+              ...prev,
+              {
+                ...collabData.data(),
+                id: collabData.id,
+                brandName: brandData.data().name,
+                brandImage: brandData.data().image,
+                paymentVerified: brandData.data().paymentMethodVerified,
+                applications: applicationData,
+              },
+            ]);
+          }
+
           return {
             ...collabData.data(),
             id: collabData.id,
@@ -110,7 +126,6 @@ const Applications = () => {
         return proposal !== null;
       });
 
-      setProposals(validProposals);
       setNotPendingProposals(totalNotPendingApplications);
     } catch (error) {
       console.error("Error fetching proposals: ", error);
@@ -126,7 +141,10 @@ const Applications = () => {
   const pendingProposals = useMemo(
     () =>
       proposals.filter((proposal) => {
-        return proposal.applications[0].status === "pending";
+        proposal.applications = proposal.applications.filter(
+          (application: IApplications) => application.status === "pending"
+        );
+        return proposal.applications.length !== 0;
       }),
     [proposals]
   );
@@ -159,7 +177,7 @@ const Applications = () => {
       ) : pendingProposals.length !== 0 ? (
         <FlatList
           data={pendingProposals}
-          renderItem={({ item }) => (
+          renderItem={({ item, index }) => (
             <View
               style={{
                 width: "100%",
@@ -189,7 +207,7 @@ const Applications = () => {
               <Carousel
                 theme={theme}
                 data={
-                  item.applications[0].attachments.map(
+                  item.applications[index].attachments.map(
                     (attachment: MediaItem) => processRawAttachment(attachment)
                   ) || []
                 }

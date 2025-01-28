@@ -97,7 +97,7 @@ const FacebookLoginButton: React.FC<FacebookLoginButtonProps> = ({
             },
           }
         )
-        .then((res) => { });
+        .then((res) => {});
     } catch (error) {
       console.error(error);
     }
