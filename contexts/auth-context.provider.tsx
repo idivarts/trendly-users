@@ -33,6 +33,8 @@ import {
 import { analyticsLogEvent } from "@/utils/analytics";
 import { INITIAL_USER_DATA } from "@/constants/User";
 import { resetAndNavigate } from "@/utils/router";
+import { Platform } from "react-native";
+import { updatedTokens } from "@/utils/push-notification/push-notification-token.native";
 
 interface AuthContextProps {
   deleteUserAccount: (userId: string) => Promise<void>;
@@ -228,10 +230,22 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
     }
   };
 
-  const signOutUser = () => {
+  const signOutUser = async () => {
+    if (Platform.OS !== "web") {
+      // Remove push notification token from the database
+      const newUpdatedTokens = await updatedTokens(user);
+
+      if (newUpdatedTokens) {
+        await updateUser(session as string, {
+          pushNotificationToken: newUpdatedTokens,
+        });
+      }
+    }
+
     signOut(AuthApp)
       .then(() => {
         setSession("");
+        setUser(null);
 
         analyticsLogEvent("signed_out", {
           id: user?.id,
