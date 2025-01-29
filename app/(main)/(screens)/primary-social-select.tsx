@@ -7,9 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
   faArrowRight,
   faCheck,
-  faChevronLeft,
 } from "@fortawesome/free-solid-svg-icons";
-import Select from "@/components/ui/select";
 import { Text, View } from "@/components/theme/Themed";
 import { useSocialContext } from "@/contexts";
 import { useAuthContext } from "@/contexts";
