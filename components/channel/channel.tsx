@@ -2,9 +2,10 @@ import { View } from "@/components/theme/Themed";
 import ScreenHeader from "@/components/ui/screen-header";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Pressable } from "react-native";
+import { ActivityIndicator, Platform, Pressable } from "react-native";
 import { Channel as ChannelType } from "stream-chat";
 import { Channel, MessageInput, MessageList, useChatContext } from "stream-chat-expo";
+import * as Notifications from "expo-notifications";
 
 import ChatMessageTopbar from "./chat-message-topbar";
 import Colors from "@/constants/Colors";
@@ -66,6 +67,20 @@ const ChannelNative = () => {
 
     fetchChannel();
   }, [cid]);
+
+  useEffect(() => {
+    const resetBadgeCount = async () => {
+      if (Platform.OS === "ios" || Platform.OS === "android") {
+        try {
+          await Notifications.setBadgeCountAsync(0);
+        } catch (error) {
+          console.error("Failed to reset badge count:", error);
+        }
+      }
+    };
+
+    resetBadgeCount();
+  }, []);
 
   useEffect(() => {
     if (contract) {
