@@ -32,7 +32,8 @@ import Carousel, {
   Pagination,
 } from "react-native-reanimated-carousel";
 
-import { useSharedValue } from "react-native-reanimated";
+import { useSharedValue, runOnJS } from "react-native-reanimated";
+import Swiper from "react-native-swiper";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -45,6 +46,7 @@ const PreSignIn = () => {
   const [index, setIndex] = useState(0);
   const router = useRouter();
   const swiperRef = useRef<ICarouselInstance>(null);
+  const nativeRef = useRef<Swiper>(null);
   const progress = useSharedValue(0);
 
   const { instagramLogin, promptAsyncInstagram, requestInstagram } =
@@ -70,7 +72,15 @@ const PreSignIn = () => {
       (slide) => slide.key === "connect"
     );
     if (connectSlideIndex !== -1) {
-      swiperRef.current?.scrollTo({ index: connectSlideIndex });
+      // swiperRef.current?.scrollTo({ index: connectSlideIndex });
+      if (Platform.OS === "web") {
+        swiperRef.current?.scrollTo({
+          count: connectSlideIndex - progress.value,
+          animated: true,
+        });
+      } else {
+        nativeRef.current?.scrollTo(connectSlideIndex);
+      }
     }
   };
 
@@ -83,150 +93,281 @@ const PreSignIn = () => {
 
   return (
     <AppLayout>
-      <Carousel
-        data={slides}
-        width={Dimensions.get("window").width}
-        pagingEnabled
-        ref={swiperRef}
-        loop={false}
-        onProgressChange={(_, absoluteProgress) => {
-          progress.value = absoluteProgress;
-          setIndex(Math.round(absoluteProgress));
-        }}
-        withAnimation={{
-          type: "timing",
-          config: {},
-        }}
-        renderItem={({ item }) => (
-          <View style={styles.slide}>
-            {item.key !== "connect" && (
-              <Button
-                mode="outlined"
-                style={styles.skipButton}
-                onPress={skipToConnect}
-              >
-                Skip
-              </Button>
-            )}
-            <View style={styles.imageContainer}>
-              <Image source={imageUrl(item.image)} style={styles.image} />
-            </View>
-            <Title style={[styles.title, { color: Colors(theme).primary }]}>
-              {item.title}
-            </Title>
-            <Paragraph style={styles.paragraph}>{item.text}</Paragraph>
-            {item.key === "connect" && Platform.OS !== "web" && (
-              <View style={styles.socialContainer}>
-                <SocialButton
-                  icon={faFacebook}
-                  label="Login with Facebook"
-                  onPress={
-                    requestFacebook
-                      ? () => {
-                          promptAsyncFacebook();
-                        }
-                      : () => {}
-                  }
-                />
-                <SocialButton
-                  icon={faInstagram}
-                  label="Login with Instagram"
-                  onPress={
-                    requestInstagram
-                      ? () => {
-                          promptAsyncInstagram();
-                        }
-                      : () => {}
-                  }
-                />
-              </View>
-            )}
-            {item.key === "connect" && Platform.OS === "web" && (
-              <View style={styles.socialContainer}>
-                <SocialButton
-                  icon={faFacebook}
-                  label="Login with Facebook"
-                  onPress={facebookLogin}
-                />
-                <SocialButton
-                  icon={faInstagram}
-                  label="Login with Instagram"
-                  onPress={instagramLogin}
-                />
-              </View>
-            )}
-            {item.key !== "connect" && (
-              <Pressable
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  marginTop: 15,
-                  backgroundColor: Colors(theme).primary,
-                  paddingHorizontal: 20,
-                  paddingVertical: 10,
-                  borderRadius: 5,
-                  gap: 10,
-                }}
-                onPress={() => {
-                  swiperRef.current?.next();
-                }}
-              >
-                <Text
-                  style={{
-                    color: Colors(theme).white,
-                    fontSize: 16,
-                  }}
-                >
-                  Next
-                </Text>
-                <FontAwesomeIcon
-                  icon={faArrowRight}
-                  size={16}
-                  color={Colors(theme).white}
-                />
-              </Pressable>
-            )}
-            {item.key === "connect" && loading && (
-              <Portal>
-                <View
-                  style={{
-                    flex: 1,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    zIndex: 1000,
-                    backgroundColor: Colors(theme).backdrop,
-                  }}
-                >
-                  <ActivityIndicator size="large" color={Colors(theme).text} />
+      {Platform.OS === "web" ? (
+        <>
+          <Carousel
+            data={slides}
+            width={Dimensions.get("window").width}
+            pagingEnabled
+            ref={swiperRef}
+            loop={false}
+            onProgressChange={(_, absoluteProgress) => {
+              runOnJS((value: number) => {
+                progress.value = value;
+              })(absoluteProgress);
+            }}
+            withAnimation={{
+              type: "timing",
+              config: {},
+            }}
+            renderItem={({ item }) => (
+              <View style={styles.slide}>
+                {item.key !== "connect" && (
+                  <Button
+                    mode="outlined"
+                    style={styles.skipButton}
+                    onPress={skipToConnect}
+                  >
+                    Skip
+                  </Button>
+                )}
+                <View style={styles.imageContainer}>
+                  <Image source={imageUrl(item.image)} style={styles.image} />
                 </View>
-              </Portal>
+                <Title style={[styles.title, { color: Colors(theme).primary }]}>
+                  {item.title}
+                </Title>
+                <Paragraph style={styles.paragraph}>{item.text}</Paragraph>
+                {item.key === "connect" && Platform.OS !== "web" && (
+                  <View style={styles.socialContainer}>
+                    <SocialButton
+                      icon={faFacebook}
+                      label="Login with Facebook"
+                      onPress={
+                        requestFacebook
+                          ? () => {
+                              promptAsyncFacebook();
+                            }
+                          : () => {}
+                      }
+                    />
+                    <SocialButton
+                      icon={faInstagram}
+                      label="Login with Instagram"
+                      onPress={
+                        requestInstagram
+                          ? () => {
+                              promptAsyncInstagram();
+                            }
+                          : () => {}
+                      }
+                    />
+                  </View>
+                )}
+                {item.key === "connect" && Platform.OS === "web" && (
+                  <View style={styles.socialContainer}>
+                    <SocialButton
+                      icon={faFacebook}
+                      label="Login with Facebook"
+                      onPress={facebookLogin}
+                    />
+                    <SocialButton
+                      icon={faInstagram}
+                      label="Login with Instagram"
+                      onPress={instagramLogin}
+                    />
+                  </View>
+                )}
+                {item.key !== "connect" && (
+                  <Pressable
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      marginTop: 15,
+                      backgroundColor: Colors(theme).primary,
+                      paddingHorizontal: 20,
+                      paddingVertical: 10,
+                      borderRadius: 5,
+                      gap: 10,
+                    }}
+                    onPress={() => {
+                      swiperRef.current?.next();
+                    }}
+                  >
+                    <Text
+                      style={{
+                        color: Colors(theme).white,
+                        fontSize: 16,
+                      }}
+                    >
+                      Next
+                    </Text>
+                    <FontAwesomeIcon
+                      icon={faArrowRight}
+                      size={16}
+                      color={Colors(theme).white}
+                    />
+                  </Pressable>
+                )}
+                {item.key === "connect" && loading && (
+                  <Portal>
+                    <View
+                      style={{
+                        flex: 1,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        zIndex: 1000,
+                        backgroundColor: Colors(theme).backdrop,
+                      }}
+                    >
+                      <ActivityIndicator
+                        size="large"
+                        color={Colors(theme).text}
+                      />
+                    </View>
+                  </Portal>
+                )}
+              </View>
             )}
-          </View>
-        )}
-      />
-      <Pagination.Basic
-        progress={progress}
-        data={slides}
-        size={12}
-        dotStyle={{
-          borderRadius: 100,
-          backgroundColor: Colors(theme).backdrop,
-        }}
-        activeDotStyle={{
-          borderRadius: 100,
-          overflow: "hidden",
-          backgroundColor: Colors(theme).primary,
-        }}
-        containerStyle={[
-          {
-            gap: 5,
-            marginBottom: 10,
-          },
-        ]}
-        horizontal
-        onPress={onPressPagination}
-      />
+          />
+          <Pagination.Basic
+            progress={progress}
+            data={slides}
+            size={12}
+            dotStyle={{
+              borderRadius: 100,
+              backgroundColor: Colors(theme).backdrop,
+            }}
+            activeDotStyle={{
+              borderRadius: 100,
+              overflow: "hidden",
+              backgroundColor: Colors(theme).primary,
+            }}
+            containerStyle={[
+              {
+                gap: 5,
+                marginBottom: 10,
+              },
+            ]}
+            horizontal
+            onPress={onPressPagination}
+          />
+        </>
+      ) : (
+        <Swiper
+          ref={nativeRef}
+          style={styles.wrapper}
+          dotStyle={styles.dotStyle}
+          loop={false}
+          activeDotStyle={[
+            styles.dotStyle,
+            { backgroundColor: Colors(theme).primary },
+          ]}
+          paginationStyle={styles.pagination}
+        >
+          {slides.map((slide) => (
+            <View style={styles.slide} key={slide.key}>
+              {slide.key !== "connect" && (
+                <Button
+                  mode="outlined"
+                  style={styles.skipButton}
+                  onPress={skipToConnect}
+                >
+                  Skip
+                </Button>
+              )}
+              <View style={styles.imageContainer}>
+                <Image source={imageUrl(slide.image)} style={styles.image} />
+              </View>
+              <Title style={[styles.title, { color: Colors(theme).primary }]}>
+                {slide.title}
+              </Title>
+              <Paragraph style={styles.paragraph}>{slide.text}</Paragraph>
+              {slide.key === "connect" && Platform.OS !== "web" && (
+                <View style={styles.socialContainer}>
+                  <SocialButton
+                    icon={faFacebook}
+                    label="Login with Facebook"
+                    onPress={
+                      requestFacebook
+                        ? () => {
+                            promptAsyncFacebook();
+                          }
+                        : () => {}
+                    }
+                  />
+                  <SocialButton
+                    icon={faInstagram}
+                    label="Login with Instagram"
+                    onPress={
+                      requestInstagram
+                        ? () => {
+                            promptAsyncInstagram();
+                          }
+                        : () => {}
+                    }
+                  />
+                </View>
+              )}
+              {slide.key === "connect" && Platform.OS === "web" && (
+                <View style={styles.socialContainer}>
+                  <SocialButton
+                    icon={faFacebook}
+                    label="Login with Facebook"
+                    onPress={facebookLogin}
+                  />
+                  <SocialButton
+                    icon={faInstagram}
+                    label="Login with Instagram"
+                    onPress={instagramLogin}
+                  />
+                </View>
+              )}
+              {slide.key !== "connect" && Platform.OS !== "web" && (
+                <Pressable
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    marginTop: 15,
+                    backgroundColor: Colors(theme).primary,
+                    paddingHorizontal: 20,
+                    paddingVertical: 10,
+                    borderRadius: 5,
+                    gap: 10,
+                  }}
+                  onPress={() => {
+                    nativeRef.current?.scrollBy(1);
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: Colors(theme).white,
+                      fontSize: 16,
+                    }}
+                  >
+                    Next
+                  </Text>
+                  <FontAwesomeIcon
+                    icon={faArrowRight}
+                    size={16}
+                    color={Colors(theme).white}
+                  />
+                </Pressable>
+              )}
+              {slide.key === "connect" && loading && (
+                <Portal>
+                  <View
+                    style={{
+                      flex: 1,
+                      justifyContent: "center",
+                      alignItems: "center",
+                      zIndex: 1000,
+                      backgroundColor: Colors(theme).backdrop,
+                    }}
+                  >
+                    <ActivityIndicator
+                      size="large"
+                      color={Colors(theme).text}
+                    />
+                  </View>
+                </Portal>
+              )}
+            </View>
+          ))}
+        </Swiper>
+      )}
 
       {error && <Text style={{ color: "red" }}>Error: {error}</Text>}
     </AppLayout>

@@ -166,6 +166,7 @@ const PastContracts = () => {
                   router.push(`/contract-details/${item.streamChannelId}`);
                 }}
                 style={{
+                  flex: 1,
                   borderWidth: 0.3,
                   borderColor: Colors(theme).gray300,
                   borderRadius: 5,

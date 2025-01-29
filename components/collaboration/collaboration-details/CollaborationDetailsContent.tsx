@@ -87,7 +87,7 @@ const CollborationDetailsContent = (
   const [contracts, setContracts] = useState<Contract[]>([]);
 
   const authModalBottomSheetModalRef = useRef<BottomSheetModal>(null);
-  const { createNotification } = useNotificationContext();
+  const { sendNotification } = useNotificationContext();
   const { user } = useAuthContext();
   const { getContractsByCollaborationId } = useContractContext();
 
@@ -144,8 +144,10 @@ const CollborationDetailsContent = (
     }).then(() => {
       if (!user?.id) return;
 
-      createNotification(
-        props?.invitationData?.managerId || "",
+      sendNotification(
+        {
+          managers: [props?.invitationData?.managerId || ""],
+        },
         {
           data: {
             userId: user?.id,
@@ -157,7 +159,6 @@ const CollborationDetailsContent = (
           title: "Invitation Accepted",
           type: "invitation-accepted",
         },
-        "managers"
       ).then(() => {
         setStatus("accepted");
         Toaster.success("Invitation accepted successfully");
@@ -548,19 +549,19 @@ const CollborationDetailsContent = (
             </Text>
             {props.collaborationDetail.promotionType ===
               PromotionType.PAID_COLLAB && (
-              <Text
-                style={{
-                  fontSize: 16,
-                  color: Colors(theme).text,
-                }}
-              >
-                Budget:
-                {props.collaborationDetail?.budget?.min ===
-                props.collaborationDetail?.budget?.max
-                  ? `Rs. ${props.collaborationDetail?.budget?.min}`
-                  : `Rs. ${props.collaborationDetail?.budget?.min} - Rs. ${props.collaborationDetail?.budget?.max}`}
-              </Text>
-            )}
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: Colors(theme).text,
+                  }}
+                >
+                  Budget:
+                  {props.collaborationDetail?.budget?.min ===
+                    props.collaborationDetail?.budget?.max
+                    ? `Rs. ${props.collaborationDetail?.budget?.min}`
+                    : `Rs. ${props.collaborationDetail?.budget?.min} - Rs. ${props.collaborationDetail?.budget?.max}`}
+                </Text>
+              )}
           </View>
           {/* chips */}
           <View
@@ -574,7 +575,7 @@ const CollborationDetailsContent = (
             <ChipCard
               chipText={
                 props.collaborationDetail.promotionType ===
-                PromotionType.PAID_COLLAB
+                  PromotionType.PAID_COLLAB
                   ? "Paid"
                   : "Unpaid"
               }
@@ -598,10 +599,10 @@ const CollborationDetailsContent = (
                     content === "Instagram"
                       ? faInstagram
                       : content === "Facebook"
-                      ? faFacebook
-                      : content === "Youtube"
-                      ? faYoutube
-                      : faInstagram
+                        ? faFacebook
+                        : content === "Youtube"
+                          ? faYoutube
+                          : faInstagram
                   }
                 />
               ))}
@@ -651,8 +652,8 @@ const CollborationDetailsContent = (
                   latitudeDelta: 0.0922,
                   longitudeDelta: 0.042,
                 }}
-                onMapRegionChange={(region) => {}}
-                onFormattedAddressChange={(address) => {}}
+                onMapRegionChange={(region) => { }}
+                onFormattedAddressChange={(address) => { }}
               />
               <Text
                 style={{

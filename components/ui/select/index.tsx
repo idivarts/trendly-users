@@ -55,7 +55,6 @@ const Select: React.FC<SelectProps> = ({
     <View
       style={[
         {
-          flex: 1,
           gap: 8,
         },
         direction === "row" ? {
