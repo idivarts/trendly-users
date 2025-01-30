@@ -5,12 +5,7 @@ export interface Notification extends INotifications {
 }
 
 export interface PushNotificationPayload {
-  data?: {
-    [key: string]: any;
-  };
-  notification: {
-    title: string;
-    description: string;
-    image?: string;
-  };
+  title: string;
+  description: string;
+  image?: string;
 }

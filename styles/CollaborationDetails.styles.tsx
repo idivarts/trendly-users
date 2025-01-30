@@ -40,7 +40,6 @@ export const stylesFn = (theme: Theme) =>
     shortDescription: {
       fontSize: 16,
       color: Colors(theme).text,
-      lineHeight: 22,
       textAlign: "left",
       marginTop: 16,
     },
