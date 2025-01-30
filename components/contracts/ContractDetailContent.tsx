@@ -128,6 +128,7 @@ const ContractDetailsContent = (props: CollaborationDetailsContentProps) => {
                   fontSize: 16,
                   color: Colors(theme).gray100,
                   marginTop: 10,
+                  lineHeight: 22,
                 }}
               >
                 {props.collaborationDetail.description}
@@ -153,7 +154,7 @@ const ContractDetailsContent = (props: CollaborationDetailsContentProps) => {
             influencerQuestions={
               props?.collaborationDetail?.questionsToInfluencers
             }
-            setConfirmationModalVisible={() => { }}
+            setConfirmationModalVisible={() => {}}
           />
           <View
             style={{

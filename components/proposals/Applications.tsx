@@ -17,6 +17,7 @@ import {
 } from "firebase/firestore";
 import {
   ActivityIndicator,
+  Dimensions,
   FlatList,
   Pressable,
   RefreshControl,
@@ -31,6 +32,8 @@ import { useAuthContext } from "@/contexts";
 import { processRawAttachment } from "@/utils/attachments";
 import { MediaItem } from "../ui/carousel/render-media-item";
 import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
+import { MAX_WIDTH_WEB } from "@/constants/Container";
+import { useBreakpoints } from "@/hooks";
 
 const Applications = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -50,6 +53,7 @@ const Applications = () => {
 
   const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const { xl } = useBreakpoints();
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -162,8 +166,9 @@ const Applications = () => {
   return (
     <View
       style={{
-        width: "100%",
         flex: 1,
+        width: xl ? MAX_WIDTH_WEB : "100%",
+        marginHorizontal: "auto",
       }}
     >
       {proposals.length === 0 && notPendingProposals === 0 ? (
@@ -211,6 +216,7 @@ const Applications = () => {
                     (attachment: MediaItem) => processRawAttachment(attachment)
                   ) || []
                 }
+                carouselWidth={MAX_WIDTH_WEB}
               />
               <Pressable
                 onPress={() => {

@@ -30,6 +30,8 @@ import { processRawAttachment } from "@/utils/attachments";
 import CollaborationHeader from "../collaboration/card-components/CollaborationHeader";
 import { Card } from "react-native-paper";
 import { useAuthContext } from "@/contexts";
+import { MAX_WIDTH_WEB } from "@/constants/Container";
+import { useBreakpoints } from "@/hooks";
 
 const Invitations = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -51,6 +53,7 @@ const Invitations = () => {
   const styles = stylesFn(theme);
 
   const [isLoading, setIsLoading] = useState(true);
+  const { xl } = useBreakpoints();
   const fetchInvitations = async () => {
     try {
       const invitationCol = collectionGroup(FirestoreDB, "invitations");
@@ -144,8 +147,9 @@ const Invitations = () => {
   return (
     <View
       style={{
-        width: "100%",
         flex: 1,
+        width: xl ? MAX_WIDTH_WEB : "100%",
+        marginHorizontal: "auto",
       }}
     >
       {pendingInvitations.length === 0 && notPendingInvitations === 0 ? (
@@ -195,6 +199,7 @@ const Invitations = () => {
                       processRawAttachment(attachment)
                     ) || []
                   }
+                  carouselWidth={MAX_WIDTH_WEB}
                 />
               )}
               <Pressable
