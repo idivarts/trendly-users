@@ -19,6 +19,7 @@ export const stylesFn = (theme: Theme) =>
       top: 0,
       padding: 10,
       borderRadius: 5,
+      marginTop: 50,
     },
     timerText: {
       color: Colors(theme).white,
