@@ -69,110 +69,104 @@ const SocialPage: React.FC<SocialPageProps> = ({
   };
 
   return (
-    <>
-      <Card style={styles.card}>
-        <View style={styles.row}>
-          <View style={styles.leftSection}>
-            <ImageComponent
-              url={image}
-              altText="Profile Photo"
-              shape="square"
-              size="small"
-            />
-            <View
-              style={{
-                flexDirection: "column",
-              }}
-            >
-              <Text style={styles.title}>{profile.name}</Text>
-              {handle && (
-                <Text style={styles.underline}>
-                  {handle ? "@" + handle : null}
-                </Text>
-              )}
-            </View>
-          </View>
-
-          <View
-            style={{
-              backgroundColor: Colors(theme).primary,
-              padding: 5,
-              borderRadius: 8,
-              alignItems: "center",
-            }}
-          >
-            <FontAwesomeIcon
-              icon={
-                platform === SocialPlatform.INSTAGRAM ? faInstagram : faFacebook
-              }
-              size={20}
-              color={Colors(theme).white}
-            />
-          </View>
-          {user?.primarySocial === id && (
-            <View
-              style={{
-                backgroundColor: Colors(theme).primary,
-                padding: 5,
-                borderRadius: 8,
-                alignItems: "center",
-                flexDirection: "row",
-                marginLeft: 10,
-              }}
-            >
-              <FontAwesomeIcon
-                icon={faStar}
-                size={20}
-                color={Colors(theme).white}
-              />
-              <Text
-                style={{
-                  color: Colors(theme).white,
-                  fontSize: 12,
-                  fontWeight: "bold",
-                }}
-              >
-                Primary
-              </Text>
-            </View>
+    <View style={styles.row}>
+      <View style={styles.leftSection}>
+        <ImageComponent
+          url={image}
+          altText="Profile Photo"
+          shape="square"
+          size="small"
+        />
+        <View
+          style={{
+            flexDirection: "column",
+          }}
+        >
+          <Text style={styles.title}>{profile.name}</Text>
+          {handle && (
+            <Text style={styles.underline}>{handle ? "@" + handle : null}</Text>
           )}
-          <Menu
-            visible={menuVisible}
-            onDismiss={toggleMenu}
-            anchor={
-              <IconButton
-                icon="dots-horizontal"
-                onPress={toggleMenu}
-                style={styles.iconButton}
-              />
-            }
-            contentStyle={{
-              marginTop: 40,
-              backgroundColor: Colors(theme).background,
-              borderWidth: 0.5,
-              borderColor: Colors(theme).aliceBlue,
+        </View>
+      </View>
+
+      <View
+        style={{
+          backgroundColor: Colors(theme).primary,
+          padding: 5,
+          borderRadius: 8,
+          alignItems: "center",
+        }}
+      >
+        <FontAwesomeIcon
+          icon={
+            platform === SocialPlatform.INSTAGRAM ? faInstagram : faFacebook
+          }
+          size={20}
+          color={Colors(theme).white}
+        />
+      </View>
+      {user?.primarySocial === id && (
+        <View
+          style={{
+            backgroundColor: Colors(theme).primary,
+            padding: 5,
+            borderRadius: 8,
+            alignItems: "center",
+            flexDirection: "row",
+            marginLeft: 10,
+          }}
+        >
+          <FontAwesomeIcon
+            icon={faStar}
+            size={20}
+            color={Colors(theme).white}
+          />
+          <Text
+            style={{
+              color: Colors(theme).white,
+              fontSize: 12,
+              fontWeight: "bold",
             }}
           >
-            <>
-              <Menu.Item
-                onPress={() => {
-                  makePrimary();
-                }}
-                title="Mark as Primary"
-                style={styles.menuStyle}
-                titleStyle={styles.menuTitleStyle}
-              />
-              <Menu.Item
-                onPress={() => {}}
-                title="Disconnect"
-                style={styles.menuStyle}
-                titleStyle={styles.menuTitleStyle}
-              />
-            </>
-          </Menu>
+            Primary
+          </Text>
         </View>
-      </Card>
-    </>
+      )}
+      <Menu
+        visible={menuVisible}
+        onDismiss={toggleMenu}
+        anchor={
+          <IconButton
+            icon="dots-horizontal"
+            onPress={toggleMenu}
+            style={styles.iconButton}
+          />
+        }
+        contentStyle={{
+          marginTop: 40,
+          backgroundColor: Colors(theme).background,
+          borderWidth: 0.5,
+          borderColor: Colors(theme).aliceBlue,
+        }}
+      >
+        <>
+          <Menu.Item
+            onPress={() => {
+              makePrimary();
+            }}
+            title="Mark as Primary"
+            style={styles.menuStyle}
+            titleStyle={styles.menuTitleStyle}
+          />
+          <Menu.Item
+            onPress={() => {}}
+            title="Disconnect"
+            style={styles.menuStyle}
+            titleStyle={styles.menuTitleStyle}
+          />
+        </>
+      </Menu>
+    </View>
   );
 };
 

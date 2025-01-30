@@ -6,16 +6,15 @@ export const stylesFn = (theme: Theme) =>
   StyleSheet.create({
     card: {
       marginVertical: 10,
-      borderRadius: 8,
-      borderWidth: 0.5,
-      borderColor: Colors(theme).border,
     },
     row: {
       flexDirection: "row",
       alignItems: "center",
       padding: 10,
-      borderRadius: 8,
       justifyContent: "space-between",
+      borderRadius: 8,
+      borderWidth: 0.5,
+      borderColor: Colors(theme).gray300,
     },
     leftSection: {
       flex: 2,
