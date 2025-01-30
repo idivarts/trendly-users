@@ -7,6 +7,7 @@ import {
 } from "react";
 
 import {
+  addDoc,
   collection,
   doc,
   getDocs,
@@ -23,14 +24,19 @@ import { useAuthContext } from "./auth-context.provider";
 import { INotifications } from "@/shared-libs/firestore/trendly-pro/models/notifications";
 
 interface NotificationContextProps {
+  createNotification: (
+    userId: string,
+    notification: INotifications,
+    userType?: string,
+  ) => Promise<void>;
+  markAllNotificationsAsRead: (userId: string) => Promise<void>;
   sendNotification: (
     ids: {
       users?: string[];
       managers?: string[];
     },
-    payload: INotifications | PushNotificationPayload,
+    payload: PushNotificationPayload,
   ) => Promise<void>;
-  markAllNotificationsAsRead: (userId: string) => Promise<void>;
   userNotifications: Notification[];
   unreadNotifications: number;
   updateUserNotification: (
@@ -97,7 +103,7 @@ export const NotificationContextProvider: React.FC<PropsWithChildren> = ({
       users?: string[];
       managers?: string[];
     },
-    payload: INotifications | PushNotificationPayload,
+    payload: PushNotificationPayload,
   ) => {
     await fetch("https://be.trendly.pro/api/v1/chat/notification", {
       method: "POST",
@@ -110,6 +116,23 @@ export const NotificationContextProvider: React.FC<PropsWithChildren> = ({
         managerId: ids.managers || [],
         payload,
       }),
+    });
+  }
+
+  const createNotification = async (
+    userId: string,
+    notification: INotifications,
+    userType: string = "managers",
+  ) => {
+    const userRef = doc(FirestoreDB, userType, userId);
+    const notificationsRef = collection(userRef, "notifications");
+    await addDoc(notificationsRef, {
+      data: notification.data,
+      description: notification.description,
+      isRead: notification.isRead,
+      timeStamp: notification.timeStamp,
+      title: notification.title,
+      type: notification.type,
     });
   }
 
@@ -155,11 +178,12 @@ export const NotificationContextProvider: React.FC<PropsWithChildren> = ({
   return (
     <NotificationContext.Provider
       value={{
-        sendNotification,
+        createNotification,
         markAllNotificationsAsRead,
-        userNotifications,
+        sendNotification,
         unreadNotifications,
         updateUserNotification,
+        userNotifications,
       }}
     >
       {children}

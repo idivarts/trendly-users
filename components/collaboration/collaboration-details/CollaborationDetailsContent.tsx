@@ -17,16 +17,12 @@ import { Invitation } from "@/types/Collaboration";
 import {
   faCheckCircle,
   faCircleInfo,
-  faCoins,
   faDollarSign,
   faFilm,
   faHouseLaptop,
   faLocationDot,
-  faMap,
-  faNoteSticky,
   faPanorama,
   faRecordVinyl,
-  faStar,
   faStarHalfStroke,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -87,7 +83,10 @@ const CollborationDetailsContent = (
   const [contracts, setContracts] = useState<Contract[]>([]);
 
   const authModalBottomSheetModalRef = useRef<BottomSheetModal>(null);
-  const { sendNotification } = useNotificationContext();
+  const {
+    createNotification,
+    sendNotification,
+  } = useNotificationContext();
   const { user } = useAuthContext();
   const { getContractsByCollaborationId } = useContractContext();
 
@@ -144,10 +143,8 @@ const CollborationDetailsContent = (
     }).then(() => {
       if (!user?.id) return;
 
-      sendNotification(
-        {
-          managers: [props?.invitationData?.managerId || ""],
-        },
+      createNotification(
+        props?.invitationData?.managerId || "",
         {
           data: {
             userId: user?.id,
@@ -159,9 +156,22 @@ const CollborationDetailsContent = (
           title: "Invitation Accepted",
           type: "invitation-accepted",
         },
+        "managers"
       ).then(() => {
         setStatus("accepted");
         Toaster.success("Invitation accepted successfully");
+
+        sendNotification(
+          {
+            managers: [props?.invitationData?.managerId || ""],
+          },
+          {
+            notification: {
+              title: "Invitation Accepted",
+              description: `${user?.name} with email id ${user?.email} accepted invitation to collaborate for ${props.collaborationDetail.name}`,
+            },
+          },
+        );
 
         router.navigate(`/apply-now/${props?.invitationData?.collaborationId}`);
       });
