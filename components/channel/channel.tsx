@@ -69,6 +69,12 @@ const ChannelNative = () => {
   }, [cid]);
 
   useEffect(() => {
+    if (contract) {
+      fetchBrand(contract?.brandId as string);
+    }
+  }, [contract]);
+
+  useEffect(() => {
     const resetBadgeCount = async () => {
       if (Platform.OS === "ios" || Platform.OS === "android") {
         try {
@@ -81,12 +87,6 @@ const ChannelNative = () => {
 
     resetBadgeCount();
   }, []);
-
-  useEffect(() => {
-    if (contract) {
-      fetchBrand(contract?.brandId as string);
-    }
-  }, [contract]);
 
   if (!channel || !contract) {
     return (
