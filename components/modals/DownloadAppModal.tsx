@@ -54,13 +54,7 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
   };
 
   const handleClose = () => {
-    console.log("handleClose");
-
     bottomSheetModalRef.current?.dismiss();
-    bottomSheetModalRef.current?.close();
-    bottomSheetModalRef.current?.forceClose();
-    bottomSheetModalRef.current?.snapToIndex(-1);
-    bottomSheetModalRef.current?.snapToPosition(0);
   }
 
   return (
