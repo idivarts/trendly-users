@@ -11,7 +11,6 @@ import {
 import { Text, View } from "../theme/Themed";
 import Colors from "@/constants/Colors";
 import { Pressable, StyleSheet } from "react-native";
-import { useRouter } from "expo-router";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faCircleDown, faClose } from "@fortawesome/free-solid-svg-icons";
 import Button from "../ui/button";
@@ -28,7 +27,6 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
   collaborationId,
 }) => {
   const snapPoints = useMemo(() => ["25%", "25%", "25%"], []);
-  const router = useRouter();
 
   const theme = useTheme();
   const styles = stylesFn(theme);
@@ -56,7 +54,13 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
   };
 
   const handleClose = () => {
+    console.log("handleClose");
+
     bottomSheetModalRef.current?.dismiss();
+    bottomSheetModalRef.current?.close();
+    bottomSheetModalRef.current?.forceClose();
+    bottomSheetModalRef.current?.snapToIndex(-1);
+    bottomSheetModalRef.current?.snapToPosition(0);
   }
 
   return (
@@ -64,7 +68,7 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
       backdropComponent={renderBackdrop}
       containerOffset={containerOffset}
       enablePanDownToClose={true}
-      index={2}
+      index={1}
       ref={bottomSheetModalRef}
       snapPoints={snapPoints}
       topInset={insets.top}
@@ -90,6 +94,9 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
             </Text>
             <Pressable
               onPress={handleClose}
+              style={{
+                zIndex: 10,
+              }}
             >
               <FontAwesomeIcon
                 color={Colors(theme).primary}
