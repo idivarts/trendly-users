@@ -11,7 +11,7 @@ import CollaborationFilter from "@/components/FilterModal";
 import AppLayout from "@/layouts/app-layout";
 import { useTheme } from "@react-navigation/native";
 import { stylesFn } from "@/styles/Collections.styles";
-import { collection, getDocs, orderBy, query } from "firebase/firestore";
+import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
 import { FirestoreDB } from "@/utils/firestore";
 import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
@@ -116,7 +116,11 @@ const Collaboration = () => {
     const collabRef = collection(FirestoreDB, "collaborations");
 
     // Use Firestore sorting by "timeStamp" in descending order (newest first)
-    const collabQuery = query(collabRef, orderBy("timeStamp", "desc"));
+    const collabQuery = query(
+      collabRef,
+      orderBy("timeStamp", "desc"),
+      where("status", "==", "active")
+    );
     const snapshot = await getDocs(collabQuery);
 
     const data = snapshot.docs.map((doc) => {
