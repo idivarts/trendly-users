@@ -110,7 +110,6 @@ const ChannelNative = () => {
       CommandsButton={CommandsButton}
       MoreOptionsButton={MoreOptionsButton}
       SendButton={SendButton}
-      StartAudioRecordingButton={AudioRecordingButton}
     >
       <ScreenHeader
         title={channel?.data?.name || 'Chat'}
