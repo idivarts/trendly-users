@@ -1,26 +1,7 @@
-import { ActivityIndicator } from "react-native";
-import { useTheme } from "@react-navigation/native";
-
-import { View } from "@/components/theme/Themed";
-import Colors from "@/constants/Colors";
+import { View } from "react-native";
 
 const Index = () => {
-  const theme = useTheme();
-
-  return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-      }}
-    >
-      <ActivityIndicator
-        size="large"
-        color={Colors(theme).primary}
-      />
-    </View>
-  );
+  return <View></View>;
 };
 
 export default Index;
