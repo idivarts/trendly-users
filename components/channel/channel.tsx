@@ -19,7 +19,6 @@ import { imageUrl } from "@/utils/url";
 import {
   AttachButton,
   AttachmentPickerSelectionBar,
-  AudioRecordingButton,
   CommandsButton,
   MoreOptionsButton,
   SendButton,
