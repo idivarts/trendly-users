@@ -19,7 +19,6 @@ import { imageUrl } from "@/utils/url";
 import {
   AttachButton,
   AttachmentPickerSelectionBar,
-  AudioRecordingButton,
   CommandsButton,
   MoreOptionsButton,
   SendButton,
@@ -110,7 +109,6 @@ const ChannelNative = () => {
       CommandsButton={CommandsButton}
       MoreOptionsButton={MoreOptionsButton}
       SendButton={SendButton}
-      StartAudioRecordingButton={AudioRecordingButton}
     >
       <ScreenHeader
         title={channel?.data?.name || 'Chat'}
