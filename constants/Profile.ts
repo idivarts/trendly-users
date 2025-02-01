@@ -1,9 +1,8 @@
 import {
   faChartSimple,
-  faFileLines,
   faGears,
   faHeadset,
-  faUsers,
+  faUsers
 } from "@fortawesome/free-solid-svg-icons";
 
 export const PROFILE_ITEMS = [
@@ -21,13 +20,13 @@ export const PROFILE_ITEMS = [
     route: "/connected-socials",
     active: false,
   },
-  {
-    id: "3",
-    title: "My Stats",
-    active: false,
-    icon: faChartSimple,
-    route: "/my-stats",
-  },
+  // {
+  //   id: "3",
+  //   title: "My Stats",
+  //   active: false,
+  //   icon: faChartSimple,
+  //   route: "/my-stats",
+  // },
   {
     id: "5",
     title: "Help and Support",
