@@ -12,7 +12,7 @@ import { processRawAttachment } from "@/utils/attachments";
 import { FirestoreDB } from "@/utils/firestore";
 import { useTheme } from "@react-navigation/native";
 import { router } from "expo-router";
-import { collection, getDocs, orderBy, query } from "firebase/firestore";
+import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -116,7 +116,7 @@ const Collaboration = () => {
     const collabRef = collection(FirestoreDB, "collaborations");
 
     // Use Firestore sorting by "timeStamp" in descending order (newest first)
-    const collabQuery = query(collabRef, orderBy("timeStamp", "desc"));
+    const collabQuery = query(collabRef, where("status", "==", "active"), orderBy("timeStamp", "desc"));
     const snapshot = await getDocs(collabQuery);
 
     const data = snapshot.docs.map((doc) => {
