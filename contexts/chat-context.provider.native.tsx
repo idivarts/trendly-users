@@ -69,6 +69,7 @@ export const ChatContextProvider: React.FC<PropsWithChildren> = ({
       .then(() => {
         setClient(streamClient);
         setIsReady(true);
+        setHasError(false);
       })
   };
 
