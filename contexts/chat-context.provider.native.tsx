@@ -74,6 +74,11 @@ export const ChatContextProvider: React.FC<PropsWithChildren> = ({
   };
 
   const connectUser = async () => {
+    if (isReady) {
+      console.log("User already connected to Stream");
+      setHasError(false);
+      return;
+    }
     console.log("Connecting user");
     try {
       const response = await fetch("https://be.trendly.pro/api/v1/chat/connect", {
