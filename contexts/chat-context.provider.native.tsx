@@ -57,20 +57,13 @@ export const ChatContextProvider: React.FC<PropsWithChildren> = ({
   const { user } = useAuthContext();
 
   const connect = async (streamToken: string) => {
-    await streamClient
-      .connectUser(
-        {
-          id: user?.id as string,
-          name: user?.name as string,
-          image: (user?.profileImage as string) || "",
-        },
-        streamToken
-      )
-      .then(() => {
-        setClient(streamClient);
-        setIsReady(true);
-        setHasError(false);
-      })
+    await streamClient.connectUser({
+      id: user?.id as string,
+    }, streamToken).then(() => {
+      setClient(streamClient);
+      setIsReady(true);
+      setHasError(false);
+    })
   };
 
   const connectUser = async () => {
