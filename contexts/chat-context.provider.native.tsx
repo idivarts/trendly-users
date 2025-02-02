@@ -1,3 +1,5 @@
+import { useStreamTheme } from "@/hooks";
+import { useTheme } from "@react-navigation/native";
 import {
   createContext,
   useContext,
@@ -8,8 +10,6 @@ import {
 import { Channel, DefaultGenerics, StreamChat } from "stream-chat";
 import { Chat, OverlayProvider } from "stream-chat-expo";
 import { useAuthContext } from "./auth-context.provider";
-import { useTheme } from "@react-navigation/native";
-import { useStreamTheme } from "@/hooks";
 
 const streamClient = StreamChat.getInstance(
   process.env.EXPO_PUBLIC_STREAM_API_KEY!
@@ -24,14 +24,16 @@ interface ChatContextProps {
   fetchMembers: (channel: string) => Promise<any>;
   sendSystemMessage: (channel: string, message: string) => void;
   fetchChannelCid: (channelId: string) => Promise<string>;
+  hasError?: boolean
 }
 
 const ChatContext = createContext<ChatContextProps>({
   createGroupWithMembers: async () => Promise.resolve({} as Channel),
-  connectUser: async () => {},
-  fetchMembers: async () => {},
-  sendSystemMessage: async () => {},
+  connectUser: async () => { },
+  fetchMembers: async () => { },
+  sendSystemMessage: async () => { },
   fetchChannelCid: async () => "",
+  hasError: false
 });
 
 export const useChatContext = () => useContext(ChatContext);
@@ -40,6 +42,7 @@ export const ChatContextProvider: React.FC<PropsWithChildren> = ({
   children,
 }) => {
   const [isReady, setIsReady] = useState(false);
+  const [hasError, setHasError] = useState(false);
   const theme = useTheme();
   const { getTheme } = useStreamTheme(theme);
   const [streamChatTheme, setStreamChatTheme] = useState(getTheme());
@@ -66,10 +69,14 @@ export const ChatContextProvider: React.FC<PropsWithChildren> = ({
       .then(() => {
         setClient(streamClient);
         setIsReady(true);
+      }).catch(e => {
+        setIsReady(false);
+        setHasError(true);
       });
   };
 
   const connectUser = async () => {
+    console.log("Connecting user");
     const response = await fetch("https://be.trendly.pro/api/v1/chat/connect", {
       method: "POST",
       headers: {
@@ -82,6 +89,8 @@ export const ChatContextProvider: React.FC<PropsWithChildren> = ({
 
     if (data.token !== "") {
       await connect(data.token);
+    } else {
+      throw { message: "Chat not initiated" };
     }
   };
 
@@ -160,6 +169,7 @@ export const ChatContextProvider: React.FC<PropsWithChildren> = ({
             fetchChannelCid,
             fetchMembers,
             sendSystemMessage,
+            hasError,
           }}
         >
           {children}
