@@ -69,28 +69,33 @@ export const ChatContextProvider: React.FC<PropsWithChildren> = ({
       .then(() => {
         setClient(streamClient);
         setIsReady(true);
-      }).catch(e => {
-        setIsReady(false);
-        setHasError(true);
-      });
+      })
   };
 
   const connectUser = async () => {
     console.log("Connecting user");
-    const response = await fetch("https://be.trendly.pro/api/v1/chat/connect", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${user?.id}`,
-      },
-    });
+    try {
+      const response = await fetch("https://be.trendly.pro/api/v1/chat/connect", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user?.id}`,
+        },
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-    if (data.token !== "") {
-      await connect(data.token);
-    } else {
-      throw { message: "Chat not initiated" };
+      console.log("Stream Token", data.token);
+
+      if (!!data.token) {
+        await connect(data.token);
+      } else {
+        throw { message: "Chat not initiated" };
+      }
+    } catch (error) {
+      console.log(error);
+      setIsReady(false);
+      setHasError(true);
     }
   };
 
