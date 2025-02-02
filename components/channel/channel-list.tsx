@@ -1,5 +1,5 @@
-import { router } from "expo-router";
-import React, { useEffect, useState } from "react";
+import { router, useFocusEffect } from "expo-router";
+import React, { useCallback, useState } from "react";
 import { Searchbar } from "react-native-paper";
 import { Channel as ChannelType } from "stream-chat";
 import { ChannelList } from "stream-chat-expo";
@@ -25,11 +25,14 @@ const ChannelListNative = () => {
 
   const { hasError, connectUser } = useChatContext();
 
-  useEffect(() => {
-    if (hasError) {
-      connectUser();
-    }
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      if (hasError) {
+        console.log("Messages is in focus.. Running connectUser");
+        connectUser();
+      }
+    }, [])
+  );
 
   if (!user?.id) {
     return null;
