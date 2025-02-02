@@ -1,27 +1,29 @@
-import React, { useEffect, useMemo } from "react";
-import { View, FlatList, Pressable } from "react-native";
+import BottomSheetActions from "@/components/BottomSheetActions";
+import CollaborationDetails from "@/components/collaboration/card-components/CollaborationDetails";
+import CollaborationHeader from "@/components/collaboration/card-components/CollaborationHeader";
+import { MediaItem } from "@/components/ui/carousel/render-media-item";
+import ScreenHeader from "@/components/ui/screen-header";
+import Colors from "@/constants/Colors";
+import { MAX_WIDTH_WEB } from "@/constants/Container";
+import { useAuthContext } from "@/contexts";
+import { useBreakpoints } from "@/hooks";
 import AppLayout from "@/layouts/app-layout";
+import ScrollMedia from "@/shared-uis/components/carousel/scroll-media";
+import { processRawAttachment } from "@/utils/attachments";
+import { FirestoreDB } from "@/utils/firestore";
+import { useTheme } from "@react-navigation/native";
+import { router } from "expo-router";
 import {
   collection,
+  collectionGroup,
+  doc as firebaseDoc,
   getDoc,
+  getDocs,
   query,
   where,
-  getDocs,
-  doc as firebaseDoc,
-  collectionGroup,
 } from "firebase/firestore";
-import { FirestoreDB } from "@/utils/firestore";
-import BottomSheetActions from "@/components/BottomSheetActions";
-import ScreenHeader from "@/components/ui/screen-header";
-import CollaborationDetails from "@/components/collaboration/card-components/CollaborationDetails";
-import Colors from "@/constants/Colors";
-import { processRawAttachment } from "@/utils/attachments";
-import Carousel from "@/shared-uis/components/carousel/carousel";
-import CollaborationHeader from "@/components/collaboration/card-components/CollaborationHeader";
-import { useTheme } from "@react-navigation/native";
-import { useAuthContext } from "@/contexts";
-import { MediaItem } from "@/components/ui/carousel/render-media-item";
-import { router } from "expo-router";
+import React, { useEffect } from "react";
+import { FlatList, Pressable, View } from "react-native";
 
 const PastApplicationPage = (props: any) => {
   const [isVisible, setIsVisible] = React.useState(false);
@@ -38,6 +40,7 @@ const PastApplicationPage = (props: any) => {
   const closeBottomSheet = () => setIsVisible(false);
 
   const { user } = useAuthContext();
+  const { xl } = useBreakpoints();
 
   const fetchProposals = async () => {
     try {
@@ -153,7 +156,19 @@ const PastApplicationPage = (props: any) => {
                 }}
                 onOpenBottomSheet={() => openBottomSheet(item.id)}
               />
-              <Carousel
+              <ScrollMedia
+                xl={xl}
+                MAX_WIDTH_WEB={MAX_WIDTH_WEB}
+                media={
+                  (item.applications[index].attachments &&
+                    item.applications[index].attachments.map(
+                      (attachment: MediaItem) =>
+                        processRawAttachment(attachment)
+                    )) ||
+                  []
+                }
+              />
+              {/* <Carousel
                 theme={theme}
                 data={
                   (item.applications[index].attachments &&
@@ -163,7 +178,7 @@ const PastApplicationPage = (props: any) => {
                     )) ||
                   []
                 }
-              />
+              /> */}
               <Pressable
                 onPress={() => {
                   router.push({

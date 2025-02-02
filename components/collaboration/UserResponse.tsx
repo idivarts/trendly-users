@@ -1,14 +1,16 @@
-import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
-import { FC } from "react";
-import { Text, View } from "../theme/Themed";
-import { Pressable, ScrollView } from "react-native";
-import RenderMediaItem from "../ui/carousel/render-media-item";
-import { processRawAttachment } from "@/utils/attachments";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faPaperclip } from "@fortawesome/free-solid-svg-icons";
-import { router } from "expo-router";
 import Colors from "@/constants/Colors";
+import { MAX_WIDTH_WEB } from "@/constants/Container";
+import { useBreakpoints } from "@/hooks";
+import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
+import ScrollMedia from "@/shared-uis/components/carousel/scroll-media";
+import { processRawAttachment } from "@/utils/attachments";
+import { faPaperclip } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
+import { router } from "expo-router";
+import { FC } from "react";
+import { Pressable } from "react-native";
+import { Text, View } from "../theme/Themed";
 import Button from "../ui/button";
 
 interface UserResponseProps {
@@ -26,7 +28,7 @@ const UserResponse: FC<UserResponseProps> = ({
     return processRawAttachment(attachment);
   });
   const theme = useTheme();
-
+  const { xl } = useBreakpoints();
   return (
     <View
       style={{
@@ -92,7 +94,16 @@ const UserResponse: FC<UserResponseProps> = ({
           gap: 10,
         }}
       >
-        <ScrollView horizontal style={{}}>
+        {attachmentFiltered &&
+          <ScrollMedia
+            MAX_WIDTH_WEB={MAX_WIDTH_WEB}
+            media={attachmentFiltered}
+            xl={xl}
+            theme={theme}
+            padding={5}
+          />}
+
+        {/* <ScrollView horizontal style={{}}>
           {attachmentFiltered?.map((attachment, index) => (
             <RenderMediaItem
               key={index}
@@ -100,10 +111,10 @@ const UserResponse: FC<UserResponseProps> = ({
               index={index}
               height={100}
               width={100}
-              handleImagePress={() => {}}
+              handleImagePress={() => { }}
             />
           ))}
-        </ScrollView>
+        </ScrollView> */}
         <Text style={{ fontSize: 16, marginTop: 10 }}>
           {application?.message}
         </Text>
@@ -155,32 +166,32 @@ const UserResponse: FC<UserResponseProps> = ({
         >
           {application?.answersFromInfluencer
             ? influencerQuestions &&
-              application?.answersFromInfluencer.map((answer, index) => {
-                return (
-                  <View
+            application?.answersFromInfluencer.map((answer, index) => {
+              return (
+                <View
+                  style={{
+                    flexDirection: "column",
+                    gap: 10,
+                  }}
+                >
+                  <Text
                     style={{
-                      flexDirection: "column",
-                      gap: 10,
+                      fontSize: 16,
+                      fontWeight: "bold",
                     }}
                   >
-                    <Text
-                      style={{
-                        fontSize: 16,
-                        fontWeight: "bold",
-                      }}
-                    >
-                      {influencerQuestions[answer.question]}
-                    </Text>
-                    <Text
-                      style={{
-                        fontSize: 16,
-                      }}
-                    >
-                      {answer.answer}
-                    </Text>
-                  </View>
-                );
-              })
+                    {influencerQuestions[answer.question]}
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                    }}
+                  >
+                    {answer.answer}
+                  </Text>
+                </View>
+              );
+            })
             : null}
         </View>
       </View>

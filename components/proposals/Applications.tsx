@@ -1,39 +1,37 @@
-import React from "react";
 import BottomSheetActions from "@/components/BottomSheetActions";
 import { Text, View } from "@/components/theme/Themed";
 import Colors from "@/constants/Colors";
+import { MAX_WIDTH_WEB } from "@/constants/Container";
+import { useAuthContext } from "@/contexts";
+import { useBreakpoints } from "@/hooks";
 import AppLayout from "@/layouts/app-layout";
+import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
+import ScrollMedia from "@/shared-uis/components/carousel/scroll-media";
+import { stylesFn } from "@/styles/Proposal.styles";
+import { processRawAttachment } from "@/utils/attachments";
+import { FirestoreDB } from "@/utils/firestore";
 import { useTheme } from "@react-navigation/native";
 import { Link, router } from "expo-router";
-import { useEffect, useMemo, useState } from "react";
 import {
   collection,
+  collectionGroup,
+  doc as firebaseDoc,
+  getDoc,
   getDocs,
   query,
   where,
-  doc as firebaseDoc,
-  getDoc,
-  collectionGroup,
 } from "firebase/firestore";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
-  Dimensions,
   FlatList,
   Pressable,
-  RefreshControl,
+  RefreshControl
 } from "react-native";
-import { FirestoreDB } from "@/utils/firestore";
-import { stylesFn } from "@/styles/Proposal.styles";
-import EmptyState from "../ui/empty-state";
-import Carousel from "@/shared-uis/components/carousel/carousel";
-import CollaborationHeader from "../collaboration/card-components/CollaborationHeader";
 import CollaborationDetails from "../collaboration/card-components/CollaborationDetails";
-import { useAuthContext } from "@/contexts";
-import { processRawAttachment } from "@/utils/attachments";
+import CollaborationHeader from "../collaboration/card-components/CollaborationHeader";
 import { MediaItem } from "../ui/carousel/render-media-item";
-import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
-import { MAX_WIDTH_WEB } from "@/constants/Container";
-import { useBreakpoints } from "@/hooks";
+import EmptyState from "../ui/empty-state";
 
 const Applications = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -209,7 +207,13 @@ const Applications = () => {
                 }}
                 onOpenBottomSheet={() => openBottomSheet(item.id)}
               />
-              <Carousel
+              <ScrollMedia
+                theme={theme}
+                xl={xl} media={item.applications[index].attachments.map(
+                  (attachment: MediaItem) => processRawAttachment(attachment)
+                ) || []} MAX_WIDTH_WEB={MAX_WIDTH_WEB} />
+
+              {/* <Carousel
                 theme={theme}
                 data={
                   item.applications[index].attachments.map(
@@ -217,7 +221,7 @@ const Applications = () => {
                   ) || []
                 }
                 carouselWidth={MAX_WIDTH_WEB}
-              />
+              /> */}
               <Pressable
                 onPress={() => {
                   router.push({
