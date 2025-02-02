@@ -1,22 +1,22 @@
 import { Platform, ScrollView, StyleSheet, Text } from "react-native";
 
-import { View } from "@/components/theme/Themed";
-import { useAuthContext } from "@/contexts";
-import { PROFILE_ITEMS } from "@/constants/Profile";
-import ProfileItemCard from "@/components/profile/ProfileItemCard";
 import ProfileCard from "@/components/profile/ProfileCard";
-import { Href, useRouter } from "expo-router";
+import ProfileItemCard from "@/components/profile/ProfileItemCard";
+import { View } from "@/components/theme/Themed";
 import ConfirmationModal from "@/components/ui/modal/ConfirmationModal";
-import { useState } from "react";
+import Colors from "@/constants/Colors";
+import { COMPLETION_PERCENTAGE } from "@/constants/CompletionPercentage";
+import { PROFILE_ITEMS } from "@/constants/Profile";
+import { useAuthContext } from "@/contexts";
+import AppLayout from "@/layouts/app-layout";
 import {
   faRightFromBracket,
   faWarning,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import Colors from "@/constants/Colors";
 import { useTheme } from "@react-navigation/native";
-import { COMPLETION_PERCENTAGE } from "@/constants/CompletionPercentage";
-import AppLayout from "@/layouts/app-layout";
+import { Href, useRouter } from "expo-router";
+import { useState } from "react";
 
 const ProfileScreen = () => {
   const router = useRouter();
@@ -79,7 +79,7 @@ const ProfileScreen = () => {
             item={item}
             onPress={() => {
               if (item.title === "Help and Support" && Platform.OS === "web") {
-                window.open("https://trendly.pro/help-and-support/", "_blank");
+                window.open("https://www.trendly.pro/help-and-support/", "_blank");
               } else {
                 router.push(item.route as Href);
               }

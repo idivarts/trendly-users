@@ -1,32 +1,32 @@
-import React, { useState, useEffect } from "react";
+import CollaborationFilter from "@/components/FilterModal";
+import SearchComponent from "@/components/SearchComponent";
+import Colors from "@/constants/Colors";
+import { MAX_WIDTH_WEB } from "@/constants/Container";
+import { useBreakpoints } from "@/hooks";
+import AppLayout from "@/layouts/app-layout";
+import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
+import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
+import Carousel from "@/shared-uis/components/carousel/carousel";
+import { stylesFn } from "@/styles/Collections.styles";
+import { processRawAttachment } from "@/utils/attachments";
+import { FirestoreDB } from "@/utils/firestore";
+import { useTheme } from "@react-navigation/native";
+import { router } from "expo-router";
+import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
+import React, { useEffect, useState } from "react";
 import {
-  FlatList,
-  RefreshControl,
-  Pressable,
   ActivityIndicator,
   Dimensions,
+  FlatList,
+  Pressable,
+  RefreshControl,
 } from "react-native";
-import SearchComponent from "@/components/SearchComponent";
-import CollaborationFilter from "@/components/FilterModal";
-import AppLayout from "@/layouts/app-layout";
-import { useTheme } from "@react-navigation/native";
-import { stylesFn } from "@/styles/Collections.styles";
-import { collection, getDocs, orderBy, query } from "firebase/firestore";
-import { FirestoreDB } from "@/utils/firestore";
-import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
-import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
-import Colors from "@/constants/Colors";
 import BottomSheetActions from "../BottomSheetActions";
-import EmptyState from "../ui/empty-state";
-import CollaborationHeader from "./card-components/CollaborationHeader";
-import Carousel from "@/shared-uis/components/carousel/carousel";
-import CollaborationDetails from "./card-components/CollaborationDetails";
-import CollaborationStats from "./card-components/CollaborationStats";
-import { processRawAttachment } from "@/utils/attachments";
-import { router } from "expo-router";
-import { useBreakpoints } from "@/hooks";
-import { MAX_WIDTH_WEB } from "@/constants/Container";
 import { View } from "../theme/Themed";
+import EmptyState from "../ui/empty-state";
+import CollaborationDetails from "./card-components/CollaborationDetails";
+import CollaborationHeader from "./card-components/CollaborationHeader";
+import CollaborationStats from "./card-components/CollaborationStats";
 
 interface ICollaborationAddCardProps extends ICollaboration {
   name: string;
@@ -116,7 +116,7 @@ const Collaboration = () => {
     const collabRef = collection(FirestoreDB, "collaborations");
 
     // Use Firestore sorting by "timeStamp" in descending order (newest first)
-    const collabQuery = query(collabRef, orderBy("timeStamp", "desc"));
+    const collabQuery = query(collabRef, where("status", "==", "active"), orderBy("timeStamp", "desc"));
     const snapshot = await getDocs(collabQuery);
 
     const data = snapshot.docs.map((doc) => {
@@ -156,8 +156,8 @@ const Collaboration = () => {
       job.budget.min
       ? job.budget.min >= salaryRange[0]
       : true && job.budget && job.budget.max
-      ? job.budget.max <= salaryRange[1]
-      : true;
+        ? job.budget.max <= salaryRange[1]
+        : true;
   });
 
   const styles = stylesFn(theme);
@@ -261,17 +261,29 @@ const Collaboration = () => {
                   onOpenBottomSheet={() => openBottomSheet(item.id)}
                 />
                 {item.attachments && item.attachments.length > 0 && (
-                  <Carousel
-                    theme={theme}
-                    data={
-                      item.attachments?.map((attachment) =>
-                        processRawAttachment(attachment)
-                      ) || []
-                    }
-                    carouselWidth={
-                      xl ? MAX_WIDTH_WEB : Dimensions.get("window").width
-                    }
-                  />
+                  <Pressable onPress={() => {
+                    router.push({
+                      // @ts-ignore
+                      pathname: `/collaboration-details/${item.id}`,
+                      params: {
+                        cardType: "collaboration",
+                        cardId: item.id,
+                        collaborationID: item.id,
+                      },
+                    });
+                  }}>
+                    <Carousel
+                      theme={theme}
+                      data={
+                        item.attachments?.map((attachment) =>
+                          processRawAttachment(attachment)
+                        ) || []
+                      }
+                      carouselWidth={
+                        xl ? MAX_WIDTH_WEB : Dimensions.get("window").width
+                      }
+                    />
+                  </Pressable>
                 )}
                 <Pressable
                   onPress={() => {
