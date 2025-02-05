@@ -333,10 +333,8 @@ const ApplyScreen = () => {
             <AssetsPreview
               files={files.map((file) => ({
                 id: file.id,
-                type: file.type,
-                url: file.type.includes("video")
-                  ? file.localUri || file.uri
-                  : file.uri,
+                type: (file.type.includes("video") && file.localUri) ? "image" : file.type,
+                url: file.uri,
               }))}
               handleAssetUpload={handleAssetUpload}
             />
