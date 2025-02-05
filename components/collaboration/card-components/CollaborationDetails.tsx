@@ -60,7 +60,7 @@ const CollaborationDetails: FC<CollaborationDetailsProps> = ({
       <View
         style={{
           flexDirection: "row",
-          marginTop: 16,
+          marginTop: 10,
           flexWrap: "wrap",
           rowGap: 10,
         }}
