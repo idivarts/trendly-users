@@ -1,9 +1,9 @@
 import { Text, View } from "@/components/theme/Themed";
 import { stylesFn } from "@/styles/CollaborationCardStats.styles";
-import { useTheme } from "@react-navigation/native";
-import { FC, useEffect, useState } from "react";
-import { doc, collection, getDocs } from "firebase/firestore";
 import { FirestoreDB } from "@/utils/firestore";
+import { useTheme } from "@react-navigation/native";
+import { collection, getDocs } from "firebase/firestore";
+import { FC, useEffect, useState } from "react";
 
 interface CollaborationStatsProps {
   influencerCount: number;
@@ -42,6 +42,7 @@ const CollaborationStats: FC<CollaborationStatsProps> = (
     <View
       style={{
         paddingHorizontal: 16,
+        paddingTop: 16
       }}
     >
       <View style={styles.infoRow}>
