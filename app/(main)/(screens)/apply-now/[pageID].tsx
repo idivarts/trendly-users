@@ -303,6 +303,7 @@ const ApplyScreen = () => {
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.contentContainerStyle}
+        nestedScrollEnabled={true}
       >
         {files.length === 0 && (
           <Card style={styles.card} onPress={handleAssetUpload}>
@@ -328,16 +329,18 @@ const ApplyScreen = () => {
         )}
 
         {files.length > 0 && (
-          <AssetsPreview
-            files={files.map((file) => ({
-              id: file.id,
-              type: file.type,
-              url: file.type.includes("video")
-                ? file.localUri || file.uri
-                : file.uri,
-            }))}
-            handleAssetUpload={handleAssetUpload}
-          />
+          <>
+            <AssetsPreview
+              files={files.map((file) => ({
+                id: file.id,
+                type: file.type,
+                url: file.type.includes("video")
+                  ? file.localUri || file.uri
+                  : file.uri,
+              }))}
+              handleAssetUpload={handleAssetUpload}
+            />
+          </>
         )}
 
         <View>
@@ -408,6 +411,7 @@ const ApplyScreen = () => {
             />
             <FlatList
               data={questions}
+              nestedScrollEnabled
               renderItem={({ item: question, index }) => (
                 <ListItem
                   key={index}
