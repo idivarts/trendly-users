@@ -206,7 +206,7 @@ const Preview = () => {
         </Card>
 
       </ScrollView>
-      <View style={{ paddingHorizontal: 16 }}>
+      <View style={{ paddingHorizontal: 16, paddingBottom: 8 }}>
         <Text
           style={{
             color: errorMessage.includes("successfully")

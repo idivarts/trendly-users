@@ -28,6 +28,7 @@ import { router, useLocalSearchParams } from "expo-router";
 import { doc, getDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { Platform, ScrollView, View } from "react-native";
+import { FlatList } from "react-native-gesture-handler";
 import {
   Card,
   HelperText,
@@ -54,7 +55,7 @@ const ApplyScreen = () => {
   const [profileAttachments, setProfileAttachments] = useState<Attachment[]>(
     []
   );
-  const [questions, setQuestions] = useState<any[]>([]);
+  const [questions, setQuestions] = useState<string[]>([]);
   const [fileAttachments, setFileAttachments] = useState<any[]>([]);
 
   const [timelineData, setTimelineData] = useState<Date | null>(null);
@@ -405,75 +406,81 @@ const ApplyScreen = () => {
                 );
               }}
             />
-            {questions.map((question, index) => (
-              <ListItem
-                key={index}
-                title={question}
-                leftIcon={faCircleQuestion}
-                content={answers[index]}
-                onAction={() => {
-                  router.push({
-                    pathname: "/apply-now/question",
-                    params: {
-                      title: "Question " + (index + 1),
-                      value: answers[index] || "",
-                      path: `/apply-now/${pageID}`,
-                      selectedFiles: params.selectedFiles,
-                      actualQuestion: question,
-                      profileAttachments: params.profileAttachments,
-                      placeholder: "",
-                      //@ts-ignore
-                      timelineData: timelineData,
-                      fileAttachments: JSON.stringify(fileAttachments),
-                      answers: JSON.stringify(answers),
-                      quotation: quotation,
-                      note: note,
-                    },
-                  });
-                }}
-              />
-            ))}
+            <FlatList
+              data={questions}
+              renderItem={({ item: question, index }) => (
+                <ListItem
+                  key={index}
+                  title={question}
+                  leftIcon={faCircleQuestion}
+                  content={answers[index]}
+                  onAction={() => {
+                    router.push({
+                      pathname: "/apply-now/question",
+                      params: {
+                        title: "Question " + (index + 1),
+                        value: answers[index] || "",
+                        path: `/apply-now/${pageID}`,
+                        selectedFiles: params.selectedFiles,
+                        actualQuestion: question,
+                        profileAttachments: params.profileAttachments,
+                        placeholder: "",
+                        //@ts-ignore
+                        timelineData: timelineData,
+                        fileAttachments: JSON.stringify(fileAttachments),
+                        answers: JSON.stringify(answers),
+                        quotation: quotation,
+                        note: note,
+                      },
+                    });
+                  }}
+                />
+              )}
+            ></FlatList>
+            {/* {questions.map((question, index) => (
+              
+            ))} */}
           </List.Section>
-
-          {errorMessage ? (
-            <HelperText type="error" style={styles.errorText}>
-              {errorMessage}
-            </HelperText>
-          ) : null}
-
-          {processMessage && (
-            <HelperText type="info" style={styles.processText}>
-              {processMessage} - {processPercentage}% done
-            </HelperText>
-          )}
-
-          <ProgressBar
-            progress={processPercentage / 100}
-            color={Colors(theme).primary}
-            style={styles.progressBar}
-          />
-
-          <Button
-            mode="contained"
-            onPress={async () => {
-              if (!note || note.length === 0) {
-                Toaster.error("Please add a note");
-                return;
-              }
-
-              if (files.length === 0) {
-                Toaster.error("Please upload a asset");
-                return;
-              }
-
-              await handleUploadFiles();
-            }}
-            loading={loading}
-          >
-            {processMessage ? "Uploading Assets" : "Preview Application"}
-          </Button>
         </View>
       </ScrollView>
+      <View style={{ paddingHorizontal: 16, paddingBottom: 8 }}>
+        {errorMessage ? (
+          <HelperText type="error" style={styles.errorText}>
+            {errorMessage}
+          </HelperText>
+        ) : null}
+
+        {processMessage && (
+          <HelperText type="info" style={styles.processText}>
+            {processMessage} - {processPercentage}% done
+          </HelperText>
+        )}
+        <ProgressBar
+          progress={processPercentage / 100}
+          color={Colors(theme).primary}
+          style={styles.progressBar}
+        />
+
+        <Button
+          mode="contained"
+          onPress={async () => {
+            if (!note || note.length === 0) {
+              Toaster.error("Please add a note");
+              return;
+            }
+
+            if (files.length === 0) {
+              Toaster.error("Please upload a asset");
+              return;
+            }
+
+            await handleUploadFiles();
+          }}
+          loading={loading}
+        >
+          {processMessage ? "Uploading Assets" : "Preview Application"}
+        </Button>
+      </View>
       {showDatePicker && (
         <View
           style={{
