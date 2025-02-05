@@ -1,8 +1,31 @@
+import AssetsPreview from "@/components/ui/assets-preview";
+import Button from "@/components/ui/button";
+import ListItem from "@/components/ui/list-item/ListItem";
+import ScreenHeader from "@/components/ui/screen-header";
+import TextInput from "@/components/ui/text-input";
+import Colors from "@/constants/Colors";
+import { useAWSContext } from "@/contexts/aws-context.provider";
 import AppLayout from "@/layouts/app-layout";
+import { Attachment } from "@/shared-libs/firestore/trendly-pro/constants/attachment";
+import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
+import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { stylesFn } from "@/styles/ApplyNow.styles";
-import { useTheme } from "@react-navigation/native";
-import { router, useLocalSearchParams } from "expo-router";
+import { AssetItem } from "@/types/Asset";
+import { FirestoreDB } from "@/utils/firestore";
+import { faCircleQuestion } from "@fortawesome/free-regular-svg-icons";
+import {
+  faClapperboard,
+  faClockRotateLeft,
+  faDollarSign,
+  faPaperclip
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { useTheme } from "@react-navigation/native";
+import * as DocumentPicker from "expo-document-picker";
+import * as MediaLibrary from "expo-media-library";
+import { router, useLocalSearchParams } from "expo-router";
+import { doc, getDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { Platform, ScrollView, View } from "react-native";
 import {
@@ -13,32 +36,6 @@ import {
   Paragraph,
   ProgressBar,
 } from "react-native-paper";
-import Toaster from "@/shared-uis/components/toaster/Toaster";
-import ScreenHeader from "@/components/ui/screen-header";
-import { useAWSContext } from "@/contexts/aws-context.provider";
-import * as DocumentPicker from "expo-document-picker";
-import {
-  faClapperboard,
-  faClockRotateLeft,
-  faDollarSign,
-  faLink,
-  faLocationDot,
-  faPaperclip,
-} from "@fortawesome/free-solid-svg-icons";
-import ListItem from "@/components/ui/list-item/ListItem";
-import Colors from "@/constants/Colors";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import * as MediaLibrary from "expo-media-library";
-import { AssetItem } from "@/types/Asset";
-import AssetsPreview from "@/components/ui/assets-preview";
-import { Attachment } from "@/shared-libs/firestore/trendly-pro/constants/attachment";
-import { FirestoreDB } from "@/utils/firestore";
-import { doc, getDoc } from "firebase/firestore";
-import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
-import ContentItem from "@/components/basic-profile/edit-profile/ContentItem";
-import { faCircleQuestion } from "@fortawesome/free-regular-svg-icons";
-import TextInput from "@/components/ui/text-input";
-import Button from "@/components/ui/button";
 
 const ApplyScreen = () => {
   const params = useLocalSearchParams();
@@ -138,25 +135,23 @@ const ApplyScreen = () => {
       ];
       const timelineTimestamp = timelineData?.getTime();
 
-      setTimeout(() => {
-        setLoading(false);
-        setProcessMessage("");
-        setProcessPercentage(0);
-        router.push({
-          pathname: "/apply-now/preview",
-          params: {
-            ...params,
-            pageID,
-            note,
-            attachments: JSON.stringify(finalFiles),
-            quotation: quotation,
-            timeline: timelineTimestamp,
-            fileAttachments: JSON.stringify(uploadedFiles),
-            answers: JSON.stringify(answers),
-          },
-        });
-        setLoading(false);
-      }, 5000);
+      setLoading(false);
+      setProcessMessage("");
+      setProcessPercentage(0);
+      router.push({
+        pathname: "/apply-now/preview",
+        params: {
+          ...params,
+          pageID,
+          note,
+          attachments: JSON.stringify(finalFiles),
+          quotation: quotation,
+          timeline: timelineTimestamp,
+          fileAttachments: JSON.stringify(uploadedFiles),
+          answers: JSON.stringify(answers),
+        },
+      });
+      setLoading(false);
     } catch (error) {
       console.error(error);
       setLoading(false);
@@ -195,8 +190,8 @@ const ApplyScreen = () => {
             file.type === "image"
               ? file.imageUrl
               : Platform.OS === "ios"
-              ? file.appleUrl
-              : file.playUrl,
+                ? file.appleUrl
+                : file.playUrl,
           type: file.type,
         },
       ]);

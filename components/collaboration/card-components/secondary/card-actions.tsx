@@ -1,7 +1,6 @@
-import React from "react";
-import { StyleSheet } from "react-native";
 import { Text, View } from "@/components/theme/Themed";
 import Colors from "@/constants/Colors";
+import { convertToKUnits } from "@/utils/conversion";
 import {
   faChartLine,
   faFaceSmile,
@@ -9,7 +8,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
-import { convertToKUnits } from "@/utils/conversion";
+import React from "react";
+import { StyleSheet } from "react-native";
 
 type CardActionsProps = {
   metrics: {
@@ -69,6 +69,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 16,
     paddingBottom: 16,
+    paddingTop: 16,
   },
   metrics: {
     flexDirection: "row",
