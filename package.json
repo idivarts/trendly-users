@@ -7,6 +7,7 @@
     "android": "expo run:android",
     "eas-build-pre-install": "./eas-prebuild.sh",
     "ios": "expo run:ios",
+    "ios-device": "expo run:ios --device",
     "web": "expo start --web",
     "test": "jest --watchAll",
     "build": "expo export -p web",
