@@ -49,7 +49,7 @@ const CollaborationDetails: FC<CollaborationDetailsProps> = ({
       {collabDescription && (
         <Text
           style={{
-            color: Colors(theme).white,
+            color: Colors(theme).text,
             fontSize: 16,
             paddingTop: 8,
           }}
