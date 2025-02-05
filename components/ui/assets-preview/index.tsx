@@ -1,5 +1,6 @@
 import { View } from "@/components/theme/Themed";
 import Colors from "@/constants/Colors";
+import stylesFn from "@/styles/assets-preview/AssetsPreview.styles";
 import { imageUrl } from "@/utils/url";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -7,7 +8,6 @@ import { useTheme } from "@react-navigation/native";
 import { ResizeMode, Video } from "expo-av";
 import { Image, Platform, ScrollView } from "react-native";
 import { IconButton } from "react-native-paper";
-import stylesFn from "@/styles/assets-preview/AssetsPreview.styles";
 import Button from "../button";
 
 interface FileAsset {
@@ -30,6 +30,9 @@ const AssetsPreview: React.FC<AssetsPreviewProps> = ({
   const theme = useTheme();
   const styles = stylesFn(theme);
 
+  // useEffect(() => {
+  //   console.log("Files:", files)
+  // }, [files])
   return (
     <View style={styles.container}>
       <ScrollView
@@ -47,7 +50,7 @@ const AssetsPreview: React.FC<AssetsPreviewProps> = ({
                 }}
                 style={styles.video}
                 resizeMode={ResizeMode.COVER}
-                useNativeControls
+                useNativeControls={false}
                 onLoad={(status) => console.log("Video Loaded:", status)}
                 onError={(error) => console.error("Video Error:", error)}
                 onReadyForDisplay={(videoData) => {
