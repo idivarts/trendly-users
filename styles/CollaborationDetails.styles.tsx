@@ -1,5 +1,5 @@
-import { StyleSheet } from "react-native";
 import { Theme } from "@react-navigation/native";
+import { StyleSheet } from "react-native";
 
 import Colors from "@/constants/Colors";
 
@@ -24,6 +24,8 @@ export const stylesFn = (theme: Theme) =>
       alignItems: "center",
       width: "100%",
       gap: 16,
+      paddingTop: 16,
+      paddingBottom: 24
     },
     name: {
       fontWeight: "bold",
