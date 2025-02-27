@@ -261,29 +261,28 @@ const Collaboration = () => {
                   onOpenBottomSheet={() => openBottomSheet(item.id)}
                 />
                 {item.attachments && item.attachments.length > 0 && (
-                  <Pressable onPress={() => {
-                    router.push({
-                      // @ts-ignore
-                      pathname: `/collaboration-details/${item.id}`,
-                      params: {
-                        cardType: "collaboration",
-                        cardId: item.id,
-                        collaborationID: item.id,
-                      },
-                    });
-                  }}>
-                    <Carousel
-                      theme={theme}
-                      data={
-                        item.attachments?.map((attachment) =>
-                          processRawAttachment(attachment)
-                        ) || []
-                      }
-                      carouselWidth={
-                        xl ? MAX_WIDTH_WEB : Dimensions.get("window").width
-                      }
-                    />
-                  </Pressable>
+                  <Carousel
+                    theme={theme}
+                    onImagePress={() => {
+                      router.push({
+                        // @ts-ignore
+                        pathname: `/collaboration-details/${item.id}`,
+                        params: {
+                          cardType: "collaboration",
+                          cardId: item.id,
+                          collaborationID: item.id,
+                        },
+                      });
+                    }}
+                    data={
+                      item.attachments?.map((attachment) =>
+                        processRawAttachment(attachment)
+                      ) || []
+                    }
+                    carouselWidth={
+                      xl ? MAX_WIDTH_WEB : Dimensions.get("window").width
+                    }
+                  />
                 )}
                 <Pressable
                   onPress={() => {

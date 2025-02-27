@@ -1,35 +1,62 @@
-import React, { useState, useEffect, useRef } from "react";
+import Button from "@/components/ui/button";
+import RenderMediaItem from "@/components/ui/carousel/render-media-item";
+import ScreenHeader from "@/components/ui/screen-header";
+import Colors from "@/constants/Colors";
+import { useAuthContext } from "@/contexts";
+import Toaster from "@/shared-uis/components/toaster/Toaster";
+import { stylesFn } from "@/styles/apply-now/gallery.styles";
+import { AssetItem } from "@/types/Asset";
+import { processRawAttachment } from "@/utils/attachments";
+import { faCamera, faImage, faVideo } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { useTheme } from "@react-navigation/native";
+import { Camera, CameraView, useCameraPermissions } from "expo-camera";
+import * as MediaLibrary from "expo-media-library";
+import { router, useLocalSearchParams } from "expo-router";
+import React, { useEffect, useRef, useState } from "react";
 import {
-  View,
   FlatList,
   Image,
   Modal,
-  Pressable,
   Platform,
+  Pressable,
   ScrollView,
+  View,
 } from "react-native";
-import * as MediaLibrary from "expo-media-library";
-import { Surface, Text, Checkbox } from "react-native-paper";
-import { CameraView, useCameraPermissions, Camera } from "expo-camera";
-import { router, useLocalSearchParams } from "expo-router";
-import { stylesFn } from "@/styles/apply-now/gallery.styles";
-import { useTheme } from "@react-navigation/native";
-import ScreenHeader from "@/components/ui/screen-header";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faCamera, faImage, faVideo } from "@fortawesome/free-solid-svg-icons";
-import Colors from "@/constants/Colors";
-import { AssetItem } from "@/types/Asset";
-import { useAuthContext } from "@/contexts";
-import { processRawAttachment } from "@/utils/attachments";
-import RenderMediaItem from "@/components/ui/carousel/render-media-item";
-import Button from "@/components/ui/button";
-import Toaster from "@/shared-uis/components/toaster/Toaster";
+import { Checkbox, Surface, Text } from "react-native-paper";
 import Toast from "react-native-toast-message";
+
+class Mutex {
+  locked;
+  currentAfter: any;
+  constructor() {
+    this.locked = false;
+    this.currentAfter = undefined
+  }
+
+  useOnce(callback: any, after: any) {
+    if (this.locked || after == this.currentAfter) {
+      throw new Error("This variable can only be used once!");
+    }
+    this.locked = true;
+    try {
+      return callback();
+    } finally {
+      this.locked = false; // Releases the lock after execution
+      this.currentAfter = after
+    }
+  }
+}
+
+const mutex = new Mutex();
 
 const GalleryScreen = () => {
   const { pageID } = useLocalSearchParams();
   const params = useLocalSearchParams();
-  const [assets, setAssets] = useState<any>([]);
+  const [assets, setAssets] = useState<MediaLibrary.AssetInfo[]>([]);
+  const [assetAfter, setAssetAfter] = useState<any>(undefined)
+  const [reachedEnd, setReachedEnd] = useState<boolean>(false)
+  const [loading, setLoading] = useState(false)
   const [selectedItems, setSelectedItems] = useState<AssetItem[]>([]);
   const [profileAttachments, setProfileAttachments] = useState<any[]>([]);
   const [permissionGranted, setPermissionGranted] = useState(false);
@@ -86,14 +113,48 @@ const GalleryScreen = () => {
     })();
   }, []);
 
-  const fetchAssets = async () => {
+  const fetchAssets = async (after?: string) => {
+    if (reachedEnd)
+      return;
+    console.log("---------------> Fetching New Assets", after);
+
     const album = await MediaLibrary.getAssetsAsync({
       mediaType: ["photo", "video"],
       sortBy: ["creationTime"],
-      first: 250,
+      first: 20,
+      after
     });
 
-    setAssets(album.assets);
+    if (after) {
+      setAssets([...assets, ...album.assets])
+    } else {
+      setAssets(album.assets);
+      mutex.currentAfter = undefined
+    }
+
+    if (album.assets.length > 0) {
+      setAssetAfter(album.assets[album.assets.length - 1].id)
+    } else {
+      setReachedEnd(true)
+    }
+  };
+  const handleScroll = ({ nativeEvent }: any) => {
+    try {
+      const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
+      const paddingToBottom = 20; // Threshold before reaching the end
+      // console.log("Coming to Handle Scroll", layoutMeasurement.height + contentOffset.y,
+      //   contentSize.height - paddingToBottom, assets.length);
+      if (layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom && assets.length > 0) {
+        mutex.useOnce(() => {
+          fetchAssets(assetAfter);
+        }, assetAfter); // Allowed
+      }
+
+      // mutex.useOnce(() => console.log("Trying again...")); // Error: Already used
+    } catch (error) {
+      console.log(error);
+    }
+
   };
 
   const handleSelectItem = (item: MediaLibrary.AssetInfo) => {
@@ -311,48 +372,50 @@ const GalleryScreen = () => {
     }
   }, [isRecording]);
 
-  const renderItem = ({ item }: { item: MediaLibrary.AssetInfo }) => (
-    <Pressable
-      onPress={() => handleSelectItem(item)}
-      style={styles.itemWrapper}
-    >
-      <Surface style={styles.itemContainer}>
-        <Image
-          source={{ uri: item.uri }}
-          style={styles.image}
-          resizeMode="cover"
-        />
-        <View style={styles.checkboxContainer}>
-          <Checkbox
-            status={
-              selectedItems.find(
-                (selectedItem: AssetItem) => item.id === selectedItem.id
-              )
-                ? "checked"
-                : "unchecked"
-            }
-            onPress={() => handleSelectItem(item)}
+  const renderItem = ({ item }: { item: MediaLibrary.AssetInfo }) => {
+    return (
+      <Pressable
+        onPress={() => handleSelectItem(item)}
+        style={styles.itemWrapper}
+      >
+        <Surface style={styles.itemContainer}>
+          <Image
+            source={{ uri: item.uri }}
+            style={styles.image}
+            resizeMode="cover"
           />
-        </View>
-        {item.mediaType === "video" ? (
-          <View
-            style={{
-              position: "absolute",
-              bottom: 2,
-              left: 2,
-              backgroundColor: Colors(theme).white,
-              padding: 4,
-              borderRadius: 4,
-            }}
-          >
-            <Text>
-              {new Date(item.duration * 1000).toISOString().substr(14, 5)}
-            </Text>
+          <View style={styles.checkboxContainer}>
+            <Checkbox
+              status={
+                selectedItems.find(
+                  (selectedItem: AssetItem) => item.id === selectedItem.id
+                )
+                  ? "checked"
+                  : "unchecked"
+              }
+              onPress={() => handleSelectItem(item)}
+            />
           </View>
-        ) : null}
-      </Surface>
-    </Pressable>
-  );
+          {item.mediaType === "video" ? (
+            <View
+              style={{
+                position: "absolute",
+                bottom: 2,
+                left: 2,
+                backgroundColor: Colors(theme).white,
+                padding: 4,
+                borderRadius: 4,
+              }}
+            >
+              <Text>
+                {new Date(item.duration * 1000).toISOString().substr(14, 5)}
+              </Text>
+            </View>
+          ) : null}
+        </Surface>
+      </Pressable>
+    )
+  };
 
   if (!permissionGranted) {
     return (
@@ -408,7 +471,7 @@ const GalleryScreen = () => {
           style={styles.camera}
           ref={cameraRef}
           facing="back"
-          onCameraReady={() => {}}
+          onCameraReady={() => { }}
           mode="video"
         >
           {isRecording ? (
@@ -465,6 +528,8 @@ const GalleryScreen = () => {
         contentContainerStyle={{
           flexGrow: 1,
         }}
+        onScroll={handleScroll}
+        removeClippedSubviews={true}
       >
         {attachmentFiltered && attachmentFiltered.length > 0 && (
           <FlatList
@@ -481,7 +546,7 @@ const GalleryScreen = () => {
               >
                 <Surface style={styles.itemContainer}>
                   <RenderMediaItem
-                    handleImagePress={() => {}}
+                    handleImagePress={() => { }}
                     index={item.id}
                     item={item.attachment}
                     height={120}
@@ -540,6 +605,10 @@ const GalleryScreen = () => {
               Media from your gallery
             </Text>
           }
+          // initialNumToRender={9} // Only render first 5 images
+          // maxToRenderPerBatch={12} // Render max 5 images per batch
+          // windowSize={3} // Keep only 3 screen’s worth of content in memory
+          removeClippedSubviews={true} // Unmount images not in view
         />
       </ScrollView>
 

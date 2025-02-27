@@ -1,26 +1,24 @@
 import { Text, View } from "@/components/theme/Themed";
 import Colors from "@/constants/Colors";
-import { useTheme } from "@react-navigation/native";
-import { FC } from "react";
-import ChipCard from "./ChipComponent";
-import {
-  faCoins,
-  faDollarSign,
-  faFilm,
-  faHouseLaptop,
-  faLocationDot,
-  faMap,
-  faPanorama,
-  faRecordVinyl,
-} from "@fortawesome/free-solid-svg-icons";
+import { PromotionType } from "@/shared-libs/firestore/trendly-pro/constants/promotion-type";
+import { truncateText } from "@/utils/profile";
 import {
   faFacebook,
   faInstagram,
   faYoutube,
 } from "@fortawesome/free-brands-svg-icons";
-import { PromotionType } from "@/shared-libs/firestore/trendly-pro/constants/promotion-type";
 import { faHeart, faStarHalfStroke } from "@fortawesome/free-regular-svg-icons";
-import { truncateText } from "@/utils/profile";
+import {
+  faDollarSign,
+  faFilm,
+  faHouseLaptop,
+  faLocationDot,
+  faPanorama,
+  faRecordVinyl
+} from "@fortawesome/free-solid-svg-icons";
+import { useTheme } from "@react-navigation/native";
+import { FC } from "react";
+import ChipCard from "./ChipComponent";
 
 interface CollaborationDetailsProps {
   collaborationDetails: {
@@ -51,8 +49,9 @@ const CollaborationDetails: FC<CollaborationDetailsProps> = ({
       {collabDescription && (
         <Text
           style={{
-            color: Colors(theme).gray100,
+            color: Colors(theme).text,
             fontSize: 16,
+            paddingTop: 8,
           }}
         >
           {truncateText(collabDescription, 120)}
@@ -85,10 +84,10 @@ const CollaborationDetails: FC<CollaborationDetailsProps> = ({
                 content === "Instagram"
                   ? faInstagram
                   : content === "Facebook"
-                  ? faFacebook
-                  : content === "Youtube"
-                  ? faYoutube
-                  : faInstagram
+                    ? faFacebook
+                    : content === "Youtube"
+                      ? faYoutube
+                      : faInstagram
               }
             />
           ))}
@@ -101,14 +100,14 @@ const CollaborationDetails: FC<CollaborationDetailsProps> = ({
                 content === "Posts"
                   ? faPanorama
                   : content === "Reels"
-                  ? faFilm
-                  : content === "Stories"
-                  ? faHeart
-                  : content === "Live"
-                  ? faRecordVinyl
-                  : content === "Product Reviews"
-                  ? faStarHalfStroke
-                  : faPanorama
+                    ? faFilm
+                    : content === "Stories"
+                      ? faHeart
+                      : content === "Live"
+                        ? faRecordVinyl
+                        : content === "Product Reviews"
+                          ? faStarHalfStroke
+                          : faPanorama
               }
             />
           ))}

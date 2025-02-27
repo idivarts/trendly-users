@@ -1,25 +1,25 @@
-import AppLayout from "@/layouts/app-layout";
-import { View, Text, FlatList, Platform } from "react-native";
-import { router, useLocalSearchParams } from "expo-router";
-import { Card } from "react-native-paper";
-import { FirestoreDB } from "@/utils/firestore";
-import { collection, doc, setDoc } from "firebase/firestore";
-import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
-import { useState, useEffect } from "react";
-import ScreenHeader from "@/components/ui/screen-header";
-import { processRawAttachment } from "@/utils/attachments";
-import { useAuthContext } from "@/contexts";
-import { useBreakpoints } from "@/hooks";
-import { CardHeader } from "@/components/collaboration/card-components/secondary/card-header";
-import { Attachment } from "@/shared-libs/firestore/trendly-pro/constants/attachment";
-import { useTheme } from "@react-navigation/native";
-import Carousel from "@/shared-uis/components/carousel/carousel";
 import { CardActions } from "@/components/collaboration/card-components/secondary/card-actions";
 import { CardDescription } from "@/components/collaboration/card-components/secondary/card-description";
 import { CardFooter } from "@/components/collaboration/card-components/secondary/card-footer";
-import { convertToKUnits } from "@/utils/conversion";
+import { CardHeader } from "@/components/collaboration/card-components/secondary/card-header";
 import Button from "@/components/ui/button";
+import ScreenHeader from "@/components/ui/screen-header";
 import Colors from "@/constants/Colors";
+import { useAuthContext } from "@/contexts";
+import { useBreakpoints } from "@/hooks";
+import AppLayout from "@/layouts/app-layout";
+import { Attachment } from "@/shared-libs/firestore/trendly-pro/constants/attachment";
+import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
+import Carousel from "@/shared-uis/components/carousel/carousel";
+import { processRawAttachment } from "@/utils/attachments";
+import { convertToKUnits } from "@/utils/conversion";
+import { FirestoreDB } from "@/utils/firestore";
+import { useTheme } from "@react-navigation/native";
+import { router, useLocalSearchParams } from "expo-router";
+import { collection, doc, setDoc } from "firebase/firestore";
+import { useEffect, useState } from "react";
+import { ScrollView, Text, View } from "react-native";
+import { Card } from "react-native-paper";
 
 const Preview = () => {
   const params = useLocalSearchParams();
@@ -173,65 +173,70 @@ const Preview = () => {
   return (
     <AppLayout>
       <ScreenHeader title="Preview" />
-      <FlatList
+      <ScrollView>
+        <Card
+          style={{
+            paddingVertical: 16,
+          }}
+        >
+          <CardHeader
+            avatar={user?.profileImage || ""}
+            handle={user?.socials?.[0]}
+            isVerified={user?.isVerified}
+            name={user?.name || ""}
+          />
+          <Carousel
+            data={rawAttachments.map((attachment: Attachment) =>
+              processRawAttachment(attachment)
+            )}
+            theme={theme}
+          />
+          <CardActions
+            metrics={{
+              followers: user?.backend?.followers || 0,
+              reach: user?.backend?.reach || 0,
+              rating: user?.backend?.rating || 0,
+            }}
+          />
+          <CardDescription text={note} />
+          <CardFooter
+            quote={convertToKUnits(Number(quotation)) as string}
+            timeline={new Date(timeline).toLocaleDateString("en-US")}
+          />
+        </Card>
+
+      </ScrollView>
+      <View style={{ paddingHorizontal: 16, paddingBottom: 8 }}>
+        <Text
+          style={{
+            color: errorMessage.includes("successfully")
+              ? Colors(theme).green
+              : Colors(theme).red,
+            marginBottom: 8,
+            textAlign: "center",
+          }}
+        >
+          {errorMessage}
+        </Text>
+        <Button
+          mode="contained"
+          onPress={handleSubmit}
+          loading={loading}
+          disabled={loading}
+          style={{ marginTop: 8 }}
+        >
+          Submit Application
+        </Button>
+      </View>
+      {/* <FlatList
         data={[1]}
         renderItem={() => {
           return (
-            <Card
-              style={{
-                paddingVertical: 16,
-              }}
-            >
-              <CardHeader
-                avatar={user?.profileImage || ""}
-                handle={user?.socials?.[0]}
-                isVerified={user?.isVerified}
-                name={user?.name || ""}
-              />
-              <Carousel
-                data={rawAttachments.map((attachment: Attachment) =>
-                  processRawAttachment(attachment)
-                )}
-                theme={theme}
-              />
-              <CardActions
-                metrics={{
-                  followers: user?.backend?.followers || 0,
-                  reach: user?.backend?.reach || 0,
-                  rating: user?.backend?.rating || 0,
-                }}
-              />
-              <CardDescription text={note} />
-              <CardFooter
-                quote={convertToKUnits(Number(quotation)) as string}
-                timeline={new Date(timeline).toLocaleDateString("en-US")}
-              />
-            </Card>
+            
           );
         }}
         ListFooterComponent={
-          <View style={{ padding: 16 }}>
-            <Text
-              style={{
-                color: errorMessage.includes("successfully")
-                  ? Colors(theme).green
-                  : Colors(theme).red,
-                marginBottom: 8,
-                textAlign: "center",
-              }}
-            >
-              {errorMessage}
-            </Text>
-            <Button
-              mode="contained"
-              onPress={handleSubmit}
-              loading={loading}
-              disabled={loading}
-              style={{ marginTop: 8 }}
-            >
-              Submit Application
-            </Button>
-          </View>
+          
         }
         style={{
           width: xl ? 768 : "100%",
@@ -241,7 +246,7 @@ const Preview = () => {
           paddingVertical: 16,
           paddingHorizontal: Platform.OS === "web" ? 16 : 0,
         }}
-      />
+      /> */}
     </AppLayout>
   );
 };

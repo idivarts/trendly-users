@@ -1,10 +1,34 @@
+import AssetsPreview from "@/components/ui/assets-preview";
+import Button from "@/components/ui/button";
+import ListItem from "@/components/ui/list-item/ListItem";
+import ScreenHeader from "@/components/ui/screen-header";
+import TextInput from "@/components/ui/text-input";
+import Colors from "@/constants/Colors";
+import { useAWSContext } from "@/contexts/aws-context.provider";
 import AppLayout from "@/layouts/app-layout";
+import { Attachment } from "@/shared-libs/firestore/trendly-pro/constants/attachment";
+import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
+import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { stylesFn } from "@/styles/ApplyNow.styles";
-import { useTheme } from "@react-navigation/native";
-import { router, useLocalSearchParams } from "expo-router";
+import { AssetItem } from "@/types/Asset";
+import { FirestoreDB } from "@/utils/firestore";
+import { faCircleQuestion } from "@fortawesome/free-regular-svg-icons";
+import {
+  faClapperboard,
+  faClockRotateLeft,
+  faDollarSign,
+  faPaperclip
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { useTheme } from "@react-navigation/native";
+import * as DocumentPicker from "expo-document-picker";
+import * as MediaLibrary from "expo-media-library";
+import { router, useLocalSearchParams } from "expo-router";
+import { doc, getDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { Platform, ScrollView, View } from "react-native";
+import { FlatList } from "react-native-gesture-handler";
 import {
   Card,
   HelperText,
@@ -13,32 +37,6 @@ import {
   Paragraph,
   ProgressBar,
 } from "react-native-paper";
-import Toaster from "@/shared-uis/components/toaster/Toaster";
-import ScreenHeader from "@/components/ui/screen-header";
-import { useAWSContext } from "@/contexts/aws-context.provider";
-import * as DocumentPicker from "expo-document-picker";
-import {
-  faClapperboard,
-  faClockRotateLeft,
-  faDollarSign,
-  faLink,
-  faLocationDot,
-  faPaperclip,
-} from "@fortawesome/free-solid-svg-icons";
-import ListItem from "@/components/ui/list-item/ListItem";
-import Colors from "@/constants/Colors";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import * as MediaLibrary from "expo-media-library";
-import { AssetItem } from "@/types/Asset";
-import AssetsPreview from "@/components/ui/assets-preview";
-import { Attachment } from "@/shared-libs/firestore/trendly-pro/constants/attachment";
-import { FirestoreDB } from "@/utils/firestore";
-import { doc, getDoc } from "firebase/firestore";
-import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
-import ContentItem from "@/components/basic-profile/edit-profile/ContentItem";
-import { faCircleQuestion } from "@fortawesome/free-regular-svg-icons";
-import TextInput from "@/components/ui/text-input";
-import Button from "@/components/ui/button";
 
 const ApplyScreen = () => {
   const params = useLocalSearchParams();
@@ -57,7 +55,7 @@ const ApplyScreen = () => {
   const [profileAttachments, setProfileAttachments] = useState<Attachment[]>(
     []
   );
-  const [questions, setQuestions] = useState<any[]>([]);
+  const [questions, setQuestions] = useState<string[]>([]);
   const [fileAttachments, setFileAttachments] = useState<any[]>([]);
 
   const [timelineData, setTimelineData] = useState<Date | null>(null);
@@ -138,25 +136,23 @@ const ApplyScreen = () => {
       ];
       const timelineTimestamp = timelineData?.getTime();
 
-      setTimeout(() => {
-        setLoading(false);
-        setProcessMessage("");
-        setProcessPercentage(0);
-        router.push({
-          pathname: "/apply-now/preview",
-          params: {
-            ...params,
-            pageID,
-            note,
-            attachments: JSON.stringify(finalFiles),
-            quotation: quotation,
-            timeline: timelineTimestamp,
-            fileAttachments: JSON.stringify(uploadedFiles),
-            answers: JSON.stringify(answers),
-          },
-        });
-        setLoading(false);
-      }, 5000);
+      setLoading(false);
+      setProcessMessage("");
+      setProcessPercentage(0);
+      router.push({
+        pathname: "/apply-now/preview",
+        params: {
+          ...params,
+          pageID,
+          note,
+          attachments: JSON.stringify(finalFiles),
+          quotation: quotation,
+          timeline: timelineTimestamp,
+          fileAttachments: JSON.stringify(uploadedFiles),
+          answers: JSON.stringify(answers),
+        },
+      });
+      setLoading(false);
     } catch (error) {
       console.error(error);
       setLoading(false);
@@ -195,8 +191,8 @@ const ApplyScreen = () => {
             file.type === "image"
               ? file.imageUrl
               : Platform.OS === "ios"
-              ? file.appleUrl
-              : file.playUrl,
+                ? file.appleUrl
+                : file.playUrl,
           type: file.type,
         },
       ]);
@@ -307,6 +303,7 @@ const ApplyScreen = () => {
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.contentContainerStyle}
+        nestedScrollEnabled={true}
       >
         {files.length === 0 && (
           <Card style={styles.card} onPress={handleAssetUpload}>
@@ -332,16 +329,16 @@ const ApplyScreen = () => {
         )}
 
         {files.length > 0 && (
-          <AssetsPreview
-            files={files.map((file) => ({
-              id: file.id,
-              type: file.type,
-              url: file.type.includes("video")
-                ? file.localUri || file.uri
-                : file.uri,
-            }))}
-            handleAssetUpload={handleAssetUpload}
-          />
+          <>
+            <AssetsPreview
+              files={files.map((file) => ({
+                id: file.id,
+                type: (file.type.includes("video") && file.localUri) ? "image" : file.type,
+                url: file.uri,
+              }))}
+              handleAssetUpload={handleAssetUpload}
+            />
+          </>
         )}
 
         <View>
@@ -410,75 +407,82 @@ const ApplyScreen = () => {
                 );
               }}
             />
-            {questions.map((question, index) => (
-              <ListItem
-                key={index}
-                title={question}
-                leftIcon={faCircleQuestion}
-                content={answers[index]}
-                onAction={() => {
-                  router.push({
-                    pathname: "/apply-now/question",
-                    params: {
-                      title: "Question " + (index + 1),
-                      value: answers[index] || "",
-                      path: `/apply-now/${pageID}`,
-                      selectedFiles: params.selectedFiles,
-                      actualQuestion: question,
-                      profileAttachments: params.profileAttachments,
-                      placeholder: "",
-                      //@ts-ignore
-                      timelineData: timelineData,
-                      fileAttachments: JSON.stringify(fileAttachments),
-                      answers: JSON.stringify(answers),
-                      quotation: quotation,
-                      note: note,
-                    },
-                  });
-                }}
-              />
-            ))}
+            <FlatList
+              data={questions}
+              nestedScrollEnabled
+              renderItem={({ item: question, index }) => (
+                <ListItem
+                  key={index}
+                  title={question}
+                  leftIcon={faCircleQuestion}
+                  content={answers[index]}
+                  onAction={() => {
+                    router.push({
+                      pathname: "/apply-now/question",
+                      params: {
+                        title: "Question " + (index + 1),
+                        value: answers[index] || "",
+                        path: `/apply-now/${pageID}`,
+                        selectedFiles: params.selectedFiles,
+                        actualQuestion: question,
+                        profileAttachments: params.profileAttachments,
+                        placeholder: "",
+                        //@ts-ignore
+                        timelineData: timelineData,
+                        fileAttachments: JSON.stringify(fileAttachments),
+                        answers: JSON.stringify(answers),
+                        quotation: quotation,
+                        note: note,
+                      },
+                    });
+                  }}
+                />
+              )}
+            ></FlatList>
+            {/* {questions.map((question, index) => (
+              
+            ))} */}
           </List.Section>
-
-          {errorMessage ? (
-            <HelperText type="error" style={styles.errorText}>
-              {errorMessage}
-            </HelperText>
-          ) : null}
-
-          {processMessage && (
-            <HelperText type="info" style={styles.processText}>
-              {processMessage} - {processPercentage}% done
-            </HelperText>
-          )}
-
-          <ProgressBar
-            progress={processPercentage / 100}
-            color={Colors(theme).primary}
-            style={styles.progressBar}
-          />
-
-          <Button
-            mode="contained"
-            onPress={async () => {
-              if (!note || note.length === 0) {
-                Toaster.error("Please add a note");
-                return;
-              }
-
-              if (files.length === 0) {
-                Toaster.error("Please upload a asset");
-                return;
-              }
-
-              await handleUploadFiles();
-            }}
-            loading={loading}
-          >
-            {processMessage ? "Uploading Assets" : "Preview Application"}
-          </Button>
         </View>
       </ScrollView>
+      <View style={{ paddingHorizontal: 16, paddingBottom: 8 }}>
+        {errorMessage ? (
+          <HelperText type="error" style={styles.errorText}>
+            {errorMessage}
+          </HelperText>
+        ) : null}
+
+        {processMessage && (
+          <HelperText type="info" style={styles.processText}>
+            {processMessage} - {processPercentage}% done
+          </HelperText>
+        )}
+        <ProgressBar
+          progress={processPercentage / 100}
+          color={Colors(theme).primary}
+          style={styles.progressBar}
+        />
+
+        <Button
+          mode="contained"
+          onPress={async () => {
+            if (!note || note.length === 0) {
+              Toaster.error("Please add a note");
+              return;
+            }
+
+            if (files.length === 0) {
+              Toaster.error("Please upload a asset");
+              return;
+            }
+
+            await handleUploadFiles();
+          }}
+          loading={loading}
+        >
+          {processMessage ? "Uploading Assets" : "Preview Application"}
+        </Button>
+      </View>
       {showDatePicker && (
         <View
           style={{
