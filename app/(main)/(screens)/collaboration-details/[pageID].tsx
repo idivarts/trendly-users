@@ -1,15 +1,15 @@
+import { useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { IconButton } from "react-native-paper";
-import { useLocalSearchParams } from "expo-router";
 
-import AppLayout from "@/layouts/app-layout";
 import BottomSheetActions from "@/components/BottomSheetActions";
 import CollaborationDetails from "@/components/collaboration/collaboration-details";
 import ScreenHeader from "@/components/ui/screen-header";
 import Colors from "@/constants/Colors";
-import { useTheme } from "@react-navigation/native";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import AppLayout from "@/layouts/app-layout";
 import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { useTheme } from "@react-navigation/native";
 
 const CollaborationDetailsScreen = () => {
   const theme = useTheme();
@@ -18,7 +18,7 @@ const CollaborationDetailsScreen = () => {
   const { cardId, cardType, collaborationID, pageID } = useLocalSearchParams();
 
   return (
-    <AppLayout>
+    <AppLayout withWebPadding={true}>
       <ScreenHeader
         title="Collaboration Details"
         rightAction

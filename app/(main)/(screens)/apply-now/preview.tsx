@@ -5,6 +5,7 @@ import { CardHeader } from "@/components/collaboration/card-components/secondary
 import Button from "@/components/ui/button";
 import ScreenHeader from "@/components/ui/screen-header";
 import Colors from "@/constants/Colors";
+import { MAX_WIDTH_WEB } from "@/constants/Container";
 import { useAuthContext } from "@/contexts";
 import { useBreakpoints } from "@/hooks";
 import AppLayout from "@/layouts/app-layout";
@@ -18,7 +19,7 @@ import { useTheme } from "@react-navigation/native";
 import { router, useLocalSearchParams } from "expo-router";
 import { collection, doc, setDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { ScrollView, Text, View } from "react-native";
+import { Platform, ScrollView, Text, View } from "react-native";
 import { Card } from "react-native-paper";
 
 const Preview = () => {
@@ -171,13 +172,13 @@ const Preview = () => {
   };
 
   return (
-    <AppLayout>
+    <AppLayout withWebPadding={true}>
       <ScreenHeader title="Preview" />
       <ScrollView>
         <Card
-          style={{
+          style={[{
             paddingVertical: 16,
-          }}
+          }, Platform.OS === "web" ? { alignSelf: "center", maxWidth: MAX_WIDTH_WEB, marginVertical: 8 } : {}]}
         >
           <CardHeader
             avatar={user?.profileImage || ""}
