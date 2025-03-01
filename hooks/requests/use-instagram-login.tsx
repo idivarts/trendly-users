@@ -52,7 +52,7 @@ const useInstagramLogin = (
     if (Platform.OS === "web") {
       window.open(`${authUrl}?redirect_type=${Platform.OS === "web" ? 1 : 3}&`, "_blank",
         "width=500,height=600");
-      window.addEventListener("message", receiveMessage, false);
+      window.addEventListener('storage', receiveMessage);
     } else {
       await promptAsyncInstagram();
     }
@@ -91,16 +91,14 @@ const useInstagramLogin = (
       });
   };
 
-  const receiveMessage = (event: MessageEvent) => {
-    console.log("Auth Result Message: ", event);
-
-    if (event.origin !== "https://be.trendly.pro") {
-      return;
-    }
-    if (event.data.code) {
-      handleInstagramSignIn(event.data.code);
+  const receiveMessage = (event: StorageEvent) => {
+    if (event.key === 'insta_code') {
+      console.log('Received update:', event.newValue);
+      handleInstagramSignIn("" + event.newValue);
+      window.removeEventListener('storage', receiveMessage);
     }
   };
+
   useEffect(() => {
     console.log("Auth Result Response: ", responseInstagram);
     if (
