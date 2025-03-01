@@ -1,19 +1,20 @@
-import React, { useState } from "react";
-import { Pressable } from "react-native";
-import { useTheme } from "@react-navigation/native";
-import { SURVEY_DATA } from "@/constants/SurveyData";
 import { submitSurvey } from "@/components/surverHandlers";
-import { stylesFn } from "@/styles/Questions.styles";
+import { Text, View } from "@/components/theme/Themed";
+import Select from "@/components/ui/select";
 import Colors from "@/constants/Colors";
+import { SURVEY_DATA } from "@/constants/SurveyData";
+import AppLayout from "@/layouts/app-layout";
+import { stylesFn } from "@/styles/Questions.styles";
 import { SurveyAnswer } from "@/types/Survey";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { resetAndNavigate } from "@/utils/router";
 import {
   faArrowRight,
   faChevronLeft,
 } from "@fortawesome/free-solid-svg-icons";
-import Select from "@/components/ui/select";
-import { Text, View } from "@/components/theme/Themed";
-import { resetAndNavigate } from "@/utils/router";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { useTheme } from "@react-navigation/native";
+import React, { useState } from "react";
+import { Pressable } from "react-native";
 
 const Questions = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -70,71 +71,73 @@ const Questions = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Pressable
-          onPress={() => {
-            if (currentQuestionIndex > 0) {
-              setCurrentQuestionIndex(currentQuestionIndex - 1);
-              setSelectedOptions([]);
-            }
+    <AppLayout withWebPadding>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Pressable
+            onPress={() => {
+              if (currentQuestionIndex > 0) {
+                setCurrentQuestionIndex(currentQuestionIndex - 1);
+                setSelectedOptions([]);
+              }
+            }}
+          >
+            <FontAwesomeIcon
+              icon={faChevronLeft}
+              size={24}
+              color={Colors(theme).text}
+            />
+          </Pressable>
+          <Text style={styles.questionText}>{currentQuestion.question}</Text>
+        </View>
+
+        <Select
+          style={{
+            gap: 12,
           }}
-        >
-          <FontAwesomeIcon
-            icon={faChevronLeft}
-            size={24}
-            color={Colors(theme).text}
-          />
-        </Pressable>
-        <Text style={styles.questionText}>{currentQuestion.question}</Text>
-      </View>
+          direction="column"
+          items={currentQuestion.options.map((option) => ({
+            label: option,
+            value: option,
+          }))}
+          onSelect={handleSelection}
+          multiselect={currentQuestion.multiselect}
+          value={selectedOptions}
+          selectItemIcon
+          selectItemStyle={{
+            paddingHorizontal: 16,
+            paddingVertical: 16,
+          }}
+        />
 
-      <Select
-        style={{
-          gap: 12,
-        }}
-        direction="column"
-        items={currentQuestion.options.map((option) => ({
-          label: option,
-          value: option,
-        }))}
-        onSelect={handleSelection}
-        multiselect={currentQuestion.multiselect}
-        value={selectedOptions}
-        selectItemIcon
-        selectItemStyle={{
-          paddingHorizontal: 16,
-          paddingVertical: 16,
-        }}
-      />
+        <View style={styles.bottomNavigation}>
+          {currentQuestionIndex === SURVEY_DATA.length - 1 ? (
+            <Pressable onPress={handleNext} style={styles.nextButton}>
+              <FontAwesomeIcon
+                icon={faArrowRight}
+                size={30}
+                color={Colors(theme).white}
+              />
+            </Pressable>
+          ) : (
+            <Pressable onPress={handleNext} style={styles.nextButton}>
+              <FontAwesomeIcon
+                icon={faArrowRight}
+                size={30}
+                color={Colors(theme).white}
+              />
+            </Pressable>
+          )}
 
-      <View style={styles.bottomNavigation}>
-        {currentQuestionIndex === SURVEY_DATA.length - 1 ? (
-          <Pressable onPress={handleNext} style={styles.nextButton}>
-            <FontAwesomeIcon
-              icon={faArrowRight}
-              size={30}
-              color={Colors(theme).white}
-            />
+          <Pressable
+            onPress={() => resetAndNavigate("/collaborations")}
+            style={styles.skipButton}
+          >
+            <Text style={styles.skipText}>Skip</Text>
           </Pressable>
-        ) : (
-          <Pressable onPress={handleNext} style={styles.nextButton}>
-            <FontAwesomeIcon
-              icon={faArrowRight}
-              size={30}
-              color={Colors(theme).white}
-            />
-          </Pressable>
-        )}
-
-        <Pressable
-          onPress={() => resetAndNavigate("/collaborations")}
-          style={styles.skipButton}
-        >
-          <Text style={styles.skipText}>Skip</Text>
-        </Pressable>
+        </View>
       </View>
-    </View>
+    </AppLayout>
   );
 };
 

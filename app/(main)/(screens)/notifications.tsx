@@ -1,13 +1,13 @@
-import AppLayout from "@/layouts/app-layout";
-import React from "react";
-import { useTheme } from "@react-navigation/native";
-import Colors from "@/constants/Colors";
 import Notifications from "@/components/notifications";
-import { useAuthContext, useNotificationContext } from "@/contexts";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faCheck } from "@fortawesome/free-solid-svg-icons";
-import { Pressable } from "react-native";
 import ScreenHeader from "@/components/ui/screen-header";
+import Colors from "@/constants/Colors";
+import { useAuthContext, useNotificationContext } from "@/contexts";
+import AppLayout from "@/layouts/app-layout";
+import { faCheck } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { useTheme } from "@react-navigation/native";
+import React from "react";
+import { Pressable } from "react-native";
 import { Appbar } from "react-native-paper";
 
 export const NotificationAction = () => {
@@ -61,7 +61,7 @@ export default function NotificationsScreen() {
   };
 
   return (
-    <AppLayout>
+    <AppLayout withWebPadding>
       <ScreenHeader
         title="Notifications"
         rightAction

@@ -10,7 +10,7 @@ interface TextModalProps {
   value: string;
   placeholder: string;
   title: string;
-  type: string;
+  type?: string;
   onSubmit: (value: string) => void;
 }
 
