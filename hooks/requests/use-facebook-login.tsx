@@ -1,6 +1,11 @@
-import React, { useEffect } from "react";
 import axios from "axios";
 import * as AuthSession from "expo-auth-session";
+import {
+  Auth,
+  FacebookAuthProvider,
+  getAdditionalUserInfo,
+  signInWithCredential,
+} from "firebase/auth";
 import {
   collection,
   doc,
@@ -9,15 +14,10 @@ import {
   setDoc,
   updateDoc,
 } from "firebase/firestore";
-import {
-  Auth,
-  FacebookAuthProvider,
-  getAdditionalUserInfo,
-  signInWithCredential,
-} from "firebase/auth";
+import React, { useEffect } from "react";
 
-import { useAuthContext } from "@/contexts";
 import { FB_APP_ID } from "@/constants/Facebook";
+import { useAuthContext } from "@/contexts";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import * as WebBrowser from "expo-web-browser";
@@ -57,6 +57,11 @@ const useFacebookLogin = (
           "email",
           "pages_show_list",
           "pages_read_engagement",
+          "business_management",
+          "instagram_basic",
+          "instagram_manage_insights",
+          "read_insights",
+          "pages_manage_metadata"
         ],
       },
       { authorizationEndpoint: "https://www.facebook.com/v10.0/dialog/oauth" }
