@@ -18,9 +18,14 @@ const Index = () => {
                 console.log("Code: ", code);
                 console.log("Parent", window.parent);
 
-                window.parent.postMessage({ code }, "*");
+                // window.parent.postMessage({ code }, "*");
                 // window.opener.postMessage({ code }, "*");
+                localStorage.setItem("insta_code", code);
                 window.close();
+            } else {
+                // localStorage.setItem("insta_code", "Somethign");
+                // window.parent.postMessage({ code: "Somethign" }, "*");
+                // window.opener.postMessage({ code: "Somethign" }, "*");
             }
         }
     }, [url])

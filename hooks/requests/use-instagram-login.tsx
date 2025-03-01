@@ -22,9 +22,12 @@ const useInstagramLogin = (
   firestore: Firestore,
   initialUserData: Partial<IUsers>,
   setLoading: React.Dispatch<React.SetStateAction<boolean>>,
-  setError: React.Dispatch<React.SetStateAction<string | null>>
+  setError: React.Dispatch<React.SetStateAction<string | null>>,
+  customCodeHandler: ((code: string) => void) | null = null
 ): useInstagramLoginType => {
   const { firebaseSignIn, firebaseSignUp } = useAuthContext();
+
+  const isLocalhost = Platform.OS == "web" ? (window.location.hostname === 'localhost') : false;
 
   const redirectUri = AuthSession.makeRedirectUri({
     native: `fb${FB_APP_ID}://authorize`,
@@ -42,7 +45,7 @@ const useInstagramLogin = (
         responseType: "token",
       },
       {
-        authorizationEndpoint: `${authUrl}?redirect_type=${Platform.OS === "web" ? 1 : 3}&`,
+        authorizationEndpoint: `${authUrl}?redirect_type=${Platform.OS === "web" ? (isLocalhost ? 1 : 2) : 3}&`,
       }
     );
 
@@ -50,18 +53,22 @@ const useInstagramLogin = (
     if (Platform.OS === "web") {
       window.open(`${authUrl}?redirect_type=${Platform.OS === "web" ? 1 : 3}&`, "_blank",
         "width=500,height=600");
-      window.addEventListener("message", receiveMessage, false);
+      window.addEventListener('storage', receiveMessage);
     } else {
       await promptAsyncInstagram();
     }
   };
 
   const handleInstagramSignIn = async (accessToken: string) => {
+    if (customCodeHandler) {
+      customCodeHandler(accessToken);
+      return;
+    }
     setLoading(true);
     await axios
       .post("https://be.trendly.pro/instagram/auth", {
         code: accessToken,
-        redirect_type: Platform.OS === "web" ? "1" : "3",
+        redirect_type: Platform.OS === "web" ? (isLocalhost ? "1" : "2") : "3",
       })
       .then(async (response) => {
         const user = await signInWithCustomToken(
@@ -89,16 +96,14 @@ const useInstagramLogin = (
       });
   };
 
-  const receiveMessage = (event: MessageEvent) => {
-    console.log("Auth Result Message: ", event);
-
-    if (event.origin !== "https://be.trendly.pro") {
-      return;
-    }
-    if (event.data.code) {
-      handleInstagramSignIn(event.data.code);
+  const receiveMessage = (event: StorageEvent) => {
+    if (event.key === 'insta_code') {
+      console.log('Received update:', event.newValue);
+      handleInstagramSignIn("" + event.newValue);
+      window.removeEventListener('storage', receiveMessage);
     }
   };
+
   useEffect(() => {
     console.log("Auth Result Response: ", responseInstagram);
     if (
