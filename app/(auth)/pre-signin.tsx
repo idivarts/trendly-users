@@ -31,6 +31,7 @@ import Carousel, {
   Pagination,
 } from "react-native-reanimated-carousel";
 
+import { useBreakpoints } from "@/hooks";
 import { runOnJS, useSharedValue } from "react-native-reanimated";
 import Swiper from "react-native-swiper";
 
@@ -89,6 +90,7 @@ const PreSignIn = () => {
       animated: true,
     });
   };
+  const { xl } = useBreakpoints();
 
   return (
     <AppLayout>
@@ -96,7 +98,7 @@ const PreSignIn = () => {
         <>
           <Carousel
             data={slides}
-            width={Dimensions.get("window").width}
+            width={xl ? Dimensions.get("window").width - 120 * 4 : Dimensions.get("window").width}
             pagingEnabled
             ref={swiperRef}
             loop={false}
