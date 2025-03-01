@@ -99,17 +99,18 @@ const useFacebookLogin = (
           }
         );
 
-        const userData = {
-          ...initialUserData,
-          accessToken,
-          name: result.user.displayName,
-          email: result.user.email || "",
-          // @ts-ignore
-          profileImage: user?.profile?.picture?.data?.url || "",
-          fbid,
-        };
-
-        await setDoc(userDocRef, userData);
+        if (!isExistingUser) {
+          const userData = {
+            ...initialUserData,
+            accessToken,
+            name: result.user.displayName,
+            email: result.user.email || "",
+            // @ts-ignore
+            profileImage: user?.profile?.picture?.data?.url || "",
+            fbid,
+          };
+          await setDoc(userDocRef, userData);
+        }
 
         const userToken = await auth.currentUser?.getIdToken();
 
@@ -142,13 +143,9 @@ const useFacebookLogin = (
         } else if (graphAPIResponse.data.accounts && graphAPIResponse.data.accounts.data.length === 1 && !graphAPIResponse.data.accounts.data[0].instagram_business_account) {
           //update and make this as the primary social
           const userDocRef = doc(firestore, "users", result.user.uid);
-          const userDoc = await getDoc(userDocRef);
-          const userData = userDoc.data() as IUsers;
-
-          userData.primarySocial = graphAPIResponse.data.accounts.data[0].id;
-
+          const primarySocial = graphAPIResponse.data.accounts.data[0].id;
           await updateDoc(userDocRef, {
-            primarySocial: userData.primarySocial,
+            primarySocial: primarySocial,
           }).then(() => {
             Toaster.success("Social marked as primary");
           }).catch((error) => {
