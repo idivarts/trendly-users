@@ -166,9 +166,9 @@ const useFacebookLogin = (
                   return true
                 return false
               });
-              if (exists)
+              if (!exists)
                 await updateDoc(userDocRef, {
-                  primarySocial: userDoc?.primarySocial,
+                  primarySocial: null,
                 })
             }
             firebaseSignIn(result.user.uid);
