@@ -1,19 +1,35 @@
-import React, { useEffect, useRef, useState } from "react";
-import { View, ScrollView, Pressable, Linking } from "react-native";
-import { Text, Card, Portal } from "react-native-paper";
-import { router } from "expo-router";
-import { useTheme } from "@react-navigation/native";
-import { stylesFn } from "@/styles/CollaborationDetails.styles";
-import { FirestoreDB } from "@/utils/firestore";
-import { deleteDoc, doc, getDoc, updateDoc } from "firebase/firestore";
-import Toaster from "@/shared-uis/components/toaster/Toaster";
+import CreateCollaborationMap from "@/components/create-collaboration/CreateCollaborationMap";
+import AuthModal from "@/components/modals/AuthModal";
+import Button from "@/components/ui/button";
+import ConfirmationModal from "@/components/ui/modal/ConfirmationModal";
+import Colors from "@/constants/Colors";
 import {
   useAuthContext,
   useContractContext,
   useNotificationContext,
 } from "@/contexts";
-import { CollaborationDetail } from ".";
+import { useBreakpoints } from "@/hooks";
+import { PromotionType } from "@/shared-libs/firestore/trendly-pro/constants/promotion-type";
+import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
+import { IManagers } from "@/shared-libs/firestore/trendly-pro/models/managers";
+import Carousel from "@/shared-uis/components/carousel/carousel";
+import ScrollMedia from "@/shared-uis/components/carousel/scroll-media";
+import ImageComponent from "@/shared-uis/components/image-component";
+import RatingSection from "@/shared-uis/components/rating-section";
+import Toaster from "@/shared-uis/components/toaster/Toaster";
+import { stylesFn } from "@/styles/CollaborationDetails.styles";
 import { Invitation } from "@/types/Collaboration";
+import { Contract } from "@/types/Contract";
+import { processRawAttachment } from "@/utils/attachments";
+import { formatTimeToNow } from "@/utils/date";
+import { FirestoreDB } from "@/utils/firestore";
+import { truncateText } from "@/utils/profile";
+import {
+  faFacebook,
+  faInstagram,
+  faYoutube,
+} from "@fortawesome/free-brands-svg-icons";
+import { faHeart } from "@fortawesome/free-regular-svg-icons";
 import {
   faCheckCircle,
   faCircleInfo,
@@ -26,32 +42,18 @@ import {
   faStarHalfStroke,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import Colors from "@/constants/Colors";
-import Carousel from "@/shared-uis/components/carousel/carousel";
-import { processRawAttachment } from "@/utils/attachments";
-import { truncateText } from "@/utils/profile";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { useTheme } from "@react-navigation/native";
+import { router } from "expo-router";
+import { deleteDoc, doc, getDoc, updateDoc } from "firebase/firestore";
+import React, { useEffect, useRef, useState } from "react";
+import { Linking, Platform, Pressable, ScrollView, View } from "react-native";
+import { Card, Portal, Text } from "react-native-paper";
+import { CollaborationDetail } from ".";
 import ChipCard from "../card-components/ChipComponent";
-import {
-  faFacebook,
-  faInstagram,
-  faYoutube,
-} from "@fortawesome/free-brands-svg-icons";
-import CreateCollaborationMap from "@/components/create-collaboration/CreateCollaborationMap";
-import { IManagers } from "@/shared-libs/firestore/trendly-pro/models/managers";
-import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import UserResponse from "../UserResponse";
 import BrandModal from "./modal/BrandModal";
 import ManagerModal from "./modal/ManagerModal";
-import { PromotionType } from "@/shared-libs/firestore/trendly-pro/constants/promotion-type";
-import ConfirmationModal from "@/components/ui/modal/ConfirmationModal";
-import ImageComponent from "@/shared-uis/components/image-component";
-import AuthModal from "@/components/modals/AuthModal";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { faHeart } from "@fortawesome/free-regular-svg-icons";
-import { formatTimeToNow } from "@/utils/date";
-import { Contract } from "@/types/Contract";
-import RatingSection from "@/shared-uis/components/rating-section";
-import Button from "@/components/ui/button";
 
 interface ApplicationData extends IApplications {
   id: string;
@@ -253,6 +255,7 @@ const CollborationDetailsContent = (
   useEffect(() => {
     fetchContracts();
   }, []);
+  const { xl } = useBreakpoints()
 
   return (
     <ScrollView
@@ -263,14 +266,21 @@ const CollborationDetailsContent = (
       <View style={styles.profileCard}>
         {props?.collaborationDetail?.attachments &&
           props?.collaborationDetail?.attachments.length > 0 && (
-            <Carousel
+            Platform.OS === "web" ? (<ScrollMedia
+              media={props?.collaborationDetail?.attachments?.map((attachment) =>
+                processRawAttachment(attachment)
+              ) || []}
+              MAX_WIDTH_WEB={"100%"}
+              xl={xl}
+              mediaRes={{ width: 300, height: 300 }}
+            />) : (<Carousel
               theme={theme}
               data={
                 props?.collaborationDetail?.attachments?.map((attachment) =>
                   processRawAttachment(attachment)
                 ) || []
               }
-            />
+            />)
           )}
         <Card.Content style={styles.profileContent}>
           {/* About Collaboration */}
