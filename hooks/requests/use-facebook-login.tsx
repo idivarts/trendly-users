@@ -100,7 +100,7 @@ const useFacebookLogin = (
           {
             params: {
               fields:
-                "id,name,accounts{name,id,access_token,category_list,tasks,facebook_business_account,category}",
+                "id,name,accounts{name,id,access_token,instagram_business_account}",
               access_token: accessToken,
             },
           }
