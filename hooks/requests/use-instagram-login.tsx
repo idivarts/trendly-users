@@ -26,7 +26,7 @@ const useInstagramLogin = (
 ): useInstagramLoginType => {
   const { firebaseSignIn, firebaseSignUp } = useAuthContext();
 
-  const isLocalhost = window.location.hostname === 'localhost';
+  const isLocalhost = Platform.OS == "web" ? (window.location.hostname === 'localhost') : false;
 
   const redirectUri = AuthSession.makeRedirectUri({
     native: `fb${FB_APP_ID}://authorize`,
