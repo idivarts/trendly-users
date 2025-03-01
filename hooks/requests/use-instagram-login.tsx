@@ -22,7 +22,8 @@ const useInstagramLogin = (
   firestore: Firestore,
   initialUserData: Partial<IUsers>,
   setLoading: React.Dispatch<React.SetStateAction<boolean>>,
-  setError: React.Dispatch<React.SetStateAction<string | null>>
+  setError: React.Dispatch<React.SetStateAction<string | null>>,
+  customCodeHandler: ((code: string) => void) | null = null
 ): useInstagramLoginType => {
   const { firebaseSignIn, firebaseSignUp } = useAuthContext();
 
@@ -59,6 +60,10 @@ const useInstagramLogin = (
   };
 
   const handleInstagramSignIn = async (accessToken: string) => {
+    if (customCodeHandler) {
+      customCodeHandler(accessToken);
+      return;
+    }
     setLoading(true);
     await axios
       .post("https://be.trendly.pro/instagram/auth", {

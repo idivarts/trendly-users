@@ -1,11 +1,13 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { ActivityIndicator } from "react-native-paper";
-import * as WebBrowser from "expo-web-browser";
-import * as AuthSession from "expo-auth-session";
-import { Platform, View } from "react-native";
 import { FB_APP_ID as fbid } from "@/constants/Facebook";
+import { INITIAL_USER_DATA } from "@/constants/User";
+import { useInstagramLogin } from "@/hooks/requests";
 import { AuthApp } from "@/utils/auth";
+import { FirestoreDB } from "@/utils/firestore";
+import axios from "axios";
+import * as WebBrowser from "expo-web-browser";
+import React, { useState } from "react";
+import { Platform, View } from "react-native";
+import { ActivityIndicator } from "react-native-paper";
 import Button from "../ui/button";
 
 interface FacebookLoginButtonProps {
@@ -20,35 +22,10 @@ const InstagramLoginButton: React.FC<FacebookLoginButtonProps> = () => {
   const [isLoading, setIsLoading] = useState(false);
   const user = AuthApp.currentUser;
 
-  const authUrl = `https://be.trendly.pro/instagram`;
+  const { instagramLogin } = useInstagramLogin(AuthApp, FirestoreDB, INITIAL_USER_DATA, () => { }, () => { }, (code) => {
+    handleAddAccount(code);
+  });
 
-  const [request, response, promptAsync] = AuthSession.useAuthRequest(
-    {
-      clientId: FB_APP_ID,
-      redirectUri: AuthSession.makeRedirectUri({
-        native: `fb${FB_APP_ID}://authorize`,
-      }),
-    },
-    {
-      authorizationEndpoint: `${authUrl}?redirect_type=${Platform.OS === "web" ? 2 : 3
-        }&`,
-    }
-  );
-
-  const handleInstagramSignIn = async () => {
-    await promptAsync();
-  };
-
-  useEffect(() => {
-    if (response?.type === "success" || response?.type === "error") {
-      const { code } = response.params;
-      if (code) {
-        handleAddAccount(code);
-      } else {
-        console.log("Instagram login failed. Please try again.");
-      }
-    }
-  }, [response]);
 
   const handleAddAccount = async (accessToken: string) => {
     setIsLoading(true);
@@ -87,7 +64,7 @@ const InstagramLoginButton: React.FC<FacebookLoginButtonProps> = () => {
         <Button
           mode="contained"
           style={{ marginVertical: 10, paddingVertical: 5 }}
-          onPress={handleInstagramSignIn}
+          onPress={instagramLogin}
           icon={"instagram"}
           labelStyle={{ color: "white", fontSize: 16 }}
         >
