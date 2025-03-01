@@ -1,4 +1,4 @@
-import { View } from "@/components/theme/Themed";
+import { Text, View } from "@/components/theme/Themed";
 import Colors from "@/constants/Colors";
 import { resetAndNavigate } from "@/utils/router";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
@@ -42,15 +42,15 @@ const ScreenHeader: React.FC<ScreenHeaderProps> = ({
       }}
       statusBarHeight={0}
     >
-      <View
-        style={{
-          marginTop: 2,
-          marginLeft: 10,
-        }}
-        lightColor={Colors(theme).transparent}
-        darkColor={Colors(theme).transparent}
-      >
-        <Pressable onPress={handleAction}>
+      <Pressable onPress={handleAction}>
+        <View
+          style={{
+            marginTop: 2,
+            marginLeft: 16,
+          }}
+          lightColor={Colors(theme).transparent}
+          darkColor={Colors(theme).transparent}
+        >
           <FontAwesomeIcon
             icon={faArrowLeft}
             size={20}
@@ -59,19 +59,19 @@ const ScreenHeader: React.FC<ScreenHeaderProps> = ({
               alignItems: "center",
             }}
           />
-        </Pressable>
-      </View>
+        </View>
+      </Pressable>
 
       <Appbar.Content
         style={{
           flex: 1,
-          marginLeft: Platform.OS === "web" ? 12 : 16,
+          marginLeft: Platform.OS === "web" ? 32 : 16,
         }}
         color={Colors(theme).text}
         title={title}
       />
 
-      {rightAction && rightActionButton}
+      {rightAction && <Text style={{ fontSize: 16, fontWeight: "400" }}><View>{rightActionButton}</View></Text>}
     </Appbar.Header>
   );
 };
