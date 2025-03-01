@@ -1,8 +1,8 @@
 import React, { FC, useEffect, useState } from "react";
-import { View, StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Modal, Portal, Text } from "react-native-paper";
-import TextInput from "../ui/text-input";
 import Button from "../ui/button";
+import TextInput from "../ui/text-input";
 
 interface TextModalProps {
   isOpen: boolean;
@@ -10,6 +10,7 @@ interface TextModalProps {
   value: string;
   placeholder: string;
   title: string;
+  type: string;
   onSubmit: (value: string) => void;
 }
 
@@ -45,9 +46,11 @@ export const TextModal: FC<TextModalProps> = ({ ...props }) => {
             placeholder={props.placeholder}
             value={text}
             onChangeText={setText}
+            keyboardType={props.type == "text" ? "default" : "numeric"}
+            inputMode={props.type == "text" ? "text" : "numeric"}
             style={styles.textInput}
-            multiline
-            numberOfLines={20}
+            multiline={props.type == "text" ? true : false}
+            numberOfLines={props.type == "text" ? 20 : 1}
           />
           <View style={styles.buttonContainer}>
             <Button mode="contained" onPress={handleSave} style={styles.button}>

@@ -58,6 +58,7 @@ const ApplyScreenWeb = () => {
     title: "",
     placeholder: "",
     value: "",
+    type: "text",
     onSubmit: (value: string) => { },
   });
 
@@ -67,7 +68,7 @@ const ApplyScreenWeb = () => {
     value: string,
     onSubmit: (value: string) => void
   ) => {
-    setModalData({ isOpen: true, title, placeholder, value, onSubmit });
+    setModalData({ isOpen: true, title, placeholder, value, onSubmit, type: title == "Enter Quotation" ? "number" : "text" });
   };
 
   const [files, setFiles] = useState<File[]>([]);
@@ -417,6 +418,7 @@ const ApplyScreenWeb = () => {
         title={modalData.title}
         placeholder={modalData.placeholder}
         value={modalData.value}
+        type={modalData.type}
         onSubmit={modalData.onSubmit}
       />
     </AppLayout>
