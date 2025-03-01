@@ -1,12 +1,19 @@
+import { INITIAL_USER_DATA } from "@/constants/User";
 import { useStorageState } from "@/hooks";
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  type PropsWithChildren,
-} from "react";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
+import { User } from "@/types/User";
+import { analyticsLogEvent } from "@/utils/analytics";
+import { AuthApp } from "@/utils/auth";
+import { FirestoreDB } from "@/utils/firestore";
+import { updatedTokens } from "@/utils/push-notification/push-notification-token.native";
+import { resetAndNavigate } from "@/utils/router";
+import {
+  createUserWithEmailAndPassword,
+  deleteUser,
+  sendEmailVerification,
+  signInWithEmailAndPassword,
+  signOut,
+} from "firebase/auth";
 import {
   collection,
   deleteDoc,
@@ -20,21 +27,14 @@ import {
   where,
   writeBatch,
 } from "firebase/firestore";
-import { FirestoreDB } from "@/utils/firestore";
-import { User } from "@/types/User";
-import { AuthApp } from "@/utils/auth";
 import {
-  createUserWithEmailAndPassword,
-  deleteUser,
-  sendEmailVerification,
-  signInWithEmailAndPassword,
-  signOut,
-} from "firebase/auth";
-import { analyticsLogEvent } from "@/utils/analytics";
-import { INITIAL_USER_DATA } from "@/constants/User";
-import { resetAndNavigate } from "@/utils/router";
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type PropsWithChildren,
+} from "react";
 import { Platform } from "react-native";
-import { updatedTokens } from "@/utils/push-notification/push-notification-token.native";
 
 interface AuthContextProps {
   deleteUserAccount: (userId: string) => Promise<void>;
@@ -114,7 +114,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
 
       setSession(userCredential.user.uid);
 
-      await fetch("https://be.trendly.pro/api/v1/chat/auth", {
+      fetch("https://be.trendly.pro/api/v1/chat/auth", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -151,7 +151,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
 
       setSession(userCredential.user.uid);
 
-      await fetch("https://be.trendly.pro/api/v1/chat/auth", {
+      fetch("https://be.trendly.pro/api/v1/chat/auth", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -170,6 +170,13 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
 
   const firebaseSignIn = async (token: string) => {
     setSession(token);
+    fetch("https://be.trendly.pro/api/v1/chat/auth", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
     resetAndNavigate("/collaborations");
     Toaster.success("Signed In Successfully!");
@@ -177,6 +184,14 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
 
   const firebaseSignUp = async (token: string, hasSocials?: boolean) => {
     setSession(token);
+    fetch("https://be.trendly.pro/api/v1/chat/auth", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
     if (hasSocials) {
       resetAndNavigate("/questions");
       Toaster.success("Signed Up Successfully!");
