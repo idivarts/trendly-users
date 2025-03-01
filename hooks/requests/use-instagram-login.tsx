@@ -1,20 +1,17 @@
-import { useEffect } from "react";
-import { Platform } from "react-native";
 import axios from "axios";
 import * as AuthSession from "expo-auth-session";
-import { collection, doc, Firestore, updateDoc } from "firebase/firestore";
 import { Auth, signInWithCustomToken } from "firebase/auth";
+import { collection, doc, Firestore, updateDoc } from "firebase/firestore";
+import { useEffect } from "react";
+import { Platform } from "react-native";
 
-import { useAuthContext } from "@/contexts";
 import { FB_APP_ID } from "@/constants/Facebook";
+import { useAuthContext } from "@/contexts";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import * as WebBrowser from "expo-web-browser";
 
 interface useInstagramLoginType {
   instagramLogin: () => void;
-  promptAsyncInstagram: (
-    options?: AuthSession.AuthRequestPromptOptions
-  ) => Promise<AuthSession.AuthSessionResult>;
   requestInstagram: AuthSession.AuthRequest | null;
 }
 
@@ -31,7 +28,9 @@ const useInstagramLogin = (
 
   const redirectUri = AuthSession.makeRedirectUri({
     native: `fb${FB_APP_ID}://authorize`,
+    ...(Platform.OS == "web" ? { path: "insta-redirect" } : {})
   });
+  console.log("Redirect Uri for Instagram: ", redirectUri);
 
   const authUrl = `https://be.trendly.pro/instagram`;
 
@@ -40,16 +39,21 @@ const useInstagramLogin = (
       {
         clientId: FB_APP_ID,
         redirectUri,
+        responseType: "token",
       },
       {
-        authorizationEndpoint: `${authUrl}?redirect_type=${
-          Platform.OS === "web" ? 2 : 3
-        }&`,
+        authorizationEndpoint: `${authUrl}?redirect_type=${Platform.OS === "web" ? 1 : 3}&`,
       }
     );
 
   const instagramLogin = async () => {
-    await promptAsyncInstagram();
+    if (Platform.OS === "web") {
+      window.open(`${authUrl}?redirect_type=${Platform.OS === "web" ? 1 : 3}&`, "_blank",
+        "width=500,height=600");
+      window.addEventListener("message", receiveMessage, false);
+    } else {
+      await promptAsyncInstagram();
+    }
   };
 
   const handleInstagramSignIn = async (accessToken: string) => {
@@ -57,7 +61,7 @@ const useInstagramLogin = (
     await axios
       .post("https://be.trendly.pro/instagram/auth", {
         code: accessToken,
-        redirect_type: Platform.OS === "web" ? "2" : "3",
+        redirect_type: Platform.OS === "web" ? "1" : "3",
       })
       .then(async (response) => {
         const user = await signInWithCustomToken(
@@ -85,7 +89,18 @@ const useInstagramLogin = (
       });
   };
 
+  const receiveMessage = (event: MessageEvent) => {
+    console.log("Auth Result Message: ", event);
+
+    if (event.origin !== "https://be.trendly.pro") {
+      return;
+    }
+    if (event.data.code) {
+      handleInstagramSignIn(event.data.code);
+    }
+  };
   useEffect(() => {
+    console.log("Auth Result Response: ", responseInstagram);
     if (
       responseInstagram?.type === "success" ||
       responseInstagram?.type === "error"
@@ -101,7 +116,6 @@ const useInstagramLogin = (
 
   return {
     instagramLogin,
-    promptAsyncInstagram,
     requestInstagram,
   };
 };

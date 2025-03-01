@@ -1,24 +1,24 @@
-import { useMemo, useState } from "react";
-import { useSharedValue } from "react-native-reanimated";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Theme, useTheme } from "@react-navigation/native";
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
+import { Theme, useTheme } from "@react-navigation/native";
+import { useMemo, useState } from "react";
+import { useSharedValue } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { Text, View } from "../theme/Themed";
 import Colors from "@/constants/Colors";
-import { Platform, Pressable, StyleSheet } from "react-native";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faClose } from "@fortawesome/free-solid-svg-icons";
-import { faFacebook, faInstagram } from "@fortawesome/free-brands-svg-icons";
-import SocialButton from "../ui/button/social-button";
+import { INITIAL_USER_DATA } from "@/constants/User";
 import { useFacebookLogin, useInstagramLogin } from "@/hooks/requests";
 import { AuthApp } from "@/utils/auth";
 import { FirestoreDB } from "@/utils/firestore";
-import { INITIAL_USER_DATA } from "@/constants/User";
+import { faFacebook, faInstagram } from "@fortawesome/free-brands-svg-icons";
+import { faClose } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { Platform, Pressable, StyleSheet } from "react-native";
+import { Text, View } from "../theme/Themed";
+import SocialButton from "../ui/button/social-button";
 
 interface AuthModalProps {
   bottomSheetModalRef: React.RefObject<BottomSheetModal>;
@@ -45,7 +45,6 @@ const AuthModal: React.FC<AuthModalProps> = ({
 
   const {
     instagramLogin,
-    promptAsyncInstagram,
     requestInstagram,
   } = useInstagramLogin(
     AuthApp,
@@ -158,7 +157,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
                   instagramLogin();
                 } else {
                   if (requestInstagram) {
-                    promptAsyncInstagram();
+                    instagramLogin();
                   }
                 }
               }}
