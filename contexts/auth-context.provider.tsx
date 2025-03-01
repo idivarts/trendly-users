@@ -12,7 +12,7 @@ import {
   deleteUser,
   sendEmailVerification,
   signInWithEmailAndPassword,
-  signOut,
+  signOut
 } from "firebase/auth";
 import {
   collection,
