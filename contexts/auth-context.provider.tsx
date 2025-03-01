@@ -39,7 +39,7 @@ import { Platform } from "react-native";
 interface AuthContextProps {
   deleteUserAccount: (userId: string) => Promise<void>;
   firebaseSignIn: (token: string) => void;
-  firebaseSignUp: (token: string, hasSocials?: boolean) => void;
+  firebaseSignUp: (token: string, hasSocials?: number) => void;
   getUser: (userId: string) => Promise<User | null>;
   isLoading: boolean;
   isUserLoading: boolean;
@@ -55,7 +55,7 @@ interface AuthContextProps {
 const AuthContext = createContext<AuthContextProps>({
   deleteUserAccount: () => Promise.resolve(),
   firebaseSignIn: (token: string) => null,
-  firebaseSignUp: (token: string, hasSocials?: boolean) => null,
+  firebaseSignUp: (token: string, hasSocials?: number) => null,
   getUser: () => Promise.resolve(null),
   isLoading: false,
   isUserLoading: false,
@@ -168,13 +168,13 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
     }
   };
 
-  const firebaseSignIn = async (token: string) => {
-    setSession(token);
+  const firebaseSignIn = async (uid: string) => {
+    setSession(uid);
     fetch("https://be.trendly.pro/api/v1/chat/auth", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${uid}`,
       },
     });
 
@@ -182,21 +182,24 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
     Toaster.success("Signed In Successfully!");
   };
 
-  const firebaseSignUp = async (token: string, hasSocials?: boolean) => {
-    setSession(token);
+  const firebaseSignUp = async (uid: string, hasSocials?: number) => {
+    setSession(uid);
     fetch("https://be.trendly.pro/api/v1/chat/auth", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${uid}`,
       },
     });
 
-    if (hasSocials) {
+    if (!hasSocials) {
+      resetAndNavigate("/no-social-connected");
+      Toaster.success("Signed Up Successfully!");
+    } else if (hasSocials == 1) {
       resetAndNavigate("/questions");
       Toaster.success("Signed Up Successfully!");
-    } else {
-      resetAndNavigate("/no-social-connected");
+    } else if (hasSocials > 1) {
+      resetAndNavigate("/primary-social-select");
       Toaster.success("Signed Up Successfully!");
     }
   };

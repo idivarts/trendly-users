@@ -134,17 +134,9 @@ const useFacebookLogin = (
           }
         );
 
-        if (
-          !graphAPIResponse.data.accounts ||
-          graphAPIResponse.data.accounts.length === 0
-        ) {
-          firebaseSignUp(result.user.uid, false);
-        }
-
-        if (
-          graphAPIResponse.data.accounts &&
-          graphAPIResponse.data.accounts.data.length === 1
-        ) {
+        if (!graphAPIResponse.data.accounts || graphAPIResponse.data.accounts.length === 0) {
+          firebaseSignUp(result.user.uid, 0);
+        } else if (graphAPIResponse.data.accounts && graphAPIResponse.data.accounts.data.length === 1 && !graphAPIResponse.data.accounts.data[0].instagram_business_account) {
           //update and make this as the primary social
           const userDocRef = doc(firestore, "users", result.user.uid);
           const userDoc = await getDoc(userDocRef);
@@ -161,9 +153,10 @@ const useFacebookLogin = (
             .catch((error) => {
               Toaster.error("Error marking social as primary");
             });
+          firebaseSignUp(result.user.uid, 1);
+        } else {
+          firebaseSignUp(result.user.uid, 2);
         }
-
-        firebaseSignUp(result.user.uid);
       }
     } catch (error: any) {
       setError(error.message);
