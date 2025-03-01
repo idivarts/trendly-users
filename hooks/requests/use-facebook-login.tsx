@@ -24,10 +24,8 @@ import * as WebBrowser from "expo-web-browser";
 
 interface useFacebookLoginType {
   facebookLogin: () => void;
-  promptAsyncFacebook: (
-    options?: AuthSession.AuthRequestPromptOptions
-  ) => Promise<AuthSession.AuthSessionResult>;
   requestFacebook: AuthSession.AuthRequest | null;
+  customHandleToken?: (token: string) => void;
 }
 
 WebBrowser.maybeCompleteAuthSession();
@@ -37,7 +35,8 @@ const useFacebookLogin = (
   firestore: Firestore,
   initialUserData: Partial<IUsers>,
   setLoading: React.Dispatch<React.SetStateAction<boolean>>,
-  setError: React.Dispatch<React.SetStateAction<string | null>>
+  setError: React.Dispatch<React.SetStateAction<string | null>>,
+  customHandleToken: ((code: string) => void) | null = null,
 ): useFacebookLoginType => {
   const { firebaseSignIn, firebaseSignUp } = useAuthContext();
 
@@ -71,6 +70,10 @@ const useFacebookLogin = (
   };
 
   const handleFirebaseSignIn = async (accessToken: string) => {
+    if (customHandleToken) {
+      customHandleToken(accessToken);
+      return;
+    }
     try {
       setLoading(true);
       const credential = FacebookAuthProvider.credential(accessToken);
@@ -194,7 +197,6 @@ const useFacebookLogin = (
 
   return {
     facebookLogin,
-    promptAsyncFacebook,
     requestFacebook,
   };
 };

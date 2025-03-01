@@ -1,61 +1,22 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { ActivityIndicator } from "react-native-paper";
-import * as WebBrowser from "expo-web-browser";
-import * as AuthSession from "expo-auth-session";
-import { View } from "react-native";
-import { FB_APP_ID as fbid } from "@/constants/Facebook";
-import { FirestoreDB } from "@/utils/firestore";
+import { useFacebookLogin } from "@/hooks/requests";
 import { AuthApp } from "@/utils/auth";
+import { FirestoreDB } from "@/utils/firestore";
+import axios from "axios";
+import * as WebBrowser from "expo-web-browser";
 import { collection, doc } from "firebase/firestore";
+import React, { useState } from "react";
+import { View } from "react-native";
+import { ActivityIndicator } from "react-native-paper";
 import Button from "../ui/button";
 
-interface FacebookLoginButtonProps {
-  onFacebookLogin: (userId: string | null) => void;
-  isConnected?: boolean;
-}
 
 WebBrowser.maybeCompleteAuthSession();
 
-const FacebookLoginButton: React.FC<FacebookLoginButtonProps> = ({
-  isConnected,
-  onFacebookLogin,
-}) => {
-  const FB_APP_ID = fbid;
+const FacebookLoginButton: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const [request, response, promptAsync] = AuthSession.useAuthRequest(
-    {
-      clientId: FB_APP_ID,
-      redirectUri: AuthSession.makeRedirectUri({
-        native: `fb${FB_APP_ID}://authorize`,
-      }),
-      responseType: AuthSession.ResponseType.Token,
-      scopes: [
-        "public_profile",
-        "email",
-        "pages_show_list",
-        "pages_read_engagement",
-        "instagram_basic",
-        "instagram_manage_messages",
-      ],
-    },
-    { authorizationEndpoint: "https://www.facebook.com/v10.0/dialog/oauth" }
-  );
-
-  const handleFacebookSignIn = async () => {
-    await promptAsync();
-  };
-
-  useEffect(() => {
-    if (response?.type === "success") {
-      const { access_token } = response.params;
-      handleFirebaseSignIn(access_token);
-    } else if (response?.type === "error") {
-    }
-  }, [response]);
-
   const handleFirebaseSignIn = async (accessToken: string) => {
+    setIsLoading(true);
     try {
       const userCollection = collection(FirestoreDB, "users");
       const userID = AuthApp.currentUser?.uid;
@@ -68,7 +29,7 @@ const FacebookLoginButton: React.FC<FacebookLoginButtonProps> = ({
         {
           params: {
             fields:
-              "id,name,accounts{name,id,access_token,category_list,tasks,instagram_business_account,category}",
+              "id,name,accounts{name,id,access_token,instagram_business_account}",
             access_token: accessToken,
           },
         }
@@ -97,11 +58,15 @@ const FacebookLoginButton: React.FC<FacebookLoginButtonProps> = ({
             },
           }
         )
-        .then((res) => {});
+        .then((res) => { });
     } catch (error) {
       console.error(error);
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  const { facebookLogin } = useFacebookLogin(AuthApp, FirestoreDB, {}, () => { }, () => { }, handleFirebaseSignIn);
 
   return (
     <View>
@@ -115,7 +80,7 @@ const FacebookLoginButton: React.FC<FacebookLoginButtonProps> = ({
         <Button
           mode="contained"
           style={{ marginVertical: 10, paddingVertical: 5 }}
-          onPress={handleFacebookSignIn}
+          onPress={facebookLogin}
           icon={"facebook"}
           labelStyle={{ color: "white", fontSize: 16 }}
         >

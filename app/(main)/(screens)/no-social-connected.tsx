@@ -2,14 +2,13 @@ import FacebookLoginButton from "@/components/profile/ConnectWithFacebook";
 import InstagramLoginButton from "@/components/profile/ConnectWithInstagram";
 import Button from "@/components/ui/button";
 import Colors from "@/constants/Colors";
-import { useAuthContext } from "@/contexts";
-import { useSocialContext } from "@/contexts";
+import { useAuthContext, useSocialContext } from "@/contexts";
 import AppLayout from "@/layouts/app-layout";
 import { imageUrl } from "@/utils/url";
 import { useTheme } from "@react-navigation/native";
 import { router } from "expo-router";
 import React, { useEffect } from "react";
-import { View, StyleSheet, Image } from "react-native";
+import { Image, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 
 const TrendlyScreen = () => {
@@ -75,8 +74,8 @@ const TrendlyScreen = () => {
 
         {/* Buttons */}
         <View style={styles.buttonContainer}>
-          <FacebookLoginButton onFacebookLogin={() => {}} />
-          <InstagramLoginButton onFacebookLogin={() => {}} />
+          <FacebookLoginButton />
+          <InstagramLoginButton />
         </View>
       </View>
     </AppLayout>

@@ -56,7 +56,6 @@ const AuthModal: React.FC<AuthModalProps> = ({
 
   const {
     facebookLogin,
-    promptAsyncFacebook,
     requestFacebook,
   } = useFacebookLogin(
     AuthApp,
@@ -135,7 +134,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
                   facebookLogin();
                 } else {
                   if (requestFacebook) {
-                    promptAsyncFacebook();
+                    facebookLogin();
                   }
                 }
               }}
