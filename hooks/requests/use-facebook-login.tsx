@@ -60,8 +60,7 @@ const useFacebookLogin = (
           "business_management",
           "instagram_basic",
           "instagram_manage_insights",
-          "read_insights",
-          "pages_manage_metadata"
+          "read_insights"
         ],
       },
       { authorizationEndpoint: "https://www.facebook.com/v10.0/dialog/oauth" }
