@@ -1,21 +1,21 @@
-import React, { useState } from "react";
-import { Linking } from "react-native";
-import { Card, IconButton, Menu } from "react-native-paper";
-import { stylesFn } from "@/styles/profile/SocialPage.styles";
-import Toaster from "@/shared-uis/components/toaster/Toaster";
-import { useTheme } from "@react-navigation/native";
 import { Text, View } from "@/components/theme/Themed";
 import Colors from "@/constants/Colors";
+import { useAuthContext } from "@/contexts";
 import { SocialPlatform } from "@/shared-libs/firestore/trendly-pro/constants/social-platform";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faFacebook, faInstagram } from "@fortawesome/free-brands-svg-icons";
-import { faStar } from "@fortawesome/free-regular-svg-icons";
+import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
+import ImageComponent from "@/shared-uis/components/image-component";
+import Toaster from "@/shared-uis/components/toaster/Toaster";
+import { stylesFn } from "@/styles/profile/SocialPage.styles";
 import { AuthApp } from "@/utils/auth";
 import { FirestoreDB } from "@/utils/firestore";
+import { faFacebook, faInstagram } from "@fortawesome/free-brands-svg-icons";
+import { faStar } from "@fortawesome/free-regular-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { useTheme } from "@react-navigation/native";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
-import { useAuthContext } from "@/contexts";
-import ImageComponent from "@/shared-uis/components/image-component";
+import React, { useState } from "react";
+import { Linking } from "react-native";
+import { IconButton, Menu } from "react-native-paper";
 
 interface SocialPageProps {
   name: string;
@@ -61,6 +61,13 @@ const SocialPage: React.FC<SocialPageProps> = ({
 
     await updateDoc(userDocRef, { primarySocial: userData.primarySocial })
       .then(() => {
+        fetch("https://be.trendly.pro/api/v1/chat/auth", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${AuthApp.currentUser?.uid}`,
+          },
+        });
         Toaster.success("Social marked as primary");
       })
       .catch((error) => {
@@ -159,7 +166,7 @@ const SocialPage: React.FC<SocialPageProps> = ({
             titleStyle={styles.menuTitleStyle}
           />
           <Menu.Item
-            onPress={() => {}}
+            onPress={() => { }}
             title="Disconnect"
             style={styles.menuStyle}
             titleStyle={styles.menuTitleStyle}
