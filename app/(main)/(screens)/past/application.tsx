@@ -120,7 +120,7 @@ const PastApplicationPage = (props: any) => {
   }, []);
 
   return (
-    <AppLayout>
+    <AppLayout withWebPadding>
       <ScreenHeader title="Past Applications" />
       <View
         style={{

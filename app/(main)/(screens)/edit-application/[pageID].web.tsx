@@ -1,45 +1,43 @@
-import React, { useEffect, useState } from "react";
-import { Platform, ScrollView, View } from "react-native";
-import {
-  Card,
-  IconButton,
-  HelperText,
-  List,
-  ProgressBar,
-} from "react-native-paper";
-import { router, useLocalSearchParams } from "expo-router";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import { useTheme } from "@react-navigation/native";
-import {
-  faClapperboard,
-  faClockRotateLeft,
-  faDollarSign,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import * as DocumentPicker from "expo-document-picker";
+import { TextModal } from "@/components/TextInputModal/TextModal.web";
+import AssetsPreview from "@/components/ui/assets-preview";
+import Button from "@/components/ui/button";
+import ListItem from "@/components/ui/list-item/ListItem";
 import ScreenHeader from "@/components/ui/screen-header";
+import TextInput from "@/components/ui/text-input";
 import Colors from "@/constants/Colors";
 import { useAWSContext } from "@/contexts/aws-context.provider";
-import AppLayout from "@/layouts/app-layout";
-import Toaster from "@/shared-uis/components/toaster/Toaster";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { stylesFn } from "@/styles/ApplyNow.styles";
-import {
-  faPaperclip,
-} from "@fortawesome/free-solid-svg-icons";
-import ListItem from "@/components/ui/list-item/ListItem";
-import AssetsPreview from "@/components/ui/assets-preview";
 import { useBreakpoints } from "@/hooks";
-import { TextModal } from "@/components/TextInputModal/TextModal.web";
-import { handleModalOrInputPage } from "@/utils/TextInput";
+import AppLayout from "@/layouts/app-layout";
 import {
   IApplications,
   ICollaboration,
 } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
+import Toaster from "@/shared-uis/components/toaster/Toaster";
+import { stylesFn } from "@/styles/ApplyNow.styles";
 import { FirestoreDB } from "@/utils/firestore";
+import { handleModalOrInputPage } from "@/utils/TextInput";
 import { faCircleQuestion } from "@fortawesome/free-regular-svg-icons";
-import TextInput from "@/components/ui/text-input";
-import Button from "@/components/ui/button";
+import {
+  faClapperboard,
+  faClockRotateLeft,
+  faDollarSign,
+  faPaperclip,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { useTheme } from "@react-navigation/native";
+import * as DocumentPicker from "expo-document-picker";
+import { router, useLocalSearchParams } from "expo-router";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import React, { useEffect, useState } from "react";
+import { Platform, ScrollView, View } from "react-native";
+import {
+  Card,
+  HelperText,
+  IconButton,
+  List,
+  ProgressBar,
+} from "react-native-paper";
 
 const ApplyScreenWeb = () => {
   const params = useLocalSearchParams();
@@ -355,7 +353,7 @@ const ApplyScreenWeb = () => {
   }, []);
 
   return (
-    <AppLayout>
+    <AppLayout withWebPadding>
       <ScreenHeader title="Edit Application" />
       <ScrollView
         style={styles.container}
@@ -548,6 +546,7 @@ const ApplyScreenWeb = () => {
       )}
       <TextModal
         isOpen={modalData.isOpen}
+        type="text"
         onClose={() => setModalData({ ...modalData, isOpen: false })}
         title={modalData.title}
         placeholder={modalData.placeholder}

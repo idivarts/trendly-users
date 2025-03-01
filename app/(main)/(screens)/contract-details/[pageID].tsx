@@ -1,33 +1,33 @@
+import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { IconButton } from "react-native-paper";
-import { router, useLocalSearchParams } from "expo-router";
 
-import AppLayout from "@/layouts/app-layout";
-import ScreenHeader from "@/components/ui/screen-header";
-import Colors from "@/constants/Colors";
-import { useTheme } from "@react-navigation/native";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 import ContractDetailsContent, {
   Application,
 } from "@/components/contracts/ContractDetailContent";
-import {
-  collectionGroup,
-  doc,
-  getDocs,
-  getDoc,
-  query,
-  where,
-} from "firebase/firestore";
-import { FirestoreDB } from "@/utils/firestore";
-import { IContracts } from "@/shared-libs/firestore/trendly-pro/models/contracts";
-import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
+import { View } from "@/components/theme/Themed";
+import ScreenHeader from "@/components/ui/screen-header";
+import Colors from "@/constants/Colors";
+import { useAuthContext } from "@/contexts";
+import AppLayout from "@/layouts/app-layout";
 import {
   ICollaboration,
 } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
-import { View } from "@/components/theme/Themed";
+import { IContracts } from "@/shared-libs/firestore/trendly-pro/models/contracts";
+import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
+import { FirestoreDB } from "@/utils/firestore";
+import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { useTheme } from "@react-navigation/native";
+import {
+  collectionGroup,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
 import { ActivityIndicator } from "react-native";
-import { useAuthContext } from "@/contexts";
 
 interface ICollaborationCard extends IContracts {
   userData: IUsers;
@@ -99,7 +99,7 @@ const ContractDetailsScreen = () => {
 
   if (isLoading || !contract) {
     return (
-      <AppLayout>
+      <AppLayout withWebPadding>
         <View style={{ flex: 1, alignItems: "center", padding: 20 }}>
           <ActivityIndicator size="large" color={Colors(theme).primary} />
         </View>

@@ -11,7 +11,7 @@ interface AppLayoutProps extends PropsWithChildren<Record<string, unknown>> {
   withWebPadding?: boolean;
 }
 
-const AppLayout: React.FC<AppLayoutProps> = ({ children, withWebPadding }) => {
+const AppLayout: React.FC<AppLayoutProps> = ({ children, withWebPadding = true }) => {
   const theme = useTheme();
   const isAndroid = useMemo(() => Platform.OS === "android", []);
   const { xl } = useBreakpoints()
