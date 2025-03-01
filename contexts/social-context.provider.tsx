@@ -1,4 +1,6 @@
+import { ISocials } from "@/shared-libs/firestore/trendly-pro/models/socials";
 import { FirestoreDB } from "@/utils/firestore";
+import { router } from "expo-router";
 import { collection, onSnapshot } from "firebase/firestore";
 import {
   createContext,
@@ -8,8 +10,6 @@ import {
   type PropsWithChildren,
 } from "react";
 import { useAuthContext } from "./auth-context.provider";
-import { ISocials } from "@/shared-libs/firestore/trendly-pro/models/socials";
-import { router } from "expo-router";
 
 interface SocialContextProps {
   socials: ISocials[];
@@ -69,6 +69,8 @@ export const SocialContextProvider = ({ children }: PropsWithChildren<{}>) => {
           // @ts-ignore
           ? socialData.find((social: ISocials) => social.id === user.primarySocial)
           : null;
+
+        console.log("Firebase Sign --> Social data", socialData, user.primarySocial, primary);
 
         if (!primary) {
           setPrimarySocial(null);

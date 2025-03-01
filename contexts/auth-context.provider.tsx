@@ -1,12 +1,19 @@
+import { INITIAL_USER_DATA } from "@/constants/User";
 import { useStorageState } from "@/hooks";
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  type PropsWithChildren,
-} from "react";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
+import { User } from "@/types/User";
+import { analyticsLogEvent } from "@/utils/analytics";
+import { AuthApp } from "@/utils/auth";
+import { FirestoreDB } from "@/utils/firestore";
+import { updatedTokens } from "@/utils/push-notification/push-notification-token.native";
+import { resetAndNavigate } from "@/utils/router";
+import {
+  createUserWithEmailAndPassword,
+  deleteUser,
+  sendEmailVerification,
+  signInWithEmailAndPassword,
+  signOut
+} from "firebase/auth";
 import {
   collection,
   deleteDoc,
@@ -20,26 +27,19 @@ import {
   where,
   writeBatch,
 } from "firebase/firestore";
-import { FirestoreDB } from "@/utils/firestore";
-import { User } from "@/types/User";
-import { AuthApp } from "@/utils/auth";
 import {
-  createUserWithEmailAndPassword,
-  deleteUser,
-  sendEmailVerification,
-  signInWithEmailAndPassword,
-  signOut,
-} from "firebase/auth";
-import { analyticsLogEvent } from "@/utils/analytics";
-import { INITIAL_USER_DATA } from "@/constants/User";
-import { resetAndNavigate } from "@/utils/router";
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type PropsWithChildren,
+} from "react";
 import { Platform } from "react-native";
-import { updatedTokens } from "@/utils/push-notification/push-notification-token.native";
 
 interface AuthContextProps {
   deleteUserAccount: (userId: string) => Promise<void>;
   firebaseSignIn: (token: string) => void;
-  firebaseSignUp: (token: string, hasSocials?: boolean) => void;
+  firebaseSignUp: (token: string, hasSocials?: number) => void;
   getUser: (userId: string) => Promise<User | null>;
   isLoading: boolean;
   isUserLoading: boolean;
@@ -55,7 +55,7 @@ interface AuthContextProps {
 const AuthContext = createContext<AuthContextProps>({
   deleteUserAccount: () => Promise.resolve(),
   firebaseSignIn: (token: string) => null,
-  firebaseSignUp: (token: string, hasSocials?: boolean) => null,
+  firebaseSignUp: (token: string, hasSocials?: number) => null,
   getUser: () => Promise.resolve(null),
   isLoading: false,
   isUserLoading: false,
@@ -114,7 +114,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
 
       setSession(userCredential.user.uid);
 
-      await fetch("https://be.trendly.pro/api/v1/chat/auth", {
+      fetch("https://be.trendly.pro/api/v1/chat/auth", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -151,7 +151,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
 
       setSession(userCredential.user.uid);
 
-      await fetch("https://be.trendly.pro/api/v1/chat/auth", {
+      fetch("https://be.trendly.pro/api/v1/chat/auth", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -168,20 +168,42 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
     }
   };
 
-  const firebaseSignIn = async (token: string) => {
-    setSession(token);
+  const firebaseSignIn = async (uid: string) => {
+    console.log("Firebase Sign In", uid);
+
+    setSession(uid);
+    fetch("https://be.trendly.pro/api/v1/chat/auth", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${uid}`,
+      },
+    });
 
     resetAndNavigate("/collaborations");
     Toaster.success("Signed In Successfully!");
   };
 
-  const firebaseSignUp = async (token: string, hasSocials?: boolean) => {
-    setSession(token);
-    if (hasSocials) {
+  const firebaseSignUp = async (uid: string, hasSocials?: number) => {
+    console.log("Firebase Sign Up", uid, hasSocials);
+
+    setSession(uid);
+    fetch("https://be.trendly.pro/api/v1/chat/auth", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${uid}`,
+      },
+    });
+
+    if (!hasSocials) {
+      resetAndNavigate("/no-social-connected");
+      Toaster.success("Signed Up Successfully!");
+    } else if (hasSocials == 1) {
       resetAndNavigate("/questions");
       Toaster.success("Signed Up Successfully!");
-    } else {
-      resetAndNavigate("/no-social-connected");
+    } else if (hasSocials > 1) {
+      resetAndNavigate("/primary-social-select");
       Toaster.success("Signed Up Successfully!");
     }
   };

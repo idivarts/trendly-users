@@ -81,18 +81,8 @@ const useFacebookLogin = (
         const fbid = result.user.providerData[0].uid;
 
         const findUser = await getDoc(userDocRef);
-        if (findUser.exists()) {
-          await fetch("https://be.trendly.pro/api/v1/chat/auth", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${result.user.uid}`,
-            },
-          });
-          firebaseSignIn(result.user.uid);
-          return;
-        }
-
+        const isExistingUser = findUser.exists();
+        const userDoc = findUser.data();
         const user = getAdditionalUserInfo(result);
 
         const graphAPIResponse = await axios.get(
@@ -141,24 +131,12 @@ const useFacebookLogin = (
           }
         );
 
-        await fetch("https://be.trendly.pro/api/v1/chat/auth", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${result.user.uid}`,
-          },
-        });
-        if (
-          !graphAPIResponse.data.accounts ||
-          graphAPIResponse.data.accounts.length === 0
-        ) {
-          firebaseSignUp(result.user.uid, false);
-        }
-
-        if (
-          graphAPIResponse.data.accounts &&
-          graphAPIResponse.data.accounts.data.length === 1
-        ) {
+        if (!graphAPIResponse.data.accounts || graphAPIResponse.data.accounts.length === 0) {
+          if (isExistingUser)
+            firebaseSignIn(result.user.uid);
+          else
+            firebaseSignUp(result.user.uid, 0);
+        } else if (graphAPIResponse.data.accounts && graphAPIResponse.data.accounts.data.length === 1 && !graphAPIResponse.data.accounts.data[0].instagram_business_account) {
           //update and make this as the primary social
           const userDocRef = doc(firestore, "users", result.user.uid);
           const userDoc = await getDoc(userDocRef);
@@ -168,16 +146,35 @@ const useFacebookLogin = (
 
           await updateDoc(userDocRef, {
             primarySocial: userData.primarySocial,
-          })
-            .then(() => {
-              Toaster.success("Social marked as primary");
-            })
-            .catch((error) => {
-              Toaster.error("Error marking social as primary");
-            });
-        }
+          }).then(() => {
+            Toaster.success("Social marked as primary");
+          }).catch((error) => {
+            Toaster.error("Error marking social as primary");
+          });
+          if (isExistingUser)
+            firebaseSignIn(result.user.uid);
+          else
+            firebaseSignUp(result.user.uid, 1);
+        } else {
+          if (isExistingUser) {
+            if (userDoc?.primarySocial) {
+              console.log("Primary Social Exists", userDoc?.primarySocial);
 
-        firebaseSignUp(result.user.uid);
+              const userDocRef = doc(firestore, "users", result.user.uid);
+              const exists = graphAPIResponse.data.accounts.data.find((account: any) => {
+                if (account.id === userDoc?.primarySocial || account?.instagram_business_account?.id === userDoc?.primarySocial)
+                  return true
+                return false
+              });
+              if (exists)
+                await updateDoc(userDocRef, {
+                  primarySocial: userDoc?.primarySocial,
+                })
+            }
+            firebaseSignIn(result.user.uid);
+          } else
+            firebaseSignUp(result.user.uid, 2);
+        }
       }
     } catch (error: any) {
       setError(error.message);

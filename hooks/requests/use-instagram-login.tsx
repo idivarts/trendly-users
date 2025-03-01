@@ -84,7 +84,7 @@ const useInstagramLogin = (
           };
 
           await updateDoc(userDocRef, userData);
-          firebaseSignUp(user.user.uid, true);
+          firebaseSignUp(user.user.uid, 1);
         }
       })
       .catch((error: Error) => {
