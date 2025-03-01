@@ -1,4 +1,4 @@
-import { View } from "@/components/theme/Themed";
+import { Text, View } from "@/components/theme/Themed";
 import Colors from "@/constants/Colors";
 import { resetAndNavigate } from "@/utils/router";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
@@ -71,7 +71,7 @@ const ScreenHeader: React.FC<ScreenHeaderProps> = ({
         title={title}
       />
 
-      {rightAction && rightActionButton}
+      {rightAction && <Text style={{ fontSize: 16, fontWeight: "400" }}><View>{rightActionButton}</View></Text>}
     </Appbar.Header>
   );
 };
