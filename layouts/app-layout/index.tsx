@@ -1,17 +1,20 @@
-import { PropsWithChildren, useMemo } from "react";
-import { Platform, SafeAreaView, StatusBar, StyleSheet } from "react-native";
 import { StatusBar as ExpoStatusBar } from "expo-status-bar";
+import React, { PropsWithChildren, useMemo } from "react";
+import { Platform, SafeAreaView, StatusBar, StyleSheet } from "react-native";
 
 import Colors from "@/constants/Colors";
+import { useBreakpoints } from "@/hooks";
 import { useTheme } from "@react-navigation/native";
 import Toast from "react-native-toast-message";
 
-interface AppLayoutProps extends PropsWithChildren<Record<string, unknown>> { }
+interface AppLayoutProps extends PropsWithChildren<Record<string, unknown>> {
+  withWebPadding?: boolean;
+}
 
-const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
+const AppLayout: React.FC<AppLayoutProps> = ({ children, withWebPadding }) => {
   const theme = useTheme();
   const isAndroid = useMemo(() => Platform.OS === "android", []);
-
+  const { xl } = useBreakpoints()
   return (
     <SafeAreaView
       style={[
@@ -20,6 +23,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           backgroundColor: Colors(theme).background,
           paddingTop: isAndroid ? StatusBar.currentHeight : 0,
         },
+        Platform.OS === "web" && withWebPadding && xl && { paddingHorizontal: 120 },
       ]}
     >
       {children}
