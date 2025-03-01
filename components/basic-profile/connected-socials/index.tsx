@@ -1,13 +1,12 @@
 import FacebookLoginButton from "@/components/profile/ConnectWithFacebook";
+import InstagramLoginButton from "@/components/profile/ConnectWithInstagram";
 import SocialPage from "@/components/profile/SocialPage";
 import { View } from "@/components/theme/Themed";
-import React from "react";
+import { useSocialContext } from "@/contexts";
 import { SocialPlatform } from "@/shared-libs/firestore/trendly-pro/constants/social-platform";
-import { useState } from "react";
+import React, { useState } from "react";
 import { FlatList } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
-import InstagramLoginButton from "@/components/profile/ConnectWithInstagram";
-import { useSocialContext } from "@/contexts";
 
 const ConnectedSocials: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -48,8 +47,8 @@ const ConnectedSocials: React.FC = () => {
               gap: 10,
             }}
           />
-          <FacebookLoginButton onFacebookLogin={() => {}} />
-          <InstagramLoginButton onFacebookLogin={() => {}} />
+          <FacebookLoginButton />
+          <InstagramLoginButton />
         </>
       )}
     </View>

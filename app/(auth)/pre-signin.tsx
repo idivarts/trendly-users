@@ -57,7 +57,7 @@ const PreSignIn = () => {
       setError
     );
 
-  const { facebookLogin, promptAsyncFacebook, requestFacebook } =
+  const { facebookLogin, requestFacebook } =
     useFacebookLogin(
       AuthApp,
       FirestoreDB,
@@ -135,7 +135,7 @@ const PreSignIn = () => {
                       onPress={
                         requestFacebook
                           ? () => {
-                            promptAsyncFacebook();
+                            facebookLogin();
                           }
                           : () => { }
                       }
@@ -281,7 +281,7 @@ const PreSignIn = () => {
                     onPress={
                       requestFacebook
                         ? () => {
-                          promptAsyncFacebook();
+                          facebookLogin();
                         }
                         : () => { }
                     }
@@ -292,7 +292,7 @@ const PreSignIn = () => {
                     onPress={
                       requestInstagram
                         ? () => {
-                          promptAsyncInstagram();
+                          facebookLogin();
                         }
                         : () => { }
                     }

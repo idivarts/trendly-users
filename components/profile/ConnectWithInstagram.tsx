@@ -10,14 +10,9 @@ import { Platform, View } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
 import Button from "../ui/button";
 
-interface FacebookLoginButtonProps {
-  onFacebookLogin: (userId: string | null) => void;
-  isConnected?: boolean;
-}
-
 WebBrowser.maybeCompleteAuthSession();
 
-const InstagramLoginButton: React.FC<FacebookLoginButtonProps> = () => {
+const InstagramLoginButton: React.FC = () => {
   const FB_APP_ID = fbid;
   const [isLoading, setIsLoading] = useState(false);
   const user = AuthApp.currentUser;
