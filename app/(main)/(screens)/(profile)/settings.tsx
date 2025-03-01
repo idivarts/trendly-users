@@ -2,6 +2,7 @@ import Settings from "@/components/settings";
 import { Text, View } from "@/components/theme/Themed";
 import ScreenHeader from "@/components/ui/screen-header";
 import { useAuthContext } from "@/contexts";
+import AppLayout from "@/layouts/app-layout";
 import { AccountStatus } from "@/shared-libs/firestore/trendly-pro/models/users";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { User } from "@/types/User";
@@ -65,29 +66,31 @@ const SettingsScreen = () => {
   }
 
   return (
-    <View style={{ flex: 1 }}>
-      <ScreenHeader
-        title="Settings"
-        rightAction
-        rightActionButton={
-          <Pressable
-            onPress={handleSave}
-            style={{ padding: 10 }}
-          >
-            <Text>Save</Text>
-          </Pressable>
-        }
-      />
-      <Settings
-        handleDeactivate={handleDeactivate}
-        handleDelete={handleDelete}
-        onSave={handleOnSave}
-        user={user}
-        isDeactivating={isDeactivating}
-        isDeleting={isDeleting}
-      />
-      <Toast />
-    </View>
+    <AppLayout withWebPadding>
+      <View style={{ flex: 1 }}>
+        <ScreenHeader
+          title="Settings"
+          rightAction
+          rightActionButton={
+            <Pressable
+              onPress={handleSave}
+              style={{ padding: 10 }}
+            >
+              <Text>Save</Text>
+            </Pressable>
+          }
+        />
+        <Settings
+          handleDeactivate={handleDeactivate}
+          handleDelete={handleDelete}
+          onSave={handleOnSave}
+          user={user}
+          isDeactivating={isDeactivating}
+          isDeleting={isDeleting}
+        />
+        <Toast />
+      </View>
+    </AppLayout>
   );
 };
 

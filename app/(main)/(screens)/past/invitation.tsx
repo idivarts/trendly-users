@@ -1,25 +1,25 @@
-import React, { useEffect } from "react";
-import { View, FlatList } from "react-native";
+import BottomSheetActions from "@/components/BottomSheetActions";
+import CollaborationDetails from "@/components/collaboration/card-components/CollaborationDetails";
+import CollaborationHeader from "@/components/collaboration/card-components/CollaborationHeader";
+import ScreenHeader from "@/components/ui/screen-header";
+import Colors from "@/constants/Colors";
+import { useAuthContext } from "@/contexts";
 import AppLayout from "@/layouts/app-layout";
+import Carousel from "@/shared-uis/components/carousel/carousel";
+import { processRawAttachment } from "@/utils/attachments";
+import { FirestoreDB } from "@/utils/firestore";
+import { useTheme } from "@react-navigation/native";
 import {
   collection,
-  query,
-  where,
+  collectionGroup,
   doc as firebaseDoc,
   getDoc,
-  collectionGroup,
+  getDocs,
+  query,
+  where,
 } from "firebase/firestore";
-import { FirestoreDB } from "@/utils/firestore";
-import { getDocs } from "firebase/firestore";
-import BottomSheetActions from "@/components/BottomSheetActions";
-import ScreenHeader from "@/components/ui/screen-header";
-import CollaborationDetails from "@/components/collaboration/card-components/CollaborationDetails";
-import Colors from "@/constants/Colors";
-import { processRawAttachment } from "@/utils/attachments";
-import Carousel from "@/shared-uis/components/carousel/carousel";
-import CollaborationHeader from "@/components/collaboration/card-components/CollaborationHeader";
-import { useTheme } from "@react-navigation/native";
-import { useAuthContext } from "@/contexts";
+import React, { useEffect } from "react";
+import { FlatList, View } from "react-native";
 
 const PastApplicationPage = (props: any) => {
   const [isVisible, setIsVisible] = React.useState(false);
@@ -104,7 +104,7 @@ const PastApplicationPage = (props: any) => {
   }, []);
 
   return (
-    <AppLayout>
+    <AppLayout withWebPadding>
       <ScreenHeader title="Past Invitations" />
       <View
         style={{
