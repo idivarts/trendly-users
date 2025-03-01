@@ -1,38 +1,37 @@
-import React, { useState, useRef } from "react";
+import Button from "@/components/ui/button";
+import SocialButton from "@/components/ui/button/social-button";
+import Colors from "@/constants/Colors";
+import { slides } from "@/constants/Slides";
+import { INITIAL_USER_DATA } from "@/constants/User";
+import { useFacebookLogin, useInstagramLogin } from "@/hooks/requests";
+import AppLayout from "@/layouts/app-layout";
+import stylesFn from "@/styles/tab1.styles";
+import { AuthApp } from "@/utils/auth";
+import { FirestoreDB } from "@/utils/firestore";
+import { imageUrl } from "@/utils/url";
+import { faFacebook, faInstagram } from "@fortawesome/free-brands-svg-icons";
+import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { useTheme } from "@react-navigation/native";
+import { useRouter } from "expo-router";
+import * as WebBrowser from "expo-web-browser";
+import React, { useRef, useState } from "react";
 import {
-  View,
-  Text,
+  ActivityIndicator,
+  Dimensions,
   Image,
   Platform,
   Pressable,
-  ActivityIndicator,
-  Dimensions,
+  Text,
+  View,
 } from "react-native";
-import { Title, Paragraph, Portal } from "react-native-paper";
-import stylesFn from "@/styles/tab1.styles";
-import { useTheme } from "@react-navigation/native";
-import AppLayout from "@/layouts/app-layout";
-import { slides } from "@/constants/Slides";
-import * as WebBrowser from "expo-web-browser";
-import { AuthApp } from "@/utils/auth";
-import { useRouter } from "expo-router";
-import { INITIAL_USER_DATA } from "@/constants/User";
-import Colors from "@/constants/Colors";
-import { FirestoreDB } from "@/utils/firestore";
-import BottomSheetActions from "@/components/BottomSheetActions";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
-import SocialButton from "@/components/ui/button/social-button";
-import { faFacebook, faInstagram } from "@fortawesome/free-brands-svg-icons";
-import { imageUrl } from "@/utils/url";
-import { useFacebookLogin, useInstagramLogin } from "@/hooks/requests";
-import Button from "@/components/ui/button";
+import { Paragraph, Portal, Title } from "react-native-paper";
 import Carousel, {
   ICarouselInstance,
   Pagination,
 } from "react-native-reanimated-carousel";
 
-import { useSharedValue, runOnJS } from "react-native-reanimated";
+import { runOnJS, useSharedValue } from "react-native-reanimated";
 import Swiper from "react-native-swiper";
 
 WebBrowser.maybeCompleteAuthSession();
@@ -49,7 +48,7 @@ const PreSignIn = () => {
   const nativeRef = useRef<Swiper>(null);
   const progress = useSharedValue(0);
 
-  const { instagramLogin, promptAsyncInstagram, requestInstagram } =
+  const { instagramLogin, requestInstagram } =
     useInstagramLogin(
       AuthApp,
       FirestoreDB,
@@ -136,9 +135,9 @@ const PreSignIn = () => {
                       onPress={
                         requestFacebook
                           ? () => {
-                              promptAsyncFacebook();
-                            }
-                          : () => {}
+                            promptAsyncFacebook();
+                          }
+                          : () => { }
                       }
                     />
                     <SocialButton
@@ -147,9 +146,9 @@ const PreSignIn = () => {
                       onPress={
                         requestInstagram
                           ? () => {
-                              promptAsyncInstagram();
-                            }
-                          : () => {}
+                            instagramLogin();
+                          }
+                          : () => { }
                       }
                     />
                   </View>
@@ -282,9 +281,9 @@ const PreSignIn = () => {
                     onPress={
                       requestFacebook
                         ? () => {
-                            promptAsyncFacebook();
-                          }
-                        : () => {}
+                          promptAsyncFacebook();
+                        }
+                        : () => { }
                     }
                   />
                   <SocialButton
@@ -293,9 +292,9 @@ const PreSignIn = () => {
                     onPress={
                       requestInstagram
                         ? () => {
-                            promptAsyncInstagram();
-                          }
-                        : () => {}
+                          promptAsyncInstagram();
+                        }
+                        : () => { }
                     }
                   />
                 </View>
