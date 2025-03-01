@@ -26,6 +26,8 @@ const useInstagramLogin = (
 ): useInstagramLoginType => {
   const { firebaseSignIn, firebaseSignUp } = useAuthContext();
 
+  const isLocalhost = window.location.hostname === 'localhost';
+
   const redirectUri = AuthSession.makeRedirectUri({
     native: `fb${FB_APP_ID}://authorize`,
     ...(Platform.OS == "web" ? { path: "insta-redirect" } : {})
@@ -42,7 +44,7 @@ const useInstagramLogin = (
         responseType: "token",
       },
       {
-        authorizationEndpoint: `${authUrl}?redirect_type=${Platform.OS === "web" ? 1 : 3}&`,
+        authorizationEndpoint: `${authUrl}?redirect_type=${Platform.OS === "web" ? (isLocalhost ? 1 : 2) : 3}&`,
       }
     );
 
@@ -61,7 +63,7 @@ const useInstagramLogin = (
     await axios
       .post("https://be.trendly.pro/instagram/auth", {
         code: accessToken,
-        redirect_type: Platform.OS === "web" ? "1" : "3",
+        redirect_type: Platform.OS === "web" ? (isLocalhost ? "1" : "2") : "3",
       })
       .then(async (response) => {
         const user = await signInWithCustomToken(
