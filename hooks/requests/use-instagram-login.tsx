@@ -27,7 +27,7 @@ const useInstagramLogin = (
 ): useInstagramLoginType => {
   const { firebaseSignIn, firebaseSignUp } = useAuthContext();
 
-  const isLocalhost = Platform.OS == "web" ? (window.location.hostname === 'localhost') : false;
+  const isLocalhost = Platform.OS == "web" ? (window.location.hostname.includes('localhost')) : false;
 
   const redirectUri = AuthSession.makeRedirectUri({
     native: `fb${FB_APP_ID}://authorize`,
@@ -35,7 +35,7 @@ const useInstagramLogin = (
   });
   console.log("Redirect Uri for Instagram: ", redirectUri);
 
-  const authUrl = `https://be.trendly.pro/instagram`;
+  const authUrl = `https://be.trendly.pro/instagram?redirect_type=${Platform.OS === "web" ? (isLocalhost ? 1 : 2) : 3}&`;
 
   const [requestInstagram, responseInstagram, promptAsyncInstagram] =
     AuthSession.useAuthRequest(
@@ -45,14 +45,13 @@ const useInstagramLogin = (
         responseType: "token",
       },
       {
-        authorizationEndpoint: `${authUrl}?redirect_type=${Platform.OS === "web" ? (isLocalhost ? 1 : 2) : 3}&`,
+        authorizationEndpoint: authUrl,
       }
     );
 
   const instagramLogin = async () => {
     if (Platform.OS === "web") {
-      window.open(`${authUrl}?redirect_type=${Platform.OS === "web" ? 1 : 3}&`, "_blank",
-        "width=500,height=600");
+      window.open(authUrl, "_blank", "width=500,height=600");
       window.addEventListener('storage', receiveMessage);
     } else {
       await promptAsyncInstagram();
