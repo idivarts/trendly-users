@@ -55,11 +55,11 @@ const useFacebookLogin = (
           "public_profile",
           "email",
           "pages_show_list",
-          "pages_read_engagement",
           "business_management",
           "instagram_basic",
-          "instagram_manage_insights",
-          "read_insights"
+          // "pages_read_engagement",
+          // "instagram_manage_insights",
+          // "read_insights"
         ],
       },
       { authorizationEndpoint: "https://www.facebook.com/v10.0/dialog/oauth" }
