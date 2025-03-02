@@ -31,6 +31,7 @@ import Carousel, {
   Pagination,
 } from "react-native-reanimated-carousel";
 
+import ProfileOnboardLoader from "@/components/ProfileOnboardLoader";
 import { useBreakpoints } from "@/hooks";
 import { runOnJS, useSharedValue } from "react-native-reanimated";
 import Swiper from "react-native-swiper";
@@ -203,20 +204,7 @@ const PreSignIn = () => {
                 )}
                 {item.key === "connect" && loading && (
                   <Portal>
-                    <View
-                      style={{
-                        flex: 1,
-                        justifyContent: "center",
-                        alignItems: "center",
-                        zIndex: 1000,
-                        backgroundColor: Colors(theme).backdrop,
-                      }}
-                    >
-                      <ActivityIndicator
-                        size="large"
-                        color={Colors(theme).text}
-                      />
-                    </View>
+                    <ProfileOnboardLoader />
                   </Portal>
                 )}
               </View>

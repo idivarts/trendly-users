@@ -4,7 +4,7 @@ import {
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
 import { Theme, useTheme } from "@react-navigation/native";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -16,7 +16,10 @@ import { FirestoreDB } from "@/utils/firestore";
 import { faFacebook, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import React from "react";
 import { Platform, Pressable, StyleSheet } from "react-native";
+import { Portal } from "react-native-paper";
+import ProfileOnboardLoader from "../ProfileOnboardLoader";
 import { Text, View } from "../theme/Themed";
 import SocialButton from "../ui/button/social-button";
 
@@ -74,97 +77,107 @@ const AuthModal: React.FC<AuthModalProps> = ({
       />
     );
   };
+  useEffect(() => {
+    if (loading) {
+      bottomSheetModalRef.current?.close();
+    }
+  }, [loading]);
 
   const handleClose = () => {
     bottomSheetModalRef.current?.dismiss();
   }
 
   return (
-    <BottomSheetModal
-      backdropComponent={renderBackdrop}
-      containerOffset={containerOffset}
-      enablePanDownToClose={false}
-      index={2}
-      ref={bottomSheetModalRef}
-      snapPoints={snapPoints}
-      topInset={insets.top}
-    >
-      <BottomSheetScrollView
-        contentContainerStyle={styles.bottomSheetScrollViewContentContainer}
+    <>
+      <BottomSheetModal
+        backdropComponent={renderBackdrop}
+        containerOffset={containerOffset}
+        enablePanDownToClose={false}
+        index={2}
+        ref={bottomSheetModalRef}
+        snapPoints={snapPoints}
+        topInset={insets.top}
       >
-        <View
-          style={styles.container}
+        <BottomSheetScrollView
+          contentContainerStyle={styles.bottomSheetScrollViewContentContainer}
         >
-          <View>
-            <View style={styles.header}>
-              <Text style={styles.title}>Login / Register</Text>
-              <Pressable
-                onPress={handleClose}
-              >
-                <FontAwesomeIcon
-                  icon={faClose}
-                  color={Colors(theme).primary}
-                  size={24}
-                />
-              </Pressable>
+          <View
+            style={styles.container}
+          >
+            <View>
+              <View style={styles.header}>
+                <Text style={styles.title}>Login / Register</Text>
+                <Pressable
+                  onPress={handleClose}
+                >
+                  <FontAwesomeIcon
+                    icon={faClose}
+                    color={Colors(theme).primary}
+                    size={24}
+                  />
+                </Pressable>
+              </View>
+
+              <Text style={styles.subtitle}>Use your social login to register or login</Text>
             </View>
 
-            <Text style={styles.subtitle}>Use your social login to register or login</Text>
-          </View>
-
-          <View
-            style={{
-              gap: 16,
-            }}
-          >
-            <SocialButton
-              icon={faFacebook}
-              iconColor={Colors(theme).white}
-              customStyles={{
-                backgroundColor: Colors(theme).primary,
-                justifyContent: "center",
-
+            <View
+              style={{
+                gap: 16,
               }}
-              label="Continue with Facebook"
-              labelStyles={{
-                color: Colors(theme).white,
-              }}
-              onPress={() => {
-                if (Platform.OS === "web") {
-                  facebookLogin();
-                } else {
-                  if (requestFacebook) {
+            >
+              <SocialButton
+                icon={faFacebook}
+                iconColor={Colors(theme).white}
+                customStyles={{
+                  backgroundColor: Colors(theme).primary,
+                  justifyContent: "center",
+
+                }}
+                label="Continue with Facebook"
+                labelStyles={{
+                  color: Colors(theme).white,
+                }}
+                onPress={() => {
+                  if (Platform.OS === "web") {
                     facebookLogin();
+                  } else {
+                    if (requestFacebook) {
+                      facebookLogin();
+                    }
                   }
-                }
-              }}
-            />
-            <SocialButton
-              icon={faInstagram}
-              iconColor={Colors(theme).white}
-              customStyles={{
-                backgroundColor: Colors(theme).primary,
-                justifyContent: "center",
+                }}
+              />
+              <SocialButton
+                icon={faInstagram}
+                iconColor={Colors(theme).white}
+                customStyles={{
+                  backgroundColor: Colors(theme).primary,
+                  justifyContent: "center",
 
-              }}
-              label="Continue with Instagram"
-              labelStyles={{
-                color: Colors(theme).white,
-              }}
-              onPress={() => {
-                if (Platform.OS === "web") {
-                  instagramLogin();
-                } else {
-                  if (requestInstagram) {
+                }}
+                label="Continue with Instagram"
+                labelStyles={{
+                  color: Colors(theme).white,
+                }}
+                onPress={() => {
+                  if (Platform.OS === "web") {
                     instagramLogin();
+                  } else {
+                    if (requestInstagram) {
+                      instagramLogin();
+                    }
                   }
-                }
-              }}
-            />
+                }}
+              />
+            </View>
           </View>
-        </View>
-      </BottomSheetScrollView>
-    </BottomSheetModal>
+        </BottomSheetScrollView>
+      </BottomSheetModal>
+      {loading && <Portal>
+        <ProfileOnboardLoader />
+      </Portal>}
+    </>
   );
 };
 
