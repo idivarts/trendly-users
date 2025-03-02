@@ -135,15 +135,16 @@ const useFacebookLogin = (
           }
         );
 
-        if (!graphAPIResponse.data.accounts || graphAPIResponse.data.accounts.length === 0) {
-          if (isExistingUser)
-            firebaseSignIn(result.user.uid);
-          else
-            firebaseSignUp(result.user.uid, 0);
-        } else if (graphAPIResponse.data.accounts && graphAPIResponse.data.accounts.data.length === 1 && !graphAPIResponse.data.accounts.data[0].instagram_business_account) {
+        // if (!graphAPIResponse.data.accounts || graphAPIResponse.data.accounts.length === 0) {
+        //   if (isExistingUser)
+        //     firebaseSignIn(result.user.uid);
+        //   else
+        //     firebaseSignUp(result.user.uid, 0);
+        // } else 
+        if (graphAPIResponse.data.accounts && graphAPIResponse.data.accounts.data.length === 0) {
           //update and make this as the primary social
           const userDocRef = doc(firestore, "users", result.user.uid);
-          const primarySocial = graphAPIResponse.data.accounts.data[0].id;
+          const primarySocial = graphAPIResponse.data.id;
           await updateDoc(userDocRef, {
             primarySocial: primarySocial,
           }).then(() => {
@@ -157,20 +158,6 @@ const useFacebookLogin = (
             firebaseSignUp(result.user.uid, 1);
         } else {
           if (isExistingUser) {
-            if (userDoc?.primarySocial) {
-              console.log("Primary Social Exists", userDoc?.primarySocial);
-
-              const userDocRef = doc(firestore, "users", result.user.uid);
-              const exists = graphAPIResponse.data.accounts.data.find((account: any) => {
-                if (account.id === userDoc?.primarySocial || account?.instagram_business_account?.id === userDoc?.primarySocial)
-                  return true
-                return false
-              });
-              if (!exists)
-                await updateDoc(userDocRef, {
-                  primarySocial: null,
-                })
-            }
             firebaseSignIn(result.user.uid);
           } else
             firebaseSignUp(result.user.uid, 2);
