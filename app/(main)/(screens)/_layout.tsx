@@ -10,7 +10,7 @@ const ScreensLayout = () => {
           headerShown: false,
         }}
       >
-        <Stack.Screen
+        {/* <Stack.Screen
           name="questions"
           options={{
             headerShown: false,
@@ -21,7 +21,7 @@ const ScreensLayout = () => {
           options={{
             headerShown: false,
           }}
-        />
+        /> */}
       </Stack>
     </AppLayout>
   );
