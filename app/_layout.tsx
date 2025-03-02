@@ -3,16 +3,8 @@ import { APP_SCHEME } from "@/constants/App";
 import CustomPaperTheme from "@/constants/Theme";
 import {
   AuthContextProvider,
-  AWSContextProvider,
-  BrandContextProvider,
-  CloudMessagingContextProvider,
-  CollaborationContextProvider,
-  ContractContextProvider,
-  FirebaseStorageContextProvider,
-  NotificationContextProvider,
-  useAuthContext,
+  useAuthContext
 } from "@/contexts";
-import { SocialContextProvider } from "@/contexts/social-context.provider";
 import { resetAndNavigate } from "@/utils/router";
 import { queryParams } from "@/utils/url";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
@@ -67,27 +59,11 @@ const RootLayout = () => {
 
   return (
     <AuthContextProvider>
-      <SocialContextProvider>
-        <GestureHandlerRootView>
-          <BottomSheetModalProvider>
-            <AWSContextProvider>
-              <FirebaseStorageContextProvider>
-                <BrandContextProvider>
-                  <CollaborationContextProvider>
-                    <ContractContextProvider>
-                      <NotificationContextProvider>
-                        <CloudMessagingContextProvider>
-                          <RootLayoutStack />
-                        </CloudMessagingContextProvider>
-                      </NotificationContextProvider>
-                    </ContractContextProvider>
-                  </CollaborationContextProvider>
-                </BrandContextProvider>
-              </FirebaseStorageContextProvider>
-            </AWSContextProvider>
-          </BottomSheetModalProvider>
-        </GestureHandlerRootView>
-      </SocialContextProvider>
+      <GestureHandlerRootView>
+        <BottomSheetModalProvider>
+          <RootLayoutStack />
+        </BottomSheetModalProvider>
+      </GestureHandlerRootView>
     </AuthContextProvider>
   );
 };
