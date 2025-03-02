@@ -8,8 +8,7 @@ import ProfileBottomSheet from "@/shared-uis/components/ProfileModal/Profile-Mod
 import { FirestoreDB } from "@/utils/firestore";
 import {
   BottomSheetBackdrop,
-  BottomSheetModal,
-  BottomSheetScrollView,
+  BottomSheetModal
 } from "@gorhom/bottom-sheet";
 import { useTheme } from "@react-navigation/native";
 import { useMemo, useRef, useState } from "react";
@@ -34,7 +33,10 @@ const EditProfileScreen: React.FC = () => {
     right: insets.right,
   });
 
-  const handleSheetChanges = (index: number) => {};
+  const handleSheetChanges = (index: number) => { };
+  const closeProfileModal = () => {
+    bottomSheetModalRef.current?.close();
+  }
 
   const { user } = useAuthContext();
 
@@ -81,7 +83,7 @@ const EditProfileScreen: React.FC = () => {
         snapPoints={snapPoints}
         onChange={handleSheetChanges}
         backdropComponent={renderBackdrop}
-        enablePanDownToClose={true}
+        enablePanDownToClose={false}
         containerOffset={containerOffset}
         topInset={insets.top}
       >
@@ -90,6 +92,7 @@ const EditProfileScreen: React.FC = () => {
           theme={theme}
           FireStoreDB={FirestoreDB}
           isBrandsApp={false}
+          closeModal={closeProfileModal}
         />
       </BottomSheetModal>
 
