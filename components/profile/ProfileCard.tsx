@@ -1,19 +1,19 @@
-import { Platform, Pressable } from "react-native";
-import { Text, View } from "../theme/Themed";
+import Colors from "@/constants/Colors";
+import { PLACEHOLDER_PERSON_IMAGE } from "@/constants/Placeholder";
+import { useAuthContext } from "@/contexts";
+import { useAWSContext } from "@/contexts/aws-context.provider";
+import ImageComponent from "@/shared-uis/components/image-component";
 import stylesFn from "@/styles/profile/ProfileCard.styles";
 import { User } from "@/types/User";
-import { PLACEHOLDER_PERSON_IMAGE } from "@/constants/Placeholder";
-import { useTheme } from "@react-navigation/native";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faChevronRight, faPen } from "@fortawesome/free-solid-svg-icons";
-import Colors from "@/constants/Colors";
-import ImageUploadModal from "../ui/modal/ImageUploadModal";
-import { useAuthContext } from "@/contexts";
-import { useEffect, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { useTheme } from "@react-navigation/native";
 import { ResizeMode, Video } from "expo-av";
-import ImageComponent from "@/shared-uis/components/image-component";
-import { useAWSContext } from "@/contexts/aws-context.provider";
+import { useEffect, useState } from "react";
+import { Pressable } from "react-native";
+import { Text, View } from "../theme/Themed";
 import Button from "../ui/button";
+import ImageUploadModal from "../ui/modal/ImageUploadModal";
 
 interface ProfileCardProps {
   item: User;
@@ -69,28 +69,29 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ item, onPress }) => {
 
   const fetchImage = async () => {
     try {
-      if (!user?.profile) {
-        setImage(user?.profileImage || "");
-        return;
-      }
+      setImage(user?.profileImage || "");
+      // if (!user?.profile) {
+      //   setImage(user?.profileImage || "");
+      //   return;
+      // }
 
-      const imageToShow =
-        user?.profile?.attachments && user.profile.attachments[0]
-          ? user.profile.attachments[0]
-          : null;
+      // const imageToShow =
+      //   user?.profile?.attachments && user.profile.attachments[0]
+      //     ? user.profile.attachments[0]
+      //     : null;
 
-      if (imageToShow === null) {
-        setImage(user?.profileImage || "");
-        setIsVideo(false);
-      } else if (imageToShow.type === "image") {
-        setIsVideo(false);
-        setImage(imageToShow.imageUrl || "");
-      } else if (imageToShow.type === "video") {
-        setIsVideo(true);
-        Platform.OS === "ios"
-          ? setImage(imageToShow.appleUrl || "")
-          : setImage(imageToShow.playUrl || "");
-      }
+      // if (imageToShow === null) {
+      //   setImage(user?.profileImage || "");
+      //   setIsVideo(false);
+      // } else if (imageToShow.type === "image") {
+      //   setIsVideo(false);
+      //   setImage(imageToShow.imageUrl || "");
+      // } else if (imageToShow.type === "video") {
+      //   setIsVideo(true);
+      //   Platform.OS === "ios"
+      //     ? setImage(imageToShow.appleUrl || "")
+      //     : setImage(imageToShow.playUrl || "");
+      // }
     } catch (error) {
       console.error("Error fetching image or generating thumbnail:", error);
       setImage(PLACEHOLDER_PERSON_IMAGE);
