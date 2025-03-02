@@ -1,24 +1,24 @@
+import VerifiedIcon from "@/assets/icons/verified.svg";
 import { Text, View } from "@/components/theme/Themed";
-import TextInput from "@/components/ui/text-input";
-import { useEffect, useState } from "react";
-import { Keyboard, Platform, Animated, Pressable } from "react-native";
-import ContentItem from "./ContentItem";
-import Select from "@/components/ui/select";
 import Button from "@/components/ui/button";
+import Select from "@/components/ui/select";
+import SelectGroup from "@/components/ui/select/select-group";
+import TextInput from "@/components/ui/text-input";
+import Colors from "@/constants/Colors";
+import { useBreakpoints } from "@/hooks";
+import useEditProfile from "@/hooks/use-edit-profile";
+import { stylesFn } from "@/styles/edit-profile/EditProfile.styles";
 import { processRawAttachment } from "@/utils/attachments";
 import { generateEmptyAssets } from "@/utils/profile";
-import { useBreakpoints } from "@/hooks";
 import { useTheme } from "@react-navigation/native";
-import { stylesFn } from "@/styles/edit-profile/EditProfile.styles";
-import useEditProfile from "@/hooks/use-edit-profile";
+import { useRouter } from "expo-router";
+import { useEffect, useState } from "react";
+import { Animated, Keyboard, Platform, Pressable } from "react-native";
+import { ProgressBar } from "react-native-paper";
+import ContentItem from "./ContentItem";
 import DragAndDropNative from "./grid/native/DragAndDropNative";
 import DragAndDropWeb from "./grid/web/DragAndDropWeb";
-import { ProgressBar } from "react-native-paper";
-import Colors from "@/constants/Colors";
-import VerifiedIcon from "@/assets/icons/verified.svg";
 import Wrapper from "./grid/wrapper";
-import { useRouter } from "expo-router";
-import SelectGroup from "@/components/ui/select/select-group";
 
 interface EditProfileProps {
   unsavedChanges?: boolean;
@@ -124,12 +124,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
                   ...processRawAttachment(attachment),
                   id: index.toString(),
                 }
-              }) || items.map((item, index) => {
-                return {
-                  ...item,
-                  id: index.toString(),
-                }
-              })}
+              }) || []}
               onUploadAsset={handleAssetsUpdateWeb}
             />
           ) : (
