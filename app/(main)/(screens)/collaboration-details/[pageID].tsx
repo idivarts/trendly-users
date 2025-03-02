@@ -10,12 +10,16 @@ import AppLayout from "@/layouts/app-layout";
 import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
+import { resetAndNavigate } from "@/utils/router";
 
 const CollaborationDetailsScreen = () => {
   const theme = useTheme();
   const [isVisible, setIsVisible] = useState(false);
 
   const { cardId, cardType, collaborationID, pageID } = useLocalSearchParams();
+  if (pageID === undefined || pageID === "undefined") {
+    resetAndNavigate("/collaborations");
+  }
 
   return (
     <AppLayout withWebPadding={true}>
