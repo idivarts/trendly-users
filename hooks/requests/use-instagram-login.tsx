@@ -33,7 +33,7 @@ const useInstagramLogin = (
     native: `fb${FB_APP_ID}://authorize`,
     ...(Platform.OS == "web" ? { path: "insta-redirect" } : {})
   });
-  console.log("Redirect Uri for Instagram: ", redirectUri);
+  // console.log("Redirect Uri for Instagram: ", redirectUri);
 
   const authUrl = `https://be.trendly.pro/instagram?redirect_type=${Platform.OS === "web" ? (isLocalhost ? 1 : 2) : 3}&`;
 

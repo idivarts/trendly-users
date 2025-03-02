@@ -1,29 +1,34 @@
-import { View } from "react-native";
+import { CollaborationContextProvider, NotificationContextProvider } from "@/contexts";
 import AppLayout from "@/layouts/app-layout";
 import { Stack } from "expo-router";
+import { View } from "react-native";
 
 const PublicLayout = () => {
   return (
     <AppLayout>
-      <View
-        style={{
-          flex: 1,
-        }}
-      >
-        <Stack
-          screenOptions={{
-            animation: "ios",
-            headerShown: false,
-          }}
-        >
-          <Stack.Screen
-            name="collaboration/[collaborationId]"
-            options={{
-              headerShown: false,
+      <CollaborationContextProvider>
+        <NotificationContextProvider>
+          <View
+            style={{
+              flex: 1,
             }}
-          />
-        </Stack>
-      </View>
+          >
+            <Stack
+              screenOptions={{
+                animation: "ios",
+                headerShown: false,
+              }}
+            >
+              <Stack.Screen
+                name="collaboration/[collaborationId]"
+                options={{
+                  headerShown: false,
+                }}
+              />
+            </Stack>
+          </View>
+        </NotificationContextProvider>
+      </CollaborationContextProvider>
     </AppLayout>
   );
 };

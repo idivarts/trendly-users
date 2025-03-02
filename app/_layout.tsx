@@ -1,39 +1,31 @@
+import { useColorScheme } from "@/components/theme/useColorScheme";
+import { APP_SCHEME } from "@/constants/App";
+import CustomPaperTheme from "@/constants/Theme";
+import {
+  AuthContextProvider,
+  useAuthContext
+} from "@/contexts";
+import { resetAndNavigate } from "@/utils/router";
+import { queryParams } from "@/utils/url";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import {
   DarkTheme,
   DefaultTheme as ExpoDefaultTheme,
   ThemeProvider,
   useTheme,
 } from "@react-navigation/native";
-import { Provider } from "react-native-paper";
 import { useFonts } from "expo-font";
 import { Href, Stack, useGlobalSearchParams, usePathname, useRouter, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
+import { Linking } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { Linking, Platform } from "react-native";
+import { Provider } from "react-native-paper";
 import "react-native-reanimated";
-import { useColorScheme } from "@/components/theme/useColorScheme";
-import {
-  AuthContextProvider,
-  AWSContextProvider,
-  BrandContextProvider,
-  CloudMessagingContextProvider,
-  CollaborationContextProvider,
-  ContractContextProvider,
-  FirebaseStorageContextProvider,
-  NotificationContextProvider,
-  useAuthContext,
-} from "@/contexts";
-import CustomPaperTheme from "@/constants/Theme";
-import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import { SocialContextProvider } from "@/contexts/social-context.provider";
-import { APP_SCHEME } from "@/constants/App";
-import { resetAndNavigate } from "@/utils/router";
-import { queryParams } from "@/utils/url";
 export {
   // Catch any errors thrown by the Layout component.
-  ErrorBoundary,
+  ErrorBoundary
 } from "expo-router";
 
 export const unstable_settings = {
@@ -67,27 +59,11 @@ const RootLayout = () => {
 
   return (
     <AuthContextProvider>
-      <SocialContextProvider>
-        <GestureHandlerRootView>
-          <BottomSheetModalProvider>
-            <AWSContextProvider>
-              <FirebaseStorageContextProvider>
-                <BrandContextProvider>
-                  <CollaborationContextProvider>
-                    <ContractContextProvider>
-                      <NotificationContextProvider>
-                        <CloudMessagingContextProvider>
-                          <RootLayoutStack />
-                        </CloudMessagingContextProvider>
-                      </NotificationContextProvider>
-                    </ContractContextProvider>
-                  </CollaborationContextProvider>
-                </BrandContextProvider>
-              </FirebaseStorageContextProvider>
-            </AWSContextProvider>
-          </BottomSheetModalProvider>
-        </GestureHandlerRootView>
-      </SocialContextProvider>
+      <GestureHandlerRootView>
+        <BottomSheetModalProvider>
+          <RootLayoutStack />
+        </BottomSheetModalProvider>
+      </GestureHandlerRootView>
     </AuthContextProvider>
   );
 };
@@ -158,8 +134,8 @@ const RootLayoutStack = () => {
           <Stack.Screen name="(auth)" options={{ headerShown: false }} />
           <Stack.Screen name="(public)" options={{ headerShown: false }} />
           <Stack.Screen name="index" />
-          <Stack.Screen name="modal" options={{ presentation: "modal" }} />
           <Stack.Screen name="+not-found" />
+          {/* <Stack.Screen name="modal" options={{ presentation: "modal" }} /> */}
         </Stack>
       </Provider>
     </ThemeProvider>

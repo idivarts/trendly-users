@@ -1,15 +1,12 @@
 import {
-  useContext,
   createContext,
   type PropsWithChildren,
+  useContext,
   useEffect,
 } from "react";
 
-import { getToken } from "firebase/messaging";
-import { messaging } from "@/utils/messaging-web";
 import { Platform } from "react-native";
 import { useAuthContext } from "./auth-context.provider";
-import { newToken } from "@/utils/token";
 
 interface CloudMessagingContextProps { }
 
@@ -27,32 +24,36 @@ export const CloudMessagingContextProvider: React.FC<PropsWithChildren> = ({
   } = useAuthContext();
 
   const requestPermission = async () => {
-    const permission = await Notification.requestPermission();
-    if (permission === "granted") {
-      const token = await getToken(
-        messaging,
-        {
-          vapidKey: process.env.EXPO_PUBLIC_CLOUD_MESSAGING_VALID_KEY,
-        },
-      );
+    // const permission = await Notification.requestPermission();
+    // if (permission === "granted") {
+    //   const token = await getToken(
+    //     messaging,
+    //     {
+    //       vapidKey: process.env.EXPO_PUBLIC_CLOUD_MESSAGING_VALID_KEY,
+    //     },
+    //   );
 
-      if (user && session) {
-        const newNativeToken = newToken("web", user, token);
+    //   if (user && session) {
+    //     const newNativeToken = newToken("web", user, token);
 
-        if (newNativeToken) {
-          await updateUser(session, {
-            pushNotificationToken: newNativeToken,
-          });
-        }
-      }
-    } else if (permission === "denied") {
-      alert("You denied the permission to receive notifications");
-    }
+    //     if (newNativeToken) {
+    //       await updateUser(session, {
+    //         pushNotificationToken: newNativeToken,
+    //       });
+    //     }
+    //   }
+    // } else if (permission === "denied") {
+    //   alert("You denied the permission to receive notifications");
+    // }
   }
 
   useEffect(() => {
-    if (Platform.OS === "web" && session && user) {
-      requestPermission();
+    try {
+      if (Platform.OS === "web" && session && user) {
+        requestPermission();
+      }
+    } catch (e) {
+      console.log(e);
     }
   }, [session, user]);
 

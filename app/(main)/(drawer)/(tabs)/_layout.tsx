@@ -1,12 +1,13 @@
-import React from "react";
 import { router, Tabs } from "expo-router";
+import React from "react";
 
-import Colors from "@/constants/Colors";
-import { useClientOnlyValue } from "@/components/useClientOnlyValue";
-import { useBreakpoints } from "@/hooks";
-import { useTheme } from "@react-navigation/native";
 import NotificationIcon from "@/components/notifications/notification-icon";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { View } from "@/components/theme/Themed";
+import { useClientOnlyValue } from "@/components/useClientOnlyValue";
+import Colors from "@/constants/Colors";
+import { COMPLETION_PERCENTAGE } from "@/constants/CompletionPercentage";
+import { useAuthContext } from "@/contexts";
+import { useBreakpoints } from "@/hooks";
 import {
   faComment,
   faFileLines,
@@ -22,10 +23,9 @@ import {
   faStar as faStarSolid,
   faUser as faUserSolid,
 } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { useTheme } from "@react-navigation/native";
 import { TouchableOpacity } from "react-native";
-import { useAuthContext } from "@/contexts";
-import { COMPLETION_PERCENTAGE } from "@/constants/CompletionPercentage";
-import { View } from "@/components/theme/Themed";
 
 const TabLayout = () => {
   const { xl } = useBreakpoints();
@@ -52,6 +52,21 @@ const TabLayout = () => {
         },
       }}
     >
+      <Tabs.Screen
+        name="collaborations"
+        options={{
+          title: "Collaborations",
+          tabBarLabel: "Collaborations",
+          headerRight: () => <NotificationIcon />,
+          tabBarIcon: ({ color, focused }) => (
+            <FontAwesomeIcon
+              color={color}
+              icon={focused ? faStarSolid : faStar}
+              size={24}
+            />
+          ),
+        }}
+      />
       <Tabs.Screen
         name="proposals"
         options={{
@@ -80,21 +95,6 @@ const TabLayout = () => {
             />
           ),
           headerRight: () => <NotificationIcon />,
-        }}
-      />
-      <Tabs.Screen
-        name="collaborations"
-        options={{
-          title: "Collaborations",
-          tabBarLabel: "Collaborations",
-          headerRight: () => <NotificationIcon />,
-          tabBarIcon: ({ color, focused }) => (
-            <FontAwesomeIcon
-              color={color}
-              icon={focused ? faStarSolid : faStar}
-              size={24}
-            />
-          ),
         }}
       />
       <Tabs.Screen
@@ -127,18 +127,18 @@ const TabLayout = () => {
               />
               {(!user?.profile?.completionPercentage ||
                 user.profile.completionPercentage < COMPLETION_PERCENTAGE) && (
-                <View
-                  style={{
-                    backgroundColor: Colors(theme).yellow,
-                    width: 10,
-                    height: 10,
-                    position: "absolute",
-                    top: 5,
-                    right: 20,
-                    borderRadius: 20,
-                  }}
-                />
-              )}
+                  <View
+                    style={{
+                      backgroundColor: Colors(theme).yellow,
+                      width: 10,
+                      height: 10,
+                      position: "absolute",
+                      top: 5,
+                      right: 20,
+                      borderRadius: 20,
+                    }}
+                  />
+                )}
             </>
           ),
 
