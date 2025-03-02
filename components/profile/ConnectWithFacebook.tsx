@@ -44,13 +44,13 @@ const FacebookLoginButton: React.FC = () => {
             accounts: graphAPIResponse.data.accounts,
             name: graphAPIResponse.data.name,
             id: graphAPIResponse.data.id,
-            expiresIn: Number(graphAPIResponse.data.expires_in),
-            accessToken: graphAPIResponse.data.access_token,
-            signedRequest: graphAPIResponse.data.signedRequest,
-            graphDomain: graphAPIResponse.data.graphDomain,
-            data_access_expiration_time: Number(
-              graphAPIResponse.data.data_access_expiration_time
-            ),
+            accessToken: accessToken,
+            // expiresIn: Number(graphAPIResponse.data.expires_in),
+            // signedRequest: graphAPIResponse.data.signedRequest,
+            // graphDomain: graphAPIResponse.data.graphDomain,
+            // data_access_expiration_time: Number(
+            //   graphAPIResponse.data.data_access_expiration_time
+            // ),
           },
           {
             headers: {
