@@ -6,9 +6,6 @@ export const DUMMY_IMAGE =
   "https://www.pngkey.com/png/full/114-1149878_setting-user-avatar-in-specific-size-without-breaking.png";
 
 export const INITIAL_USER_DATA: Partial<IUsers> = {
-  profileImage: "",
-  phoneNumber: "",
-  location: "",
   isVerified: false,
   profile: {
     completionPercentage: 0,
