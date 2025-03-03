@@ -17,13 +17,12 @@ import { useRouter } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import React, { useRef, useState } from "react";
 import {
-  ActivityIndicator,
   Dimensions,
   Image,
   Platform,
   Pressable,
   Text,
-  View,
+  View
 } from "react-native";
 import { Paragraph, Portal, Title } from "react-native-paper";
 import Carousel, {
@@ -32,6 +31,7 @@ import Carousel, {
 } from "react-native-reanimated-carousel";
 
 import ProfileOnboardLoader from "@/components/ProfileOnboardLoader";
+import { IS_INSTA_AVAILABLE } from "@/constants/App";
 import { useBreakpoints } from "@/hooks";
 import { runOnJS, useSharedValue } from "react-native-reanimated";
 import Swiper from "react-native-swiper";
@@ -130,44 +130,20 @@ const PreSignIn = () => {
                   {item.title}
                 </Title>
                 <Paragraph style={styles.paragraph}>{item.text}</Paragraph>
-                {item.key === "connect" && Platform.OS !== "web" && (
-                  <View style={styles.socialContainer}>
-                    <SocialButton
-                      icon={faFacebook}
-                      label="Login with Facebook"
-                      onPress={
-                        requestFacebook
-                          ? () => {
-                            facebookLogin();
-                          }
-                          : () => { }
-                      }
-                    />
-                    <SocialButton
-                      icon={faInstagram}
-                      label="Login with Instagram"
-                      onPress={
-                        requestInstagram
-                          ? () => {
-                            instagramLogin();
-                          }
-                          : () => { }
-                      }
-                    />
-                  </View>
-                )}
-                {item.key === "connect" && Platform.OS === "web" && (
+
+                {item.key === "connect" && (
                   <View style={styles.socialContainer}>
                     <SocialButton
                       icon={faFacebook}
                       label="Login with Facebook"
                       onPress={facebookLogin}
                     />
-                    <SocialButton
-                      icon={faInstagram}
-                      label="Login with Instagram"
-                      onPress={instagramLogin}
-                    />
+                    {IS_INSTA_AVAILABLE &&
+                      <SocialButton
+                        icon={faInstagram}
+                        label="Login with Instagram"
+                        onPress={instagramLogin}
+                      />}
                   </View>
                 )}
                 {item.key !== "connect" && (
@@ -263,7 +239,7 @@ const PreSignIn = () => {
                 {slide.title}
               </Title>
               <Paragraph style={styles.paragraph}>{slide.text}</Paragraph>
-              {slide.key === "connect" && Platform.OS !== "web" && (
+              {slide.key === "connect" && (
                 <View style={styles.socialContainer}>
                   <SocialButton
                     icon={faFacebook}
@@ -276,34 +252,22 @@ const PreSignIn = () => {
                         : () => { }
                     }
                   />
-                  <SocialButton
+                  {IS_INSTA_AVAILABLE && <SocialButton
                     icon={faInstagram}
                     label="Login with Instagram"
                     onPress={
                       requestInstagram
                         ? () => {
-                          facebookLogin();
+                          instagramLogin();
                         }
                         : () => { }
                     }
-                  />
+                  />}
+
                 </View>
               )}
-              {slide.key === "connect" && Platform.OS === "web" && (
-                <View style={styles.socialContainer}>
-                  <SocialButton
-                    icon={faFacebook}
-                    label="Login with Facebook"
-                    onPress={facebookLogin}
-                  />
-                  <SocialButton
-                    icon={faInstagram}
-                    label="Login with Instagram"
-                    onPress={instagramLogin}
-                  />
-                </View>
-              )}
-              {slide.key !== "connect" && Platform.OS !== "web" && (
+
+              {slide.key !== "connect" && (
                 <Pressable
                   style={{
                     flexDirection: "row",
@@ -337,20 +301,7 @@ const PreSignIn = () => {
               )}
               {slide.key === "connect" && loading && (
                 <Portal>
-                  <View
-                    style={{
-                      flex: 1,
-                      justifyContent: "center",
-                      alignItems: "center",
-                      zIndex: 1000,
-                      backgroundColor: Colors(theme).backdrop,
-                    }}
-                  >
-                    <ActivityIndicator
-                      size="large"
-                      color={Colors(theme).text}
-                    />
-                  </View>
+                  <ProfileOnboardLoader />
                 </Portal>
               )}
             </View>
