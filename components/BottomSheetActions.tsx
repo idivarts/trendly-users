@@ -1,11 +1,12 @@
+import { DUMMY_PASSWORD, DUMMY_USER_CREDENTIALS } from "@/constants/User";
+import { useAuthContext } from "@/contexts";
+import Toaster from "@/shared-uis/components/toaster/Toaster";
+import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
+import { setStringAsync } from "expo-clipboard";
+import { Href, useRouter } from "expo-router";
 import React from "react";
 import { Modal, Pressable, StyleSheet, View } from "react-native";
 import { List } from "react-native-paper";
-import { Href, useRouter } from "expo-router";
-import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
-import { DUMMY_PASSWORD, DUMMY_USER_CREDENTIALS } from "@/constants/User";
-import { useAuthContext } from "@/contexts";
-
 interface BottomSheetActionsProps {
   cardType:
   | "collaboration"
@@ -109,6 +110,14 @@ const BottomSheetActions = ({
               title="Apply Now"
               onPress={() => {
                 router.push(`/apply-now/${cardId}`);
+                handleClose();
+              }}
+            />
+            <List.Item
+              title="Copy Collaboration Link"
+              onPress={() => {
+                setStringAsync(`https://creators.trendly.pro/collaboration/${cardId}`)
+                Toaster.success("Link copied to clipboard");
                 handleClose();
               }}
             />
