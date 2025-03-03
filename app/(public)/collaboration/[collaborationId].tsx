@@ -1,27 +1,28 @@
-import { Appbar } from "react-native-paper";
 import { useTheme } from "@react-navigation/native";
 import { useLocalSearchParams, usePathname, useRouter } from "expo-router";
+import { ActivityIndicator, Appbar } from "react-native-paper";
 
+import CollaborationDetails from "@/components/collaboration/collaboration-details";
+import AuthModal from "@/components/modals/AuthModal";
+import DownloadAppModal from "@/components/modals/DownloadAppModal";
 import { Text } from "@/components/theme/Themed";
 import Button from "@/components/ui/button";
 import Colors from "@/constants/Colors";
-import AppLayout from "@/layouts/app-layout";
-import DownloadAppModal from "@/components/modals/DownloadAppModal";
-import { useCallback, useEffect, useRef } from "react";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { Platform } from "react-native";
-import { useBreakpoints } from "@/hooks";
-import CollaborationDetails from "@/components/collaboration/collaboration-details";
-import AuthModal from "@/components/modals/AuthModal";
 import { useAuthContext } from "@/contexts";
+import { useBreakpoints } from "@/hooks";
+import AppLayout from "@/layouts/app-layout";
 import { AuthApp } from "@/utils/auth";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { signInAnonymously } from "firebase/auth";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Platform } from "react-native";
 
 const CollaborationDetailsScreen = () => {
   const {
     collaborationId,
   } = useLocalSearchParams();
   const pathname = usePathname();
+  const [loading, setLoading] = useState(true)
 
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const authModalBottomSheetModalRef = useRef<BottomSheetModal>(null);
@@ -53,7 +54,7 @@ const CollaborationDetailsScreen = () => {
     if (user) {
       router.replace(`/collaboration-details/${collaborationId}`);
     } else {
-      signInAnonymously(AuthApp);
+      signInAnonymously(AuthApp).then(() => { setLoading(false) });
     }
   }, [user]);
 
@@ -86,12 +87,13 @@ const CollaborationDetailsScreen = () => {
           Register Now
         </Button>
       </Appbar.Header>
-      <CollaborationDetails
+      {!loading ? <CollaborationDetails
         pageID={collaborationId as string}
         cardId={null as any}
         cardType="public-collaboration"
         collaborationID={collaborationId as string}
-      />
+      /> : <ActivityIndicator size="small" color={Colors(theme).primary} />}
+
       <DownloadAppModal
         bottomSheetModalRef={bottomSheetModalRef}
         collaborationId={collaborationId as string}
