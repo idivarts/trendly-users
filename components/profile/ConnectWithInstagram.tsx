@@ -1,3 +1,4 @@
+import { IS_INSTA_AVAILABLE } from "@/constants/App";
 import { FB_APP_ID as fbid } from "@/constants/Facebook";
 import { INITIAL_USER_DATA } from "@/constants/User";
 import { useInstagramLogin } from "@/hooks/requests";
@@ -46,6 +47,9 @@ const InstagramLoginButton: React.FC = () => {
       setIsLoading(false);
     }
   };
+
+  if (!IS_INSTA_AVAILABLE)
+    return null;
 
   return (
     <View>
