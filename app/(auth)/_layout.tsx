@@ -1,6 +1,6 @@
-import { View } from "react-native";
 import AppLayout from "@/layouts/app-layout";
 import { Stack } from "expo-router";
+import { View } from "react-native";
 
 const AuthLayout = () => {
   return (
@@ -36,6 +36,12 @@ const AuthLayout = () => {
           />
           <Stack.Screen
             name="forgot-password"
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="beta"
             options={{
               headerShown: false,
             }}
