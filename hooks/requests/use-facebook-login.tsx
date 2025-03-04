@@ -57,10 +57,12 @@ const useFacebookLogin = (
           "email",
           "pages_show_list",
           "business_management",
-          ...(IS_BETA_ENABLED ? ["instagram_basic"] : [])
-          // "pages_read_engagement",
-          // "instagram_manage_insights",
-          // "read_insights"
+          ...(IS_BETA_ENABLED ?
+            ["instagram_basic",
+              "pages_read_engagement",
+              "instagram_manage_insights",
+              "read_insights"] : [])
+
         ],
       },
       { authorizationEndpoint: "https://www.facebook.com/v10.0/dialog/oauth" }
