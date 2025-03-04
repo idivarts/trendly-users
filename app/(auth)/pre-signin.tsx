@@ -31,7 +31,7 @@ import Carousel, {
 } from "react-native-reanimated-carousel";
 
 import ProfileOnboardLoader from "@/components/ProfileOnboardLoader";
-import { IS_INSTA_AVAILABLE } from "@/constants/App";
+import { IS_BETA_ENABLED } from "@/constants/App";
 import { useBreakpoints } from "@/hooks";
 import { runOnJS, useSharedValue } from "react-native-reanimated";
 import Swiper from "react-native-swiper";
@@ -138,7 +138,7 @@ const PreSignIn = () => {
                       label="Login with Facebook"
                       onPress={facebookLogin}
                     />
-                    {IS_INSTA_AVAILABLE &&
+                    {IS_BETA_ENABLED &&
                       <SocialButton
                         icon={faInstagram}
                         label="Login with Instagram"
@@ -252,7 +252,7 @@ const PreSignIn = () => {
                         : () => { }
                     }
                   />
-                  {IS_INSTA_AVAILABLE && <SocialButton
+                  {IS_BETA_ENABLED && <SocialButton
                     icon={faInstagram}
                     label="Login with Instagram"
                     onPress={

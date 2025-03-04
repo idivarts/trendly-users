@@ -6,4 +6,4 @@ export const APP_STORE_URL =
 export const PLAY_STORE_URL =
   "https://play.google.com/store/apps/details?id=pro.trendly.creators";
 
-export const IS_INSTA_AVAILABLE = localStorage.getItem("v2") ? true : false
+export const IS_BETA_ENABLED = localStorage.getItem("v2") ? true : false

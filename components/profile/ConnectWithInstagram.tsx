@@ -1,4 +1,4 @@
-import { IS_INSTA_AVAILABLE } from "@/constants/App";
+import { IS_BETA_ENABLED } from "@/constants/App";
 import { FB_APP_ID as fbid } from "@/constants/Facebook";
 import { INITIAL_USER_DATA } from "@/constants/User";
 import { useInstagramLogin } from "@/hooks/requests";
@@ -48,7 +48,7 @@ const InstagramLoginButton: React.FC = () => {
     }
   };
 
-  if (!IS_INSTA_AVAILABLE)
+  if (!IS_BETA_ENABLED)
     return null;
 
   return (
