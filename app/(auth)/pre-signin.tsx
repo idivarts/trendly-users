@@ -241,7 +241,7 @@ const PreSignIn = () => {
           {slides.map((slide) => (
             <View style={styles.slide} key={slide.key}>
               {slide.key === "connect" &&
-                <Pressable style={styles.skipButton} onPress={() => {
+                <Pressable style={[styles.skipButton, { padding: 20 }]} onPress={() => {
                   setVisible(true)
                 }}>
                   <FontAwesomeIcon
