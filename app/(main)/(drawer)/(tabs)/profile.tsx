@@ -63,9 +63,11 @@ const ProfileScreen = () => {
             <FontAwesomeIcon icon={faWarning} color="#fff" size={22} />
             <Text
               style={{
-                fontSize: 16,
+                fontSize: 14,
+                lineHeight: 20,
                 color: Colors(theme).white,
                 padding: 16,
+                paddingVertical: 8,
               }}
             >
               We only advertise you to our brands if your profile is more than{" "}
