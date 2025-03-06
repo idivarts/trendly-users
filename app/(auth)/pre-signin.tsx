@@ -246,7 +246,7 @@ const PreSignIn = () => {
                 }}>
                   <FontAwesomeIcon
                     icon={faEllipsis}
-                    style={styles.skipButton}></FontAwesomeIcon>
+                    style={styles.skipIcon}></FontAwesomeIcon>
                 </Pressable>
               }
               {slide.key !== "connect" && (

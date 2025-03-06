@@ -1,20 +1,20 @@
+import Button from "@/components/ui/button";
+import TextInput from "@/components/ui/text-input";
+import Colors from "@/constants/Colors";
+import { useAuthContext } from "@/contexts";
+import fnStyles from "@/styles/signup.styles";
+import { useTheme } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
-  View,
+  Dimensions,
   Image,
-  Text,
-  ScrollView,
   KeyboardAvoidingView,
   Platform,
-  Dimensions,
+  ScrollView,
+  Text,
+  View,
 } from "react-native";
-import fnStyles from "@/styles/signup.styles";
-import { useTheme } from "@react-navigation/native";
-import { useAuthContext } from "@/contexts";
-import Colors from "@/constants/Colors";
-import TextInput from "@/components/ui/text-input";
-import Button from "@/components/ui/button";
 
 const SignUpScreen = () => {
   const [name, setName] = useState("");
