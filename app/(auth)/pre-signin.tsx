@@ -10,7 +10,7 @@ import { AuthApp } from "@/utils/auth";
 import { FirestoreDB } from "@/utils/firestore";
 import { imageUrl } from "@/utils/url";
 import { faFacebook, faInstagram } from "@fortawesome/free-brands-svg-icons";
-import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight, faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
 import { useRouter } from "expo-router";
@@ -30,8 +30,9 @@ import Carousel, {
   Pagination,
 } from "react-native-reanimated-carousel";
 
+import BottomSheetActions from "@/components/BottomSheetActions";
 import ProfileOnboardLoader from "@/components/ProfileOnboardLoader";
-import { IS_INSTA_AVAILABLE } from "@/constants/App";
+import { IS_BETA_ENABLED } from "@/constants/App";
 import { useBreakpoints } from "@/hooks";
 import { runOnJS, useSharedValue } from "react-native-reanimated";
 import Swiper from "react-native-swiper";
@@ -114,6 +115,22 @@ const PreSignIn = () => {
             }}
             renderItem={({ item }) => (
               <View style={styles.slide}>
+                {item.key === "connect" &&
+                  // <Pressable style={styles.skipButton} onPress={() => {
+                  //   setVisible(true)
+                  // }}>
+                  //   <FontAwesomeIcon
+                  //     icon={faEllipsis}
+                  //     style={styles.skipButton}></FontAwesomeIcon>
+                  // </Pressable>
+                  <Button
+                    mode="outlined"
+                    style={styles.skipButton}
+                    onPress={() => setVisible(true)}
+                  >
+                    Options
+                  </Button>
+                }
                 {item.key !== "connect" && (
                   <Button
                     mode="outlined"
@@ -138,7 +155,7 @@ const PreSignIn = () => {
                       label="Login with Facebook"
                       onPress={facebookLogin}
                     />
-                    {IS_INSTA_AVAILABLE &&
+                    {IS_BETA_ENABLED &&
                       <SocialButton
                         icon={faInstagram}
                         label="Login with Instagram"
@@ -223,6 +240,15 @@ const PreSignIn = () => {
         >
           {slides.map((slide) => (
             <View style={styles.slide} key={slide.key}>
+              {slide.key === "connect" &&
+                <Pressable style={styles.skipButton} onPress={() => {
+                  setVisible(true)
+                }}>
+                  <FontAwesomeIcon
+                    icon={faEllipsis}
+                    style={styles.skipButton}></FontAwesomeIcon>
+                </Pressable>
+              }
               {slide.key !== "connect" && (
                 <Button
                   mode="outlined"
@@ -252,7 +278,7 @@ const PreSignIn = () => {
                         : () => { }
                     }
                   />
-                  {IS_INSTA_AVAILABLE && <SocialButton
+                  {IS_BETA_ENABLED && <SocialButton
                     icon={faInstagram}
                     label="Login with Instagram"
                     onPress={
@@ -310,6 +336,13 @@ const PreSignIn = () => {
       )}
 
       {error && <Text style={{ color: "red" }}>Error: {error}</Text>}
+      <BottomSheetActions
+        isVisible={visible}
+        cardType="pre-signin"
+        onClose={() => setVisible(false)}
+        snapPointsRange={["25%", "40%"]}
+      />
+
     </AppLayout>
   );
 };
