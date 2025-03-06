@@ -1,3 +1,4 @@
+import { IS_BETA_ENABLED } from "@/constants/App";
 import { DUMMY_PASSWORD, DUMMY_USER_CREDENTIALS } from "@/constants/User";
 import { useAuthContext } from "@/contexts";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
@@ -146,19 +147,20 @@ const BottomSheetActions = ({
         return (
           <List.Section style={{ paddingBottom: 28 }}>
             <List.Item
-              title="Login With Email"
+              title="Login as Admin"
               onPress={() => {
                 handleEmailSignIn();
                 handleClose();
               }}
             />
-            <List.Item
-              title="Login With Instagram"
+            {IS_BETA_ENABLED && <List.Item
+              title="Proceed as Guests"
               onPress={() => {
-                handleInstagramSignIn();
-                handleClose();
+                // handleInstagramSignIn();
+                // handleClose();
               }}
-            />
+            />}
+
           </List.Section>
         );
       default:
