@@ -8,29 +8,29 @@ export const calculateProfileCompletion = (profile: Profile) => {
   const totalFields = 10;
   let completedFields = 0;
 
-  if (profile.name) {
+  if (profile?.name) {
     completedFields++;
   }
 
-  if (profile.emailVerified) {
+  if (profile?.emailVerified) {
     completedFields++;
   }
 
-  if (profile.phoneVerified) {
+  if (profile?.phoneVerified) {
     completedFields++;
   }
 
-  if (profile.category.length > 0) {
+  if (profile?.category?.length > 0) {
     completedFields++;
   }
 
-  Object.values(profile.content).forEach((value) => {
+  Object.values(profile?.content).forEach((value) => {
     if (value) {
       completedFields++;
     }
   });
 
-  if (profile.attachments.length > 0) {
+  if (profile?.attachments?.length > 0) {
     completedFields++;
   }
 
