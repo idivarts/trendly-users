@@ -134,8 +134,10 @@ const ApplyScreenWeb = () => {
   const handleUploadFiles = async () => {
     setLoading(true);
     try {
-      const uploadedFiles = await uploadAttachments(fileAttachments);
-      const uploadedFilesResponse = await uploadFiles(files);
+      const [uploadedFiles, uploadedFilesResponse] = await Promise.all([
+        uploadAttachments(fileAttachments),
+        uploadFiles(files)
+      ]);
 
       setUploadedFiles(uploadedFilesResponse);
 

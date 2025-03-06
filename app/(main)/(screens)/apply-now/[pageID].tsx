@@ -112,29 +112,25 @@ const ApplyScreen = () => {
   const handleUploadFiles = async () => {
     setLoading(true);
     try {
-      const uploadedFiles = await uploadAttachments(fileAttachments);
-
       const filesWithoutProfileAttachments = // if file uri starts with https, it is a profile attachment and should be removed
         files.filter((file) => !file.uri.startsWith("https"));
 
-      const uploadedFileUrisResponse = await uploadFileUris(
-        filesWithoutProfileAttachments
-      );
+      const [uploadedFiles, uploadedFileUrisResponse] = await Promise.all([
+        uploadAttachments(fileAttachments),
+        uploadFileUris(filesWithoutProfileAttachments)
+      ]);
 
       const finalProfileAttachments = profileAttachments.map(
         //@ts-ignore
         ({ id, ...rest }) => rest // Exclude the `id` field
       );
 
-      setUploadedFiles([
-        ...uploadedFileUrisResponse,
-        ...finalProfileAttachments,
-      ]);
-
       const finalFiles = [
         ...uploadedFileUrisResponse,
         ...finalProfileAttachments,
       ];
+      setUploadedFiles(finalFiles);
+
       const timelineTimestamp = timelineData?.getTime();
 
       setLoading(false);

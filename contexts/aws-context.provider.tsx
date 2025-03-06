@@ -152,24 +152,24 @@ export const AWSContextProvider: React.FC<PropsWithChildren> = ({
 
   const uploadFileUris = async (fileUris: AssetItem[]): Promise<any[]> => {
     try {
-      const uploadedFiles: any[] = [];
+      const uploadedFiles: Promise<any>[] = [];
       const totalProgress = 100 / fileUris.length;
 
       setProcessPercentage(0);
 
       for (const [index, fileUri] of fileUris.entries()) {
         setProcessMessage(`Uploading asset ${index + 1}`);
-        const result = await uploadFileUri(fileUri);
+        const result = uploadFileUri(fileUri);
         setProcessPercentage((prev) =>
           Math.ceil(Math.round(prev + totalProgress))
         );
         uploadedFiles.push(result);
       }
-
+      const files = await Promise.all(uploadedFiles)
       setProcessMessage("Uploaded Successfully - Processing files");
       setProcessPercentage(100);
 
-      return uploadedFiles;
+      return files;
     } catch (error) {
       console.error(error);
       throw new Error("Failed to upload files");
@@ -219,23 +219,24 @@ export const AWSContextProvider: React.FC<PropsWithChildren> = ({
 
   const uploadFiles = async (files: File[]): Promise<any[]> => {
     try {
-      const uploadedFiles: any[] = [];
+      const uploadedFiles: Promise<any>[] = [];
       const totalProgress = 100 / files.length;
       setProcessPercentage(0);
 
       for (const file of files) {
         setProcessMessage(`Uploading ${file.name}`);
-        const result = await uploadFile(file);
+        const result = uploadFile(file);
         setProcessPercentage((prev) =>
           Math.ceil(Math.round(prev + totalProgress))
         );
         uploadedFiles.push(result);
       }
+      const mfiles = await Promise.all(uploadedFiles)
 
       setProcessMessage("Uploaded Successfully - Processing files");
       setProcessPercentage(100);
 
-      return uploadedFiles;
+      return mfiles;
     } catch (error) {
       console.error(error);
       throw new Error("Failed to upload files");
@@ -284,23 +285,24 @@ export const AWSContextProvider: React.FC<PropsWithChildren> = ({
 
   const uploadAttachments = async (attachment: AssetItem[]): Promise<any> => {
     try {
-      const uploadedFiles: any[] = [];
+      const uploadedFiles: Promise<any>[] = [];
       const totalProgress = 100 / attachment.length;
       setProcessPercentage(0);
 
       for (const file of attachment) {
         setProcessMessage(`Uploading ${file.id}`);
-        const result = await uploadAttachment(file);
+        const result = uploadAttachment(file);
         setProcessPercentage((prev) =>
           Math.ceil(Math.round(prev + totalProgress))
         );
         uploadedFiles.push(result);
       }
+      const allFiles = await Promise.all(uploadedFiles)
 
       setProcessMessage("Uploaded Successfully - Processing files");
       setProcessPercentage(100);
 
-      return uploadedFiles;
+      return allFiles;
     } catch (error) {
       console.error(error);
       throw new Error("Failed to upload files");
