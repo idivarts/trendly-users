@@ -211,7 +211,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
                   setUnsavedChanges && setUnsavedChanges(true);
                 }}
               />
-              <Button
+              {/* <Button
                 mode="contained"
                 size="small"
                 style={{
@@ -220,7 +220,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
                 onPress={() => null}
               >
                 {user?.phoneVerified ? 'Verified' : 'Verify'}
-              </Button>
+              </Button> */}
             </View>
           </View>
           <View
