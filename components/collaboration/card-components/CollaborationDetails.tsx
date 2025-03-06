@@ -67,7 +67,7 @@ const CollaborationDetails: FC<CollaborationDetailsProps> = ({
       >
         <ChipCard
           chipText={
-            promotionType === PromotionType.PAID_COLLAB ? "Paid" : "Unpaid"
+            promotionType === PromotionType.PAID_COLLAB ? "Paid" : "Barter"
           }
           chipIcon={faDollarSign}
         />

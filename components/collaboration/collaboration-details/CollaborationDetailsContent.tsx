@@ -597,7 +597,7 @@ const CollborationDetailsContent = (
                 props.collaborationDetail.promotionType ===
                   PromotionType.PAID_COLLAB
                   ? "Paid"
-                  : "Unpaid"
+                  : "Barter"
               }
               chipIcon={faDollarSign}
             />
