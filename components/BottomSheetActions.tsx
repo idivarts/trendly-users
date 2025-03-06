@@ -147,7 +147,7 @@ const BottomSheetActions = ({
         return (
           <List.Section style={{ paddingBottom: 28 }}>
             <List.Item
-              title="Login as Admin"
+              title="Proceed with Email"
               onPress={() => {
                 handleEmailSignIn();
                 handleClose();
