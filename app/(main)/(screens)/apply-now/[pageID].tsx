@@ -8,6 +8,7 @@ import { useAWSContext } from "@/contexts/aws-context.provider";
 import AppLayout from "@/layouts/app-layout";
 import { Attachment } from "@/shared-libs/firestore/trendly-pro/constants/attachment";
 import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
+import ProgressLoader from "@/shared-uis/components/ProgressLoader";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { stylesFn } from "@/styles/ApplyNow.styles";
 import { AssetItem } from "@/types/Asset";
@@ -462,6 +463,7 @@ const ApplyScreen = () => {
           color={Colors(theme).primary}
           style={styles.progressBar}
         />
+        {loading && <ProgressLoader isProcessing={loading} progress={processPercentage} />}
 
         <Button
           mode="contained"

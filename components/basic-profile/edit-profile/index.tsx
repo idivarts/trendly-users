@@ -14,11 +14,11 @@ import { useTheme } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Animated, Keyboard, Platform, Pressable } from "react-native";
+import ProgressLoader from "../../../shared-uis/components/ProgressLoader";
 import ContentItem from "./ContentItem";
 import DragAndDropNative from "./grid/native/DragAndDropNative";
 import DragAndDropWeb from "./grid/web/DragAndDropWeb";
 import Wrapper from "./grid/wrapper";
-import ProfileProgressLoader from "./ProfileProgressLoader";
 
 interface EditProfileProps {
   unsavedChanges?: boolean;
@@ -324,7 +324,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
           </View>
         </View>
       </Wrapper>
-      {isProcessing && <ProfileProgressLoader isProcessing={true} progress={processPercentage} />}
+      {isProcessing && <ProgressLoader isProcessing={true} progress={processPercentage} />}
       {unsavedChanges &&
         <Animated.View
           style={[

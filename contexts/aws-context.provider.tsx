@@ -1,14 +1,14 @@
+import { AssetItem, NativeAssetItem, WebAssetItem } from "@/types/Asset";
 import { AuthApp } from "@/utils/auth";
+import * as FileSystem from "expo-file-system";
+import * as MediaLibrary from "expo-media-library";
 import {
-  useContext,
   createContext,
   type PropsWithChildren,
+  useContext,
   useState,
 } from "react";
 import { Platform } from "react-native";
-import * as FileSystem from "expo-file-system";
-import * as MediaLibrary from "expo-media-library";
-import { AssetItem, NativeAssetItem, WebAssetItem } from "@/types/Asset";
 
 interface AWSContextProps {
   getBlob: (fileUri: any) => Promise<Blob>;
@@ -312,20 +312,17 @@ export const AWSContextProvider: React.FC<PropsWithChildren> = ({
     nativeAssets: NativeAssetItem[],
     webAssets: WebAssetItem[],
   ): Promise<any[]> => {
-    let uploadedAssets = [];
-
+    let allAttachments: Promise<any>[] = []
     if (Platform.OS === 'web') {
       for (const asset of webAssets) {
         if (typeof asset.url === 'string' && asset.url.includes('http')) {
           const attachment = attachments.find(attachment => (
             asset.url === attachment.imageUrl || asset.url === attachment.playUrl || asset.url === attachment.appleUrl
           ));
-
-          uploadedAssets.push(attachment);
+          allAttachments.push(attachment)
         } else if (asset.url instanceof File) {
-          const uploadAsset = await uploadFile(asset.url as File);
-
-          uploadedAssets.push(uploadAsset);
+          const uploadAsset = uploadFile(asset.url as File);
+          allAttachments.push(uploadAsset)
         } else {
           continue;
         }
@@ -337,30 +334,29 @@ export const AWSContextProvider: React.FC<PropsWithChildren> = ({
           const attachment = attachments.find(attachment => (
             asset.url === attachment.imageUrl || asset.url === attachment.playUrl || asset.url === attachment.appleUrl
           ));
-
-          uploadedAssets.push(attachment);
+          allAttachments.push(attachment);
         } else if (asset.type === 'video') {
-          const uploadAsset = await uploadFileUri({
+          const uploadAsset = uploadFileUri({
             id: asset.url,
             type: 'video',
             localUri: asset.url,
             uri: asset.url,
           });
 
-          uploadedAssets.push(uploadAsset);
+          allAttachments.push(uploadAsset);
         } else {
-          const uploadAsset = await uploadFileUri({
+          const uploadAsset = uploadFileUri({
             id: asset.url,
             type: 'image',
             localUri: asset.url,
             uri: asset.url,
           });
 
-          uploadedAssets.push(uploadAsset);
+          allAttachments.push(uploadAsset);
         }
       };
     }
-
+    const uploadedAssets = await Promise.all(allAttachments)
     return uploadedAssets;
   }
 

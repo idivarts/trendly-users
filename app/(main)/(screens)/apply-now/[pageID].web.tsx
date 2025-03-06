@@ -9,6 +9,7 @@ import { useAWSContext } from "@/contexts/aws-context.provider";
 import { useBreakpoints } from "@/hooks";
 import AppLayout from "@/layouts/app-layout";
 import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
+import ProgressLoader from "@/shared-uis/components/ProgressLoader";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { stylesFn } from "@/styles/ApplyNow.styles";
 import { FirestoreDB } from "@/utils/firestore";
@@ -382,7 +383,7 @@ const ApplyScreenWeb = () => {
               style={styles.progressBar}
             />
           )}
-
+          {loading && <ProgressLoader isProcessing={loading} progress={processPercentage} />}
           <Button
             mode="contained"
             onPress={async () => {
