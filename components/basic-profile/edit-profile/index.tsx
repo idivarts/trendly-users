@@ -41,15 +41,6 @@ const EditProfile: React.FC<EditProfileProps> = ({
     xl,
   } = useBreakpoints();
 
-  const items = [
-    { url: '', type: '' },
-    { url: '', type: '' },
-    { url: '', type: '' },
-    { url: '', type: '' },
-    { url: '', type: '' },
-    { url: '', type: '' },
-  ];
-
   const {
     contents,
     email,
@@ -130,7 +121,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
           ) : (
             <DragAndDropNative
               items={
-                generateEmptyAssets(user?.profile?.attachments as any, items).map((item, index) => {
+                generateEmptyAssets(user?.profile?.attachments as any).map((item, index) => {
                   return {
                     ...item,
                     id: index,
