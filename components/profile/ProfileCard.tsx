@@ -179,7 +179,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ item, onPress }) => {
           marginVertical: 10,
         }}
       >
-        Complete your Profile
+        {(item.profile?.completionPercentage && item.profile?.completionPercentage > 60) ? "Edit Profile" : "Complete your Profile"}
       </Button>
       <ImageUploadModal
         onImageUpload={onImageUpload}
