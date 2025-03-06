@@ -1,24 +1,25 @@
-import React, { useRef, useState } from "react";
-import { useTheme } from "@react-navigation/native";
-import { Text, View } from "@/components/theme/Themed";
-import { Appbar } from "react-native-paper";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import AppLayout from "@/layouts/app-layout";
-import Colors from "@/constants/Colors";
-import { RichEditor, RichToolbar } from "react-native-pell-rich-editor";
 import Component from "@/components/textbox-rtf/TextBox";
+import { Text, View } from "@/components/theme/Themed";
+import Colors from "@/constants/Colors";
 import { useAuthContext } from "@/contexts";
-import { User } from "@/types/User";
+import AppLayout from "@/layouts/app-layout";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
-import Toast from "react-native-toast-message";
-import { Pressable } from "react-native";
-import { calculateProfileCompletion } from "@/utils/profile";
 import { Profile } from "@/types/Profile";
+import { User } from "@/types/User";
+import { calculateProfileCompletion } from "@/utils/profile";
+import { useTheme } from "@react-navigation/native";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import React, { useRef, useState } from "react";
+import { Pressable } from "react-native";
+import { ActivityIndicator, Appbar } from "react-native-paper";
+import { RichEditor } from "react-native-pell-rich-editor";
+import Toast from "react-native-toast-message";
 
 const EditTextArea: React.FC = () => {
   const theme = useTheme();
   const navigation = useRouter();
   const richText = useRef<RichEditor>(null);
+  const [loading, setLoading] = useState(false)
 
   const {
     userProfile,
@@ -34,38 +35,43 @@ const EditTextArea: React.FC = () => {
   const { user, updateUser } = useAuthContext();
 
   const handleUpdateProfileContent = async () => {
-    if (!user || !user.profile) return;
+    setLoading(true)
+    try {
+      if (!user) return;
 
-    const content = {
-      ...user.profile.content,
-      [key as string]: value,
-    };
+      const content = {
+        ...(user?.profile?.content || {}),
+        [key as string]: value,
+      };
 
-    const percentage = calculateProfileCompletion({
-      name: user.name,
-      emailVerified: user.emailVerified,
-      phoneVerified: user.phoneVerified,
-      category: user.profile.category || [],
-      content: content as Profile["content"],
-      attachments: user.profile.attachments as Profile["attachments"],
-    });
+      const percentage = calculateProfileCompletion({
+        name: user.name,
+        emailVerified: user.emailVerified,
+        phoneVerified: user.phoneVerified,
+        category: user.profile?.category || [],
+        content: content as Profile["content"],
+        attachments: user.profile?.attachments as Profile["attachments"],
+      });
 
-    const updatedContent: User = {
-      ...user,
-      profile: {
-        ...user.profile,
-        completionPercentage: percentage,
-        content: {
-          ...user?.profile?.content,
-          [key as string]: value,
+      const updatedContent: Partial<User> = {
+        // ...user,
+        profile: {
+          ...(user?.profile || {}),
+          completionPercentage: percentage,
+          content: {
+            ...(user?.profile?.content || {}),
+            [key as string]: value,
+          },
         },
-      },
-    };
+      };
 
-    await updateUser(user.id, updatedContent).then(() => {
-      navigation.navigate("/edit-profile");
-      Toaster.success(`${title ? title : "Profile"} updated successfully`);
-    });
+      await updateUser(user.id, updatedContent).then(() => {
+        navigation.navigate("/edit-profile");
+        Toaster.success(`${title ? title : "Profile"} updated successfully`);
+      });
+    } finally {
+      setLoading(false)
+    }
   };
 
   const handleSubmit = () => {
@@ -107,16 +113,17 @@ const EditTextArea: React.FC = () => {
       >
         <Appbar.BackAction onPress={handleGoBack} />
         <Appbar.Content title={title} />
-        <Pressable
-          onPress={handleSubmit}
-          style={{
-            paddingRight: 20,
-          }}
-        >
-          <Text style={{ color: Colors(theme).primary, fontSize: 16 }}>
-            Done
-          </Text>
-        </Pressable>
+        {loading ? <ActivityIndicator size={"small"} style={{ paddingRight: 20 }} /> :
+          <Pressable
+            onPress={handleSubmit}
+            style={{
+              paddingRight: 20,
+            }}
+          >
+            <Text style={{ color: Colors(theme).primary, fontSize: 16 }}>
+              Done
+            </Text>
+          </Pressable>}
       </Appbar.Header>
       <Toast />
       <View
