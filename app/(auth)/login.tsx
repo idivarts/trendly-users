@@ -112,7 +112,7 @@ const LoginScreen = () => {
         </Text>
       </View> : <View style={styles.footer}>
         <Text style={styles.footerText}>
-          Signup with Email is not allowed for regular users?{" "}
+          Email signup is restricted to authorized users only.{" "}
           <Text
             style={styles.footerLink}
             onPress={() => { handleEmailPress() }}
