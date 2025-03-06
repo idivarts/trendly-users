@@ -169,7 +169,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
   };
 
   const firebaseSignIn = async (uid: string) => {
-    console.log("Firebase Sign In", uid);
+    // console.log("Firebase Sign In", uid);
 
     setSession(uid);
     fetch("https://be.trendly.pro/api/v1/chat/auth", {
@@ -185,7 +185,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
   };
 
   const firebaseSignUp = async (uid: string, hasSocials?: number) => {
-    console.log("Firebase Sign Up", uid, hasSocials);
+    // console.log("Firebase Sign Up", uid, hasSocials);
 
     setSession(uid);
     fetch("https://be.trendly.pro/api/v1/chat/auth", {

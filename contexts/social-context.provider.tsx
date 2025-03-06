@@ -70,7 +70,7 @@ export const SocialContextProvider = ({ children }: PropsWithChildren<{}>) => {
           ? socialData.find((social: ISocials) => social.id === user.primarySocial)
           : null;
 
-        console.log("Firebase Sign --> Social data", socialData, user.primarySocial, primary);
+        // console.log("Firebase Sign --> Social data", socialData, user.primarySocial, primary);
 
         if (!primary) {
           setPrimarySocial(null);

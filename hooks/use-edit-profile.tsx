@@ -146,6 +146,8 @@ const useEditProfile = ({
       webAssets
     );
 
+    // console.log("Uploaded Assets", uploadedAssets, "\n", nativeAssets, uploadedAssets.length, nativeAssets.length);
+
     setProcessMessage("Saved profile attachments...");
     setProcessPercentage(70);
 
