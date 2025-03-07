@@ -144,20 +144,22 @@ const Collaboration = () => {
   };
 
   const filteredList = collabs.filter((job) => {
-    return (job.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      searchQuery === "") &&
-      (selectedCategory === "" ||
-        job.promotionType.includes(selectedCategory) ||
-        selectedCategory === "All") &&
-      (selectedJobType === "" ||
-        job.contentFormat.includes(selectedJobType) ||
-        selectedJobType === "All") &&
-      job.budget &&
-      job.budget.min
-      ? job.budget.min >= salaryRange[0]
-      : true && job.budget && job.budget.max
-        ? job.budget.max <= salaryRange[1]
-        : true;
+    return job.name.toLowerCase().includes(searchQuery.toLowerCase())
+      || job.description?.toLowerCase().includes(searchQuery.toLowerCase())
+    // return (job.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    //   searchQuery === "") &&
+    //   (selectedCategory === "" ||
+    //     job.promotionType.includes(selectedCategory) ||
+    //     selectedCategory === "All") &&
+    //   (selectedJobType === "" ||
+    //     job.contentFormat.includes(selectedJobType) ||
+    //     selectedJobType === "All") &&
+    //   job.budget &&
+    //   job.budget.min
+    //   ? job.budget.min >= salaryRange[0]
+    //   : true && job.budget && job.budget.max
+    //     ? job.budget.max <= salaryRange[1]
+    //     : true;
   });
 
   const styles = stylesFn(theme);

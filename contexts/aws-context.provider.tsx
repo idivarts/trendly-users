@@ -1,14 +1,14 @@
+import { AssetItem, NativeAssetItem, WebAssetItem } from "@/types/Asset";
 import { AuthApp } from "@/utils/auth";
+import * as FileSystem from "expo-file-system";
+import * as MediaLibrary from "expo-media-library";
 import {
-  useContext,
   createContext,
   type PropsWithChildren,
+  useContext,
   useState,
 } from "react";
 import { Platform } from "react-native";
-import * as FileSystem from "expo-file-system";
-import * as MediaLibrary from "expo-media-library";
-import { AssetItem, NativeAssetItem, WebAssetItem } from "@/types/Asset";
 
 interface AWSContextProps {
   getBlob: (fileUri: any) => Promise<Blob>;
@@ -152,24 +152,24 @@ export const AWSContextProvider: React.FC<PropsWithChildren> = ({
 
   const uploadFileUris = async (fileUris: AssetItem[]): Promise<any[]> => {
     try {
-      const uploadedFiles: any[] = [];
+      const uploadedFiles: Promise<any>[] = [];
       const totalProgress = 100 / fileUris.length;
 
       setProcessPercentage(0);
 
       for (const [index, fileUri] of fileUris.entries()) {
         setProcessMessage(`Uploading asset ${index + 1}`);
-        const result = await uploadFileUri(fileUri);
+        const result = uploadFileUri(fileUri);
         setProcessPercentage((prev) =>
           Math.ceil(Math.round(prev + totalProgress))
         );
         uploadedFiles.push(result);
       }
-
+      const files = await Promise.all(uploadedFiles)
       setProcessMessage("Uploaded Successfully - Processing files");
       setProcessPercentage(100);
 
-      return uploadedFiles;
+      return files;
     } catch (error) {
       console.error(error);
       throw new Error("Failed to upload files");
@@ -219,23 +219,24 @@ export const AWSContextProvider: React.FC<PropsWithChildren> = ({
 
   const uploadFiles = async (files: File[]): Promise<any[]> => {
     try {
-      const uploadedFiles: any[] = [];
+      const uploadedFiles: Promise<any>[] = [];
       const totalProgress = 100 / files.length;
       setProcessPercentage(0);
 
       for (const file of files) {
         setProcessMessage(`Uploading ${file.name}`);
-        const result = await uploadFile(file);
+        const result = uploadFile(file);
         setProcessPercentage((prev) =>
           Math.ceil(Math.round(prev + totalProgress))
         );
         uploadedFiles.push(result);
       }
+      const mfiles = await Promise.all(uploadedFiles)
 
       setProcessMessage("Uploaded Successfully - Processing files");
       setProcessPercentage(100);
 
-      return uploadedFiles;
+      return mfiles;
     } catch (error) {
       console.error(error);
       throw new Error("Failed to upload files");
@@ -284,23 +285,24 @@ export const AWSContextProvider: React.FC<PropsWithChildren> = ({
 
   const uploadAttachments = async (attachment: AssetItem[]): Promise<any> => {
     try {
-      const uploadedFiles: any[] = [];
+      const uploadedFiles: Promise<any>[] = [];
       const totalProgress = 100 / attachment.length;
       setProcessPercentage(0);
 
       for (const file of attachment) {
         setProcessMessage(`Uploading ${file.id}`);
-        const result = await uploadAttachment(file);
+        const result = uploadAttachment(file);
         setProcessPercentage((prev) =>
           Math.ceil(Math.round(prev + totalProgress))
         );
         uploadedFiles.push(result);
       }
+      const allFiles = await Promise.all(uploadedFiles)
 
       setProcessMessage("Uploaded Successfully - Processing files");
       setProcessPercentage(100);
 
-      return uploadedFiles;
+      return allFiles;
     } catch (error) {
       console.error(error);
       throw new Error("Failed to upload files");
@@ -312,20 +314,17 @@ export const AWSContextProvider: React.FC<PropsWithChildren> = ({
     nativeAssets: NativeAssetItem[],
     webAssets: WebAssetItem[],
   ): Promise<any[]> => {
-    let uploadedAssets = [];
-
+    let allAttachments: Promise<any>[] = []
     if (Platform.OS === 'web') {
       for (const asset of webAssets) {
         if (typeof asset.url === 'string' && asset.url.includes('http')) {
           const attachment = attachments.find(attachment => (
             asset.url === attachment.imageUrl || asset.url === attachment.playUrl || asset.url === attachment.appleUrl
           ));
-
-          uploadedAssets.push(attachment);
+          allAttachments.push(attachment)
         } else if (asset.url instanceof File) {
-          const uploadAsset = await uploadFile(asset.url as File);
-
-          uploadedAssets.push(uploadAsset);
+          const uploadAsset = uploadFile(asset.url as File);
+          allAttachments.push(uploadAsset)
         } else {
           continue;
         }
@@ -337,30 +336,29 @@ export const AWSContextProvider: React.FC<PropsWithChildren> = ({
           const attachment = attachments.find(attachment => (
             asset.url === attachment.imageUrl || asset.url === attachment.playUrl || asset.url === attachment.appleUrl
           ));
-
-          uploadedAssets.push(attachment);
+          allAttachments.push(attachment);
         } else if (asset.type === 'video') {
-          const uploadAsset = await uploadFileUri({
+          const uploadAsset = uploadFileUri({
             id: asset.url,
             type: 'video',
             localUri: asset.url,
             uri: asset.url,
           });
 
-          uploadedAssets.push(uploadAsset);
+          allAttachments.push(uploadAsset);
         } else {
-          const uploadAsset = await uploadFileUri({
+          const uploadAsset = uploadFileUri({
             id: asset.url,
             type: 'image',
             localUri: asset.url,
             uri: asset.url,
           });
 
-          uploadedAssets.push(uploadAsset);
+          allAttachments.push(uploadAsset);
         }
       };
     }
-
+    const uploadedAssets = await Promise.all(allAttachments)
     return uploadedAssets;
   }
 

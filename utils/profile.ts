@@ -1,36 +1,36 @@
+import { IPreferences } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { NativeAssetItem } from "@/types/Asset";
 import { Profile } from "@/types/Profile";
-import { processRawAttachment } from "./attachments";
 import { SurveyAnswer } from "@/types/Survey";
-import { IPreferences } from "@/shared-libs/firestore/trendly-pro/models/users";
+import { processRawAttachment } from "./attachments";
 
 export const calculateProfileCompletion = (profile: Profile) => {
   const totalFields = 10;
   let completedFields = 0;
 
-  if (profile.name) {
+  if (profile?.name) {
     completedFields++;
   }
 
-  if (profile.emailVerified) {
+  if (profile?.emailVerified) {
     completedFields++;
   }
 
-  if (profile.phoneVerified) {
+  if (profile?.phoneVerified) {
     completedFields++;
   }
 
-  if (profile.category.length > 0) {
+  if (profile?.category?.length > 0) {
     completedFields++;
   }
 
-  Object.values(profile.content).forEach((value) => {
+  Object.values(profile?.content).forEach((value) => {
     if (value) {
       completedFields++;
     }
   });
 
-  if (profile.attachments.length > 0) {
+  if (profile?.attachments?.length > 0) {
     completedFields++;
   }
 
@@ -43,26 +43,23 @@ export const truncateText = (text: string, length: number) => {
 
 export const generateEmptyAssets = (
   attachments: any[],
-  items: NativeAssetItem[]
-) => {
+): NativeAssetItem[] => {
   if (!attachments) {
-    return items;
+    const assets: NativeAssetItem[] = []
+    for (let i = 0; i < 6; i++) {
+      assets.push({ url: "", type: "", });
+    }
+    return assets
   }
 
   const assetsLength = attachments.length;
 
-  let assets =
-    attachments.map((attachment, index) => {
-      return {
-        ...processRawAttachment(attachment),
-      };
-    }) || items;
+  let assets = attachments.map((attachment, index) => {
+    return processRawAttachment(attachment);
+  });
 
   for (let i = assetsLength; i < 6; i++) {
-    assets.push({
-      url: "",
-      type: "",
-    });
+    assets.push({ url: "", type: "", });
   }
 
   return assets;

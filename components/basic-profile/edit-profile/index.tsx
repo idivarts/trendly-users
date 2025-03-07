@@ -14,7 +14,7 @@ import { useTheme } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Animated, Keyboard, Platform, Pressable } from "react-native";
-import { ProgressBar } from "react-native-paper";
+import ProgressLoader from "../../../shared-uis/components/ProgressLoader";
 import ContentItem from "./ContentItem";
 import DragAndDropNative from "./grid/native/DragAndDropNative";
 import DragAndDropWeb from "./grid/web/DragAndDropWeb";
@@ -40,15 +40,6 @@ const EditProfile: React.FC<EditProfileProps> = ({
   const {
     xl,
   } = useBreakpoints();
-
-  const items = [
-    { url: '', type: '' },
-    { url: '', type: '' },
-    { url: '', type: '' },
-    { url: '', type: '' },
-    { url: '', type: '' },
-    { url: '', type: '' },
-  ];
 
   const {
     contents,
@@ -130,7 +121,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
           ) : (
             <DragAndDropNative
               items={
-                generateEmptyAssets(user?.profile?.attachments as any, items).map((item, index) => {
+                generateEmptyAssets(user?.profile?.attachments as any).map((item, index) => {
                   return {
                     ...item,
                     id: index,
@@ -211,7 +202,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
                   setUnsavedChanges && setUnsavedChanges(true);
                 }}
               />
-              <Button
+              {/* <Button
                 mode="contained"
                 size="small"
                 style={{
@@ -220,7 +211,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
                 onPress={() => null}
               >
                 {user?.phoneVerified ? 'Verified' : 'Verify'}
-              </Button>
+              </Button> */}
             </View>
           </View>
           <View
@@ -324,42 +315,45 @@ const EditProfile: React.FC<EditProfileProps> = ({
           </View>
         </View>
       </Wrapper>
-      <Animated.View
-        style={[
-          styles.saveButtonContainer,
-          {
-            bottom: keyboardHeight,
-            backgroundColor: keyboardVisible ? Colors(theme).primary : 'transparent',
-            paddingHorizontal: keyboardVisible ? 0 : 16,
-            paddingBottom: keyboardVisible ? 0 : 16,
-          }
-        ]}
-      >
-        <ProgressBar
-          progress={processPercentage / 100}
-          color={Colors(theme).aliceBlue}
-          style={styles.processPercentage}
-        />
-        <Pressable
-          onPress={handleSave}
+      {isProcessing && <ProgressLoader isProcessing={true} progress={processPercentage} />}
+      {unsavedChanges &&
+        <Animated.View
+          style={[
+            styles.saveButtonContainer,
+            {
+              bottom: keyboardHeight,
+              backgroundColor: keyboardVisible ? Colors(theme).primary : 'transparent',
+              paddingHorizontal: keyboardVisible ? 0 : 16,
+              paddingBottom: keyboardVisible ? 0 : 16,
+            }
+          ]}
         >
-          <Button
-            mode="contained"
-            loading={isProcessing}
+          {/* <ProgressBar
+            progress={processPercentage / 100}
+            color={Colors(theme).aliceBlue}
+            style={styles.processPercentage}
+          /> */}
+
+          <Pressable
             onPress={handleSave}
-            style={[
-              styles.saveButton,
-              {
-                marginBottom: keyboardVisible ? -36 : 0,
-                height: keyboardVisible ? 60 : 'auto',
-                borderRadius: keyboardVisible ? 0 : 100,
-              }
-            ]}
           >
-            {isProcessing ? 'Saving...' : 'Save'}
-          </Button>
-        </Pressable>
-      </Animated.View>
+            <Button
+              mode="contained"
+              loading={isProcessing}
+              onPress={handleSave}
+              style={[
+                styles.saveButton,
+                {
+                  marginBottom: keyboardVisible ? -36 : 0,
+                  height: keyboardVisible ? 60 : 'auto',
+                  borderRadius: keyboardVisible ? 0 : 100,
+                }
+              ]}
+            >
+              {isProcessing ? 'Saving...' : 'Save'}
+            </Button>
+          </Pressable>
+        </Animated.View>}
     </View>
   );
 };

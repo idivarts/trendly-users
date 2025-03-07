@@ -1,10 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
-import Toaster from "@/shared-uis/components/toaster/Toaster";
-import { useAWSContext } from "@/contexts/aws-context.provider";
-import { useAuthContext } from "@/contexts";
-import { calculateProfileCompletion } from "@/utils/profile";
 import { SelectItem } from "@/components/ui/select";
+import { useAuthContext } from "@/contexts";
+import { useAWSContext } from "@/contexts/aws-context.provider";
+import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { NativeAssetItem, WebAssetItem } from "@/types/Asset";
+import { calculateProfileCompletion } from "@/utils/profile";
+import { useEffect, useMemo, useState } from "react";
 import useProcess from "./use-process";
 
 interface UseEditProfileProps {
@@ -146,6 +146,8 @@ const useEditProfile = ({
       webAssets
     );
 
+    // console.log("Uploaded Assets", uploadedAssets, "\n", nativeAssets, uploadedAssets.length, nativeAssets.length);
+
     setProcessMessage("Saved profile attachments...");
     setProcessPercentage(70);
 
@@ -160,7 +162,7 @@ const useEditProfile = ({
     });
 
     setProcessMessage("Saving profile...");
-    setProcessPercentage(100);
+    setProcessPercentage(95);
     await updateUser(user?.id, {
       name,
       email,

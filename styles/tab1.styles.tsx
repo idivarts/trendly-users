@@ -18,6 +18,9 @@ const styles = (theme: Theme) =>
       top: 10,
       right: 20,
     },
+    skipIcon: {
+      color: Colors(theme).text
+    },
     skipButtonText: {
       color: Colors(theme).white,
       fontSize: 16,

@@ -8,6 +8,7 @@ import { useAWSContext } from "@/contexts/aws-context.provider";
 import AppLayout from "@/layouts/app-layout";
 import { Attachment } from "@/shared-libs/firestore/trendly-pro/constants/attachment";
 import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
+import ProgressLoader from "@/shared-uis/components/ProgressLoader";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { stylesFn } from "@/styles/ApplyNow.styles";
 import { AssetItem } from "@/types/Asset";
@@ -111,29 +112,25 @@ const ApplyScreen = () => {
   const handleUploadFiles = async () => {
     setLoading(true);
     try {
-      const uploadedFiles = await uploadAttachments(fileAttachments);
-
       const filesWithoutProfileAttachments = // if file uri starts with https, it is a profile attachment and should be removed
         files.filter((file) => !file.uri.startsWith("https"));
 
-      const uploadedFileUrisResponse = await uploadFileUris(
-        filesWithoutProfileAttachments
-      );
+      const [uploadedFiles, uploadedFileUrisResponse] = await Promise.all([
+        uploadAttachments(fileAttachments),
+        uploadFileUris(filesWithoutProfileAttachments)
+      ]);
 
       const finalProfileAttachments = profileAttachments.map(
         //@ts-ignore
         ({ id, ...rest }) => rest // Exclude the `id` field
       );
 
-      setUploadedFiles([
-        ...uploadedFileUrisResponse,
-        ...finalProfileAttachments,
-      ]);
-
       const finalFiles = [
         ...uploadedFileUrisResponse,
         ...finalProfileAttachments,
       ];
+      setUploadedFiles(finalFiles);
+
       const timelineTimestamp = timelineData?.getTime();
 
       setLoading(false);
@@ -462,6 +459,7 @@ const ApplyScreen = () => {
           color={Colors(theme).primary}
           style={styles.progressBar}
         />
+        {loading && <ProgressLoader isProcessing={loading} progress={processPercentage} />}
 
         <Button
           mode="contained"

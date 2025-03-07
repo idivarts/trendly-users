@@ -9,6 +9,7 @@ import { useAWSContext } from "@/contexts/aws-context.provider";
 import { useBreakpoints } from "@/hooks";
 import AppLayout from "@/layouts/app-layout";
 import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
+import ProgressLoader from "@/shared-uis/components/ProgressLoader";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { stylesFn } from "@/styles/ApplyNow.styles";
 import { FirestoreDB } from "@/utils/firestore";
@@ -133,8 +134,10 @@ const ApplyScreenWeb = () => {
   const handleUploadFiles = async () => {
     setLoading(true);
     try {
-      const uploadedFiles = await uploadAttachments(fileAttachments);
-      const uploadedFilesResponse = await uploadFiles(files);
+      const [uploadedFiles, uploadedFilesResponse] = await Promise.all([
+        uploadAttachments(fileAttachments),
+        uploadFiles(files)
+      ]);
 
       setUploadedFiles(uploadedFilesResponse);
 
@@ -382,7 +385,7 @@ const ApplyScreenWeb = () => {
               style={styles.progressBar}
             />
           )}
-
+          {loading && <ProgressLoader isProcessing={loading} progress={processPercentage} />}
           <Button
             mode="contained"
             onPress={async () => {
