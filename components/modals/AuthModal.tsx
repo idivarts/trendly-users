@@ -8,6 +8,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useSharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import { IS_BETA_ENABLED } from "@/constants/App";
 import Colors from "@/constants/Colors";
 import { INITIAL_USER_DATA } from "@/constants/User";
 import { useFacebookLogin, useInstagramLogin } from "@/hooks/requests";
@@ -148,28 +149,29 @@ const AuthModal: React.FC<AuthModalProps> = ({
                   }
                 }}
               />
-              <SocialButton
-                icon={faInstagram}
-                iconColor={Colors(theme).white}
-                customStyles={{
-                  backgroundColor: Colors(theme).primary,
-                  justifyContent: "center",
+              {IS_BETA_ENABLED &&
+                <SocialButton
+                  icon={faInstagram}
+                  iconColor={Colors(theme).white}
+                  customStyles={{
+                    backgroundColor: Colors(theme).primary,
+                    justifyContent: "center",
 
-                }}
-                label="Continue with Instagram"
-                labelStyles={{
-                  color: Colors(theme).white,
-                }}
-                onPress={() => {
-                  if (Platform.OS === "web") {
-                    instagramLogin();
-                  } else {
-                    if (requestInstagram) {
+                  }}
+                  label="Continue with Instagram"
+                  labelStyles={{
+                    color: Colors(theme).white,
+                  }}
+                  onPress={() => {
+                    if (Platform.OS === "web") {
                       instagramLogin();
+                    } else {
+                      if (requestInstagram) {
+                        instagramLogin();
+                      }
                     }
-                  }
-                }}
-              />
+                  }}
+                />}
             </View>
           </View>
         </BottomSheetScrollView>

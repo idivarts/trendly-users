@@ -7,6 +7,7 @@ import AuthModal from "@/components/modals/AuthModal";
 import DownloadAppModal from "@/components/modals/DownloadAppModal";
 import { Text } from "@/components/theme/Themed";
 import Button from "@/components/ui/button";
+import { IS_BETA_ENABLED } from "@/constants/App";
 import Colors from "@/constants/Colors";
 import { useAuthContext } from "@/contexts";
 import { useBreakpoints } from "@/hooks";
@@ -94,10 +95,11 @@ const CollaborationDetailsScreen = () => {
         collaborationID={collaborationId as string}
       /> : <ActivityIndicator size="small" color={Colors(theme).primary} />}
 
-      <DownloadAppModal
-        bottomSheetModalRef={bottomSheetModalRef}
-        collaborationId={collaborationId as string}
-      />
+      {IS_BETA_ENABLED &&
+        <DownloadAppModal
+          bottomSheetModalRef={bottomSheetModalRef}
+          collaborationId={collaborationId as string}
+        />}
       <AuthModal
         bottomSheetModalRef={authModalBottomSheetModalRef}
       />
