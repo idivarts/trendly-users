@@ -1,4 +1,5 @@
 import { WebAssetItem } from "@/types/Asset";
+import { DraggableItemStyle } from "./DraggableItem.style";
 
 interface DraggableItemProps {
   id: string;
@@ -14,14 +15,7 @@ const DraggableItem: React.FC<DraggableItemProps> = ({
 }) => {
   return (
     <div
-      style={{
-        borderRadius: "10px",
-        height: "10rem",
-        maxWidth: "10rem",
-        minWidth: "10rem",
-        overflow: "hidden",
-        width: "10rem",
-      }}
+      style={DraggableItemStyle.card}
       {...listeners}
       {...attributes}
     >
@@ -29,30 +23,14 @@ const DraggableItem: React.FC<DraggableItemProps> = ({
         asset.type === "video" ? (
           <video
             autoPlay={false}
-            style={{
-              height: "10rem",
-              maxWidth: "10rem",
-              minWidth: "10rem",
-              objectFit: "cover",
-            }}
+            style={DraggableItemStyle.video}
           >
-            <source
-              src={
-                typeof asset.url === "string" ? asset.url : URL.createObjectURL(asset.url)
-              }
-              type="video/mp4"
-            />
+            <source src={
+              typeof asset.url === "string" ? asset.url : URL.createObjectURL(asset.url)
+            } type="video/mp4" />
           </video>
         ) : (
-          <img
-            alt=""
-            style={{
-              borderRadius: "10px",
-              height: "10rem",
-              maxWidth: "10rem",
-              minWidth: "10rem",
-              objectFit: "cover",
-            }}
+          <img style={DraggableItemStyle.image}
             src={
               typeof asset.url === "string" ? asset.url : URL.createObjectURL(asset.url)
             }

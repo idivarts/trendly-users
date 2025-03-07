@@ -29,11 +29,11 @@ export const SocialContextProvider = ({ children }: PropsWithChildren<{}>) => {
   const { user } = useAuthContext();
   const [socials, setSocials] = useState<any[]>([]);
   const [primarySocial, setPrimarySocial] = useState<ISocials | null>(null);
-  const [isFetchingSocials, setIsFetchingSocials] = useState(false);
+  const [isFetchingSocials, setIsFetchingSocials] = useState(true);
 
   const fetchSocials = () => {
     if (!user || !user.id) {
-      setIsFetchingSocials(false);
+      // setIsFetchingSocials(false);
       return;
     };
 
@@ -93,7 +93,7 @@ export const SocialContextProvider = ({ children }: PropsWithChildren<{}>) => {
     let unsubscribe: (() => void) | undefined;
 
     if (user && user.id) {
-      setIsFetchingSocials(true);
+      // setIsFetchingSocials(true);
       unsubscribe = fetchSocials();
     }
 

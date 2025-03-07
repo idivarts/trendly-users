@@ -1,11 +1,12 @@
+import { useTheme } from "@react-navigation/native";
 import React, { PropsWithChildren } from "react";
 import { ActivityIndicator, Platform } from "react-native";
-import { useTheme } from "@react-navigation/native";
 
-import { View } from "@/components/theme/Themed";
-import { useAuthContext, useSocialContext } from "@/contexts";
-import Colors from "@/constants/Colors";
 import CollaborationsShimmer from "@/components/shimmers/collaborations-shimmer";
+import { View } from "@/components/theme/Themed";
+import Colors from "@/constants/Colors";
+import { useAuthContext, useSocialContext } from "@/contexts";
+import AppLayout from "../app-layout";
 
 interface SocialsProtectedScreenProps extends PropsWithChildren { }
 
@@ -19,11 +20,14 @@ const SocialsProtectedScreen: React.FC<SocialsProtectedScreenProps> = ({
     isFetchingSocials,
   } = useSocialContext();
 
-  if (isUserLoading || isFetchingSocials) {
-    return <LoadingScreen />;
-  }
 
-  return <>{children}</>;
+  return <>
+    {(isUserLoading || isFetchingSocials) && <LoadingScreen />}
+    {
+      <AppLayout setInvisible={(isUserLoading || isFetchingSocials)} withWebPadding={false}>
+        {children}
+      </AppLayout>}
+  </>;
 };
 
 const LoadingScreen: React.FC = () => {

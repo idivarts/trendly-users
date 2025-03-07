@@ -75,11 +75,11 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
 }) => {
   const [[isLoading, session], setSession] = useStorageState("id");
   const [user, setUser] = useState<User | null>(null);
-  const [isUserLoading, setIsUserLoading] = useState(false);
+  const [isUserLoading, setIsUserLoading] = useState(true);
 
   const fetchUser = async () => {
-    if (session) {
-      setIsUserLoading(true);
+    if (!isLoading && session) {
+      // setIsUserLoading(true);
       const userDocRef = doc(FirestoreDB, "users", session);
 
       const unsubscribe = onSnapshot(userDocRef, (userSnap) => {
@@ -102,7 +102,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
 
   useEffect(() => {
     fetchUser();
-  }, [session]);
+  }, [session, isLoading]);
 
   const signIn = async (email: string, password: string) => {
     try {
