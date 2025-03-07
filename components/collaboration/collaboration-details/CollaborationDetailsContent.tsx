@@ -266,7 +266,7 @@ const CollborationDetailsContent = (
       <View style={styles.profileCard}>
         {props?.collaborationDetail?.attachments &&
           props?.collaborationDetail?.attachments.length > 0 && (
-            Platform.OS === "web" ? (<ScrollMedia
+            (Platform.OS === "web" && xl) ? (<ScrollMedia
               media={props?.collaborationDetail?.attachments?.map((attachment) =>
                 processRawAttachment(attachment)
               ) || []}
