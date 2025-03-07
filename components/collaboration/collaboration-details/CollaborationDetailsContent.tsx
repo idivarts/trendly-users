@@ -16,6 +16,7 @@ import Carousel from "@/shared-uis/components/carousel/carousel";
 import ScrollMedia from "@/shared-uis/components/carousel/scroll-media";
 import ImageComponent from "@/shared-uis/components/image-component";
 import RatingSection from "@/shared-uis/components/rating-section";
+import ReadMore from "@/shared-uis/components/ReadMore";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { stylesFn } from "@/styles/CollaborationDetails.styles";
 import { Invitation } from "@/types/Collaboration";
@@ -320,9 +321,10 @@ const CollborationDetailsContent = (
                 width: "100%",
               }}
             >
-              <Text variant="bodySmall" style={styles.shortDescription}>
+              <ReadMore text={props.collaborationDetail.description || ""} style={styles.shortDescription} />
+              {/* <Text variant="bodySmall" >
                 {props.collaborationDetail.description}
-              </Text>
+              </Text> */}
             </View>
           </View>
 
