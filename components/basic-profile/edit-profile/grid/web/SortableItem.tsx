@@ -1,9 +1,10 @@
+import { WebAssetItem } from '@/types/Asset';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import DraggableItem from './DraggableItem';
-import { WebAssetItem } from '@/types/Asset';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faClose } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import DraggableItem from './DraggableItem';
+import { DraggableItemStyle } from './DraggableItem.style';
 
 interface SortableItemProps {
   id: string;
@@ -33,14 +34,7 @@ const SortableItem: React.FC<SortableItemProps> = ({
     <div
       ref={setNodeRef}
       style={{
-        position: 'relative',
-        minWidth: '10rem',
-        maxWidth: '10rem',
-        height: '10rem',
-        aspectRatio: '1',
-        borderRadius: '10px',
-        cursor: 'grab',
-        backgroundColor: '#f5f5f5',
+        ...DraggableItemStyle.container,
         ...style,
       }}
     >
@@ -48,20 +42,7 @@ const SortableItem: React.FC<SortableItemProps> = ({
       <button
         onClick={onRemove}
         style={{
-          position: 'absolute',
-          right: '8px',
-          bottom: '8px',
-          padding: '10px',
-          borderRadius: '50%',
-          backgroundColor: '#1e3a5f',
-          color: 'white',
-          border: 'none',
-          cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: '18px',
-          zIndex: 2,
+          ...DraggableItemStyle.button
         }}
       >
         <FontAwesomeIcon
