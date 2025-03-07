@@ -9,9 +9,10 @@ import Toast from "react-native-toast-message";
 
 interface AppLayoutProps extends PropsWithChildren<Record<string, unknown>> {
   withWebPadding?: boolean;
+  setInvisible?: boolean
 }
 
-const AppLayout: React.FC<AppLayoutProps> = ({ children, withWebPadding = true }) => {
+const AppLayout: React.FC<AppLayoutProps> = ({ children, withWebPadding = true, setInvisible }) => {
   const theme = useTheme();
   const isAndroid = useMemo(() => Platform.OS === "android", []);
   const { xl } = useBreakpoints()
@@ -19,6 +20,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children, withWebPadding = true }
     <SafeAreaView
       style={[
         styles.container,
+        setInvisible && { display: "none" },
         {
           backgroundColor: Colors(theme).background,
           paddingTop: isAndroid ? StatusBar.currentHeight : 0,

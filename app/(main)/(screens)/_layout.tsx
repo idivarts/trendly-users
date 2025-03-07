@@ -1,28 +1,18 @@
 import AppLayout from "@/layouts/app-layout";
+import { SocialsProtectedScreen } from "@/layouts/protected";
 import { Stack } from "expo-router";
 
 const ScreensLayout = () => {
   return (
     <AppLayout>
-      <Stack
-        screenOptions={{
-          animation: "ios",
-          headerShown: false,
-        }}
-      >
-        {/* <Stack.Screen
-          name="questions"
-          options={{
+      <SocialsProtectedScreen>
+        <Stack
+          screenOptions={{
+            animation: "ios",
             headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="no-social-connected"
-          options={{
-            headerShown: false,
-          }}
-        /> */}
-      </Stack>
+          }}>
+        </Stack>
+      </SocialsProtectedScreen>
     </AppLayout>
   );
 };
