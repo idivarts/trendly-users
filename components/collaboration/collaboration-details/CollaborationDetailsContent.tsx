@@ -32,14 +32,13 @@ import {
 import { faHeart } from "@fortawesome/free-regular-svg-icons";
 import {
   faCheckCircle,
-  faCircleInfo,
   faDollarSign,
   faFilm,
   faHouseLaptop,
   faLocationDot,
   faPanorama,
   faRecordVinyl,
-  faStarHalfStroke,
+  faStarHalfStroke
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
@@ -412,7 +411,7 @@ const CollborationDetailsContent = (
               >
                 Register Now
               </Button>
-              <View
+              {/* <View
                 style={{
                   alignItems: "center",
                   backgroundColor: Colors(theme).gold,
@@ -436,7 +435,7 @@ const CollborationDetailsContent = (
                   Please make sure to use this chat to first understand the
                   influencer. Post that, you can start your collaboration here
                 </Text>
-              </View>
+              </View> */}
             </View>
           )}
 
