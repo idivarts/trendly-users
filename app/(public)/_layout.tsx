@@ -25,6 +25,12 @@ const PublicLayout = () => {
                   headerShown: false,
                 }}
               />
+              <Stack.Screen
+                name="insta-redirect"
+                options={{
+                  headerShown: false,
+                }}
+              />
             </Stack>
           </View>
         </NotificationContextProvider>
