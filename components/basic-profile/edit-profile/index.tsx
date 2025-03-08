@@ -297,15 +297,20 @@ const EditProfile: React.FC<EditProfileProps> = ({
                   content={
                     item.content ? item.content : item.defaultContent
                   }
-                  onAction={() => router.push({
-                    pathname: '/textbox-page',
-                    params: {
-                      userProfile: 'true',
-                      key: item.key,
-                      title: item.title,
-                      value: item.content,
+                  onAction={() => {
+                    if (unsavedChanges) {
+                      handleSave(false)
                     }
-                  })}
+                    router.push({
+                      pathname: '/textbox-page',
+                      params: {
+                        userProfile: 'true',
+                        key: item.key,
+                        title: item.title,
+                        value: item.content,
+                      }
+                    })
+                  }}
                 />
               ))
             }
@@ -332,12 +337,12 @@ const EditProfile: React.FC<EditProfileProps> = ({
           /> */}
 
           <Pressable
-            onPress={handleSave}
+            onPress={() => handleSave()}
           >
             <Button
               mode="contained"
               loading={isProcessing}
-              onPress={handleSave}
+              onPress={() => handleSave()}
               style={[
                 styles.saveButton,
                 {

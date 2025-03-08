@@ -129,7 +129,7 @@ const useEditProfile = ({
     setUnsavedChanges && setUnsavedChanges(true);
   };
 
-  const handleSave = async () => {
+  const handleSave = async (showToast = true) => {
     if (!user) {
       Toaster.error("User not found");
       return;
@@ -162,11 +162,13 @@ const useEditProfile = ({
       },
     })
       .then(() => {
-        Toaster.success("Profile saved successfully");
+        if (showToast)
+          Toaster.success("Profile saved successfully");
         setUnsavedChanges && setUnsavedChanges(false);
       })
       .catch((error) => {
-        Toaster.error("Failed to save profile");
+        if (showToast)
+          Toaster.error("Failed to save profile");
       })
       .finally(() => {
         setProcessPercentage(0);
