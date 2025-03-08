@@ -1,3 +1,7 @@
+import { useAuthContext } from '@/contexts';
+import { useAWSContext } from '@/contexts/aws-context.provider';
+import { Attachment } from '@/shared-libs/firestore/trendly-pro/constants/attachment';
+import { processRawAttachment } from '@/shared-uis/utils/attachments';
 import { WebAssetItem } from '@/types/Asset';
 import {
   closestCenter,
@@ -14,7 +18,7 @@ import {
   arrayMove,
   rectSortingStrategy,
   SortableContext,
-  sortableKeyboardCoordinates,
+  sortableKeyboardCoordinates
 } from '@dnd-kit/sortable';
 import { useState } from 'react';
 import DraggableItem from './DraggableItem';
@@ -22,16 +26,21 @@ import EmptyItem from './EmptyItem';
 import SortableItem from './SortableItem';
 
 interface DragAndDropWebProps {
-  items: WebAssetItem[];
-  onUploadAsset: (items: WebAssetItem[]) => void;
+  attachments: Attachment[];
 }
 
-const DragAndDropWeb: React.FC<DragAndDropWebProps> = ({
-  onUploadAsset,
-  items,
-}) => {
-  const [assets, setAssets] = useState<WebAssetItem[]>(items)
+const DragAndDropWeb: React.FC<DragAndDropWebProps> = ({ attachments }) => {
+  const [assets, setAssets] = useState(attachments.map((a, index): WebAssetItem => ({
+    ...processRawAttachment(a),
+    id: "" + index,
+  })))
+  const [myAttachments, setMyAttachments] = useState(attachments.reduce((acc: any, value, index) => {
+    acc[index] = value;
+    return acc;
+  }, {}))
   const [activeId, setActiveId] = useState<string | null>(null)
+  const { user, updateUser } = useAuthContext()
+  const { uploadFile } = useAWSContext()
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -51,39 +60,63 @@ const DragAndDropWeb: React.FC<DragAndDropWebProps> = ({
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
+    // active.id
 
+    let newAssets = assets;
     if (over && active.id !== over.id) {
-      setAssets((prevAssets) => {
-        const oldIndex = prevAssets.findIndex((asset) => asset.id === active.id)
-        const newIndex = prevAssets.findIndex((asset) => asset.id === over.id)
-        const newAssets = arrayMove(prevAssets, oldIndex, newIndex)
-        onUploadAsset(newAssets)
-        return newAssets
-      })
+      const oldIndex = assets.findIndex((asset) => asset.id === active.id)
+      const newIndex = assets.findIndex((asset) => asset.id === over.id)
+      newAssets = arrayMove(assets, oldIndex, newIndex)
+      setAssets([...newAssets])
     }
     setActiveId(null);
+    orderAndUpload(newAssets, myAttachments)
   }
 
   const handleRemoveAsset = (id: string) => {
-    setAssets((prev) => {
-      const newAssets = prev.filter((asset) => asset.id !== id);
-      onUploadAsset(newAssets);
-      return newAssets;
-    });
+    const newAssets = assets.filter((asset) => asset.id !== id);
+    setAssets([...newAssets]);
+
+    delete myAttachments[parseInt(id)]
+    setMyAttachments({ ...myAttachments })
+    orderAndUpload(newAssets, myAttachments)
   }
 
-  const handleAddAsset = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAddAsset = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (file) {
-      setAssets((prevAssets) => {
-        const newAssets = [
-          ...prevAssets, {
-            id: URL.createObjectURL(file),
-            url: file,
-            type: file.type.includes('video') ? 'video' : 'image',
-          }];
-        onUploadAsset(newAssets);
-        return newAssets;
+      const id = assets.length
+      assets.push({
+        id: "" + id,
+        url: file,
+        type: file.type.includes('video') ? 'video' : 'image',
+      })
+      setAssets([...assets])
+      const uploadedAsset = await uploadFile(file)
+      assets[id].url = processRawAttachment(uploadedAsset).url
+      setAssets([...assets])
+      myAttachments[id] = uploadedAsset
+      setMyAttachments({ ...myAttachments })
+    }
+    orderAndUpload(assets, myAttachments)
+  }
+
+
+  const orderAndUpload = (assets: WebAssetItem[], myAttachments: any) => {
+    const assetOrder = assets.filter(a => !!a.url).map(a => a.id)
+    console.log("Order and Upload", assetOrder, "\n", myAttachments);
+    let newAttachments: Attachment[] = []
+    for (let i = 0; i < assetOrder.length; i++) {
+      const id = assetOrder[i];
+      newAttachments.push(myAttachments["" + id])
+    }
+    console.log("New Attachments", newAttachments);
+    if (user) {
+      updateUser(user.id, {
+        profile: {
+          ...user?.profile,
+          attachments: newAttachments
+        }
       })
     }
   }

@@ -1,31 +1,44 @@
-import React, { useState } from 'react';
-import { Pressable, View } from 'react-native';
-import * as MediaPicker from "expo-image-picker";
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faClose, faPlus } from '@fortawesome/free-solid-svg-icons';
 import Colors from '@/constants/Colors';
-import { useTheme } from '@react-navigation/native';
+import { useAWSContext } from '@/contexts/aws-context.provider';
+import { Attachment } from '@/shared-libs/firestore/trendly-pro/constants/attachment';
 import { draggableGridStylesFn } from '@/styles/draggable-grid/DraggableGrid.styles';
+import { faClose, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { useTheme } from '@react-navigation/native';
+import * as MediaPicker from "expo-image-picker";
+import React, { useEffect, useState } from 'react';
+import { Pressable, View } from 'react-native';
+import { ActivityIndicator } from 'react-native-paper';
 import AssetRender from './AssetRender';
 
 export type AssetItem = {
+  index: number,
   id: number;
   url: string;
   type: string;
 };
 
 interface DraggableItemProps {
-  item: AssetItem;
-  onAssetUpdate: (asset: AssetItem) => void;
+  asset: AssetItem;
+  onAssetUpdate: (id: number, attachment: Attachment) => void;
 }
 
 const DraggableItem: React.FC<DraggableItemProps> = ({
-  item,
+  asset,
   onAssetUpdate,
 }) => {
   const theme = useTheme();
   const styles = draggableGridStylesFn(theme);
-  const [asset, setAsset] = useState<AssetItem | null>(item);
+
+  const [url, setUrl] = useState("")
+  const [type, setType] = useState("")
+  const [loading, setLoading] = useState(false)
+  const { uploadFileUri } = useAWSContext()
+
+  useEffect(() => {
+    setUrl(asset.url)
+    setType(asset.type)
+  }, [asset])
 
   const openGallery = async () => {
     const { status } = await MediaPicker.requestMediaLibraryPermissionsAsync();
@@ -49,42 +62,43 @@ const DraggableItem: React.FC<DraggableItemProps> = ({
     }
   }
 
-  const handleImageUpload = (image: string) => {
-    setAsset({
-      ...asset as AssetItem,
-      url: image,
+  const handleImageUpload = async (image: string) => {
+    setUrl(image)
+    setType("image")
+    setLoading(true)
+    const uploadAsset = await uploadFileUri({
+      id: image,
       type: 'image',
+      localUri: image,
+      uri: image,
     });
-    onAssetUpdate({
-      ...asset as AssetItem,
-      url: image,
-      type: 'image',
-    });
+
+    setLoading(false)
+    // uploadAsset.
+    onAssetUpdate(asset.id, uploadAsset);
   }
 
-  const handleVideoUpload = (video: string) => {
-    setAsset({
-      ...asset as AssetItem,
-      url: video,
+  const handleVideoUpload = async (video: string) => {
+    setUrl(video)
+    setType("video")
+    setLoading(true)
+    const uploadAsset = await uploadFileUri({
+      id: video,
       type: 'video',
+      localUri: video,
+      uri: video,
     });
-    onAssetUpdate({
-      ...asset as AssetItem,
-      url: video,
-      type: 'video',
-    });
+
+    setLoading(false)
+    onAssetUpdate(asset.id, uploadAsset);
   }
 
   const handleRemoveAsset = () => {
-    setAsset({
-      id: item.id,
-      url: '',
-      type: '',
-    });
-    onAssetUpdate({
-      id: item.id,
-      url: '',
-      type: '',
+    setType("")
+    setUrl("")
+    onAssetUpdate(asset.id, {
+      imageUrl: "",
+      type: "image"
     });
   }
 
@@ -96,9 +110,12 @@ const DraggableItem: React.FC<DraggableItemProps> = ({
       onPress={openGallery}
     >
       {
-        asset && asset.url ? (
+        url ? (
           <AssetRender
-            asset={asset}
+            asset={{
+              url: url,
+              type: type
+            }}
           />
         ) : (
           <View
@@ -113,7 +130,7 @@ const DraggableItem: React.FC<DraggableItemProps> = ({
         )
       }
       {
-        asset && asset.url && (
+        url && (
           <Pressable
             style={styles.removeButton}
             onPress={handleRemoveAsset}
@@ -125,6 +142,18 @@ const DraggableItem: React.FC<DraggableItemProps> = ({
             />
           </Pressable>
         )
+      }
+      {
+        (url && loading) && <ActivityIndicator size={"small"} style={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: [
+            { translateX: -10 }, // Shift back by half of screen width
+            { translateY: -10 }, // Shift back by half of screen height
+          ]
+          // transform: "translate(-50%, -50%)"
+        }} />
       }
     </Pressable>
   );

@@ -1,4 +1,5 @@
 import { WebAssetItem } from "@/types/Asset";
+import { ActivityIndicator } from "react-native-paper";
 import { DraggableItemStyle } from "./DraggableItem.style";
 
 interface DraggableItemProps {
@@ -37,6 +38,17 @@ const DraggableItem: React.FC<DraggableItemProps> = ({
           />
         )
       }
+      {typeof asset.url !== "string" &&
+        <ActivityIndicator size={"small"} style={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: [
+            { translateX: -10 }, // Shift back by half of screen width
+            { translateY: -10 }, // Shift back by half of screen height
+          ]
+          // transform: "translate(-50%, -50%)"
+        }} />}
     </div>
   );
 };

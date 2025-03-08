@@ -8,13 +8,11 @@ import Colors from "@/constants/Colors";
 import { useBreakpoints } from "@/hooks";
 import useEditProfile from "@/hooks/use-edit-profile";
 import { stylesFn } from "@/styles/edit-profile/EditProfile.styles";
-import { processRawAttachment } from "@/utils/attachments";
-import { generateEmptyAssets } from "@/utils/profile";
 import { useTheme } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Animated, Keyboard, Platform, Pressable } from "react-native";
-import ProgressLoader from "../../../shared-uis/components/ProgressLoader";
+import { ActivityIndicator } from "react-native-paper";
 import ContentItem from "./ContentItem";
 import DragAndDropNative from "./grid/native/DragAndDropNative";
 import DragAndDropWeb from "./grid/web/DragAndDropWeb";
@@ -97,6 +95,12 @@ const EditProfile: React.FC<EditProfileProps> = ({
     };
   }, []);
 
+  if (!user) {
+    <View style={{ display: "flex", alignItems: "center" }}>
+      <ActivityIndicator size={"large"} />
+    </View>
+  }
+
   return (
     <View
       style={{
@@ -110,25 +114,11 @@ const EditProfile: React.FC<EditProfileProps> = ({
         {
           Platform.OS === 'web' ? (
             <DragAndDropWeb
-              items={user?.profile?.attachments?.map((attachment, index) => {
-                return {
-                  ...processRawAttachment(attachment),
-                  id: index.toString(),
-                }
-              }) || []}
-              onUploadAsset={handleAssetsUpdateWeb}
+              attachments={user?.profile?.attachments || []}
             />
           ) : (
             <DragAndDropNative
-              items={
-                generateEmptyAssets(user?.profile?.attachments as any).map((item, index) => {
-                  return {
-                    ...item,
-                    id: index,
-                  }
-                })
-              }
-              onItemsUpdate={handleAssetsUpdateNative}
+              attachments={user?.profile?.attachments || []}
             />
           )
         }
@@ -300,22 +290,27 @@ const EditProfile: React.FC<EditProfileProps> = ({
                   content={
                     item.content ? item.content : item.defaultContent
                   }
-                  onAction={() => router.push({
-                    pathname: '/textbox-page',
-                    params: {
-                      userProfile: 'true',
-                      key: item.key,
-                      title: item.title,
-                      value: item.content,
+                  onAction={() => {
+                    if (unsavedChanges) {
+                      handleSave(false)
                     }
-                  })}
+                    router.push({
+                      pathname: '/textbox-page',
+                      params: {
+                        userProfile: 'true',
+                        key: item.key,
+                        title: item.title,
+                        value: item.content,
+                      }
+                    })
+                  }}
                 />
               ))
             }
           </View>
         </View>
       </Wrapper>
-      {isProcessing && <ProgressLoader isProcessing={true} progress={processPercentage} />}
+      {/* {isProcessing && <ProgressLoader isProcessing={true} progress={processPercentage} />} */}
       {unsavedChanges &&
         <Animated.View
           style={[
@@ -335,12 +330,12 @@ const EditProfile: React.FC<EditProfileProps> = ({
           /> */}
 
           <Pressable
-            onPress={handleSave}
+            onPress={() => handleSave()}
           >
             <Button
               mode="contained"
               loading={isProcessing}
-              onPress={handleSave}
+              onPress={() => handleSave()}
               style={[
                 styles.saveButton,
                 {

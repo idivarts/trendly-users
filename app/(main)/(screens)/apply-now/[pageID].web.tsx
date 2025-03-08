@@ -1,4 +1,5 @@
 import { TextModal } from "@/components/TextInputModal/TextModal.web";
+import { Text } from "@/components/theme/Themed";
 import AssetsPreview from "@/components/ui/assets-preview";
 import Button from "@/components/ui/button";
 import ListItem from "@/components/ui/list-item/ListItem";
@@ -228,31 +229,6 @@ const ApplyScreenWeb = () => {
         style={styles.container}
         contentContainerStyle={styles.contentContainerStyle}
       >
-        <Card style={styles.card} onPress={() => inputRef.current?.click()}>
-          <Card.Content style={styles.cardContent}>
-            <IconButton
-              icon={() => (
-                <FontAwesomeIcon
-                  icon={faClapperboard}
-                  size={20}
-                  color={Colors(theme).text}
-                />
-              )}
-              onPress={() => inputRef.current?.click()}
-            />
-          </Card.Content>
-          <input
-            ref={inputRef}
-            type="file"
-            style={{
-              backgroundColor: "transparent",
-              visibility: "hidden",
-            }}
-            multiple
-            onChange={handleFileSelection}
-            accept="image/*, video/*"
-          />
-        </Card>
         {files.length > 0 && (
           <AssetsPreview
             files={previewUrls.map((file) => ({
@@ -264,6 +240,34 @@ const ApplyScreenWeb = () => {
             onRemove={removeFile}
           />
         )}
+        {files.length == 0 &&
+          <Card style={styles.card} onPress={() => inputRef.current?.click()}>
+            <Card.Content style={styles.cardContent}>
+              <IconButton
+                icon={() => (
+                  <FontAwesomeIcon
+                    icon={faClapperboard}
+                    size={20}
+                    color={Colors(theme).text}
+                  />
+                )}
+                onPress={() => inputRef.current?.click()}
+              />
+              <Text style={{ fontSize: 14, color: Colors(theme).text }}>Select media from your gallery and apply</Text>
+            </Card.Content>
+          </Card>}
+        <input
+          ref={inputRef}
+          type="file"
+          style={{
+            backgroundColor: "transparent",
+            visibility: "hidden",
+          }}
+          multiple
+          onChange={handleFileSelection}
+          accept="image/*, video/*"
+        />
+
         <View>
           <TextInput
             style={{

@@ -39,7 +39,7 @@ const SortableItem: React.FC<SortableItemProps> = ({
       }}
     >
       <DraggableItem id={id} asset={asset} listeners={listeners} attributes={attributes} />
-      <button
+      {typeof asset.url == "string" && <button
         onClick={onRemove}
         style={{
           ...DraggableItemStyle.button
@@ -49,7 +49,7 @@ const SortableItem: React.FC<SortableItemProps> = ({
           icon={faClose}
           color="white"
         />
-      </button>
+      </button>}
     </div>
   );
 };

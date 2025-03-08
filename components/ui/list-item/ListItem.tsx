@@ -19,6 +19,7 @@ interface ContentItemProps {
   onRemove?: (id: string) => void;
   title: string;
   rightContent?: boolean;
+  small?: boolean
 }
 
 const ListItem: React.FC<ContentItemProps> = ({
@@ -30,6 +31,7 @@ const ListItem: React.FC<ContentItemProps> = ({
   attachments,
   onRemove,
   rightContent = false,
+  small
 }) => {
   const theme = useTheme();
 
@@ -67,12 +69,12 @@ const ListItem: React.FC<ContentItemProps> = ({
           >
             <FontAwesomeIcon
               icon={leftIcon}
-              size={20}
+              size={small ? 16 : 20}
               color={Colors(theme).text}
             />
             <Text
               style={{
-                fontSize: 20,
+                fontSize: small ? 16 : 20,
                 minWidth: Dimensions.get("window").width / 3,
                 maxWidth: Dimensions.get("window").width * 0.7,
               }}
@@ -92,7 +94,7 @@ const ListItem: React.FC<ContentItemProps> = ({
               <Text
                 style={{
                   color: Colors(theme).gray300,
-                  fontSize: 18,
+                  fontSize: small ? 14 : 18,
                   paddingVertical: 6,
                 }}
               >
@@ -122,7 +124,7 @@ const ListItem: React.FC<ContentItemProps> = ({
                 marginVertical: 0,
               }}
               titleStyle={{
-                fontSize: 18,
+                fontSize: small ? 16 : 18,
                 color: Colors(theme).gray300,
               }}
             />

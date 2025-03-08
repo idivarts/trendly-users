@@ -6,7 +6,6 @@ import CollaborationsShimmer from "@/components/shimmers/collaborations-shimmer"
 import { View } from "@/components/theme/Themed";
 import Colors from "@/constants/Colors";
 import { useAuthContext, useSocialContext } from "@/contexts";
-import AppLayout from "../app-layout";
 
 interface SocialsProtectedScreenProps extends PropsWithChildren { }
 
@@ -24,9 +23,10 @@ const SocialsProtectedScreen: React.FC<SocialsProtectedScreenProps> = ({
   return <>
     {(isUserLoading || isFetchingSocials) && <LoadingScreen />}
     {
-      <AppLayout setInvisible={(isUserLoading || isFetchingSocials)} withWebPadding={false}>
+      <View style={{ display: (isUserLoading || isFetchingSocials) ? "none" : "flex", flex: 1 }}>
         {children}
-      </AppLayout>}
+      </View>
+    }
   </>;
 };
 
