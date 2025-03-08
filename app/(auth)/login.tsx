@@ -70,6 +70,7 @@ const LoginScreen = () => {
             value={email}
             onChangeText={setEmail}
             mode="outlined"
+            keyboardType="email-address"
             style={styles.input}
             theme={{ colors: { primary: Colors(theme).text } }}
           />
