@@ -1,12 +1,12 @@
-import { View } from "@/components/theme/Themed";
+import { Text, View } from "@/components/theme/Themed";
 import Colors from "@/constants/Colors";
 import stylesFn from "@/styles/assets-preview/AssetsPreview.styles";
 import { imageUrl } from "@/utils/url";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faAdd, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
 import { ResizeMode, Video } from "expo-av";
-import { Image, Platform, ScrollView } from "react-native";
+import { Image, Platform, Pressable, ScrollView } from "react-native";
 import { IconButton } from "react-native-paper";
 import Button from "../button";
 
@@ -80,6 +80,14 @@ const AssetsPreview: React.FC<AssetsPreviewProps> = ({
             )}
           </View>
         ))}
+        {Platform.OS == "web" &&
+          <Pressable onPress={handleAssetUpload}>
+            <View key={"add-more"} style={[styles.fileContainer, { flexDirection: "column" }]}>
+              <FontAwesomeIcon icon={faAdd} size={28}></FontAwesomeIcon>
+              <Text style={{ fontSize: 14, marginTop: 8 }}>Add More</Text>
+            </View>
+          </Pressable>
+        }
       </ScrollView>
       <Button
         mode="contained"
