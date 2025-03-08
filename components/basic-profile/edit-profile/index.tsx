@@ -9,11 +9,11 @@ import { useBreakpoints } from "@/hooks";
 import useEditProfile from "@/hooks/use-edit-profile";
 import { stylesFn } from "@/styles/edit-profile/EditProfile.styles";
 import { processRawAttachment } from "@/utils/attachments";
-import { generateEmptyAssets } from "@/utils/profile";
 import { useTheme } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Animated, Keyboard, Platform, Pressable } from "react-native";
+import { ActivityIndicator } from "react-native-paper";
 import ProgressLoader from "../../../shared-uis/components/ProgressLoader";
 import ContentItem from "./ContentItem";
 import DragAndDropNative from "./grid/native/DragAndDropNative";
@@ -97,6 +97,12 @@ const EditProfile: React.FC<EditProfileProps> = ({
     };
   }, []);
 
+  if (!user) {
+    <View style={{ display: "flex", alignItems: "center" }}>
+      <ActivityIndicator size={"large"} />
+    </View>
+  }
+
   return (
     <View
       style={{
@@ -120,15 +126,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
             />
           ) : (
             <DragAndDropNative
-              items={
-                generateEmptyAssets(user?.profile?.attachments as any).map((item, index) => {
-                  return {
-                    ...item,
-                    id: index,
-                  }
-                })
-              }
-              onItemsUpdate={handleAssetsUpdateNative}
+              attachments={user?.profile?.attachments || []}
             />
           )
         }

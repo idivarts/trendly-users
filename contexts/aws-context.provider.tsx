@@ -1,3 +1,4 @@
+import { Attachment } from "@/shared-libs/firestore/trendly-pro/constants/attachment";
 import { AssetItem, NativeAssetItem, WebAssetItem } from "@/types/Asset";
 import { AuthApp } from "@/utils/auth";
 import * as FileSystem from "expo-file-system";
@@ -18,7 +19,7 @@ interface AWSContextProps {
   setProcessPercentage: (percentage: number) => void;
   uploadFile: (file: File) => Promise<any>;
   uploadFiles: (files: File[]) => Promise<any[]>;
-  uploadFileUri: (fileUri: AssetItem) => Promise<any>;
+  uploadFileUri: (fileUri: AssetItem) => Promise<Attachment>;
   uploadFileUris: (fileUris: AssetItem[]) => Promise<any[]>;
   uploadAttachment: (file: AssetItem) => Promise<any>;
   uploadAttachments: (attachment: AssetItem[]) => Promise<any>;
@@ -110,7 +111,7 @@ export const AWSContextProvider: React.FC<PropsWithChildren> = ({
     }
   };
 
-  const uploadFileUri = async (fileUri: AssetItem): Promise<any> => {
+  const uploadFileUri = async (fileUri: AssetItem): Promise<Attachment> => {
     const preUploadUrlResponse = await fetch(preUploadRequestUrl(fileUri), {
       method: "POST",
       headers: {
