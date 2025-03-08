@@ -363,6 +363,7 @@ const ApplyScreen = () => {
           >
             <ListItem
               title="Your Quote"
+              small={true}
               leftIcon={faDollarSign}
               content={quotation === "" ? "" : "Rs. " + quotation}
               rightContent={true}
@@ -387,6 +388,7 @@ const ApplyScreen = () => {
             />
             <ListItem
               title="Timeline"
+              small={true}
               leftIcon={faClockRotateLeft}
               rightContent={true}
               content={timelineData ? timelineData.toLocaleDateString() : ""}
@@ -394,6 +396,7 @@ const ApplyScreen = () => {
             />
             <ListItem
               title="Attachments"
+              small={true}
               leftIcon={faPaperclip}
               content=""
               attachments={fileAttachments}
@@ -411,6 +414,7 @@ const ApplyScreen = () => {
                 <ListItem
                   key={index}
                   title={question}
+                  small={true}
                   leftIcon={faCircleQuestion}
                   content={answers[index]}
                   onAction={() => {
