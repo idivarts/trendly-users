@@ -8,7 +8,6 @@ import Colors from "@/constants/Colors";
 import { useBreakpoints } from "@/hooks";
 import useEditProfile from "@/hooks/use-edit-profile";
 import { stylesFn } from "@/styles/edit-profile/EditProfile.styles";
-import { processRawAttachment } from "@/utils/attachments";
 import { useTheme } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
@@ -115,13 +114,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
         {
           Platform.OS === 'web' ? (
             <DragAndDropWeb
-              items={user?.profile?.attachments?.map((attachment, index) => {
-                return {
-                  ...processRawAttachment(attachment),
-                  id: index.toString(),
-                }
-              }) || []}
-              onUploadAsset={handleAssetsUpdateWeb}
+              attachments={user?.profile?.attachments || []}
             />
           ) : (
             <DragAndDropNative

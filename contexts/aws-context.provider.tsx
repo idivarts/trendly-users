@@ -177,7 +177,7 @@ export const AWSContextProvider: React.FC<PropsWithChildren> = ({
     }
   };
 
-  const uploadFile = async (file: File): Promise<any> => {
+  const uploadFile = async (file: File): Promise<Attachment> => {
     try {
       const preUploadUrlResponse = await fetch(preUploadRequestUrl(file), {
         method: "POST",

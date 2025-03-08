@@ -5,7 +5,7 @@ import { gridStylesFn } from '@/styles/draggable-grid/DraggableGrid.styles';
 import { processRawAttachment } from '@/utils/attachments';
 import { useTheme } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { Platform, View } from 'react-native';
+import { View } from 'react-native';
 import { useSharedValue } from 'react-native-reanimated';
 import Draggable from './Draggable';
 import DraggableItem, { AssetItem } from './DraggableItem';
@@ -75,7 +75,7 @@ const DragAndDropNative: React.FC<DragAndDropNativeProps> = ({
       id: position,
       index: assets[position].index,
       type: asset.type,
-      url: (asset.type == "image" ? asset.imageUrl : (Platform.OS == "ios" ? asset.appleUrl : asset.playUrl)) || ""
+      url: processRawAttachment(asset).url
     }
     setAssets([...assets])
     if (assets[position].url) {
