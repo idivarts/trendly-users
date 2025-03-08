@@ -14,7 +14,6 @@ import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Animated, Keyboard, Platform, Pressable } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
-import ProgressLoader from "../../../shared-uis/components/ProgressLoader";
 import ContentItem from "./ContentItem";
 import DragAndDropNative from "./grid/native/DragAndDropNative";
 import DragAndDropWeb from "./grid/web/DragAndDropWeb";
@@ -313,7 +312,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
           </View>
         </View>
       </Wrapper>
-      {isProcessing && <ProgressLoader isProcessing={true} progress={processPercentage} />}
+      {/* {isProcessing && <ProgressLoader isProcessing={true} progress={processPercentage} />} */}
       {unsavedChanges &&
         <Animated.View
           style={[

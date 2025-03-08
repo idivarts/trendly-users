@@ -136,29 +136,16 @@ const useEditProfile = ({
     }
 
     setIsProcessing(true);
-    setProcessMessage("Saving profile attachments...");
+    // setProcessMessage("Saving profile attachments...");
     setProcessPercentage(20);
 
-    // Upload assets to aws s3
-    const uploadedAssets = await uploadNewAssets(
-      attachments,
-      nativeAssets,
-      webAssets
-    );
-
-    // console.log("Uploaded Assets", uploadedAssets, "\n", nativeAssets, uploadedAssets.length, nativeAssets.length);
-
-    setProcessMessage("Saved profile attachments...");
-    setProcessPercentage(70);
-
-    // Calculate profile completion
     const completionPercentage = calculateProfileCompletion({
       name,
       emailVerified: user.emailVerified,
       phoneVerified: user.phoneVerified,
       category: niches.map((niche) => niche.value),
       content,
-      attachments: uploadedAssets,
+      attachments: user.profile?.attachments || [],
     });
 
     setProcessMessage("Saving profile...");
@@ -168,9 +155,8 @@ const useEditProfile = ({
       email,
       phoneNumber,
       profile: {
+        ...user.profile,
         category: niches.map((niche) => niche.value),
-        content,
-        attachments: uploadedAssets,
         timeCommitment: timeCommitment.value,
         completionPercentage,
       },
