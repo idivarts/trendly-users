@@ -69,17 +69,25 @@ const DragAndDropNative: React.FC<DragAndDropNativeProps> = ({
     orderAndUpload()
   };
 
-  const handleAssetUpdate = (id: number, asset: Attachment) => {
+  const handleAssetUpdate = (id: number, attachment: Attachment) => {
     const position = id;
     assets[position] = {
       id: position,
       index: assets[position].index,
-      type: asset.type,
-      url: processRawAttachment(asset).url
+      type: attachment.type,
+      url: processRawAttachment(attachment).url
     }
-    setAssets([...assets])
+    setAssets((assets) => {
+      assets[position] = {
+        id: position,
+        index: assets[position].index,
+        type: attachment.type,
+        url: processRawAttachment(attachment).url
+      }
+      return [...assets]
+    })
     if (assets[position].url) {
-      myAttachments[position] = asset
+      myAttachments[position] = attachment
       setMyAttachments({ ...myAttachments })
     } else {
       delete myAttachments[position]
