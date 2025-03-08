@@ -1,8 +1,8 @@
-import { Drawer } from "expo-router/drawer";
 import DrawerMenuContent from "@/components/drawer-layout/DrawerMenuContent";
 import BackButton from "@/components/ui/back-button/BackButton";
 import { useBreakpoints } from "@/hooks";
 import { SocialsProtectedScreen } from "@/layouts/protected";
+import { Drawer } from "expo-router/drawer";
 
 const DrawerLayout = () => {
   const { xl } = useBreakpoints();
