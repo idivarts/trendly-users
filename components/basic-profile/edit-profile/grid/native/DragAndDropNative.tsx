@@ -1,10 +1,11 @@
 import { Text } from '@/components/theme/Themed';
+import { useAuthContext } from '@/contexts';
 import { Attachment } from '@/shared-libs/firestore/trendly-pro/constants/attachment';
 import { gridStylesFn } from '@/styles/draggable-grid/DraggableGrid.styles';
 import { processRawAttachment } from '@/utils/attachments';
 import { useTheme } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { View } from 'react-native';
+import { Platform, View } from 'react-native';
 import { useSharedValue } from 'react-native-reanimated';
 import Draggable from './Draggable';
 import DraggableItem, { AssetItem } from './DraggableItem';
@@ -45,6 +46,11 @@ const DragAndDropNative: React.FC<DragAndDropNativeProps> = ({
   attachments,
 }) => {
   const [assets, setAssets] = useState<AssetItem[]>(generateEmptyAssets(attachments));
+  const [myAttachments, setMyAttachments] = useState(attachments.reduce((acc: any, value, index) => {
+    acc[index] = value;
+    return acc;
+  }, {}))
+  const { user, updateUser } = useAuthContext()
 
   const initialPositions = Object.assign({}, ...assets.map(item => item.id).map((id, index) => ({ [id]: index })));
   const positions = useSharedValue(initialPositions);
@@ -60,19 +66,45 @@ const DragAndDropNative: React.FC<DragAndDropNativeProps> = ({
       assets[pos].index = newPositions[key]
     }
     setAssets([...assets])
+    orderAndUpload()
   };
 
-  const handleAssetUpdate = (id: string, asset: Attachment) => {
+  const handleAssetUpdate = (id: number, asset: Attachment) => {
     const position = id;
-    // const currentPosition = Object.keys(positions.value).find(key => Number(key) === position);
+    assets[position] = {
+      id: position,
+      index: assets[position].index,
+      type: asset.type,
+      url: (asset.type == "image" ? asset.imageUrl : (Platform.OS == "ios" ? asset.appleUrl : asset.playUrl)) || ""
+    }
+    setAssets([...assets])
+    if (assets[position].url) {
+      myAttachments[position] = asset
+      setMyAttachments({ ...myAttachments })
+    } else {
+      delete myAttachments[position]
+      setMyAttachments({ ...myAttachments })
+    }
+    orderAndUpload()
+  }
 
-    // const newAssets = assets.map(item => {
-    //   if (item.id === Number(currentPosition)) {
-    //     return asset;
-    //   }
-    //   return item;
-    // });
-    // setAssets(newAssets);
+  const orderAndUpload = () => {
+    const assetOrder = assets.filter(a => !!a.url).sort((a, b) => (a.index - b.index)).map(a => a.id)
+    console.log("Order and Upload", assetOrder, "\n", myAttachments);
+    let newAttachments: Attachment[] = []
+    for (let i = 0; i < assetOrder.length; i++) {
+      const id = assetOrder[i];
+      newAttachments.push(myAttachments["" + id])
+    }
+    console.log("New Attachments", newAttachments);
+    if (user) {
+      updateUser(user.id, {
+        profile: {
+          ...user?.profile,
+          attachments: newAttachments
+        }
+      })
+    }
   }
 
   // useEffect(() => {

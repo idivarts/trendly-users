@@ -20,7 +20,7 @@ export type AssetItem = {
 
 interface DraggableItemProps {
   asset: AssetItem;
-  onAssetUpdate: (id: any, attachment: Attachment) => void;
+  onAssetUpdate: (id: number, attachment: Attachment) => void;
 }
 
 const DraggableItem: React.FC<DraggableItemProps> = ({
