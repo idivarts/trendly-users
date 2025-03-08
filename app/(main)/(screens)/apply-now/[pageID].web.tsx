@@ -1,4 +1,5 @@
 import { TextModal } from "@/components/TextInputModal/TextModal.web";
+import { Text } from "@/components/theme/Themed";
 import AssetsPreview from "@/components/ui/assets-preview";
 import Button from "@/components/ui/button";
 import ListItem from "@/components/ui/list-item/ListItem";
@@ -252,6 +253,7 @@ const ApplyScreenWeb = () => {
                 )}
                 onPress={() => inputRef.current?.click()}
               />
+              <Text style={{ fontSize: 14, color: Colors(theme).text }}>Select media from your gallery and apply</Text>
             </Card.Content>
           </Card>}
         <input

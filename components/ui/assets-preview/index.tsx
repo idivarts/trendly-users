@@ -84,7 +84,9 @@ const AssetsPreview: React.FC<AssetsPreviewProps> = ({
           <Pressable onPress={handleAssetUpload}>
             <View key={"add-more"} style={[styles.fileContainer, { flexDirection: "column" }]}>
               <FontAwesomeIcon icon={faAdd} size={28}></FontAwesomeIcon>
-              <Text style={{ fontSize: 14, marginTop: 8 }}>Add More</Text>
+              <Text style={{
+                fontSize: 14, color: Colors(theme).text, marginTop: 8
+              }}>Add More</Text>
             </View>
           </Pressable>
         }
