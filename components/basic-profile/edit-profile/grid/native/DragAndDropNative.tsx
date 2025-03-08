@@ -77,15 +77,7 @@ const DragAndDropNative: React.FC<DragAndDropNativeProps> = ({
       type: attachment.type,
       url: processRawAttachment(attachment).url
     }
-    setAssets((assets) => {
-      assets[position] = {
-        id: position,
-        index: assets[position].index,
-        type: attachment.type,
-        url: processRawAttachment(attachment).url
-      }
-      return [...assets]
-    })
+    setAssets([...assets])
     if (assets[position].url) {
       myAttachments[position] = attachment
       setMyAttachments({ ...myAttachments })
