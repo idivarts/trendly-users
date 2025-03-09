@@ -10,6 +10,7 @@ import { processRawAttachment } from "@/utils/attachments";
 import { faImage, faVideo } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
+import { Camera, useCameraPermissions } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
 import { router, useLocalSearchParams } from "expo-router";
@@ -60,7 +61,7 @@ const GalleryScreen = () => {
   const [selectedItems, setSelectedItems] = useState<AssetItem[]>([]);
   const [profileAttachments, setProfileAttachments] = useState<any[]>([]);
   const [permissionGranted, setPermissionGranted] = useState(false);
-  // const [cameraPermission] = useCameraPermissions();
+  const [cameraPermission] = useCameraPermissions();
   // const [isCameraVisible, setIsCameraVisible] = useState(false);
   const { user } = useAuthContext();
 
@@ -263,6 +264,10 @@ const GalleryScreen = () => {
   }, [profileAttachmentsRoute]);
 
   const openNativeCamera = async (mode: "photo" | "video") => {
+    const mainStatus = await Camera.requestCameraPermissionsAsync();
+    if (!mainStatus.granted) {
+      alert("Camera permission is required to take photos");
+    }
     // Request camera permissions
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== "granted") {

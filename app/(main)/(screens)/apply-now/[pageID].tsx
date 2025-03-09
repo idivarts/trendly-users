@@ -4,7 +4,7 @@ import ListItem from "@/components/ui/list-item/ListItem";
 import ScreenHeader from "@/components/ui/screen-header";
 import TextInput from "@/components/ui/text-input";
 import Colors from "@/constants/Colors";
-import { useAWSContext } from "@/contexts/aws-context.provider";
+import { AWSProgressUpdateSubject, useAWSContext } from "@/contexts/aws-context.provider";
 import AppLayout from "@/layouts/app-layout";
 import { Attachment } from "@/shared-libs/firestore/trendly-pro/constants/attachment";
 import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
@@ -35,8 +35,7 @@ import {
   HelperText,
   IconButton,
   List,
-  Paragraph,
-  ProgressBar,
+  Paragraph
 } from "react-native-paper";
 
 const ApplyScreen = () => {
@@ -52,7 +51,6 @@ const ApplyScreen = () => {
   const [loading, setLoading] = useState(false);
   const [quotation, setQuotation] = useState("");
   const [files, setFiles] = useState<AssetItem[]>([]);
-  const [uploadedFiles, setUploadedFiles] = useState<any>([]);
   const [profileAttachments, setProfileAttachments] = useState<Attachment[]>(
     []
   );
@@ -70,13 +68,11 @@ const ApplyScreen = () => {
   const styles = stylesFn(theme);
 
   const {
-    processMessage,
-    processPercentage,
-    setProcessMessage,
-    setProcessPercentage,
     uploadFileUris,
     uploadAttachments,
   } = useAWSContext();
+
+  const [totalFiles, setTotalFiles] = useState(0)
 
   const handleAssetUpload = async () => {
     try {
@@ -102,19 +98,20 @@ const ApplyScreen = () => {
     }
   };
 
-  const onDateChange = (event: any, selectedDate?: Date) => {
-    setShowDatePicker(false);
-    if (selectedDate) {
-      setTimelineData(selectedDate);
-    }
-  };
+  // const onDateChange = (event: any, selectedDate?: Date) => {
+  //   setShowDatePicker(false);
+  //   if (selectedDate) {
+  //     setTimelineData(selectedDate);
+  //   }
+  // };
 
   const handleUploadFiles = async () => {
-    setLoading(true);
     try {
       const filesWithoutProfileAttachments = // if file uri starts with https, it is a profile attachment and should be removed
         files.filter((file) => !file.uri.startsWith("https"));
 
+      setTotalFiles(fileAttachments.length + filesWithoutProfileAttachments.length)
+      setLoading(true);
       const [uploadedFiles, uploadedFileUrisResponse] = await Promise.all([
         uploadAttachments(fileAttachments),
         uploadFileUris(filesWithoutProfileAttachments)
@@ -126,16 +123,12 @@ const ApplyScreen = () => {
       );
 
       const finalFiles = [
-        ...uploadedFileUrisResponse,
         ...finalProfileAttachments,
+        ...uploadedFileUrisResponse,
       ];
-      setUploadedFiles(finalFiles);
 
       const timelineTimestamp = timelineData?.getTime();
 
-      setLoading(false);
-      setProcessMessage("");
-      setProcessPercentage(0);
       router.push({
         pathname: "/apply-now/preview",
         params: {
@@ -149,9 +142,9 @@ const ApplyScreen = () => {
           answers: JSON.stringify(answers),
         },
       });
-      setLoading(false);
     } catch (error) {
       console.error(error);
+    } finally {
       setLoading(false);
     }
   };
@@ -453,7 +446,7 @@ const ApplyScreen = () => {
           </HelperText>
         ) : null}
 
-        {processMessage && (
+        {/* {processMessage && (
           <HelperText type="info" style={styles.processText}>
             {processMessage} - {processPercentage}% done
           </HelperText>
@@ -462,8 +455,8 @@ const ApplyScreen = () => {
           progress={processPercentage / 100}
           color={Colors(theme).primary}
           style={styles.progressBar}
-        />
-        {loading && <ProgressLoader isProcessing={loading} progress={processPercentage} />}
+        /> */}
+        {loading && <ProgressLoader isProcessing={loading} progress={10} totalFiles={totalFiles} subject={AWSProgressUpdateSubject} />}
 
         <Button
           mode="contained"
@@ -482,7 +475,7 @@ const ApplyScreen = () => {
           }}
           loading={loading}
         >
-          {processMessage ? "Uploading Assets" : "Preview Application"}
+          {loading ? "Uploading Assets" : "Preview Application"}
         </Button>
       </View>
       {showDatePicker && (

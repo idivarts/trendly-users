@@ -10,6 +10,7 @@ import {
   useState,
 } from "react";
 import { Platform } from "react-native";
+import { Subject } from "rxjs";
 
 interface AWSContextProps {
   getBlob: (fileUri: any) => Promise<Blob>;
@@ -30,6 +31,11 @@ interface AWSContextProps {
   ) => Promise<any[]>;
 }
 
+export const AWSProgressUpdateSubject = new Subject<{
+  index?: number,
+  id?: number,
+  percentage: number
+}>()
 const AWSContext = createContext<AWSContextProps>(null!);
 
 export const useAWSContext = () => useContext(AWSContext);
@@ -160,7 +166,10 @@ export const AWSContextProvider: React.FC<PropsWithChildren> = ({
 
       for (const [index, fileUri] of fileUris.entries()) {
         setProcessMessage(`Uploading asset ${index + 1}`);
-        const result = uploadFileUri(fileUri);
+        const result = uploadFileUri(fileUri).then(r => {
+          AWSProgressUpdateSubject.next({ percentage: 100 })
+          return r
+        });
         setProcessPercentage((prev) =>
           Math.ceil(Math.round(prev + totalProgress))
         );
@@ -226,7 +235,10 @@ export const AWSContextProvider: React.FC<PropsWithChildren> = ({
 
       for (const file of files) {
         setProcessMessage(`Uploading ${file.name}`);
-        const result = uploadFile(file);
+        const result = uploadFile(file).then(r => {
+          AWSProgressUpdateSubject.next({ percentage: 100 })
+          return r
+        });
         setProcessPercentage((prev) =>
           Math.ceil(Math.round(prev + totalProgress))
         );
