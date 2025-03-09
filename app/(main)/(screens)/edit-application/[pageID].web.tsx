@@ -13,6 +13,7 @@ import {
   ICollaboration,
 } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
+import { processRawAttachment } from "@/shared-uis/utils/attachments";
 import { stylesFn } from "@/styles/ApplyNow.styles";
 import { FirestoreDB } from "@/utils/firestore";
 import { handleModalOrInputPage } from "@/utils/TextInput";
@@ -75,13 +76,11 @@ const ApplyScreenWeb = () => {
   };
 
   const [files, setFiles] = useState<File[]>([]);
-  const [previewUrls, setPreviewUrls] = useState<
-    {
-      id: string;
-      type: string;
-      url: string;
-    }[]
-  >([]);
+  const [previewUrls, setPreviewUrls] = useState<{
+    id: string;
+    type: string;
+    url: string;
+  }[]>([]);
   const [fileAttachments, setFileAttachments] = useState<any[]>([]);
   const [hasFetchedData, setHasFetchedData] = useState(false);
 
@@ -114,7 +113,7 @@ const ApplyScreenWeb = () => {
     }
 
     if (selectedFiles) {
-      setFiles([...files, ...Array.from(selectedFiles)]);
+      setFiles([...Array.from(selectedFiles), ...files]);
     }
   };
 
@@ -313,7 +312,10 @@ const ApplyScreenWeb = () => {
       type: file.type,
       url: URL.createObjectURL(file),
     }));
-    setPreviewUrls([...previewUrls, ...urls]);
+    setPreviewUrls([...urls, ...originalAttachments.map(o => ({
+      ...processRawAttachment(o),
+      id: processRawAttachment(o).url
+    }))]);
 
     return () => {
       urls.forEach((url) => {
