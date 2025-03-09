@@ -4,15 +4,13 @@ import { State, TapGestureHandler } from "react-native-gesture-handler";
 import Animated from "react-native-reanimated";
 
 import { View } from "@/components/theme/Themed";
+import { MediaItem } from "@/shared-uis/components/carousel/render-media-item";
 import { stylesFn } from "@/styles/InfluencerCard.styles";
 import { imageUrl } from "@/utils/url";
 import { useTheme } from "@react-navigation/native";
 import { useState } from "react";
 
-export interface MediaItem {
-  type: string;
-  url: string;
-}
+export { MediaItem };
 
 interface RenderMediaItemProps {
   handleImagePress: (item: MediaItem) => void;
