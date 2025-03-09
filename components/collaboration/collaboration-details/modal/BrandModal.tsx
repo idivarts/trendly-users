@@ -1,20 +1,18 @@
-import { Pressable, Linking } from "react-native";
 import { useTheme } from "@react-navigation/native";
+import { Linking } from "react-native";
 
 import { Text, View } from "@/components/theme/Themed";
-import stylesFn from "@/styles/modal/UploadModal.styles";
-import { Chip, Modal } from "react-native-paper";
+import Button from "@/components/ui/button";
 import Colors from "@/constants/Colors";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import ImageComponent from "@/shared-uis/components/image-component";
+import stylesFn from "@/styles/modal/UploadModal.styles";
 import {
-  faChain,
   faCheck,
   faCheckCircle,
-  faCheckDouble,
-  faLink,
+  faLink
 } from "@fortawesome/free-solid-svg-icons";
-import ImageComponent from "@/shared-uis/components/image-component";
-import Button from "@/components/ui/button";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { Chip, Modal } from "react-native-paper";
 
 interface BrandModalProps {
   brand: {
@@ -37,6 +35,22 @@ const BrandModal: React.FC<BrandModalProps> = ({
   const theme = useTheme();
   const styles = stylesFn(theme);
 
+  const getLinkMessage = (url: string): string => {
+    try {
+      const parsedUrl = new URL(url);
+      const hostname = parsedUrl.hostname;
+
+      if (hostname.includes("instagram.com")) {
+        return "Visit Instagram";
+      } else if (hostname.includes("facebook.com")) {
+        return "Visit Facebook";
+      } else {
+        return "Visit Website";
+      }
+    } catch (error) {
+      return "Visit Website";
+    }
+  }
   return (
     <Modal
       visible={visible}
@@ -135,9 +149,9 @@ const BrandModal: React.FC<BrandModalProps> = ({
               icon={faLink}
               color={Colors(theme).white}
               size={16}
-              style={{ marginRight: 5 }}
+              style={{ marginRight: 16 }}
             />
-            Visit Website
+            {getLinkMessage(brand.website)}
           </Text>
         </Button>
       </View>

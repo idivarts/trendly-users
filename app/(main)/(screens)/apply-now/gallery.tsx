@@ -1,5 +1,5 @@
+import RenderMediaItem from "@/components/collaboration/render-media-item";
 import Button from "@/components/ui/button";
-import RenderMediaItem from "@/components/ui/carousel/render-media-item";
 import ScreenHeader from "@/components/ui/screen-header";
 import Colors from "@/constants/Colors";
 import { useAuthContext } from "@/contexts";
@@ -7,21 +7,21 @@ import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { stylesFn } from "@/styles/apply-now/gallery.styles";
 import { AssetItem } from "@/types/Asset";
 import { processRawAttachment } from "@/utils/attachments";
-import { faCamera, faImage, faVideo } from "@fortawesome/free-solid-svg-icons";
+import { faImage, faVideo } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
-import { Camera, CameraView, useCameraPermissions } from "expo-camera";
+import * as ImagePicker from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
 import { router, useLocalSearchParams } from "expo-router";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
+  Alert,
   FlatList,
   Image,
-  Modal,
   Platform,
   Pressable,
   ScrollView,
-  View,
+  View
 } from "react-native";
 import { Checkbox, Surface, Text } from "react-native-paper";
 import Toast from "react-native-toast-message";
@@ -52,20 +52,17 @@ const mutex = new Mutex();
 
 const GalleryScreen = () => {
   const { pageID } = useLocalSearchParams();
-  const params = useLocalSearchParams();
+  // const params = useLocalSearchParams();
   const [assets, setAssets] = useState<MediaLibrary.AssetInfo[]>([]);
   const [assetAfter, setAssetAfter] = useState<any>(undefined)
   const [reachedEnd, setReachedEnd] = useState<boolean>(false)
-  const [loading, setLoading] = useState(false)
+  // const [loading, setLoading] = useState(false)
   const [selectedItems, setSelectedItems] = useState<AssetItem[]>([]);
   const [profileAttachments, setProfileAttachments] = useState<any[]>([]);
   const [permissionGranted, setPermissionGranted] = useState(false);
-  const [cameraPermission, setCameraPermission] = useCameraPermissions();
-  const [recordingDuration, setRecordingDuration] = useState(0);
-  const [isCameraVisible, setIsCameraVisible] = useState(false);
-  const [isRecording, setIsRecording] = useState(false);
+  // const [cameraPermission] = useCameraPermissions();
+  // const [isCameraVisible, setIsCameraVisible] = useState(false);
   const { user } = useAuthContext();
-  const [isSaving, setIsSaving] = useState(false);
 
   const attachmentFiltered = user?.profile?.attachments?.map(
     (attachment, index) => {
@@ -77,16 +74,6 @@ const GalleryScreen = () => {
     }
   );
 
-  // Add this helper function to format the duration
-  const formatDuration = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, "0")}:${secs
-      .toString()
-      .padStart(2, "0")}`;
-  };
-
-  const cameraRef = useRef<CameraView>(null);
   const {
     note,
     selectedFiles,
@@ -113,9 +100,9 @@ const GalleryScreen = () => {
     })();
   }, []);
 
-  const fetchAssets = async (after?: string) => {
+  const fetchAssets = async (after?: string): Promise<MediaLibrary.AssetInfo | undefined> => {
     if (reachedEnd)
-      return;
+      return undefined;
     console.log("---------------> Fetching New Assets", after);
 
     const album = await MediaLibrary.getAssetsAsync({
@@ -134,9 +121,11 @@ const GalleryScreen = () => {
 
     if (album.assets.length > 0) {
       setAssetAfter(album.assets[album.assets.length - 1].id)
+      return album.assets[0]
     } else {
       setReachedEnd(true)
     }
+    return undefined
   };
   const handleScroll = ({ nativeEvent }: any) => {
     try {
@@ -244,105 +233,18 @@ const GalleryScreen = () => {
     }
   };
 
-  const openCamera = async () => {
-    if (cameraPermission?.granted) {
-      setIsCameraVisible(true);
-    } else {
-      const status = await Camera.requestCameraPermissionsAsync();
-      if (status.granted) {
-        setIsCameraVisible(true);
-      } else {
-        alert("Camera permission is required to take photos");
-      }
-    }
-  };
-
-  const takePhoto = async () => {
-    if (cameraRef.current) {
-      const photo = await cameraRef.current.takePictureAsync();
-      if (photo && photo.uri) {
-        try {
-          const asset = await MediaLibrary.createAssetAsync(photo.uri);
-
-          const newItem: AssetItem = {
-            id: asset.id.toString(),
-            localUri: asset.uri,
-            type: "image",
-            uri: asset.uri,
-          };
-          setSelectedItems((prev: AssetItem[]) => [...prev, newItem]);
-
-          // Fetch the updated assets from the library
-          fetchAssets();
-          setIsCameraVisible(false);
-        } catch (error) {
-          console.error("Failed to save photo:", error);
-        }
-      }
-    }
-  };
-
-  const startRecording = async () => {
-    if (cameraRef.current) {
-      try {
-        setIsRecording(true);
-        const video = await cameraRef.current.recordAsync();
-
-        if (video?.uri) {
-          setIsSaving(true);
-          const asset = await MediaLibrary.createAssetAsync(video.uri);
-
-          if (
-            asset.mediaType === MediaLibrary.MediaType.video &&
-            asset.duration <= 0
-          ) {
-            Toaster.error("Video too short - please record longer");
-            return;
-          }
-
-          const newItem: AssetItem = {
-            id: asset.id.toString(),
-            localUri: asset.uri,
-            type:
-              asset.mediaType === MediaLibrary.MediaType.video
-                ? "video"
-                : "image",
-            uri: asset.uri,
-          };
-
-          setSelectedItems((prev) => [...prev, newItem]);
-          await fetchAssets();
-        }
-      } catch (error) {
-        const errorMessage = (error as Error).message;
-        if (
-          errorMessage.includes(
-            "Recording was stopped before any data could be produced"
-          )
-        ) {
-          Toaster.error("Please hold the record button longer");
-        } else {
-          Toaster.error("Failed to save video");
-        }
-      } finally {
-        setIsRecording(false);
-        setIsSaving(false);
-      }
-    }
-  };
-
-  const stopRecording = async () => {
-    if (cameraRef.current && isRecording) {
-      try {
-        await cameraRef.current.stopRecording();
-      } catch (error) {
-        console.error("Error stopping recording:", error);
-      } finally {
-        setIsRecording(false);
-        setIsCameraVisible(false);
-      }
-    }
-  };
+  // const openCamera = async () => {
+  //   if (cameraPermission?.granted) {
+  //     setIsCameraVisible(true);
+  //   } else {
+  //     const status = await Camera.requestCameraPermissionsAsync();
+  //     if (status.granted) {
+  //       setIsCameraVisible(true);
+  //     } else {
+  //       alert("Camera permission is required to take photos");
+  //     }
+  //   }
+  // };
 
   useEffect(() => {
     if (selectedFiles) {
@@ -360,19 +262,105 @@ const GalleryScreen = () => {
     }
   }, [profileAttachmentsRoute]);
 
-  useEffect(() => {
-    if (isRecording) {
-      const interval = setInterval(() => {
-        setRecordingDuration((prev) => prev + 1);
-      }, 1000);
-      return () => clearInterval(interval);
+  const openNativeCamera = async (mode: "photo" | "video") => {
+    // Request camera permissions
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    if (status !== "granted") {
+      Alert.alert("Permission Denied", "You need to enable camera permissions.");
+      return;
     }
-    if (!isRecording) {
-      setRecordingDuration(0);
-    }
-  }, [isRecording]);
 
+    // Open the native camera app
+    let result = await ImagePicker.launchCameraAsync({
+      mediaTypes: mode === "photo" ? ImagePicker.MediaTypeOptions.Images : ImagePicker.MediaTypeOptions.Videos,
+      allowsEditing: true, // Allows cropping
+      quality: 1, // High-quality image/video
+    });
+
+    // Handle the captured media
+    if (!result.canceled && result.assets.length > 0) {
+      console.log("Captured:", result.assets[0].uri);
+      await MediaLibrary.saveToLibraryAsync(result.assets[0].uri);
+      let mAsset = await fetchAssets();
+      if (mAsset) {
+        const newItem: AssetItem = {
+          id: mAsset.id,
+          localUri: mAsset.uri,
+          type:
+            mAsset.mediaType === MediaLibrary.MediaType.video
+              ? "video"
+              : "image",
+          uri: mAsset.uri,
+        };
+        setSelectedItems((prev: any) => [...prev, newItem]);
+      }
+
+    }
+  };
+
+  const renderProfileItem = ({ item, index }: { item: any, index: number }) => {
+    const ind = profileAttachments.findIndex(
+      (selectedItem) => item.id === selectedItem.id
+    )
+    return (
+      <Pressable
+        onPress={() => {
+          const attachment = attachmentFiltered?.[index];
+          handleSelectProfileItem(item);
+        }}
+        style={{
+          margin: 4,
+        }}
+      >
+        <Surface style={styles.itemContainer}>
+          <RenderMediaItem
+            handleImagePress={() => { }}
+            index={item.id}
+            item={item.attachment}
+            height={120}
+            width={120}
+            borderRadius={8}
+          />
+          <View style={styles.checkboxContainer}>
+            <Checkbox
+              status={
+                ind >= 0
+                  ? "checked"
+                  : "unchecked"
+              }
+              onPress={() => {
+                handleSelectProfileItem(item);
+              }}
+            />
+            {ind >= 0 && (
+              <View style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                backgroundColor: Colors(theme).primary,
+                borderRadius: 3,
+                width: "100%",
+                height: "100%",
+                alignItems: "center",
+                padding: 7
+              }}>
+                <Text style={{
+                  fontSize: 16,
+                  fontWeight: "bold",
+                  color: Colors(theme).white,
+                }}>
+                  {(ind + 1)}
+                </Text>
+              </View>)}
+          </View>
+        </Surface>
+      </Pressable>
+    )
+  }
   const renderItem = ({ item }: { item: MediaLibrary.AssetInfo }) => {
+    const itemIndex = selectedItems.findIndex(
+      (selectedItem: AssetItem) => item.id === selectedItem.id
+    );
     return (
       <Pressable
         onPress={() => handleSelectItem(item)}
@@ -387,14 +375,32 @@ const GalleryScreen = () => {
           <View style={styles.checkboxContainer}>
             <Checkbox
               status={
-                selectedItems.find(
-                  (selectedItem: AssetItem) => item.id === selectedItem.id
-                )
+                itemIndex >= 0
                   ? "checked"
                   : "unchecked"
               }
               onPress={() => handleSelectItem(item)}
             />
+            {itemIndex >= 0 && (
+              <View style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                backgroundColor: Colors(theme).primary,
+                borderRadius: 3,
+                width: "100%",
+                height: "100%",
+                alignItems: "center",
+                padding: 7
+              }}>
+                <Text style={{
+                  fontSize: 16,
+                  fontWeight: "bold",
+                  color: Colors(theme).white,
+                }}>
+                  {(profileAttachments.length + itemIndex + 1)}
+                </Text>
+              </View>)}
           </View>
           {item.mediaType === "video" ? (
             <View
@@ -413,7 +419,7 @@ const GalleryScreen = () => {
             </View>
           ) : null}
         </Surface>
-      </Pressable>
+      </Pressable >
     )
   };
 
@@ -446,7 +452,7 @@ const GalleryScreen = () => {
               color={Colors(theme).white}
             />
           )}
-          onPress={openCamera}
+          onPress={() => openNativeCamera("photo")}
         >
           Take a Photo
         </Button>
@@ -459,64 +465,19 @@ const GalleryScreen = () => {
               color={Colors(theme).white}
             />
           )}
-          onPress={() => setIsCameraVisible(true)}
+          onPress={() => openNativeCamera("video")}
         >
           Take Video
         </Button>
       </View>
 
       {/* Camera Modal */}
-      <Modal visible={isCameraVisible} animationType="slide">
-        <CameraView
-          style={styles.camera}
-          ref={cameraRef}
-          facing="back"
-          onCameraReady={() => { }}
-          mode="video"
-        >
-          {isRecording ? (
-            <View style={styles.timerContainer}>
-              <Text style={styles.timerText}>
-                {formatDuration(recordingDuration)}
-              </Text>
-            </View>
-          ) : null}
-          <View style={styles.cameraButtons}>
-            <Button
-              mode="contained"
-              icon={() => (
-                <FontAwesomeIcon
-                  icon={faCamera}
-                  size={16}
-                  color={Colors(theme).white}
-                />
-              )}
-              onPress={async () => {
-                await takePhoto();
-              }}
-              disabled={isRecording}
-            >
-              Capture Photo
-            </Button>
-            <Button
-              mode="contained"
-              icon={() => (
-                <FontAwesomeIcon
-                  icon={faVideo}
-                  size={16}
-                  color={Colors(theme).white}
-                />
-              )}
-              onPress={isRecording ? stopRecording : startRecording}
-            >
-              {isRecording ? "Stop Recording" : "Start Recording"}
-            </Button>
-            <Button mode="contained" onPress={() => setIsCameraVisible(false)}>
-              Close
-            </Button>
-          </View>
-        </CameraView>
-      </Modal>
+      {/* <CameraInputModal
+        fetchAssets={fetchAssets}
+        isCameraVisible={isCameraVisible}
+        setIsCameraVisible={setIsCameraVisible}
+        setSelectedItems={setSelectedItems}
+      /> */}
 
       {/* Gallery */}
 
@@ -534,42 +495,7 @@ const GalleryScreen = () => {
         {attachmentFiltered && attachmentFiltered.length > 0 && (
           <FlatList
             data={attachmentFiltered}
-            renderItem={({ item, index }) => (
-              <Pressable
-                onPress={() => {
-                  const attachment = attachmentFiltered?.[index];
-                  handleSelectProfileItem(item);
-                }}
-                style={{
-                  margin: 4,
-                }}
-              >
-                <Surface style={styles.itemContainer}>
-                  <RenderMediaItem
-                    handleImagePress={() => { }}
-                    index={item.id}
-                    item={item.attachment}
-                    height={120}
-                    width={120}
-                    borderRadius={8}
-                  />
-                  <View style={styles.checkboxContainer}>
-                    <Checkbox
-                      status={
-                        profileAttachments.find(
-                          (selectedItem) => item.id === selectedItem.id
-                        )
-                          ? "checked"
-                          : "unchecked"
-                      }
-                      onPress={() => {
-                        handleSelectProfileItem(item);
-                      }}
-                    />
-                  </View>
-                </Surface>
-              </Pressable>
-            )}
+            renderItem={renderProfileItem}
             numColumns={3}
             contentContainerStyle={styles.galleryContainer}
             ListHeaderComponent={

@@ -30,7 +30,7 @@ import {
 } from "react-native";
 import CollaborationDetails from "../collaboration/card-components/CollaborationDetails";
 import CollaborationHeader from "../collaboration/card-components/CollaborationHeader";
-import { MediaItem } from "../ui/carousel/render-media-item";
+import { MediaItem } from "../collaboration/render-media-item";
 import EmptyState from "../ui/empty-state";
 
 const Applications = () => {

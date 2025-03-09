@@ -35,6 +35,14 @@ const stylesFn = (theme: Theme) => StyleSheet.create({
   button: {
     backgroundColor: Colors(theme).primary,
   },
+  buttonSecondary: {
+    backgroundColor: Colors(theme).background,
+    borderColor: Colors(theme).border,
+    borderWidth: 2
+  },
+  secondaryText: {
+    color: Colors(theme).primary,
+  }
 });
 
 export default stylesFn;

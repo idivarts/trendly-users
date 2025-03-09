@@ -1,7 +1,7 @@
 import BottomSheetActions from "@/components/BottomSheetActions";
 import CollaborationDetails from "@/components/collaboration/card-components/CollaborationDetails";
 import CollaborationHeader from "@/components/collaboration/card-components/CollaborationHeader";
-import { MediaItem } from "@/components/ui/carousel/render-media-item";
+import { MediaItem } from "@/components/collaboration/render-media-item";
 import ScreenHeader from "@/components/ui/screen-header";
 import Colors from "@/constants/Colors";
 import { MAX_WIDTH_WEB } from "@/constants/Container";

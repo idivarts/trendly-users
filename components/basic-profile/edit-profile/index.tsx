@@ -23,6 +23,12 @@ interface EditProfileProps {
   setUnsavedChanges?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+// interface IProfileSubject {
+//   action: "unsaved" | "profile",
+//   data: any
+// }
+// export const EditProfileSubject = new Subject<IProfileSubject>()
+
 const EditProfile: React.FC<EditProfileProps> = ({
   unsavedChanges,
   setUnsavedChanges,
@@ -40,29 +46,23 @@ const EditProfile: React.FC<EditProfileProps> = ({
   } = useBreakpoints();
 
   const {
-    contents,
-    email,
-    handleAssetsUpdateNative,
-    handleAssetsUpdateWeb,
-    handleNicheSelect,
-    handleSave,
-    isProcessing,
-    name,
-    nativeAssets,
-    niches,
-    phoneNumber,
-    processPercentage,
-    setEmail,
-    setName,
-    setPhoneNumber,
-    setTimeCommitment,
-    timeCommitment,
-    user,
-    verifyEmail,
+    contents, email, isProcessing, name, niches, phoneNumber, timeCommitment, user,
+    handleNicheSelect, handleSave, setEmail, setName, setPhoneNumber, setTimeCommitment,
+    verifyEmail
   } = useEditProfile({
     unsavedChanges,
     setUnsavedChanges,
   });
+
+  // useEffect(() => {
+  //   EditProfileSubject.subscribe((data) => {
+  //     if (data.action == "profile") {
+  //       setAttachments(data.data)
+  //       setUnsavedChanges && setUnsavedChanges(true)
+  //       console.log("New Attachments here", data.data.length, data.data);
+  //     }
+  //   })
+  // }, [])
 
   useEffect(() => {
     const keyboardWillShowListener = Keyboard.addListener(

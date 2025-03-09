@@ -59,9 +59,9 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             <Button
               mode="contained"
               onPress={handleCancel}
-              style={styles.button}
+              style={styles.buttonSecondary}
             >
-              {cancelText}
+              <Text style={styles.secondaryText}>{cancelText}</Text>
             </Button>
           </View>
         </View>

@@ -1,4 +1,4 @@
-import { MediaItem } from "@/components/ui/carousel/render-media-item";
+import { MediaItem } from "@/components/collaboration/render-media-item";
 import { Platform } from "react-native";
 
 export const processRawAttachment = (attachment: any): MediaItem => {

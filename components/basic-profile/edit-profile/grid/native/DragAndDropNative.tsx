@@ -4,7 +4,7 @@ import { Attachment } from '@/shared-libs/firestore/trendly-pro/constants/attach
 import { gridStylesFn } from '@/styles/draggable-grid/DraggableGrid.styles';
 import { processRawAttachment } from '@/utils/attachments';
 import { useTheme } from '@react-navigation/native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { useSharedValue } from 'react-native-reanimated';
 import Draggable from './Draggable';
@@ -42,14 +42,22 @@ const generateEmptyAssets = (
   return assets;
 };
 
+class DataHolder {
+  constructor(public myAttachments: { [k: number]: Attachment }, public assets: AssetItem[]) {
+  }
+}
+let myData: DataHolder
 const DragAndDropNative: React.FC<DragAndDropNativeProps> = ({
   attachments,
 }) => {
   const [assets, setAssets] = useState<AssetItem[]>(generateEmptyAssets(attachments));
-  const [myAttachments, setMyAttachments] = useState(attachments.reduce((acc: any, value, index) => {
-    acc[index] = value;
-    return acc;
-  }, {}))
+  useEffect(() => {
+    myData = new DataHolder(attachments.reduce((acc: any, value, index) => {
+      acc[index] = value;
+      return acc;
+    }, {}), generateEmptyAssets(attachments))
+    setAssets([...myData.assets])
+  }, [])
   const { user, updateUser } = useAuthContext()
 
   const initialPositions = Object.assign({}, ...assets.map(item => item.id).map((id, index) => ({ [id]: index })));
@@ -63,41 +71,45 @@ const DragAndDropNative: React.FC<DragAndDropNativeProps> = ({
 
     for (let key in newPositions) {
       const pos = parseInt(key)
-      assets[pos].index = newPositions[key]
+      myData.assets[pos].index = newPositions[key]
     }
-    setAssets([...assets])
+    setAssets([...myData.assets])
     orderAndUpload()
   };
 
-  const handleAssetUpdate = (id: number, asset: Attachment) => {
+  const handleAssetUpdate = (id: number, attachment: Attachment) => {
     const position = id;
-    assets[position] = {
+    myData.assets[position] = {
       id: position,
-      index: assets[position].index,
-      type: asset.type,
-      url: processRawAttachment(asset).url
+      index: myData.assets[position].index,
+      type: attachment.type,
+      url: processRawAttachment(attachment).url
     }
-    setAssets([...assets])
-    if (assets[position].url) {
-      myAttachments[position] = asset
-      setMyAttachments({ ...myAttachments })
+    setAssets([...myData.assets])
+    if (myData.assets[position].url) {
+      myData.myAttachments[position] = attachment
+      // setMyAttachments({ ...myAttachments })
     } else {
-      delete myAttachments[position]
-      setMyAttachments({ ...myAttachments })
+      delete myData.myAttachments[position]
+      // setMyAttachments({ ...myAttachments })
     }
     orderAndUpload()
   }
 
   const orderAndUpload = () => {
-    const assetOrder = assets.filter(a => !!a.url).sort((a, b) => (a.index - b.index)).map(a => a.id)
-    console.log("Order and Upload", assetOrder, "\n", myAttachments);
+    const assetOrder = myData.assets.filter(a => !!a.url).sort((a, b) => (a.index - b.index)).map(a => a.id)
+    console.log("Order and Upload", assetOrder, "\n", myData.myAttachments);
     let newAttachments: Attachment[] = []
     for (let i = 0; i < assetOrder.length; i++) {
       const id = assetOrder[i];
-      newAttachments.push(myAttachments["" + id])
+      newAttachments.push(myData.myAttachments[id])
     }
     console.log("New Attachments", newAttachments);
     if (user) {
+      // EditProfileSubject.next({
+      //   action: "profile",
+      //   data: newAttachments
+      // })
       updateUser(user.id, {
         profile: {
           ...user?.profile,
