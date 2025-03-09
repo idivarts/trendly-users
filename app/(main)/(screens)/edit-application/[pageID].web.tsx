@@ -355,32 +355,33 @@ const ApplyScreenWeb = () => {
         style={styles.container}
         contentContainerStyle={styles.contentContainerStyle}
       >
-        <Card style={styles.card} onPress={() => inputRef.current?.click()}>
-          <Card.Content style={styles.cardContent}>
-            <IconButton
-              icon={() => (
-                <FontAwesomeIcon
-                  icon={faClapperboard}
-                  size={20}
-                  color={Colors(theme).text}
-                />
-              )}
-              onPress={() => inputRef.current?.click()}
-            />
-          </Card.Content>
-          <input
-            ref={inputRef}
-            type="file"
-            style={{
-              backgroundColor: "transparent",
-              visibility: "hidden",
-              border: "none",
-            }}
-            multiple
-            onChange={handleFileSelection}
-            accept="image/*, video/*"
-          />
-        </Card>
+        {previewUrls.length == 0 &&
+          <Card style={styles.card} onPress={() => inputRef.current?.click()}>
+            <Card.Content style={styles.cardContent}>
+              <IconButton
+                icon={() => (
+                  <FontAwesomeIcon
+                    icon={faClapperboard}
+                    size={20}
+                    color={Colors(theme).text}
+                  />
+                )}
+                onPress={() => inputRef.current?.click()}
+              />
+            </Card.Content>
+          </Card>}
+        <input
+          ref={inputRef}
+          type="file"
+          style={{
+            backgroundColor: "transparent",
+            visibility: "hidden",
+            border: "none",
+          }}
+          multiple
+          onChange={handleFileSelection}
+          accept="image/*, video/*"
+        />
         {previewUrls.length > 0 && (
           <AssetsPreview
             files={previewUrls.map((file) => ({
