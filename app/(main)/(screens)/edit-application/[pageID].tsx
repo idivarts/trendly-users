@@ -94,6 +94,8 @@ const EditApplicationScreen = () => {
     params.answers ? JSON.parse(params.answers as string) : {}
   );
 
+  const [totalFiles, setTotalFiles] = useState(0)
+
   const theme = useTheme();
   const styles = stylesFn(theme);
 
@@ -140,6 +142,7 @@ const EditApplicationScreen = () => {
 
   const handleUploadFiles = async () => {
     setLoading(true);
+    setTotalFiles(1)
     try {
       var finalFilesToUploadWithoutParsing = [];
       var finalFilesToUploadWithParsing = [];
@@ -182,13 +185,11 @@ const EditApplicationScreen = () => {
         }
       }
 
-      const uploadedFiles = await uploadAttachments(
-        attachmentToUploadWithParsing
-      );
-
-      const uploadedFileUrisResponse = await uploadFileUris(
-        finalFilesToUploadWithParsing
-      );
+      setTotalFiles(attachmentToUploadWithParsing.length + finalFilesToUploadWithParsing.length)
+      const [uploadedFiles, uploadedFileUrisResponse] = await Promise.all([
+        uploadAttachments(attachmentToUploadWithParsing),
+        uploadFileUris(finalFilesToUploadWithParsing)
+      ]);
 
       const finalProfileAttachments = finalFilesToUploadWithoutParsing.map(
         //@ts-ignore
