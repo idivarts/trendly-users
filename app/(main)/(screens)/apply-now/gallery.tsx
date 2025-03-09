@@ -372,7 +372,69 @@ const GalleryScreen = () => {
     }
   }, [isRecording]);
 
+  const renderProfileItem = ({ item, index }: { item: any, index: number }) => {
+    const ind = profileAttachments.findIndex(
+      (selectedItem) => item.id === selectedItem.id
+    )
+    return (
+      <Pressable
+        onPress={() => {
+          const attachment = attachmentFiltered?.[index];
+          handleSelectProfileItem(item);
+        }}
+        style={{
+          margin: 4,
+        }}
+      >
+        <Surface style={styles.itemContainer}>
+          <RenderMediaItem
+            handleImagePress={() => { }}
+            index={item.id}
+            item={item.attachment}
+            height={120}
+            width={120}
+            borderRadius={8}
+          />
+          <View style={styles.checkboxContainer}>
+            <Checkbox
+              status={
+                ind >= 0
+                  ? "checked"
+                  : "unchecked"
+              }
+              onPress={() => {
+                handleSelectProfileItem(item);
+              }}
+            />
+            {ind >= 0 && (
+              <View style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                backgroundColor: Colors(theme).primary,
+                borderRadius: 3,
+                width: "100%",
+                height: "100%",
+                alignItems: "center",
+                padding: 7
+              }}>
+                <Text style={{
+                  fontSize: 16,
+                  fontWeight: "bold",
+                  color: Colors(theme).white,
+                }}>
+                  {(ind + 1)}
+                </Text>
+              </View>)}
+          </View>
+        </Surface>
+      </Pressable>
+    )
+  }
   const renderItem = ({ item }: { item: MediaLibrary.AssetInfo }) => {
+    const itemIndex = selectedItems.findIndex(
+      (selectedItem: AssetItem) => item.id === selectedItem.id
+    );
     return (
       <Pressable
         onPress={() => handleSelectItem(item)}
@@ -387,14 +449,32 @@ const GalleryScreen = () => {
           <View style={styles.checkboxContainer}>
             <Checkbox
               status={
-                selectedItems.find(
-                  (selectedItem: AssetItem) => item.id === selectedItem.id
-                )
+                itemIndex >= 0
                   ? "checked"
                   : "unchecked"
               }
               onPress={() => handleSelectItem(item)}
             />
+            {itemIndex >= 0 && (
+              <View style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                backgroundColor: Colors(theme).primary,
+                borderRadius: 3,
+                width: "100%",
+                height: "100%",
+                alignItems: "center",
+                padding: 7
+              }}>
+                <Text style={{
+                  fontSize: 16,
+                  fontWeight: "bold",
+                  color: Colors(theme).white,
+                }}>
+                  {(profileAttachments.length + itemIndex + 1)}
+                </Text>
+              </View>)}
           </View>
           {item.mediaType === "video" ? (
             <View
@@ -413,7 +493,7 @@ const GalleryScreen = () => {
             </View>
           ) : null}
         </Surface>
-      </Pressable>
+      </Pressable >
     )
   };
 
@@ -534,42 +614,7 @@ const GalleryScreen = () => {
         {attachmentFiltered && attachmentFiltered.length > 0 && (
           <FlatList
             data={attachmentFiltered}
-            renderItem={({ item, index }) => (
-              <Pressable
-                onPress={() => {
-                  const attachment = attachmentFiltered?.[index];
-                  handleSelectProfileItem(item);
-                }}
-                style={{
-                  margin: 4,
-                }}
-              >
-                <Surface style={styles.itemContainer}>
-                  <RenderMediaItem
-                    handleImagePress={() => { }}
-                    index={item.id}
-                    item={item.attachment}
-                    height={120}
-                    width={120}
-                    borderRadius={8}
-                  />
-                  <View style={styles.checkboxContainer}>
-                    <Checkbox
-                      status={
-                        profileAttachments.find(
-                          (selectedItem) => item.id === selectedItem.id
-                        )
-                          ? "checked"
-                          : "unchecked"
-                      }
-                      onPress={() => {
-                        handleSelectProfileItem(item);
-                      }}
-                    />
-                  </View>
-                </Surface>
-              </Pressable>
-            )}
+            renderItem={renderProfileItem}
             numColumns={3}
             contentContainerStyle={styles.galleryContainer}
             ListHeaderComponent={
