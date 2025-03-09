@@ -7,21 +7,22 @@ import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { stylesFn } from "@/styles/apply-now/gallery.styles";
 import { AssetItem } from "@/types/Asset";
 import { processRawAttachment } from "@/utils/attachments";
-import { faCamera, faImage, faVideo } from "@fortawesome/free-solid-svg-icons";
+import { faImage, faVideo } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
-import { Camera, CameraView, useCameraPermissions } from "expo-camera";
+import { useCameraPermissions } from "expo-camera";
+import * as ImagePicker from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
 import { router, useLocalSearchParams } from "expo-router";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
+  Alert,
   FlatList,
   Image,
-  Modal,
   Platform,
   Pressable,
   ScrollView,
-  View,
+  View
 } from "react-native";
 import { Checkbox, Surface, Text } from "react-native-paper";
 import Toast from "react-native-toast-message";
@@ -60,12 +61,9 @@ const GalleryScreen = () => {
   const [selectedItems, setSelectedItems] = useState<AssetItem[]>([]);
   const [profileAttachments, setProfileAttachments] = useState<any[]>([]);
   const [permissionGranted, setPermissionGranted] = useState(false);
-  const [cameraPermission, setCameraPermission] = useCameraPermissions();
-  const [recordingDuration, setRecordingDuration] = useState(0);
+  const [cameraPermission] = useCameraPermissions();
   const [isCameraVisible, setIsCameraVisible] = useState(false);
-  const [isRecording, setIsRecording] = useState(false);
   const { user } = useAuthContext();
-  const [isSaving, setIsSaving] = useState(false);
 
   const attachmentFiltered = user?.profile?.attachments?.map(
     (attachment, index) => {
@@ -77,16 +75,6 @@ const GalleryScreen = () => {
     }
   );
 
-  // Add this helper function to format the duration
-  const formatDuration = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, "0")}:${secs
-      .toString()
-      .padStart(2, "0")}`;
-  };
-
-  const cameraRef = useRef<CameraView>(null);
   const {
     note,
     selectedFiles,
@@ -113,9 +101,9 @@ const GalleryScreen = () => {
     })();
   }, []);
 
-  const fetchAssets = async (after?: string) => {
+  const fetchAssets = async (after?: string): Promise<MediaLibrary.AssetInfo | undefined> => {
     if (reachedEnd)
-      return;
+      return undefined;
     console.log("---------------> Fetching New Assets", after);
 
     const album = await MediaLibrary.getAssetsAsync({
@@ -134,9 +122,11 @@ const GalleryScreen = () => {
 
     if (album.assets.length > 0) {
       setAssetAfter(album.assets[album.assets.length - 1].id)
+      return album.assets[0]
     } else {
       setReachedEnd(true)
     }
+    return undefined
   };
   const handleScroll = ({ nativeEvent }: any) => {
     try {
@@ -244,105 +234,18 @@ const GalleryScreen = () => {
     }
   };
 
-  const openCamera = async () => {
-    if (cameraPermission?.granted) {
-      setIsCameraVisible(true);
-    } else {
-      const status = await Camera.requestCameraPermissionsAsync();
-      if (status.granted) {
-        setIsCameraVisible(true);
-      } else {
-        alert("Camera permission is required to take photos");
-      }
-    }
-  };
-
-  const takePhoto = async () => {
-    if (cameraRef.current) {
-      const photo = await cameraRef.current.takePictureAsync();
-      if (photo && photo.uri) {
-        try {
-          const asset = await MediaLibrary.createAssetAsync(photo.uri);
-
-          const newItem: AssetItem = {
-            id: asset.id.toString(),
-            localUri: asset.uri,
-            type: "image",
-            uri: asset.uri,
-          };
-          setSelectedItems((prev: AssetItem[]) => [...prev, newItem]);
-
-          // Fetch the updated assets from the library
-          fetchAssets();
-          setIsCameraVisible(false);
-        } catch (error) {
-          console.error("Failed to save photo:", error);
-        }
-      }
-    }
-  };
-
-  const startRecording = async () => {
-    if (cameraRef.current) {
-      try {
-        setIsRecording(true);
-        const video = await cameraRef.current.recordAsync();
-
-        if (video?.uri) {
-          setIsSaving(true);
-          const asset = await MediaLibrary.createAssetAsync(video.uri);
-
-          if (
-            asset.mediaType === MediaLibrary.MediaType.video &&
-            asset.duration <= 0
-          ) {
-            Toaster.error("Video too short - please record longer");
-            return;
-          }
-
-          const newItem: AssetItem = {
-            id: asset.id.toString(),
-            localUri: asset.uri,
-            type:
-              asset.mediaType === MediaLibrary.MediaType.video
-                ? "video"
-                : "image",
-            uri: asset.uri,
-          };
-
-          setSelectedItems((prev) => [...prev, newItem]);
-          await fetchAssets();
-        }
-      } catch (error) {
-        const errorMessage = (error as Error).message;
-        if (
-          errorMessage.includes(
-            "Recording was stopped before any data could be produced"
-          )
-        ) {
-          Toaster.error("Please hold the record button longer");
-        } else {
-          Toaster.error("Failed to save video");
-        }
-      } finally {
-        setIsRecording(false);
-        setIsSaving(false);
-      }
-    }
-  };
-
-  const stopRecording = async () => {
-    if (cameraRef.current && isRecording) {
-      try {
-        await cameraRef.current.stopRecording();
-      } catch (error) {
-        console.error("Error stopping recording:", error);
-      } finally {
-        setIsRecording(false);
-        setIsCameraVisible(false);
-      }
-    }
-  };
+  // const openCamera = async () => {
+  //   if (cameraPermission?.granted) {
+  //     setIsCameraVisible(true);
+  //   } else {
+  //     const status = await Camera.requestCameraPermissionsAsync();
+  //     if (status.granted) {
+  //       setIsCameraVisible(true);
+  //     } else {
+  //       alert("Camera permission is required to take photos");
+  //     }
+  //   }
+  // };
 
   useEffect(() => {
     if (selectedFiles) {
@@ -360,17 +263,41 @@ const GalleryScreen = () => {
     }
   }, [profileAttachmentsRoute]);
 
-  useEffect(() => {
-    if (isRecording) {
-      const interval = setInterval(() => {
-        setRecordingDuration((prev) => prev + 1);
-      }, 1000);
-      return () => clearInterval(interval);
+  const openNativeCamera = async (mode: "photo" | "video") => {
+    // Request camera permissions
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    if (status !== "granted") {
+      Alert.alert("Permission Denied", "You need to enable camera permissions.");
+      return;
     }
-    if (!isRecording) {
-      setRecordingDuration(0);
+
+    // Open the native camera app
+    let result = await ImagePicker.launchCameraAsync({
+      mediaTypes: mode === "photo" ? ImagePicker.MediaTypeOptions.Images : ImagePicker.MediaTypeOptions.Videos,
+      allowsEditing: true, // Allows cropping
+      quality: 1, // High-quality image/video
+    });
+
+    // Handle the captured media
+    if (!result.canceled && result.assets.length > 0) {
+      console.log("Captured:", result.assets[0].uri);
+      await MediaLibrary.saveToLibraryAsync(result.assets[0].uri);
+      let mAsset = await fetchAssets();
+      if (mAsset) {
+        const newItem: AssetItem = {
+          id: mAsset.id,
+          localUri: mAsset.uri,
+          type:
+            mAsset.mediaType === MediaLibrary.MediaType.video
+              ? "video"
+              : "image",
+          uri: mAsset.uri,
+        };
+        setSelectedItems((prev: any) => [...prev, newItem]);
+      }
+
     }
-  }, [isRecording]);
+  };
 
   const renderProfileItem = ({ item, index }: { item: any, index: number }) => {
     const ind = profileAttachments.findIndex(
@@ -526,7 +453,7 @@ const GalleryScreen = () => {
               color={Colors(theme).white}
             />
           )}
-          onPress={openCamera}
+          onPress={() => openNativeCamera("photo")}
         >
           Take a Photo
         </Button>
@@ -539,64 +466,19 @@ const GalleryScreen = () => {
               color={Colors(theme).white}
             />
           )}
-          onPress={openCamera}
+          onPress={() => openNativeCamera("video")}
         >
           Take Video
         </Button>
       </View>
 
       {/* Camera Modal */}
-      <Modal visible={isCameraVisible} animationType="slide">
-        <CameraView
-          style={styles.camera}
-          ref={cameraRef}
-          facing="back"
-          onCameraReady={() => { }}
-          mode="video"
-        >
-          {isRecording ? (
-            <View style={styles.timerContainer}>
-              <Text style={styles.timerText}>
-                {formatDuration(recordingDuration)}
-              </Text>
-            </View>
-          ) : null}
-          <View style={styles.cameraButtons}>
-            <Button
-              mode="contained"
-              icon={() => (
-                <FontAwesomeIcon
-                  icon={faCamera}
-                  size={16}
-                  color={Colors(theme).white}
-                />
-              )}
-              onPress={async () => {
-                await takePhoto();
-              }}
-              disabled={isRecording}
-            >
-              Capture Photo
-            </Button>
-            <Button
-              mode="contained"
-              icon={() => (
-                <FontAwesomeIcon
-                  icon={faVideo}
-                  size={16}
-                  color={Colors(theme).white}
-                />
-              )}
-              onPress={isRecording ? stopRecording : startRecording}
-            >
-              {isRecording ? "Stop Recording" : "Start Recording"}
-            </Button>
-            <Button mode="contained" onPress={() => setIsCameraVisible(false)}>
-              Close
-            </Button>
-          </View>
-        </CameraView>
-      </Modal>
+      {/* <CameraInputModal
+        fetchAssets={fetchAssets}
+        isCameraVisible={isCameraVisible}
+        setIsCameraVisible={setIsCameraVisible}
+        setSelectedItems={setSelectedItems}
+      /> */}
 
       {/* Gallery */}
 
