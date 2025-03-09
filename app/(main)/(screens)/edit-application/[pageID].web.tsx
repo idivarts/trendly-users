@@ -113,7 +113,7 @@ const ApplyScreenWeb = () => {
     }
 
     if (selectedFiles) {
-      setFiles([...Array.from(selectedFiles), ...files]);
+      setFiles([...files, ...Array.from(selectedFiles)]);
     }
   };
 
