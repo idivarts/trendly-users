@@ -1,6 +1,5 @@
 import { SelectItem } from "@/components/ui/select";
 import { useAuthContext } from "@/contexts";
-import { Attachment } from "@/shared-libs/firestore/trendly-pro/constants/attachment";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { NativeAssetItem, WebAssetItem } from "@/types/Asset";
 import { calculateProfileCompletion } from "@/utils/profile";
@@ -27,7 +26,7 @@ const useEditProfile = ({
     setProcessPercentage,
   } = useProcess();
 
-  const [attachments, setAttachments] = useState<Attachment[]>([]);
+  // const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [nativeAssets, setNativeAssets] = useState<NativeAssetItem[]>([]);
   const [webAssets, setWebAssets] = useState<WebAssetItem[]>([]);
   const [content, setContent] = useState({
@@ -105,7 +104,7 @@ const useEditProfile = ({
       // @ts-ignore
       setContent(user.profile?.content);
 
-      setAttachments(user.profile?.attachments || [])
+      // setAttachments(user.profile?.attachments || [])
 
       setTimeCommitment({
         label: user.profile?.timeCommitment || "Full Time",
@@ -145,7 +144,7 @@ const useEditProfile = ({
       phoneVerified: user.phoneVerified,
       category: niches.map((niche) => niche.value),
       content,
-      attachments: attachments || [],
+      attachments: user.profile?.attachments || [],
     });
 
     setProcessMessage("Saving profile...");
@@ -158,8 +157,8 @@ const useEditProfile = ({
         ...user.profile,
         category: niches.map((niche) => niche.value),
         timeCommitment: timeCommitment.value,
-        completionPercentage,
-        attachments: attachments
+        completionPercentage
+        // attachments: attachments
       },
     })
       .then(() => {
@@ -199,7 +198,7 @@ const useEditProfile = ({
     timeCommitment,
     user,
     verifyEmail,
-    setAttachments
+    // setAttachments
   };
 };
 
