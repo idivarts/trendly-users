@@ -7,7 +7,6 @@ import ScreenHeader from "@/components/ui/screen-header";
 import TextInput from "@/components/ui/text-input";
 import Colors from "@/constants/Colors";
 import { useAWSContext } from "@/contexts/aws-context.provider";
-import { useBreakpoints } from "@/hooks";
 import AppLayout from "@/layouts/app-layout";
 import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import ProgressLoader from "@/shared-uis/components/ProgressLoader";
@@ -81,15 +80,11 @@ const ApplyScreenWeb = () => {
       url: string;
     }[]
   >([]);
-  const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
   const [fileAttachments, setFileAttachments] = useState<any[]>([]);
-  const [showModal, setShowModal] = useState(false);
 
   const inputRef = React.useRef<HTMLInputElement>(null);
   const theme = useTheme();
   const styles = stylesFn(theme);
-
-  const { xl } = useBreakpoints();
 
   const {
     processMessage,
@@ -139,8 +134,6 @@ const ApplyScreenWeb = () => {
         uploadAttachments(fileAttachments),
         uploadFiles(files)
       ]);
-
-      setUploadedFiles(uploadedFilesResponse);
 
       const timelineTimestamp = timelineData?.getTime() || 0;
 

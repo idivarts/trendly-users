@@ -10,6 +10,7 @@ import {
   useState,
 } from "react";
 import { Platform } from "react-native";
+import { Subject } from "rxjs";
 
 interface AWSContextProps {
   getBlob: (fileUri: any) => Promise<Blob>;
@@ -30,6 +31,11 @@ interface AWSContextProps {
   ) => Promise<any[]>;
 }
 
+export const AWSProgressUpdateSubject = new Subject<{
+  index?: number,
+  id?: number,
+  percentage: number
+}>()
 const AWSContext = createContext<AWSContextProps>(null!);
 
 export const useAWSContext = () => useContext(AWSContext);

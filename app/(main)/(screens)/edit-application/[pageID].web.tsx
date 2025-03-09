@@ -82,9 +82,7 @@ const ApplyScreenWeb = () => {
       url: string;
     }[]
   >([]);
-  const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
   const [fileAttachments, setFileAttachments] = useState<any[]>([]);
-  const [showModal, setShowModal] = useState(false);
   const [hasFetchedData, setHasFetchedData] = useState(false);
 
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -97,10 +95,8 @@ const ApplyScreenWeb = () => {
     processMessage,
     processPercentage,
     setProcessMessage,
-    setProcessPercentage,
     uploadFiles,
     uploadAttachments,
-    uploadNewAssets,
   } = useAWSContext();
 
   const handleFileSelection = (event: React.ChangeEvent<HTMLInputElement>) => {

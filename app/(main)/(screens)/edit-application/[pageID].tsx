@@ -101,10 +101,8 @@ const EditApplicationScreen = () => {
     processMessage,
     processPercentage,
     setProcessMessage,
-    setProcessPercentage,
     uploadFileUris,
     uploadAttachments,
-    uploadNewAssets,
   } = useAWSContext();
 
   const handleAssetUpload = async () => {
@@ -133,12 +131,12 @@ const EditApplicationScreen = () => {
     }
   };
 
-  const onDateChange = (event: any, selectedDate?: Date) => {
-    setShowDatePicker(false);
-    if (selectedDate) {
-      setTimelineData(selectedDate);
-    }
-  };
+  // const onDateChange = (event: any, selectedDate?: Date) => {
+  //   setShowDatePicker(false);
+  //   if (selectedDate) {
+  //     setTimelineData(selectedDate);
+  //   }
+  // };
 
   const handleUploadFiles = async () => {
     setLoading(true);

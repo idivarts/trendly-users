@@ -52,7 +52,6 @@ const ApplyScreen = () => {
   const [loading, setLoading] = useState(false);
   const [quotation, setQuotation] = useState("");
   const [files, setFiles] = useState<AssetItem[]>([]);
-  const [uploadedFiles, setUploadedFiles] = useState<any>([]);
   const [profileAttachments, setProfileAttachments] = useState<Attachment[]>(
     []
   );
@@ -102,12 +101,12 @@ const ApplyScreen = () => {
     }
   };
 
-  const onDateChange = (event: any, selectedDate?: Date) => {
-    setShowDatePicker(false);
-    if (selectedDate) {
-      setTimelineData(selectedDate);
-    }
-  };
+  // const onDateChange = (event: any, selectedDate?: Date) => {
+  //   setShowDatePicker(false);
+  //   if (selectedDate) {
+  //     setTimelineData(selectedDate);
+  //   }
+  // };
 
   const handleUploadFiles = async () => {
     setLoading(true);
@@ -126,10 +125,10 @@ const ApplyScreen = () => {
       );
 
       const finalFiles = [
-        ...uploadedFileUrisResponse,
         ...finalProfileAttachments,
+        ...uploadedFileUrisResponse,
       ];
-      setUploadedFiles(finalFiles);
+      // setUploadedFiles(finalFiles);
 
       const timelineTimestamp = timelineData?.getTime();
 
