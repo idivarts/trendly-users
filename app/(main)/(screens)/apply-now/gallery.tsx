@@ -1,5 +1,5 @@
+import RenderMediaItem from "@/components/collaboration/render-media-item";
 import Button from "@/components/ui/button";
-import RenderMediaItem from "@/components/ui/carousel/render-media-item";
 import ScreenHeader from "@/components/ui/screen-header";
 import Colors from "@/constants/Colors";
 import { useAuthContext } from "@/contexts";

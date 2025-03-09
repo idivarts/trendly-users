@@ -36,7 +36,7 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
-import { MediaItem } from "./ui/carousel/render-media-item";
+import { MediaItem } from "./collaboration/render-media-item";
 import Tag from "./ui/tag";
 
 const { width } = Dimensions.get("window");
