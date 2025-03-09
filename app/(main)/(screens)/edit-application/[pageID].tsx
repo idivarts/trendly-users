@@ -10,6 +10,7 @@ import {
   IApplications,
   ICollaboration,
 } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
+import ProgressLoader from "@/shared-uis/components/ProgressLoader";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { stylesFn } from "@/styles/ApplyNow.styles";
 import { AssetItem } from "@/types/Asset";
@@ -35,8 +36,7 @@ import {
   HelperText,
   IconButton,
   List,
-  Paragraph,
-  ProgressBar,
+  Paragraph
 } from "react-native-paper";
 import Toast from "react-native-toast-message";
 
@@ -167,7 +167,7 @@ const EditApplicationScreen = () => {
         }
       }
 
-      setLoading(false);
+      // setLoading(false);
 
       var attachmentToUploadWithoutParsing = [];
       var attachmentToUploadWithParsing = [];
@@ -241,7 +241,8 @@ const EditApplicationScreen = () => {
       }, 1000);
     } catch (error) {
       console.error(error);
-      setLoading(false);
+    } finally {
+      setLoading(true);
     }
   };
 
@@ -650,7 +651,7 @@ const EditApplicationScreen = () => {
             </HelperText>
           ) : null}
 
-          {processMessage && (
+          {/* {processMessage && (
             <HelperText type="info" style={styles.processText}>
               {processMessage} - {processPercentage}% done
             </HelperText>
@@ -660,7 +661,9 @@ const EditApplicationScreen = () => {
             progress={processPercentage / 100}
             color={Colors(theme).primary}
             style={styles.progressBar}
-          />
+          /> */}
+
+          {loading && <ProgressLoader isProcessing={loading} progress={processPercentage} />}
 
           <Button
             mode="contained"
