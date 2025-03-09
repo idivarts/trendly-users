@@ -1,32 +1,9 @@
-import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Dimensions,
-  Modal,
-  ActivityIndicator,
-  Pressable,
-} from "react-native";
-import { Card, Avatar } from "react-native-paper";
-import { stylesFn } from "@/styles/InfluencerCard.styles";
-import { useTheme } from "@react-navigation/native";
-import {
-  PinchGestureHandler,
-  PinchGestureHandlerGestureEvent,
-} from "react-native-gesture-handler";
-import Animated, {
-  useAnimatedGestureHandler,
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-} from "react-native-reanimated";
 import Colors from "@/constants/Colors";
-import CarouselNative from "./ui/carousel/carousel";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faStar } from "@fortawesome/free-regular-svg-icons";
+import Carousel from "@/shared-uis/components/carousel/carousel";
+import ImageComponent from "@/shared-uis/components/image-component";
+import { stylesFn } from "@/styles/InfluencerCard.styles";
 import { convertToKUnits } from "@/utils/conversion";
+import { faStar } from "@fortawesome/free-regular-svg-icons";
 import {
   faArrowTrendUp,
   faCheck,
@@ -35,10 +12,32 @@ import {
   faPeopleGroup,
   faPlus,
 } from "@fortawesome/free-solid-svg-icons";
-import Tag from "./ui/tag";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { useTheme } from "@react-navigation/native";
+import React, { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  Dimensions,
+  Modal,
+  Pressable,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import {
+  PinchGestureHandler,
+  PinchGestureHandlerGestureEvent,
+} from "react-native-gesture-handler";
+import { Card } from "react-native-paper";
+import Animated, {
+  useAnimatedGestureHandler,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from "react-native-reanimated";
 import { MediaItem } from "./ui/carousel/render-media-item";
-import Carousel from "@/shared-uis/components/carousel/carousel";
-import ImageComponent from "@/shared-uis/components/image-component";
+import Tag from "./ui/tag";
 
 const { width } = Dimensions.get("window");
 

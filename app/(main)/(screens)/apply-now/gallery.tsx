@@ -459,7 +459,7 @@ const GalleryScreen = () => {
               color={Colors(theme).white}
             />
           )}
-          onPress={() => setIsCameraVisible(true)}
+          onPress={openCamera}
         >
           Take Video
         </Button>

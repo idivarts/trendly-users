@@ -1,13 +1,13 @@
-import { ActivityIndicator, Image } from "react-native";
-import Animated from "react-native-reanimated";
 import { ResizeMode, Video } from "expo-av";
-import { TapGestureHandler, State } from "react-native-gesture-handler";
+import { ActivityIndicator, Image } from "react-native";
+import { State, TapGestureHandler } from "react-native-gesture-handler";
+import Animated from "react-native-reanimated";
 
-import { stylesFn } from "@/styles/InfluencerCard.styles";
-import { useTheme } from "@react-navigation/native";
-import { imageUrl } from "@/utils/url";
-import { useState } from "react";
 import { View } from "@/components/theme/Themed";
+import { stylesFn } from "@/styles/InfluencerCard.styles";
+import { imageUrl } from "@/utils/url";
+import { useTheme } from "@react-navigation/native";
+import { useState } from "react";
 
 export interface MediaItem {
   type: string;
@@ -21,6 +21,8 @@ interface RenderMediaItemProps {
   item: MediaItem;
   videoRefs?: React.MutableRefObject<{ [key: number]: any }>;
   width?: number;
+  shouldPlay?: boolean
+  useNativeControls?: boolean,
   borderRadius?: number;
 }
 
@@ -32,6 +34,8 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
   borderRadius,
   videoRefs,
   width,
+  shouldPlay,
+  useNativeControls
 }) => {
   const theme = useTheme();
   const styles = stylesFn(theme);
@@ -87,13 +91,9 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
           videoRefs.current[index] = ref;
         }
       }}
-      source={
-        item.url
-          ? {
-              uri: item.url,
-            }
-          : require("@/assets/videos/ForBiggerJoyrides.mp4")
-      }
+      source={{
+        uri: item.url,
+      }}
       style={[
         styles.media,
         {
@@ -104,8 +104,8 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
       ]}
       resizeMode={ResizeMode.COVER}
       isLooping={false}
-      shouldPlay
-      useNativeControls
+      shouldPlay={!!shouldPlay}
+      useNativeControls={!!useNativeControls}
       onError={(error) => console.error("Video Error:", error)}
       onLoadStart={() => setIsLoading(true)}
       onLoad={() => setIsLoading(false)}
