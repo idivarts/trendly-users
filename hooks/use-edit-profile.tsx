@@ -1,6 +1,6 @@
 import { SelectItem } from "@/components/ui/select";
 import { useAuthContext } from "@/contexts";
-import { useAWSContext } from "@/contexts/aws-context.provider";
+import { Attachment } from "@/shared-libs/firestore/trendly-pro/constants/attachment";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { NativeAssetItem, WebAssetItem } from "@/types/Asset";
 import { calculateProfileCompletion } from "@/utils/profile";
@@ -17,7 +17,6 @@ const useEditProfile = ({
   setUnsavedChanges,
 }: UseEditProfileProps) => {
   const { user, updateUser, verifyEmail } = useAuthContext();
-  const { uploadNewAssets } = useAWSContext();
 
   const {
     isProcessing,
@@ -28,7 +27,7 @@ const useEditProfile = ({
     setProcessPercentage,
   } = useProcess();
 
-  const [attachments, setAttachments] = useState<any[]>([]);
+  const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [nativeAssets, setNativeAssets] = useState<NativeAssetItem[]>([]);
   const [webAssets, setWebAssets] = useState<WebAssetItem[]>([]);
   const [content, setContent] = useState({
@@ -102,10 +101,11 @@ const useEditProfile = ({
         })) || []
       );
       // TODO: Fix this
+
       // @ts-ignore
-      setContent(user?.profile?.content);
-      // @ts-ignore
-      setAttachments(user.profile?.attachments);
+      setContent(user.profile?.content);
+
+      setAttachments(user.profile?.attachments || [])
 
       setTimeCommitment({
         label: user.profile?.timeCommitment || "Full Time",
@@ -145,7 +145,7 @@ const useEditProfile = ({
       phoneVerified: user.phoneVerified,
       category: niches.map((niche) => niche.value),
       content,
-      attachments: user.profile?.attachments || [],
+      attachments: attachments || [],
     });
 
     setProcessMessage("Saving profile...");
@@ -159,6 +159,7 @@ const useEditProfile = ({
         category: niches.map((niche) => niche.value),
         timeCommitment: timeCommitment.value,
         completionPercentage,
+        attachments: attachments
       },
     })
       .then(() => {
@@ -198,6 +199,7 @@ const useEditProfile = ({
     timeCommitment,
     user,
     verifyEmail,
+    setAttachments
   };
 };
 

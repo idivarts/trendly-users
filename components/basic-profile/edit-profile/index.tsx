@@ -13,6 +13,7 @@ import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Animated, Keyboard, Platform, Pressable } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
+import { Subject } from "rxjs";
 import ContentItem from "./ContentItem";
 import DragAndDropNative from "./grid/native/DragAndDropNative";
 import DragAndDropWeb from "./grid/web/DragAndDropWeb";
@@ -22,6 +23,12 @@ interface EditProfileProps {
   unsavedChanges?: boolean;
   setUnsavedChanges?: React.Dispatch<React.SetStateAction<boolean>>;
 }
+
+interface IProfileSubject {
+  action: "unsaved" | "profile",
+  data: any
+}
+export const EditProfileSubject = new Subject<IProfileSubject>()
 
 const EditProfile: React.FC<EditProfileProps> = ({
   unsavedChanges,
@@ -40,29 +47,23 @@ const EditProfile: React.FC<EditProfileProps> = ({
   } = useBreakpoints();
 
   const {
-    contents,
-    email,
-    handleAssetsUpdateNative,
-    handleAssetsUpdateWeb,
-    handleNicheSelect,
-    handleSave,
-    isProcessing,
-    name,
-    nativeAssets,
-    niches,
-    phoneNumber,
-    processPercentage,
-    setEmail,
-    setName,
-    setPhoneNumber,
-    setTimeCommitment,
-    timeCommitment,
-    user,
-    verifyEmail,
+    contents, email, isProcessing, name, niches, phoneNumber, timeCommitment, user,
+    handleNicheSelect, handleSave, setEmail, setName, setPhoneNumber, setTimeCommitment,
+    verifyEmail, setAttachments,
   } = useEditProfile({
     unsavedChanges,
     setUnsavedChanges,
   });
+
+  useEffect(() => {
+    EditProfileSubject.subscribe((data) => {
+      if (data.action == "profile") {
+        setAttachments(data.data)
+        setUnsavedChanges && setUnsavedChanges(true)
+        console.log("New Attachments here", data.data.length, data.data);
+      }
+    })
+  }, [])
 
   useEffect(() => {
     const keyboardWillShowListener = Keyboard.addListener(

@@ -6,11 +6,13 @@ import { useAuthContext } from "@/contexts";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import ProfileBottomSheet from "@/shared-uis/components/ProfileModal/Profile-Modal";
 import { FirestoreDB } from "@/utils/firestore";
+import { resetAndNavigate } from "@/utils/router";
 import {
   BottomSheetBackdrop,
   BottomSheetModal
 } from "@gorhom/bottom-sheet";
 import { useTheme } from "@react-navigation/native";
+import { useNavigation } from "expo-router";
 import { useMemo, useRef, useState } from "react";
 import { Pressable } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
@@ -21,6 +23,7 @@ const EditProfileScreen: React.FC = () => {
   const [unsavedChanges, setUnsavedChanges] = useState(false);
   const [confirmationModalVisible, setConfirmationModalVisible] =
     useState(false);
+  const [clickBack, setClickBack] = useState(false)
 
   const theme = useTheme();
 
@@ -32,7 +35,7 @@ const EditProfileScreen: React.FC = () => {
     left: insets.left,
     right: insets.right,
   });
-
+  const navigation = useNavigation()
   const handleSheetChanges = (index: number) => { };
   const closeProfileModal = () => {
     bottomSheetModalRef.current?.close();
@@ -54,6 +57,17 @@ const EditProfileScreen: React.FC = () => {
     <View style={{ flex: 1 }}>
       <ScreenHeader
         title="Edit Profile"
+        action={() => {
+          if (unsavedChanges) {
+            setClickBack(true)
+            return;
+          }
+          if (navigation.canGoBack()) {
+            navigation.goBack();
+          } else {
+            resetAndNavigate("/collaborations");
+          }
+        }}
         rightAction
         rightActionButton={
           <Pressable
@@ -96,6 +110,24 @@ const EditProfileScreen: React.FC = () => {
         />
       </BottomSheetModal>
 
+      <ConfirmationModal
+        cancelAction={() => {
+          setClickBack(false);
+          if (navigation.canGoBack()) {
+            navigation.goBack();
+          } else {
+            resetAndNavigate("/collaborations");
+          }
+        }}
+        confirmAction={() => {
+          setClickBack(false);
+        }}
+        confirmText="Stay!"
+        cancelText="Discard"
+        description="Going back would discard your changes. Are you sure?"
+        setVisible={setClickBack}
+        visible={clickBack}
+      />
       <ConfirmationModal
         cancelAction={() => setConfirmationModalVisible(false)}
         confirmAction={() => {

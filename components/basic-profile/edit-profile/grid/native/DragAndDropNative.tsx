@@ -7,6 +7,7 @@ import { useTheme } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { View } from 'react-native';
 import { useSharedValue } from 'react-native-reanimated';
+import { EditProfileSubject } from '../..';
 import Draggable from './Draggable';
 import DraggableItem, { AssetItem } from './DraggableItem';
 
@@ -98,12 +99,16 @@ const DragAndDropNative: React.FC<DragAndDropNativeProps> = ({
     }
     console.log("New Attachments", newAttachments);
     if (user) {
-      updateUser(user.id, {
-        profile: {
-          ...user?.profile,
-          attachments: newAttachments
-        }
+      EditProfileSubject.next({
+        action: "profile",
+        data: newAttachments
       })
+      // updateUser(user.id, {
+      //   profile: {
+      //     ...user?.profile,
+      //     attachments: newAttachments
+      //   }
+      // })
     }
   }
 
