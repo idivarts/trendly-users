@@ -13,6 +13,7 @@ import {
   ICollaboration,
 } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
+import { processRawAttachment } from "@/shared-uis/utils/attachments";
 import { stylesFn } from "@/styles/ApplyNow.styles";
 import { FirestoreDB } from "@/utils/firestore";
 import { handleModalOrInputPage } from "@/utils/TextInput";
@@ -75,13 +76,11 @@ const ApplyScreenWeb = () => {
   };
 
   const [files, setFiles] = useState<File[]>([]);
-  const [previewUrls, setPreviewUrls] = useState<
-    {
-      id: string;
-      type: string;
-      url: string;
-    }[]
-  >([]);
+  const [previewUrls, setPreviewUrls] = useState<{
+    id: string;
+    type: string;
+    url: string;
+  }[]>([]);
   const [fileAttachments, setFileAttachments] = useState<any[]>([]);
   const [hasFetchedData, setHasFetchedData] = useState(false);
 
@@ -313,7 +312,10 @@ const ApplyScreenWeb = () => {
       type: file.type,
       url: URL.createObjectURL(file),
     }));
-    setPreviewUrls([...previewUrls, ...urls]);
+    setPreviewUrls([...urls, ...originalAttachments.map(o => ({
+      ...processRawAttachment(o),
+      id: processRawAttachment(o).url
+    }))]);
 
     return () => {
       urls.forEach((url) => {
@@ -355,32 +357,33 @@ const ApplyScreenWeb = () => {
         style={styles.container}
         contentContainerStyle={styles.contentContainerStyle}
       >
-        <Card style={styles.card} onPress={() => inputRef.current?.click()}>
-          <Card.Content style={styles.cardContent}>
-            <IconButton
-              icon={() => (
-                <FontAwesomeIcon
-                  icon={faClapperboard}
-                  size={20}
-                  color={Colors(theme).text}
-                />
-              )}
-              onPress={() => inputRef.current?.click()}
-            />
-          </Card.Content>
-          <input
-            ref={inputRef}
-            type="file"
-            style={{
-              backgroundColor: "transparent",
-              visibility: "hidden",
-              border: "none",
-            }}
-            multiple
-            onChange={handleFileSelection}
-            accept="image/*, video/*"
-          />
-        </Card>
+        {previewUrls.length == 0 &&
+          <Card style={styles.card} onPress={() => inputRef.current?.click()}>
+            <Card.Content style={styles.cardContent}>
+              <IconButton
+                icon={() => (
+                  <FontAwesomeIcon
+                    icon={faClapperboard}
+                    size={20}
+                    color={Colors(theme).text}
+                  />
+                )}
+                onPress={() => inputRef.current?.click()}
+              />
+            </Card.Content>
+          </Card>}
+        <input
+          ref={inputRef}
+          type="file"
+          style={{
+            backgroundColor: "transparent",
+            visibility: "hidden",
+            border: "none",
+          }}
+          multiple
+          onChange={handleFileSelection}
+          accept="image/*, video/*"
+        />
         {previewUrls.length > 0 && (
           <AssetsPreview
             files={previewUrls.map((file) => ({
