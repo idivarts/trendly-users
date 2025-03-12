@@ -20,7 +20,7 @@ const EmptyMessageState: React.FC<EmptyStateProps> = ({ listType }) => {
         action={() => router.push("/collaborations")}
         actionLabel="Explore Collaborations"
         image={require("@/assets/images/illustration3.png")}
-        subtitle={listType !== "channel" ? "Start applying to collaborations to interact with your dream brands." : "No chats here yet…"}
+        subtitle={listType == "channel" ? "Start applying to collaborations to interact with your dream brands." : "Looks like you are on a break! Start applying today to collaborate with your dream brands."}
         title="No Messages"
       />
     </View>
