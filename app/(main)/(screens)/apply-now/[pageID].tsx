@@ -327,6 +327,11 @@ const ApplyScreen = () => {
                 url: file.uri,
               }))}
               handleAssetUpload={handleAssetUpload}
+              onRemove={(id) => {
+                setFiles((prevFiles) =>
+                  prevFiles.filter((file) => file.id !== id)
+                );
+              }}
             />
           </>
         )}
