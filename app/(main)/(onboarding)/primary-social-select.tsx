@@ -5,8 +5,8 @@ import AppLayout from "@/layouts/app-layout";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { stylesFn } from "@/styles/Questions.styles";
-import { AuthApp } from "@/utils/auth";
 import { FirestoreDB } from "@/utils/firestore";
+import { HttpWrapper } from "@/utils/http-wrapper";
 import { resetAndNavigate } from "@/utils/router";
 import { faFacebook, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import {
@@ -42,13 +42,7 @@ const PrimarySocialSelect = () => {
 
       await updateDoc(userDocRef, { primarySocial: userData.primarySocial })
         .then(() => {
-          fetch("https://be.trendly.pro/api/v1/chat/auth", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${AuthApp.currentUser?.uid}`,
-            },
-          });
+          HttpWrapper.fetch("/api/v1/chat/auth", { method: "POST", });
           Toaster.success("Social marked as primary");
           resetAndNavigate("/questions");
         })

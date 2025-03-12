@@ -1,11 +1,15 @@
 import {
-  useContext,
   createContext,
   type PropsWithChildren,
-  useState,
+  useContext,
   useEffect,
+  useState,
 } from "react";
 
+import { INotifications } from "@/shared-libs/firestore/trendly-pro/models/notifications";
+import { Notification, PushNotificationPayload } from "@/types/Notification";
+import { FirestoreDB } from "@/utils/firestore";
+import { HttpWrapper } from "@/utils/http-wrapper";
 import {
   addDoc,
   collection,
@@ -18,10 +22,7 @@ import {
   where,
   writeBatch,
 } from "firebase/firestore";
-import { Notification, PushNotificationPayload } from "@/types/Notification";
-import { FirestoreDB } from "@/utils/firestore";
 import { useAuthContext } from "./auth-context.provider";
-import { INotifications } from "@/shared-libs/firestore/trendly-pro/models/notifications";
 
 interface NotificationContextProps {
   createNotification: (
@@ -105,11 +106,10 @@ export const NotificationContextProvider: React.FC<PropsWithChildren> = ({
     },
     payload: PushNotificationPayload,
   ) => {
-    await fetch("https://be.trendly.pro/api/v1/chat/notification", {
+    await HttpWrapper.fetch("/api/v1/chat/notification", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${user}`,
       },
       body: JSON.stringify({
         userId: ids.users || [],

@@ -1,6 +1,6 @@
 import { Attachment } from "@/shared-libs/firestore/trendly-pro/constants/attachment";
 import { AssetItem, NativeAssetItem, WebAssetItem } from "@/types/Asset";
-import { AuthApp } from "@/utils/auth";
+import { HttpWrapper } from "@/utils/http-wrapper";
 import * as FileSystem from "expo-file-system";
 import {
   createContext,
@@ -48,7 +48,7 @@ export const AWSContextProvider: React.FC<PropsWithChildren> = ({
 
   const preUploadRequestUrl = (file: File | AssetItem): string => {
     const date = new Date().getTime();
-    const baseUrl = "https://be.trendly.pro/s3/v1/";
+    const baseUrl = "/s3/v1/";
     const type = file.type.includes("video") ? "videos" : "images";
     let filename: string = "";
 
@@ -63,7 +63,7 @@ export const AWSContextProvider: React.FC<PropsWithChildren> = ({
 
   const preUploadRequestUrlForAttachment = (file: File | AssetItem): string => {
     const date = new Date().getTime();
-    const baseUrl = "https://be.trendly.pro/s3/v1/";
+    const baseUrl = "/s3/v1/";
     let filename: string = "";
 
     if (Platform.OS === "web") {
@@ -140,12 +140,7 @@ export const AWSContextProvider: React.FC<PropsWithChildren> = ({
   };
 
   const uploadFileUri = async (fileUri: AssetItem, subject?: { index: number, subject: Subject<SubjectInterface> }): Promise<Attachment> => {
-    const preUploadUrlResponse = await fetch(preUploadRequestUrl(fileUri), {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${AuthApp.currentUser?.uid}`,
-      },
-    });
+    const preUploadUrlResponse = await HttpWrapper.fetch(preUploadRequestUrl(fileUri), { method: "POST" });
 
     subject?.subject.next({ index: subject.index, percentage: 10 })
 
@@ -218,12 +213,7 @@ export const AWSContextProvider: React.FC<PropsWithChildren> = ({
 
   const uploadFile = async (file: File, subject?: { index: number, subject: Subject<SubjectInterface> }): Promise<Attachment> => {
     try {
-      const preUploadUrlResponse = await fetch(preUploadRequestUrl(file), {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${AuthApp.currentUser?.uid}`,
-        },
-      });
+      const preUploadUrlResponse = await HttpWrapper.fetch(preUploadRequestUrl(file), { method: "POST" });
       subject?.subject.next({ index: subject.index, percentage: 10 })
       const preUploadUrl = await preUploadUrlResponse.json();
 
@@ -294,15 +284,7 @@ export const AWSContextProvider: React.FC<PropsWithChildren> = ({
 
   const uploadAttachment = async (file: AssetItem): Promise<any> => {
     try {
-      const preUploadUrlResponse = await fetch(
-        preUploadRequestUrlForAttachment(file),
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${AuthApp.currentUser?.uid}`,
-          },
-        }
-      );
+      const preUploadUrlResponse = await HttpWrapper.fetch(preUploadRequestUrlForAttachment(file), { method: "POST", });
 
       const preUploadUrl = await preUploadUrlResponse.json();
 
