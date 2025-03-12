@@ -456,7 +456,7 @@ const ApplyScreen = () => {
           color={Colors(theme).primary}
           style={styles.progressBar}
         /> */}
-        {loading && <ProgressLoader isProcessing={loading} progress={10} totalFiles={totalFiles} subject={AWSProgressUpdateSubject} />}
+        {loading && <ProgressLoader isProcessing={loading} progress={0} subject={AWSProgressUpdateSubject} />}
 
         <Button
           mode="contained"

@@ -5,13 +5,14 @@ import ListItem from "@/components/ui/list-item/ListItem";
 import ScreenHeader from "@/components/ui/screen-header";
 import TextInput from "@/components/ui/text-input";
 import Colors from "@/constants/Colors";
-import { useAWSContext } from "@/contexts/aws-context.provider";
+import { AWSProgressUpdateSubject, useAWSContext } from "@/contexts/aws-context.provider";
 import { useBreakpoints } from "@/hooks";
 import AppLayout from "@/layouts/app-layout";
 import {
   IApplications,
   ICollaboration,
 } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
+import ProgressLoader from "@/shared-uis/components/ProgressLoader";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { processRawAttachment } from "@/shared-uis/utils/attachments";
 import { stylesFn } from "@/styles/ApplyNow.styles";
@@ -36,8 +37,7 @@ import {
   Card,
   HelperText,
   IconButton,
-  List,
-  ProgressBar,
+  List
 } from "react-native-paper";
 
 const ApplyScreenWeb = () => {
@@ -500,7 +500,7 @@ const ApplyScreenWeb = () => {
             </HelperText>
           ) : null}
 
-          {processMessage && (
+          {/* {processMessage && (
             <HelperText type="info" style={styles.processText}>
               {processMessage} - {processPercentage}% done
             </HelperText>
@@ -512,7 +512,8 @@ const ApplyScreenWeb = () => {
               color={Colors(theme).primary}
               style={styles.progressBar}
             />
-          )}
+          )} */}
+          {loading && <ProgressLoader isProcessing={loading} progress={0} subject={AWSProgressUpdateSubject} />}
 
           <Button
             mode="contained"
