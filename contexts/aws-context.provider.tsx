@@ -75,11 +75,11 @@ export const AWSContextProvider: React.FC<PropsWithChildren> = ({
     return `${baseUrl}${`attachments`}?filename=${filename}`;
   };
 
-  const progressUpload = async (uploadUrl: string, blobOrFile: Blob | File, index?: number, communicatePercentage?: Subject<SubjectInterface>, startPercentage = 10) => {
+  const progressUpload = async (uploadUrl: string, fileType: string, blobOrFile: Blob | File, index?: number, communicatePercentage?: Subject<SubjectInterface>, startPercentage = 10) => {
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
       xhr.open("PUT", uploadUrl);
-      xhr.setRequestHeader("Content-Type", "multipart/form-data");
+      xhr.setRequestHeader("Content-Type", fileType);
       // Monitor upload progress
       xhr.upload.onprogress = (event) => {
         if (event.lengthComputable) {
@@ -105,10 +105,10 @@ export const AWSContextProvider: React.FC<PropsWithChildren> = ({
       };
 
       // Prepare FormData
-      const formData = new FormData();
-      formData.append("file", blobOrFile);
+      // const formData = new FormData();
+      // formData.append("file", blobOrFile);
 
-      xhr.send(formData);
+      xhr.send(blobOrFile);
     });
   };
 
@@ -163,7 +163,7 @@ export const AWSContextProvider: React.FC<PropsWithChildren> = ({
     //   body: blob,
     // });
 
-    await progressUpload(uploadUrl, blob, subject?.index, subject?.subject);
+    await progressUpload(uploadUrl, fileUri.type, blob, subject?.index, subject?.subject);
 
     // if (!response.ok) {
     //   throw new Error("Failed to upload file");
@@ -235,7 +235,7 @@ export const AWSContextProvider: React.FC<PropsWithChildren> = ({
       //   body: file,
       // });
 
-      await progressUpload(preUploadUrl.uploadUrl, file, subject?.index, subject?.subject);
+      await progressUpload(preUploadUrl.uploadUrl, file.type, file, subject?.index, subject?.subject);
 
       // if (!response.ok) {
       //   throw new Error("Failed to upload file");
