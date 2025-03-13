@@ -29,9 +29,9 @@ const CollaborationStats: FC<CollaborationStatsProps> = (
       props.collabID,
       "applications"
     );
-    const fetchApplied = await getDocs(appliedRef);
-    const docsData = fetchApplied.docs.map((doc) => doc.data());
-    setAppliedCount(docsData.length);
+    const appLength = (await getDocs(appliedRef)).size;
+    // const docsData = fetchApplied.docs.map((doc) => doc.data());
+    setAppliedCount(appLength);
   };
 
   useEffect(() => {
