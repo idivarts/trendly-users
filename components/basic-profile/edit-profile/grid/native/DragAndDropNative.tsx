@@ -96,7 +96,7 @@ const DragAndDropNative: React.FC<DragAndDropNativeProps> = ({
     orderAndUpload()
   }
 
-  const orderAndUpload = () => {
+  const orderAndUpload = async () => {
     const assetOrder = myData.assets.filter(a => !!a.url).sort((a, b) => (a.index - b.index)).map(a => a.id)
     console.log("Order and Upload", assetOrder, "\n", myData.myAttachments);
     let newAttachments: Attachment[] = []
@@ -110,12 +110,12 @@ const DragAndDropNative: React.FC<DragAndDropNativeProps> = ({
       //   action: "profile",
       //   data: newAttachments
       // })
-      updateUser(user.id, {
+      await updateUser(user.id, {
         profile: {
           ...user?.profile,
           attachments: newAttachments
         }
-      })
+      }).catch((e) => { console.error(e) })
     }
   }
 
