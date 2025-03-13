@@ -1,33 +1,31 @@
 import { View } from "@/components/theme/Themed";
 import Colors from "@/constants/Colors";
-import AppLayout from "@/layouts/app-layout";
-import { useTheme } from "@react-navigation/native";
-import { router } from "expo-router";
-import { useEffect, useMemo, useState } from "react";
-import {
-  collection,
-  getDocs,
-  query,
-  where,
-  collectionGroup,
-  doc,
-  getDoc,
-} from "firebase/firestore";
-import { ActivityIndicator, FlatList, Pressable } from "react-native";
-import { FirestoreDB } from "@/utils/firestore";
-import { RefreshControl } from "react-native";
-import { stylesFn } from "@/styles/Proposal.styles";
-import EmptyState from "../ui/empty-state";
+import { useAuthContext } from "@/contexts";
 import { useBreakpoints } from "@/hooks";
-import { IContracts } from "@/shared-libs/firestore/trendly-pro/models/contracts";
+import AppLayout from "@/layouts/app-layout";
+import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
 import {
   IApplications,
   ICollaboration,
 } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
-import ContractDetails from "../contract-card/ContractDetails";
-import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
+import { IContracts } from "@/shared-libs/firestore/trendly-pro/models/contracts";
+import { stylesFn } from "@/styles/Proposal.styles";
+import { FirestoreDB } from "@/utils/firestore";
+import { useTheme } from "@react-navigation/native";
+import { router } from "expo-router";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  where
+} from "firebase/firestore";
+import { useEffect, useMemo, useState } from "react";
+import { ActivityIndicator, FlatList, Pressable, RefreshControl } from "react-native";
 import CollaborationHeader from "../collaboration/card-components/CollaborationHeader";
-import { useAuthContext } from "@/contexts";
+import ContractDetails from "../contract-card/ContractDetails";
+import EmptyState from "../ui/empty-state";
 
 interface ICollaborationCard extends IContracts {
   brandData: IBrands;
@@ -70,19 +68,22 @@ const PastContracts = () => {
           const contract = document.data() as IContracts;
           const collaborationId = contract.collaborationId;
 
-          const hasAppliedQuery = query(
-            collectionGroup(FirestoreDB, "applications"),
-            where("userId", "==", user.id),
-            where("collaborationId", "==", collaborationId)
-          );
+          // const hasAppliedQuery = query(
+          //   collectionGroup(FirestoreDB, "applications"),
+          //   where("userId", "==", user.id),
+          //   where("collaborationId", "==", collaborationId)
+          // );
 
-          const hasAppliedSnapshot = await getDocs(hasAppliedQuery);
+          const applicationDoc = await getDoc(doc(collection(FirestoreDB, "collaborations", collaborationId, "applications"), user.id));
+          const application = applicationDoc.data() as IApplications;
 
-          //@ts-ignore
-          const applications = hasAppliedSnapshot.docs.map((appDoc) => ({
-            id: appDoc.id,
-            ...appDoc.data(),
-          })) as IApplications[];
+          // const hasAppliedSnapshot = await getDocs(hasAppliedQuery);
+
+          // //@ts-ignore
+          // const applications = hasAppliedSnapshot.docs.map((appDoc) => ({
+          //   id: appDoc.id,
+          //   ...appDoc.data(),
+          // })) as IApplications[];
 
           const collaborationRef = doc(
             FirestoreDB,
@@ -106,7 +107,7 @@ const PastContracts = () => {
 
           return {
             ...contract,
-            applications,
+            applications: [application],
             collaborationData,
             brandData,
           };
