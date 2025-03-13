@@ -11,7 +11,7 @@ import Colors from "@/constants/Colors";
 import { useAuthContext } from "@/contexts";
 import AppLayout from "@/layouts/app-layout";
 import {
-  ICollaboration,
+  ICollaboration
 } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { IContracts } from "@/shared-libs/firestore/trendly-pro/models/contracts";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
@@ -20,12 +20,9 @@ import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
 import {
-  collectionGroup,
+  collection,
   doc,
-  getDoc,
-  getDocs,
-  query,
-  where,
+  getDoc
 } from "firebase/firestore";
 import { ActivityIndicator } from "react-native";
 
@@ -60,19 +57,22 @@ const ContractDetailsScreen = () => {
       const userSnapshot = await getDoc(userDataRef);
       const userData = userSnapshot.data() as IUsers;
 
-      const hasAppliedQuery = query(
-        collectionGroup(FirestoreDB, "applications"),
-        where("userId", "==", user.id),
-        where("collaborationId", "==", collaborationId)
-      );
+      const applicationDoc = await getDoc(doc(collection(FirestoreDB, "collaborations", collaborationId, "applications"), user.id));
+      const application = applicationDoc.exists() ? applicationDoc.data() as Application : null;
 
-      const hasAppliedSnapshot = await getDocs(hasAppliedQuery);
+      // const hasAppliedQuery = query(
+      //   collectionGroup(FirestoreDB, "applications"),
+      //   where("userId", "==", user.id),
+      //   where("collaborationId", "==", collaborationId)
+      // );
+
+      // const hasAppliedSnapshot = await getDocs(hasAppliedQuery);
 
       //@ts-ignore
-      const applications = hasAppliedSnapshot.docs.map((appDoc) => ({
-        id: appDoc.id,
-        ...appDoc.data(),
-      })) as Application[];
+      // const applications = hasAppliedSnapshot.docs.map((appDoc) => ({
+      //   id: appDoc.id,
+      //   ...appDoc.data(),
+      // })) as Application[];
 
       const collaborationRef = doc(
         FirestoreDB,
@@ -85,7 +85,7 @@ const ContractDetailsScreen = () => {
       setContract({
         ...contract,
         userData,
-        applications,
+        applications: application ? [application] : [],
         collaborationData,
       });
     } catch (error) {
