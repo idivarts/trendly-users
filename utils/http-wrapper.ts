@@ -1,6 +1,6 @@
 import { AuthApp } from "./auth";
 
-const BASE_URL = 'https://be.trendly.pro';
+const BASE_URL = 'https://be.trendly.now';
 export class HttpWrapper {
     public static fetch = async (urlPath: string, init?: RequestInit): Promise<Response> => {
         let idToken = ""

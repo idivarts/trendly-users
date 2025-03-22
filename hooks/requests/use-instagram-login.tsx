@@ -35,7 +35,7 @@ const useInstagramLogin = (
   });
   // console.log("Redirect Uri for Instagram: ", redirectUri);
 
-  const authUrl = `https://be.trendly.pro/instagram?redirect_type=${Platform.OS === "web" ? (isLocalhost ? 1 : 2) : 3}&`;
+  const authUrl = `https://be.trendly.now/instagram?redirect_type=${Platform.OS === "web" ? (isLocalhost ? 1 : 2) : 3}&`;
 
   const [requestInstagram, responseInstagram, promptAsyncInstagram] =
     AuthSession.useAuthRequest(
@@ -65,7 +65,7 @@ const useInstagramLogin = (
     }
     setLoading(true);
     await axios
-      .post("https://be.trendly.pro/instagram/auth", {
+      .post("https://be.trendly.now/instagram/auth", {
         code: accessToken,
         redirect_type: Platform.OS === "web" ? (isLocalhost ? "1" : "2") : "3",
       })

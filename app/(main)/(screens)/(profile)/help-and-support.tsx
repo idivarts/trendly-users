@@ -1,11 +1,10 @@
 import { View } from "@/components/theme/Themed";
-import React from "react";
 import ScreenHeader from "@/components/ui/screen-header";
 import Colors from "@/constants/Colors";
 import AppLayout from "@/layouts/app-layout";
 import { useTheme } from "@react-navigation/native";
-import { useState } from "react";
-import { Platform, ActivityIndicator } from "react-native";
+import React, { useState } from "react";
+import { ActivityIndicator, Platform } from "react-native";
 import { Portal } from "react-native-paper";
 import WebView from "react-native-webview";
 
@@ -36,7 +35,7 @@ const HelpAndSupportScreen: React.FC = () => {
             onLoad={() => {
               setLoading(false);
             }}
-            source={{ uri: "https://trendly.pro/help-and-support/" }}
+            source={{ uri: "https://trendly.now/help-and-support/" }}
             style={{
               flex: 1,
             }}

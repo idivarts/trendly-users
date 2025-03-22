@@ -29,7 +29,7 @@ const InstagramLoginButton: React.FC = () => {
       const token = await user?.getIdToken();
       await axios
         .post(
-          "https://be.trendly.pro/api/v1/socials/instagram",
+          "https://be.trendly.now/api/v1/socials/instagram",
           {
             code: accessToken,
             redirect_type: Platform.OS === "web" ? "2" : "3",

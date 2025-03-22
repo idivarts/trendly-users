@@ -117,7 +117,7 @@ const BottomSheetActions = ({
             <List.Item
               title="Copy Collaboration Link"
               onPress={() => {
-                setStringAsync(`https://creators.trendly.pro/collaboration/${cardId}`)
+                setStringAsync(`https://creators.trendly.now/collaboration/${cardId}`)
                 Toaster.success("Link copied to clipboard");
                 handleClose();
               }}
