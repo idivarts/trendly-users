@@ -81,7 +81,7 @@ const ProfileScreen = () => {
             item={item}
             onPress={() => {
               if (item.title === "Help and Support" && Platform.OS === "web") {
-                window.open("https://www.trendly.pro/help-and-support/", "_blank");
+                window.open("https://www.trendly.now/help-and-support/", "_blank");
               } else {
                 router.push(item.route as Href);
               }

@@ -4,7 +4,7 @@ export const connectedAccounts = [
   {
     id: "1",
     name: "Trendly",
-    handle: "Trendly.pro",
+    handle: "trendly.now",
     platform: SocialPlatform.INSTAGRAM,
     isInstagram: true,
     image:
@@ -14,7 +14,7 @@ export const connectedAccounts = [
   {
     id: "2",
     name: "Trendly",
-    handle: "Trendly.pro",
+    handle: "trendly.now",
     isInstagram: true,
     platform: SocialPlatform.FACEBOOK,
     image:

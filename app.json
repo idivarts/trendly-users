@@ -29,7 +29,7 @@
       "bundleIdentifier": "pro.trendly.creators",
       "googleServicesFile": "./GoogleService-Info.plist",
       "associatedDomains": [
-        "applinks:creators.trendly.pro"
+        "applinks:creators.trendly.now"
       ],
       "infoPlist": {
         "NSCameraUsageDescription": "Trendly requires access to your camera to take and upload photos or videos for your profile and collaboration applications.",
@@ -52,7 +52,7 @@
           "data": [
             {
               "scheme": "https",
-              "host": "creators.trendly.pro",
+              "host": "creators.trendly.now",
               "pathPrefix": "/collaboration/*"
             }
           ],

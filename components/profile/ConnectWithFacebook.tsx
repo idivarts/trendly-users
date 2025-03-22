@@ -39,7 +39,7 @@ const FacebookLoginButton: React.FC = () => {
 
       const responseFacebook = await axios
         .post(
-          "https://be.trendly.pro/api/v1/socials/facebook",
+          "https://be.trendly.now/api/v1/socials/facebook",
           {
             accounts: graphAPIResponse.data.accounts,
             name: graphAPIResponse.data.name,
