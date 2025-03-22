@@ -13,19 +13,15 @@ const stylesFn = (theme: Theme) =>
       paddingRight: 32,
     },
     fileContainer: {
-      ...Platform.select({
-        web: {
-          backgroundColor: theme.dark
-            ? Colors(theme).card
-            : Colors(theme).aliceBlue,
-          width: 250,
-          height: 250,
-          alignItems: "center",
-          justifyContent: "center",
-          position: "relative",
-          borderRadius: 10,
-        },
-      }),
+      backgroundColor: theme.dark
+        ? Colors(theme).card
+        : Colors(theme).aliceBlue,
+      width: 250,
+      height: 250,
+      alignItems: "center",
+      justifyContent: "center",
+      position: "relative",
+      borderRadius: 10,
     },
     video: {
       minWidth: 250,

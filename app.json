@@ -30,7 +30,13 @@
       "googleServicesFile": "./GoogleService-Info.plist",
       "associatedDomains": [
         "applinks:creators.trendly.pro"
-      ]
+      ],
+      "infoPlist": {
+        "NSCameraUsageDescription": "Trendly requires access to your camera to take and upload photos or videos for your profile and collaboration applications.",
+        "NSPhotoLibraryUsageDescription": "Trendly requires access to your photo library to select and upload images or videos for your profile and collaborations.",
+        "NSPhotoLibraryAddUsageDescription": "Trendly needs permission to save collaboration-related images and videos to your photo library.",
+        "NSMicrophoneUsageDescription": "Trendly requires access to your microphone to send audio messages and to create content for your profile and collaborations."
+      }
     },
     "android": {
       "adaptiveIcon": {

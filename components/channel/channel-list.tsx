@@ -81,19 +81,21 @@ const ChannelListNative = () => {
           value={searchInput}
         />
       </View>
-      {hasError ? <EmptyMessageState /> :
-        <ChannelList
-          EmptyStateIndicator={EmptyMessageState}
-          LoadingErrorIndicator={EmptyMessageState}
-          channelRenderFilterFn={customChannelFilterFunction}
-          filters={{
-            members: { $in: [user?.id as string] },
-          }}
-          sort={{ last_updated: -1 }}
-          onSelect={(channel) => {
-            router.push(`/channel/${channel.cid}`);
-          }}
-        />}
+      {hasError ? <EmptyMessageState listType="channel" /> :
+        <View style={{ flex: 1, paddingRight: 16, paddingLeft: 12 }}>
+          <ChannelList
+            EmptyStateIndicator={EmptyMessageState}
+            // LoadingErrorIndicator={EmptyMessageState}
+            channelRenderFilterFn={customChannelFilterFunction}
+            filters={{
+              members: { $in: [user?.id as string] },
+            }}
+            sort={{ last_updated: -1 }}
+            onSelect={(channel) => {
+              router.push(`/channel/${channel.cid}`);
+            }}
+          />
+        </View>}
     </>
   );
 };

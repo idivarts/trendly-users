@@ -8,7 +8,6 @@ import { useTheme } from "@react-navigation/native";
 import { ResizeMode, Video } from "expo-av";
 import { Image, Platform, Pressable, ScrollView } from "react-native";
 import { IconButton } from "react-native-paper";
-import Button from "../button";
 
 interface FileAsset {
   id: string;
@@ -80,18 +79,17 @@ const AssetsPreview: React.FC<AssetsPreviewProps> = ({
             )}
           </View>
         ))}
-        {Platform.OS == "web" &&
-          <Pressable onPress={handleAssetUpload}>
-            <View key={"add-more"} style={[styles.fileContainer, { flexDirection: "column" }]}>
-              <FontAwesomeIcon icon={faAdd} size={28}></FontAwesomeIcon>
-              <Text style={{
-                fontSize: 14, color: Colors(theme).text, marginTop: 8
-              }}>Add More</Text>
-            </View>
-          </Pressable>
-        }
+        <Pressable onPress={handleAssetUpload}>
+          <View key={"add-more"} style={[styles.fileContainer, { flexDirection: "column" }]}>
+            <FontAwesomeIcon icon={faAdd} size={28}></FontAwesomeIcon>
+            <Text style={{
+              fontSize: 14, color: Colors(theme).text, marginTop: 8
+            }}>Add More</Text>
+          </View>
+        </Pressable>
+
       </ScrollView>
-      <Button
+      {/* <Button
         mode="contained"
         onPress={handleAssetUpload}
         style={[
@@ -102,7 +100,7 @@ const AssetsPreview: React.FC<AssetsPreviewProps> = ({
         ]}
       >
         Edit
-      </Button>
+      </Button> */}
     </View>
   );
 };

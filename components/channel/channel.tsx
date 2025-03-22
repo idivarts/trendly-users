@@ -1,20 +1,20 @@
 import { View } from "@/components/theme/Themed";
 import ScreenHeader from "@/components/ui/screen-header";
+import * as Notifications from "expo-notifications";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Platform, Pressable } from "react-native";
 import { Channel as ChannelType } from "stream-chat";
 import { Channel, MessageInput, MessageList, useChatContext } from "stream-chat-expo";
-import * as Notifications from "expo-notifications";
 
-import ChatMessageTopbar from "./chat-message-topbar";
 import Colors from "@/constants/Colors";
-import { useTheme } from "@react-navigation/native";
-import { IContracts } from "@/shared-libs/firestore/trendly-pro/models/contracts";
 import { useBrandContext, useContractContext } from "@/contexts";
 import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
-import { Avatar } from "react-native-paper";
+import { IContracts } from "@/shared-libs/firestore/trendly-pro/models/contracts";
 import { imageUrl } from "@/utils/url";
+import { useTheme } from "@react-navigation/native";
+import { Avatar } from "react-native-paper";
+import ChatMessageTopbar from "./chat-message-topbar";
 
 import {
   AttachButton,
@@ -116,7 +116,8 @@ const ChannelNative = () => {
         rightActionButton={
           <Pressable
             style={{
-              marginRight: 8,
+              // marginRight: 8,
+              paddingHorizontal: 16
             }}
             onPress={() => {
               router.push(`/contract-details/${contract.streamChannelId}`);

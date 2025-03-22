@@ -4,7 +4,7 @@ import ListItem from "@/components/ui/list-item/ListItem";
 import ScreenHeader from "@/components/ui/screen-header";
 import TextInput from "@/components/ui/text-input";
 import Colors from "@/constants/Colors";
-import { useAWSContext } from "@/contexts/aws-context.provider";
+import { AWSProgressUpdateSubject, useAWSContext } from "@/contexts/aws-context.provider";
 import AppLayout from "@/layouts/app-layout";
 import {
   IApplications,
@@ -664,7 +664,7 @@ const EditApplicationScreen = () => {
             style={styles.progressBar}
           /> */}
 
-          {loading && <ProgressLoader isProcessing={loading} progress={processPercentage} />}
+          {loading && <ProgressLoader isProcessing={loading} progress={0} subject={AWSProgressUpdateSubject} />}
 
           <Button
             mode="contained"

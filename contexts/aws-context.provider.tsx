@@ -1,8 +1,7 @@
 import { Attachment } from "@/shared-libs/firestore/trendly-pro/constants/attachment";
 import { AssetItem, NativeAssetItem, WebAssetItem } from "@/types/Asset";
-import { AuthApp } from "@/utils/auth";
+import { HttpWrapper } from "@/utils/http-wrapper";
 import * as FileSystem from "expo-file-system";
-import * as MediaLibrary from "expo-media-library";
 import {
   createContext,
   type PropsWithChildren,
@@ -12,6 +11,7 @@ import {
 import { Platform } from "react-native";
 import { Subject } from "rxjs";
 
+interface SubjectInterface { index: number, percentage: number }
 interface AWSContextProps {
   getBlob: (fileUri: any) => Promise<Blob>;
   processMessage: string;
@@ -48,7 +48,7 @@ export const AWSContextProvider: React.FC<PropsWithChildren> = ({
 
   const preUploadRequestUrl = (file: File | AssetItem): string => {
     const date = new Date().getTime();
-    const baseUrl = "https://be.trendly.pro/s3/v1/";
+    const baseUrl = "/s3/v1/";
     const type = file.type.includes("video") ? "videos" : "images";
     let filename: string = "";
 
@@ -63,7 +63,7 @@ export const AWSContextProvider: React.FC<PropsWithChildren> = ({
 
   const preUploadRequestUrlForAttachment = (file: File | AssetItem): string => {
     const date = new Date().getTime();
-    const baseUrl = "https://be.trendly.pro/s3/v1/";
+    const baseUrl = "/s3/v1/";
     let filename: string = "";
 
     if (Platform.OS === "web") {
@@ -75,28 +75,50 @@ export const AWSContextProvider: React.FC<PropsWithChildren> = ({
     return `${baseUrl}${`attachments`}?filename=${filename}`;
   };
 
-  const getFileUrlFromPhotoUri = async (uri: string): Promise<string> => {
-    if (Platform.OS !== "ios") return uri;
-
-    if (uri.startsWith("ph://")) {
-      try {
-        // Extract asset ID from ph:// URI
-        const assetId = uri.replace("ph://", "");
-        const asset = await MediaLibrary.getAssetInfoAsync(assetId);
-
-        if (!asset?.localUri) {
-          throw new Error("Could not get local URI for video");
+  const progressUpload = async (uploadUrl: string, fileType: string, blobOrFile: Blob | File, index?: number, communicatePercentage?: Subject<SubjectInterface>, startPercentage = 10) => {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open("PUT", uploadUrl);
+      xhr.setRequestHeader("Content-Type", fileType);
+      // Monitor upload progress
+      xhr.upload.onprogress = (event) => {
+        if (event.lengthComputable) {
+          let percentCompleted = (event.loaded / event.total) * 100;
+          console.log(`Upload Progress: ${index} : ${percentCompleted.toFixed(2)}%`);
+          if (communicatePercentage && index !== undefined) {
+            communicatePercentage.next({ index: index, percentage: startPercentage + (percentCompleted * (100 - startPercentage) / 100) });
+          }
         }
+      };
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          setTimeout(() => {
+            resolve(xhr.responseText);
+          }, 500);
+        } else {
+          reject(`Upload failed with status ${xhr.status}`);
+        }
+      };
 
-        return asset.localUri;
-      } catch (error) {
-        console.error("Error converting ph:// URI:", error);
-        throw new Error("Failed to access video file");
-      }
-    }
+      xhr.onerror = () => {
+        reject("Upload failed due to network error.");
+      };
 
-    return uri;
+      // Prepare FormData
+      // const formData = new FormData();
+      // formData.append("file", blobOrFile);
+
+      xhr.send(blobOrFile);
+    });
   };
+
+  // // Usage
+  // const fileUri = "file:///path-to-your-file";
+  // const uploadUrl = "https://your-server.com/upload";
+
+  // uploadFile(fileUri, uploadUrl)
+  //   .then((response) => console.log("Upload success:", response))
+  //   .catch((error) => console.error("Upload error:", error));
 
   const getBlob = async (fileUri: AssetItem): Promise<Blob> => {
     if (fileUri.type === "video") {
@@ -117,13 +139,10 @@ export const AWSContextProvider: React.FC<PropsWithChildren> = ({
     }
   };
 
-  const uploadFileUri = async (fileUri: AssetItem): Promise<Attachment> => {
-    const preUploadUrlResponse = await fetch(preUploadRequestUrl(fileUri), {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${AuthApp.currentUser?.uid}`,
-      },
-    });
+  const uploadFileUri = async (fileUri: AssetItem, subject?: { index: number, subject: Subject<SubjectInterface> }): Promise<Attachment> => {
+    const preUploadUrlResponse = await HttpWrapper.fetch(preUploadRequestUrl(fileUri), { method: "POST" });
+
+    subject?.subject.next({ index: subject.index, percentage: 10 })
 
     const preUploadUrl = await preUploadUrlResponse.json();
 
@@ -131,17 +150,19 @@ export const AWSContextProvider: React.FC<PropsWithChildren> = ({
 
     const blob = await getBlob(fileUri);
 
-    const response = await fetch(uploadUrl, {
-      method: "PUT",
-      headers: {
-        "Content-Type": fileUri.type, // "image/jpeg" or "video/mp4"
-      },
-      body: blob,
-    });
+    // const response = await fetch(uploadUrl, {
+    //   method: "PUT",
+    //   headers: {
+    //     "Content-Type": fileUri.type, // "image/jpeg" or "video/mp4"
+    //   },
+    //   body: blob,
+    // });
 
-    if (!response.ok) {
-      throw new Error("Failed to upload file");
-    }
+    await progressUpload(uploadUrl, fileUri.type, blob, subject?.index, subject?.subject);
+
+    // if (!response.ok) {
+    //   throw new Error("Failed to upload file");
+    // }
 
     if (fileUri.type.includes("video")) {
       return {
@@ -162,22 +183,26 @@ export const AWSContextProvider: React.FC<PropsWithChildren> = ({
       const uploadedFiles: Promise<any>[] = [];
       const totalProgress = 100 / fileUris.length;
 
-      setProcessPercentage(0);
+      // setProcessPercentage(0);
+      const subject = new Subject<SubjectInterface>();
+      const percentageArray = Array.from({ length: fileUris.length }, (_, i) => 0)
+      subject.subscribe(({ index, percentage }) => {
+        percentageArray[index] = percentage
+        const totalPercentage = percentageArray.reduce((acc, cur) => acc + cur, 0)
+        AWSProgressUpdateSubject.next({ percentage: totalPercentage / fileUris.length })
+      })
 
       for (const [index, fileUri] of fileUris.entries()) {
-        setProcessMessage(`Uploading asset ${index + 1}`);
-        const result = uploadFileUri(fileUri).then(r => {
-          AWSProgressUpdateSubject.next({ percentage: 100 })
-          return r
-        });
-        setProcessPercentage((prev) =>
-          Math.ceil(Math.round(prev + totalProgress))
-        );
+        // setProcessMessage(`Uploading asset ${index + 1}`);
+        const result = uploadFileUri(fileUri, { index, subject });
+        // setProcessPercentage((prev) =>
+        //   Math.ceil(Math.round(prev + totalProgress))
+        // );
         uploadedFiles.push(result);
       }
       const files = await Promise.all(uploadedFiles)
-      setProcessMessage("Uploaded Successfully - Processing files");
-      setProcessPercentage(100);
+      // setProcessMessage("Uploaded Successfully - Processing files");
+      // setProcessPercentage(100);
 
       return files;
     } catch (error) {
@@ -186,28 +211,25 @@ export const AWSContextProvider: React.FC<PropsWithChildren> = ({
     }
   };
 
-  const uploadFile = async (file: File): Promise<Attachment> => {
+  const uploadFile = async (file: File, subject?: { index: number, subject: Subject<SubjectInterface> }): Promise<Attachment> => {
     try {
-      const preUploadUrlResponse = await fetch(preUploadRequestUrl(file), {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${AuthApp.currentUser?.uid}`,
-        },
-      });
-
+      const preUploadUrlResponse = await HttpWrapper.fetch(preUploadRequestUrl(file), { method: "POST" });
+      subject?.subject.next({ index: subject.index, percentage: 10 })
       const preUploadUrl = await preUploadUrlResponse.json();
 
-      const response = await fetch(preUploadUrl.uploadUrl, {
-        method: "PUT",
-        headers: {
-          "Content-Type": file.type,
-        },
-        body: file,
-      });
+      // const response = await fetch(preUploadUrl.uploadUrl, {
+      //   method: "PUT",
+      //   headers: {
+      //     "Content-Type": file.type,
+      //   },
+      //   body: file,
+      // });
 
-      if (!response.ok) {
-        throw new Error("Failed to upload file");
-      }
+      await progressUpload(preUploadUrl.uploadUrl, file.type, file, subject?.index, subject?.subject);
+
+      // if (!response.ok) {
+      //   throw new Error("Failed to upload file");
+      // }
 
       if (file.type.includes("video")) {
         return {
@@ -231,23 +253,27 @@ export const AWSContextProvider: React.FC<PropsWithChildren> = ({
     try {
       const uploadedFiles: Promise<any>[] = [];
       const totalProgress = 100 / files.length;
-      setProcessPercentage(0);
+      // setProcessPercentage(0);
+      const subject = new Subject<SubjectInterface>();
+      const percentageArray = Array.from({ length: files.length }, (_, i) => 0)
+      subject.subscribe(({ index, percentage }) => {
+        percentageArray[index] = percentage
+        const totalPercentage = percentageArray.reduce((acc, cur) => acc + cur, 0)
+        AWSProgressUpdateSubject.next({ percentage: totalPercentage / files.length })
+      })
 
-      for (const file of files) {
-        setProcessMessage(`Uploading ${file.name}`);
-        const result = uploadFile(file).then(r => {
-          AWSProgressUpdateSubject.next({ percentage: 100 })
-          return r
-        });
-        setProcessPercentage((prev) =>
-          Math.ceil(Math.round(prev + totalProgress))
-        );
+      for (const [index, file] of files.entries()) {
+        // setProcessMessage(`Uploading ${file.name}`);
+        const result = uploadFile(file, { index: index, subject });
+        // setProcessPercentage((prev) =>
+        //   Math.ceil(Math.round(prev + totalProgress))
+        // );
         uploadedFiles.push(result);
       }
       const mfiles = await Promise.all(uploadedFiles)
 
-      setProcessMessage("Uploaded Successfully - Processing files");
-      setProcessPercentage(100);
+      // setProcessMessage("Uploaded Successfully - Processing files");
+      // setProcessPercentage(100);
 
       return mfiles;
     } catch (error) {
@@ -258,15 +284,7 @@ export const AWSContextProvider: React.FC<PropsWithChildren> = ({
 
   const uploadAttachment = async (file: AssetItem): Promise<any> => {
     try {
-      const preUploadUrlResponse = await fetch(
-        preUploadRequestUrlForAttachment(file),
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${AuthApp.currentUser?.uid}`,
-          },
-        }
-      );
+      const preUploadUrlResponse = await HttpWrapper.fetch(preUploadRequestUrlForAttachment(file), { method: "POST", });
 
       const preUploadUrl = await preUploadUrlResponse.json();
 

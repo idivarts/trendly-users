@@ -5,6 +5,7 @@ import { User } from "@/types/User";
 import { analyticsLogEvent } from "@/utils/analytics";
 import { AuthApp } from "@/utils/auth";
 import { FirestoreDB } from "@/utils/firestore";
+import { HttpWrapper } from "@/utils/http-wrapper";
 import { updatedTokens } from "@/utils/push-notification/push-notification-token.native";
 import { resetAndNavigate } from "@/utils/router";
 import {
@@ -114,13 +115,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
 
       setSession(userCredential.user.uid);
 
-      fetch("https://be.trendly.pro/api/v1/chat/auth", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${userCredential.user.uid}`,
-        },
-      });
+      HttpWrapper.fetch("/api/v1/chat/auth", { method: "POST", });
 
       await analyticsLogEvent("signed_in", {
         id: userCredential.user.uid,
@@ -151,13 +146,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
 
       setSession(userCredential.user.uid);
 
-      fetch("https://be.trendly.pro/api/v1/chat/auth", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${userCredential.user.uid}`,
-        },
-      });
+      HttpWrapper.fetch("/api/v1/chat/auth", { method: "POST" });
 
       // After signup, redirect user to the no-social-connected.
       resetAndNavigate("/no-social-connected");
@@ -172,13 +161,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
     // console.log("Firebase Sign In", uid);
 
     setSession(uid);
-    fetch("https://be.trendly.pro/api/v1/chat/auth", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${uid}`,
-      },
-    });
+    HttpWrapper.fetch("/api/v1/chat/auth", { method: "POST" });
 
     resetAndNavigate("/collaborations");
     Toaster.success("Signed In Successfully!");
@@ -188,13 +171,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
     // console.log("Firebase Sign Up", uid, hasSocials);
 
     setSession(uid);
-    fetch("https://be.trendly.pro/api/v1/chat/auth", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${uid}`,
-      },
-    });
+    HttpWrapper.fetch("/api/v1/chat/auth", { method: "POST", });
 
     if (!hasSocials) {
       resetAndNavigate("/no-social-connected");

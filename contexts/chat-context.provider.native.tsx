@@ -1,4 +1,5 @@
 import { useStreamTheme } from "@/hooks";
+import { HttpWrapper } from "@/utils/http-wrapper";
 import { useTheme } from "@react-navigation/native";
 import {
   createContext,
@@ -74,14 +75,7 @@ export const ChatContextProvider: React.FC<PropsWithChildren> = ({
     }
     console.log("Connecting user");
     try {
-      const response = await fetch("https://be.trendly.pro/api/v1/chat/connect", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${user?.id}`,
-        },
-      });
-
+      const response = await HttpWrapper.fetch("/api/v1/chat/connect", { method: "POST" });
       const data = await response.json();
 
       console.log("Stream Token", data.token);
@@ -115,11 +109,10 @@ export const ChatContextProvider: React.FC<PropsWithChildren> = ({
     groupName: string,
     members: string[]
   ): Promise<Channel> => {
-    const response = await fetch("https://be.trendly.pro/api/v1/chat/channel", {
+    const response = await HttpWrapper.fetch("/api/v1/chat/channel", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${user?.id}`,
       },
       body: JSON.stringify({
         name: groupName,

@@ -3,25 +3,22 @@ import { ActivityIndicator } from "react-native";
 
 import {
   collection,
-  collectionGroup,
   doc,
   getDoc,
-  getDocs,
-  query,
-  where,
+  getDocs
 } from "firebase/firestore";
 
-import { FirestoreDB } from "@/utils/firestore";
-import CollaborationDetailsContent from "./CollaborationDetailsContent";
-import {
-  IApplications,
-  ICollaboration,
-} from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { View } from "@/components/theme/Themed";
-import { Invitation } from "@/types/Collaboration";
 import { useAuthContext } from "@/contexts";
 import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
+import {
+  ICollaboration
+} from "@/shared-libs/firestore/trendly-pro/models/collaborations";
+import { Invitation } from "@/types/Collaboration";
+import { AuthApp } from "@/utils/auth";
+import { FirestoreDB } from "@/utils/firestore";
 import { useIsFocused } from "@react-navigation/native";
+import CollaborationDetailsContent from "./CollaborationDetailsContent";
 
 export interface CollaborationDetail extends ICollaboration {
   id: string;
@@ -72,38 +69,24 @@ const CollaborationDetails: React.FC<CollaborationDetailsProps> = ({
       const brandData = brandSnapshot.data() as IBrands;
 
       const applicationsRef = collection(collabRef, "applications");
-      const applicationsSnapshot = await getDocs(applicationsRef);
-      const applicationsData = applicationsSnapshot.docs.map((doc) => {
-        return {
-          id: doc.id,
-          ...doc.data(),
-        };
-      });
+      const applicationsCount = (await getDocs(applicationsRef)).size;
 
-      setTotalApplications(applicationsData.length);
+      setTotalApplications(applicationsCount);
 
       if (user) {
-        const hasApplied = collectionGroup(FirestoreDB, "applications");
+        // const hasApplied = collectionGroup(FirestoreDB, "applications");
+        const docRef = doc(collection(FirestoreDB, "collaborations", pageID, "applications"), AuthApp.currentUser?.uid);
+        const applicationDoc = await getDoc(docRef);
+        const hasAppliedBool = applicationDoc.exists();
+        const hasAppliedData = {
+          id: applicationDoc.id,
+          ...applicationDoc.data()
+        }
 
-        const hasAppliedQuery = query(
-          hasApplied,
-          where("userId", "==", user?.id),
-          where("collaborationId", "==", pageID)
-        );
+        setHasApplied(hasAppliedBool);
+        setApplication(hasAppliedData);
 
-        // Use getDocs for queries, not getDoc
-        const hasAppliedSnapshot = await getDocs(hasAppliedQuery);
-        const hasAppliedData = hasAppliedSnapshot.docs.map((doc) => {
-          return {
-            id: doc.id,
-            ...doc.data(),
-          };
-        });
-
-        setHasApplied(hasAppliedData.length > 0);
-        setApplication(hasAppliedData[0]);
-
-        if (hasAppliedData.length > 0 && cardType !== "invitation") {
+        if (hasAppliedBool && cardType !== "invitation") {
           setCardTypeDetails("application");
         }
       }

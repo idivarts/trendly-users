@@ -6,8 +6,8 @@ import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import ImageComponent from "@/shared-uis/components/image-component";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { stylesFn } from "@/styles/profile/SocialPage.styles";
-import { AuthApp } from "@/utils/auth";
 import { FirestoreDB } from "@/utils/firestore";
+import { HttpWrapper } from "@/utils/http-wrapper";
 import { faFacebook, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import { faStar } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -61,13 +61,7 @@ const SocialPage: React.FC<SocialPageProps> = ({
 
     await updateDoc(userDocRef, { primarySocial: userData.primarySocial })
       .then(() => {
-        fetch("https://be.trendly.pro/api/v1/chat/auth", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${AuthApp.currentUser?.uid}`,
-          },
-        });
+        HttpWrapper.fetch("/api/v1/chat/auth", { method: "POST" });
         Toaster.success("Social marked as primary");
       })
       .catch((error) => {

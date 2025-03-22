@@ -107,13 +107,13 @@ const BottomSheetActions = ({
       case "details":
         return (
           <List.Section style={{ paddingBottom: 28 }}>
-            <List.Item
+            {/* <List.Item
               title="Apply Now"
               onPress={() => {
                 router.push(`/apply-now/${cardId}`);
                 handleClose();
               }}
-            />
+            /> */}
             <List.Item
               title="Copy Collaboration Link"
               onPress={() => {

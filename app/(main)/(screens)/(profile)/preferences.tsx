@@ -1,11 +1,11 @@
-import { Pressable } from "react-native";
 import Preferences from "@/components/basic-profile/preferences";
 import { Text, View } from "@/components/theme/Themed";
 import ScreenHeader from "@/components/ui/screen-header";
 import { useAuthContext } from "@/contexts";
-import { useState } from "react";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { User } from "@/types/User";
+import { useState } from "react";
+import { Pressable } from "react-native";
 import Toast from "react-native-toast-message";
 
 const PreferencesScreen = () => {
@@ -25,9 +25,13 @@ const PreferencesScreen = () => {
   }
 
   const handleSave = async () => {
-    await updateUser(updatedUser.id, updatedUser).then(() => {
+    await updateUser(updatedUser.id, {
+      preferences: updatedUser.preferences,
+    }).then(() => {
       Toaster.success('Saved changes successfully');
     }).catch((error) => {
+      console.log(error);
+
       Toaster.error('Error saving preferences');
     });
   }

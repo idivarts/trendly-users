@@ -1,10 +1,13 @@
 import { useRouter } from "expo-router";
+import { EmptyStateProps } from "stream-chat-expo";
 import { View } from "../theme/Themed";
 import EmptyState from "../ui/empty-state";
 
-const EmptyMessageState: React.FC = () => {
+const EmptyMessageState: React.FC<EmptyStateProps> = ({ listType }) => {
   const router = useRouter();
+  // if(listType =="channel"){
 
+  // }
   return (
     <View
       style={{
@@ -17,7 +20,7 @@ const EmptyMessageState: React.FC = () => {
         action={() => router.push("/collaborations")}
         actionLabel="Explore Collaborations"
         image={require("@/assets/images/illustration3.png")}
-        subtitle="Start applying to collaborations to interact with your dream brands."
+        subtitle={listType == "channel" ? "Start applying to collaborations to interact with your dream brands." : "Looks like you are on a break! Start applying today to collaborate with your dream brands."}
         title="No Messages"
       />
     </View>
