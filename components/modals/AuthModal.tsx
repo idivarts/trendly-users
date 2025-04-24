@@ -12,9 +12,10 @@ import { IS_BETA_ENABLED } from "@/constants/App";
 import Colors from "@/constants/Colors";
 import { INITIAL_USER_DATA } from "@/constants/User";
 import { useFacebookLogin, useInstagramLogin } from "@/hooks/requests";
+import { useGoogleLogin } from "@/hooks/requests/use-google-login";
 import { AuthApp } from "@/utils/auth";
 import { FirestoreDB } from "@/utils/firestore";
-import { faFacebook, faInstagram } from "@fortawesome/free-brands-svg-icons";
+import { faFacebook, faGoogle, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import React from "react";
@@ -69,6 +70,8 @@ const AuthModal: React.FC<AuthModalProps> = ({
     setError,
   );
 
+  const { googleLogin } = useGoogleLogin(setLoading, setError);
+
   const renderBackdrop = (props: any) => {
     return (
       <BottomSheetBackdrop
@@ -87,6 +90,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
   const handleClose = () => {
     bottomSheetModalRef.current?.dismiss();
   }
+
 
   return (
     <>
@@ -127,6 +131,20 @@ const AuthModal: React.FC<AuthModalProps> = ({
                 gap: 16,
               }}
             >
+              <SocialButton
+                icon={faGoogle}
+                iconColor={Colors(theme).white}
+                customStyles={{
+                  backgroundColor: Colors(theme).primary,
+                  justifyContent: "center",
+
+                }}
+                label="Continue with Google"
+                labelStyles={{
+                  color: Colors(theme).white,
+                }}
+                onPress={googleLogin}
+              />
               <SocialButton
                 icon={faFacebook}
                 iconColor={Colors(theme).white}
