@@ -16,7 +16,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Pressable } from "react-native";
 
 const PrimarySocialSelect = () => {
@@ -53,6 +53,14 @@ const PrimarySocialSelect = () => {
       console.error("Error updating primary social:", error);
     }
   };
+
+  useEffect(() => {
+    if (socials.length == 1) {
+      setSelectedSocialId(socials[0].id);
+      updatePrimarySocial(socials[0].id);
+    }
+  }, [socials])
+
   return (
     <AppLayout withWebPadding>
       <View style={styles.container}>

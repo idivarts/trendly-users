@@ -9,7 +9,6 @@ import Toaster from '@/shared-uis/components/toaster/Toaster';
 import { HttpWrapper } from '@/utils/http-wrapper';
 import { useTheme } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
-import { router } from 'expo-router';
 import React, { useRef, useState } from 'react';
 import {
     Dimensions,
@@ -38,6 +37,9 @@ const AddInstagramManual = () => {
     const { uploadFileUri, uploadFile } = useAWSContext();
     const pRef = useRef<any>()
     const dRef = useRef<any>()
+
+    const [apiLoading, setApiLoading] = useState(false)
+    const [blockLoading, setBlockLoading] = useState(false)
 
     const pickImage = async (setter: Function, urlSetter: Function) => {
         urlSetter(null);
@@ -80,11 +82,12 @@ const AddInstagramManual = () => {
     const onClickContinue = async () => {
         console.log("Instagram Manual", handle, profileImageUrl, dashboardImageUrl);
 
-        if (handle.length > 1 || !profileImageUrl || !dashboardImageUrl) {
+        if (handle.length <= 1 || !profileImageUrl || !dashboardImageUrl) {
             Toaster.error('Please fill all the fields');
             return;
         }
 
+        setApiLoading(true);
         await HttpWrapper.fetch('/api/v1/socials/instagram/manual', {
             method: 'POST',
             headers: {
@@ -97,10 +100,12 @@ const AddInstagramManual = () => {
             }),
         }).then(response => {
             Toaster.success('Instagram added successfully');
-            router.back()
+            setBlockLoading(true);
         }).catch((error) => {
             console.error(error);
             Toaster.error('Error adding Instagram', error.message);
+        }).finally(() => {
+            setApiLoading(false);
         });
     }
 
@@ -207,10 +212,14 @@ const AddInstagramManual = () => {
                 <Button size='medium'
                     style={styles.button}
                     onPress={onClickContinue}
+                    loading={apiLoading}
                     disabled={handle.length < 1 || !profileImageUrl || !dashboardImageUrl}>
                     Continue
                 </Button>
             </View>
+            {blockLoading && <View style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.5)", justifyContent: "center", alignItems: "center" }}>
+                <ActivityIndicator size={"large"} color={Colors(theme).primary} />
+            </View>}
         </AppLayout>
     );
 };
