@@ -47,27 +47,26 @@ const AddInstagramManual = () => {
                     onChangeText={setHandle}
                 />
 
-                <Text style={styles.label}>Upload Profile Screenshot</Text>
-                <TouchableOpacity style={styles.uploadBox} onPress={() => pickImage(setProfileImage)}>
-                    {profileImage ? (
-                        <Image source={{ uri: profileImage }} style={styles.uploadedImage} />
-                    ) : (
-                        <Text style={styles.uploadText}>Tap to upload</Text>
-                    )}
-                </TouchableOpacity>
+                <Text style={styles.label}>Upload Profile and Dashboard Screenshot</Text>
+                <View style={{ display: "flex", flexDirection: "row", width: "100%", gap: 10 }}>
+                    <TouchableOpacity style={styles.uploadBox} onPress={() => pickImage(setProfileImage)}>
+                        {profileImage ? (
+                            <Image source={{ uri: profileImage }} style={styles.uploadedImage} />
+                        ) : (
+                            <Text style={styles.uploadText}>Tap to upload</Text>
+                        )}
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.uploadBox} onPress={() => pickImage(setDashboardImage)}>
+                        {dashboardImage ? (
+                            <Image source={{ uri: dashboardImage }} style={styles.uploadedImage} />
+                        ) : (
+                            <Text style={styles.uploadText}>Tap to upload</Text>
+                        )}
+                    </TouchableOpacity>
 
-                <Text style={styles.label}>Upload Dashboard Screenshot</Text>
-                <TouchableOpacity style={styles.uploadBox} onPress={() => pickImage(setDashboardImage)}>
-                    {dashboardImage ? (
-                        <Image source={{ uri: dashboardImage }} style={styles.uploadedImage} />
-                    ) : (
-                        <Text style={styles.uploadText}>Tap to upload</Text>
-                    )}
-                </TouchableOpacity>
+                </View>
 
-                <TouchableOpacity style={styles.button}>
-                    <Text style={styles.buttonText}>Continue</Text>
-                </TouchableOpacity>
+                {/* <Text style={styles.label}>Upload Dashboard Screenshot</Text> */}
 
                 <Text style={[styles.label, { marginTop: 30 }]}>Example Screenshots</Text>
                 <View style={styles.exampleRow}>
@@ -85,6 +84,10 @@ const AddInstagramManual = () => {
                         <Image source={require('@/assets/images/example-dashboard.png')} style={styles.exampleImageSmall} />
                     </Pressable>
                 </View>
+
+                <TouchableOpacity style={styles.button}>
+                    <Text style={styles.buttonText}>Continue</Text>
+                </TouchableOpacity>
 
                 {/* Fullscreen Modal */}
                 <Modal visible={modalVisible} transparent animationType="fade">
@@ -126,8 +129,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#fafafa',
     },
     uploadBox: {
-        width: '100%',
-        height: 150,
+        flex: 1,
+        height: 250,
         borderWidth: 1,
         borderColor: '#ccc',
         borderRadius: 10,
@@ -137,6 +140,8 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     uploadedImage: {
+        // flex: 1,
+        // height: 250,
         width: '100%',
         height: '100%',
         borderRadius: 10,
