@@ -281,6 +281,7 @@ const ApplyScreenWeb = () => {
           <List.Section>
             <ListItem
               title="Your Quote"
+              small={true}
               leftIcon={faDollarSign}
               content={quotation === "" ? "" : "Rs. " + quotation}
               rightContent={true}
@@ -299,6 +300,7 @@ const ApplyScreenWeb = () => {
             />
             <ListItem
               title="Timeline"
+              small={true}
               leftIcon={faClockRotateLeft}
               content=""
               rightContent={true}
@@ -330,6 +332,7 @@ const ApplyScreenWeb = () => {
             />
             <ListItem
               title="Attachments"
+              small={true}
               leftIcon={faPaperclip}
               content=""
               attachments={fileAttachments}
@@ -343,6 +346,7 @@ const ApplyScreenWeb = () => {
             {questions.map((question, index) => (
               <ListItem
                 key={index}
+                small={true}
                 title={question}
                 leftIcon={faCircleQuestion}
                 content={answers[index] || ""}
