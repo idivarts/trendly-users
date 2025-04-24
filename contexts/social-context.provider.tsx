@@ -87,7 +87,7 @@ export const SocialContextProvider = ({ children }: PropsWithChildren<{}>) => {
 
         if (!primary) {
           setPrimarySocial(null);
-          replace("/primary-social-select");
+          resetAndNavigate("/primary-social-select");
         } else {
           // @ts-ignore
           setPrimarySocial(primary);
