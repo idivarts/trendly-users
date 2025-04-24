@@ -21,6 +21,7 @@ import { FB_APP_ID } from "@/constants/Facebook";
 import { useAuthContext } from "@/contexts";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
+import { HttpWrapper } from "@/utils/http-wrapper";
 import * as WebBrowser from "expo-web-browser";
 
 interface useFacebookLoginType {
@@ -117,26 +118,18 @@ const useFacebookLogin = (
 
         const userToken = await auth.currentUser?.getIdToken();
 
-        const responseFacebook = await axios.post(
-          "https://be.trendly.now/api/v1/socials/facebook",
-          {
+        HttpWrapper.fetch("/api/v1/socials/facebook", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
             accounts: graphAPIResponse.data.accounts,
             name: graphAPIResponse.data.name,
             id: graphAPIResponse.data.id,
             accessToken: accessToken,
-            // expiresIn: Number(graphAPIResponse.data.expires_in),
-            // signedRequest: graphAPIResponse.data.signedRequest,
-            // graphDomain: graphAPIResponse.data.graphDomain,
-            // data_access_expiration_time: Number(
-            //   graphAPIResponse.data.data_access_expiration_time
-            // ),
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${userToken}`,
-            },
-          }
-        );
+          }),
+        }).then((response) => { })
 
         // if (!graphAPIResponse.data.accounts || graphAPIResponse.data.accounts.length === 0) {
         //   if (isExistingUser)

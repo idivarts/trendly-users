@@ -4,7 +4,7 @@ import { INITIAL_USER_DATA } from "@/constants/User";
 import { useInstagramLogin } from "@/hooks/requests";
 import { AuthApp } from "@/utils/auth";
 import { FirestoreDB } from "@/utils/firestore";
-import axios from "axios";
+import { HttpWrapper } from "@/utils/http-wrapper";
 import * as WebBrowser from "expo-web-browser";
 import React, { useState } from "react";
 import { Platform, View } from "react-native";
@@ -27,20 +27,16 @@ const InstagramLoginButton: React.FC = () => {
     setIsLoading(true);
     try {
       const token = await user?.getIdToken();
-      await axios
-        .post(
-          "https://be.trendly.now/api/v1/socials/instagram",
-          {
-            code: accessToken,
-            redirect_type: Platform.OS === "web" ? "2" : "3",
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        )
-        .then(async (response) => { });
+      await HttpWrapper.fetch("/api/v1/socials/instagram", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          code: accessToken,
+          redirect_type: Platform.OS === "web" ? "2" : "3",
+        }),
+      })
       setIsLoading(false);
     } catch (error) {
       console.log("Error adding Instagram account: ", error);

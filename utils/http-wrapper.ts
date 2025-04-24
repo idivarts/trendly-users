@@ -7,12 +7,17 @@ export class HttpWrapper {
         if (AuthApp.currentUser) {
             idToken = await AuthApp.currentUser.getIdToken();
         }
-        return fetch(BASE_URL + urlPath, {
+        const response = await fetch(BASE_URL + urlPath, {
             ...init,
             headers: {
                 ...init?.headers,
                 ...(idToken ? { Authorization: `Bearer ${idToken}` } : {}),
             },
         });
+        if (response.status >= 300) {
+            throw response;
+        }
+        return response
     }
 }
+export { BASE_URL as BACKEND_URL };

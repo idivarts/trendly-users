@@ -5,7 +5,9 @@ import ScreenHeader from "@/components/ui/screen-header";
 import { useAuthContext } from "@/contexts";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import ProfileBottomSheet from "@/shared-uis/components/ProfileModal/Profile-Modal";
+import { AuthApp } from "@/utils/auth";
 import { FirestoreDB } from "@/utils/firestore";
+import { HttpWrapper } from "@/utils/http-wrapper";
 import { resetAndNavigate } from "@/utils/router";
 import {
   BottomSheetBackdrop,
@@ -13,7 +15,7 @@ import {
 } from "@gorhom/bottom-sheet";
 import { useTheme } from "@react-navigation/native";
 import { useNavigation } from "expo-router";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Pressable } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -40,6 +42,37 @@ const EditProfileScreen: React.FC = () => {
   const closeProfileModal = () => {
     bottomSheetModalRef.current?.close();
   }
+
+  const [loadingPosts, setLoadingPosts] = useState(false);
+  const [posts, setPosts] = useState([]);
+  const [isInstagram, setIsInstagram] = useState(false);
+
+  const fetchPosts = async () => {
+    setLoadingPosts(true);
+    const response = await HttpWrapper.fetch(`/api/v1/socials/medias?userId=${AuthApp.currentUser?.uid}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).finally(() => {
+      setLoadingPosts(false)
+    });
+    const data = await response.json();
+
+    if (data.data.isInstagram) {
+      setIsInstagram(true);
+      setPosts(data.data.medias);
+      setLoadingPosts(false);
+    } else {
+      setIsInstagram(false);
+      setPosts(data.data.posts);
+      setLoadingPosts(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPosts();
+  }, []);
 
   const { user } = useAuthContext();
 
@@ -107,6 +140,9 @@ const EditProfileScreen: React.FC = () => {
           FireStoreDB={FirestoreDB}
           isBrandsApp={false}
           closeModal={closeProfileModal}
+          loadingPosts={loadingPosts}
+          posts={posts}
+          isInstagram={isInstagram}
         />
       </BottomSheetModal>
 

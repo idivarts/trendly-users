@@ -1,6 +1,7 @@
 import { ISocials } from "@/shared-libs/firestore/trendly-pro/models/socials";
 import { FirestoreDB } from "@/utils/firestore";
-import { router } from "expo-router";
+import { resetAndNavigate } from "@/utils/router";
+import { usePathname, useRouter } from "expo-router";
 import { collection, onSnapshot } from "firebase/firestore";
 import {
   createContext,
@@ -31,6 +32,14 @@ export const SocialContextProvider = ({ children }: PropsWithChildren<{}>) => {
   const [primarySocial, setPrimarySocial] = useState<ISocials | null>(null);
   const [isFetchingSocials, setIsFetchingSocials] = useState(true);
 
+  const { replace } = useRouter();
+
+  const pathname = usePathname();
+  const allowedPaths = [
+    "/no-social-connected",
+    "/add-instagram-manual",
+  ];
+
   const fetchSocials = () => {
     if (!user || !user.id) {
       // setIsFetchingSocials(false);
@@ -60,8 +69,12 @@ export const SocialContextProvider = ({ children }: PropsWithChildren<{}>) => {
 
         setSocials(socialData);
 
+        console.log("Pathname", pathname);
+        if (allowedPaths.includes(pathname))
+          return;
+
         if (socialData.length === 0) {
-          router.replace("/no-social-connected");
+          replace("/no-social-connected");
           return;
         }
 
@@ -74,10 +87,15 @@ export const SocialContextProvider = ({ children }: PropsWithChildren<{}>) => {
 
         if (!primary) {
           setPrimarySocial(null);
-          router.replace("/primary-social-select");
+          replace("/primary-social-select");
         } else {
           // @ts-ignore
           setPrimarySocial(primary);
+
+          // If user is stagnant on onboard page when social already exists, take users to Onboarding questions page
+          if (allowedPaths.includes(pathname)) {
+            resetAndNavigate("/questions")
+          }
         }
       });
 

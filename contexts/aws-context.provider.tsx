@@ -21,7 +21,7 @@ interface AWSContextProps {
   uploadFile: (file: File) => Promise<any>;
   uploadFiles: (files: File[]) => Promise<any[]>;
   uploadFileUri: (fileUri: AssetItem) => Promise<Attachment>;
-  uploadFileUris: (fileUris: AssetItem[]) => Promise<any[]>;
+  uploadFileUris: (fileUris: AssetItem[]) => Promise<Attachment[]>;
   uploadAttachment: (file: AssetItem) => Promise<any>;
   uploadAttachments: (attachment: AssetItem[]) => Promise<any>;
   uploadNewAssets: (
@@ -178,9 +178,9 @@ export const AWSContextProvider: React.FC<PropsWithChildren> = ({
     }
   };
 
-  const uploadFileUris = async (fileUris: AssetItem[]): Promise<any[]> => {
+  const uploadFileUris = async (fileUris: AssetItem[]): Promise<Attachment[]> => {
     try {
-      const uploadedFiles: Promise<any>[] = [];
+      const uploadedFiles: Promise<Attachment>[] = [];
       const totalProgress = 100 / fileUris.length;
 
       // setProcessPercentage(0);

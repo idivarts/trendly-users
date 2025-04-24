@@ -1,5 +1,5 @@
 import FacebookLoginButton from "@/components/profile/ConnectWithFacebook";
-import InstagramLoginButton from "@/components/profile/ConnectWithInstagram";
+import InstagramLoginButton from "@/components/profile/ConnectWithInstagramManual";
 import Button from "@/components/ui/button";
 import Colors from "@/constants/Colors";
 import { useAuthContext, useSocialContext } from "@/contexts";
@@ -48,35 +48,38 @@ const TrendlyScreen = () => {
           </Button>
         </View>
 
-        {/* Illustration */}
-        <View>
-          <View style={styles.imageContainer}>
-            <Image
-              source={imageUrl(require("@/assets/images/illustration3.png"))} // Replace with your local image
-              style={styles.image}
-              resizeMode="contain"
-            />
-          </View>
+        <View style={{ flex: 1, justifyContent: "center" }}>
+          {/* Illustration */}
+          <View>
+            <View style={styles.imageContainer}>
+              <Image
+                source={imageUrl(require("@/assets/images/no-socials.png"))} // Replace with your local image
+                style={styles.image}
+                resizeMode="contain"
+              />
+            </View>
 
-          {/* No Account Text */}
-          <Text style={styles.noAccountText}>No Social Account Found</Text>
-          <Text
-            style={{
-              textAlign: "center",
-              color: Colors(theme).gray100,
-              marginBottom: 30,
-            }}
-          >
-            Influencers can only join Trendly after they connect their social
-            media to Trendly App
-          </Text>
+            {/* No Account Text */}
+            <Text style={styles.noAccountText}>Showcase your Social Account</Text>
+            <Text
+              style={{
+                textAlign: "center",
+                color: Colors(theme).gray100,
+                marginBottom: 30,
+              }}
+            >
+              Influencers can only join Trendly after they connect their social
+              media to Trendly App
+            </Text>
+            <View style={styles.buttonContainer}>
+              <InstagramLoginButton />
+              <FacebookLoginButton />
+            </View>
+          </View>
         </View>
 
         {/* Buttons */}
-        <View style={styles.buttonContainer}>
-          <FacebookLoginButton />
-          <InstagramLoginButton />
-        </View>
+
       </View>
     </AppLayout>
   );
@@ -94,11 +97,11 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     alignItems: "center",
-    marginVertical: 30,
+    // marginVertical: 0,
   },
   image: {
-    height: 200,
-    width: 200,
+    height: 300,
+    width: 300,
   },
   noAccountText: {
     textAlign: "center",
@@ -108,6 +111,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     alignItems: "center",
+    marginTop: 20,
   },
   button: {
     marginVertical: 10,

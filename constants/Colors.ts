@@ -9,6 +9,7 @@ export default (theme: Theme) => ({
     ? {
       card: "#1E1E1E",
       text: "#fff",
+      textSecondary: "#666666",
       background: "#000",
       reverseBackground: "#fff",
       tint: tintColorDark,
@@ -23,6 +24,7 @@ export default (theme: Theme) => ({
     : {
       card: "#fff",
       text: "#000",
+      textSecondary: "#666666",
       background: "#fff",
       reverseBackground: "#000",
       tint: tintColorLight,
