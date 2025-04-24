@@ -8,17 +8,19 @@ import AppLayout from '@/layouts/app-layout';
 import Toaster from '@/shared-uis/components/toaster/Toaster';
 import { useTheme } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
     Dimensions,
     Image,
     Modal,
+    Platform,
     Pressable,
     ScrollView,
     StyleSheet,
     Text,
     TouchableOpacity,
 } from 'react-native';
+import { ActivityIndicator } from 'react-native-paper';
 
 const { width } = Dimensions.get('window');
 
@@ -26,12 +28,17 @@ const AddInstagramManual = () => {
     const [handle, setHandle] = useState('');
     const [profileImage, setProfileImage] = useState<string | null>(null);
     const [dashboardImage, setDashboardImage] = useState<string | null>(null);
+    const [profileImageUrl, setProfileImageUrl] = useState<string | null>(null);
+    const [dashboardImageUrl, setDashboardImageUrl] = useState<string | null>(null);
     const [modalVisible, setModalVisible] = useState(false);
     const [activeImage, setActiveImage] = useState<any>(null);
     const theme = useTheme();
-    const { uploadFileUris } = useAWSContext();
+    const { uploadFileUri, uploadFile } = useAWSContext();
+    const pRef = useRef<any>()
+    const dRef = useRef<any>()
 
-    const pickImage = async (setter: Function) => {
+    const pickImage = async (setter: Function, urlSetter: Function) => {
+        urlSetter(null);
         const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             quality: 0.7,
@@ -39,25 +46,41 @@ const AddInstagramManual = () => {
 
         if (!result.canceled) {
             setter(result.assets[0].uri);
+            uploadFileUri({
+                id: result.assets[0].assetId + "",
+                type: 'image',
+                localUri: result.assets[0].uri,
+                uri: result.assets[0].uri,
+            }).then((asset) => {
+                urlSetter(asset.imageUrl)
+            }).catch((error) => {
+                setter(null);
+                Toaster.error('Cant upload image', error.message);
+            });
+        }
+    };
+    const pickFile = async (event: React.ChangeEvent<HTMLInputElement>,
+        setter: Function, urlSetter: Function) => {
+        const file = event.target.files?.[0]
+        if (file) {
+            urlSetter(null);
+            setter(URL.createObjectURL(file));
+            uploadFile(file).then((asset) => {
+                urlSetter(asset.imageUrl)
+            }).catch((error) => {
+                setter(null);
+                Toaster.error('Cant upload image', error.message);
+            });
         }
     };
 
+
     const onClickContinue = async () => {
-        if (!handle || !profileImage || !dashboardImage) {
+        if (!handle || !profileImageUrl || !dashboardImageUrl) {
             Toaster.error('Please fill all the fields');
             return;
         }
-        const uploadedAsseta = await uploadFileUris([{
-            id: profileImage,
-            type: 'image',
-            localUri: profileImage,
-            uri: profileImage,
-        }, {
-            id: profileImage,
-            type: 'image',
-            localUri: profileImage,
-            uri: profileImage,
-        }]);
+
     }
 
     return (
@@ -83,18 +106,34 @@ const AddInstagramManual = () => {
 
                 <Text style={styles.label}>Upload Profile and Dashboard Screenshot</Text>
                 <View style={{ display: "flex", flexDirection: "row", width: "100%", gap: 10, marginTop: 8 }}>
-                    <TouchableOpacity style={styles.uploadBox} onPress={() => pickImage(setProfileImage)}>
+                    <TouchableOpacity style={styles.uploadBox} onPress={() =>
+                        Platform.OS === 'web' ? pRef.current.click() : pickImage(setProfileImage, setProfileImageUrl)}>
                         {profileImage ? (
-                            <Image source={{ uri: profileImage }} style={styles.uploadedImage} />
+                            <>
+                                <Image source={{ uri: profileImage }} style={styles.uploadedImage} />
+                                {!profileImageUrl && <ActivityIndicator style={{ position: "absolute", zIndex: 100 }} size={"large"} />}
+                            </>
                         ) : (
-                            <Text style={styles.uploadText}>Upload Profile</Text>
+                            <>
+                                <Text style={styles.uploadText}>Upload Profile</Text>
+                                {Platform.OS === 'web' && <input type='file' ref={pRef} accept='image/*' hidden
+                                    onChange={(e) => pickFile(e, setProfileImage, setProfileImageUrl)} />}
+                            </>
                         )}
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.uploadBox} onPress={() => pickImage(setDashboardImage)}>
+                    <TouchableOpacity style={styles.uploadBox} onPress={() =>
+                        Platform.OS === 'web' ? dRef.current.click() : pickImage(setDashboardImage, setDashboardImageUrl)}>
                         {dashboardImage ? (
-                            <Image source={{ uri: dashboardImage }} style={styles.uploadedImage} />
+                            <>
+                                <Image source={{ uri: dashboardImage }} style={styles.uploadedImage} />
+                                {!dashboardImageUrl && <ActivityIndicator style={{ position: "absolute", zIndex: 100 }} size={"large"} />}
+                            </>
                         ) : (
-                            <Text style={styles.uploadText}>Upload Dashboard</Text>
+                            <>
+                                <Text style={styles.uploadText}>Upload Dashboard</Text>
+                                {Platform.OS === 'web' && <input type='file' ref={dRef} accept='image/*' hidden
+                                    onChange={(e) => pickFile(e, setDashboardImage, setDashboardImageUrl)} />}
+                            </>
                         )}
                     </TouchableOpacity>
 
@@ -147,7 +186,7 @@ const AddInstagramManual = () => {
                 <Button size='medium'
                     style={styles.button}
                     onPress={onClickContinue}
-                    disabled={handle.length < 1 || !profileImage || !dashboardImage}>
+                    disabled={handle.length < 1 || !profileImageUrl || !dashboardImageUrl}>
                     Continue
                 </Button>
             </View>
