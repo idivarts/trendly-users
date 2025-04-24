@@ -58,7 +58,7 @@ const AddInstagramManual = () => {
                     }} />
 
                 <Text style={styles.label}>Upload Profile and Dashboard Screenshot</Text>
-                <View style={{ display: "flex", flexDirection: "row", width: "100%", gap: 10 }}>
+                <View style={{ display: "flex", flexDirection: "row", width: "100%", gap: 10, marginTop: 8 }}>
                     <TouchableOpacity style={styles.uploadBox} onPress={() => pickImage(setProfileImage)}>
                         {profileImage ? (
                             <Image source={{ uri: profileImage }} style={styles.uploadedImage} />
