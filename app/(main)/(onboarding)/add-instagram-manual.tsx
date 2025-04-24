@@ -53,14 +53,14 @@ const AddInstagramManual = () => {
                         {profileImage ? (
                             <Image source={{ uri: profileImage }} style={styles.uploadedImage} />
                         ) : (
-                            <Text style={styles.uploadText}>Tap to upload</Text>
+                            <Text style={styles.uploadText}>Upload Profile</Text>
                         )}
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.uploadBox} onPress={() => pickImage(setDashboardImage)}>
                         {dashboardImage ? (
                             <Image source={{ uri: dashboardImage }} style={styles.uploadedImage} />
                         ) : (
-                            <Text style={styles.uploadText}>Tap to upload</Text>
+                            <Text style={styles.uploadText}>Upload Dashboard</Text>
                         )}
                     </TouchableOpacity>
 
