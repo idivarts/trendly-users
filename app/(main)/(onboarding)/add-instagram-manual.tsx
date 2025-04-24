@@ -112,7 +112,7 @@ const AddInstagramManual = () => {
                             <Text style={styles.bulletText}>All uploads are <Text style={{ fontWeight: '600' }}>manually verified</Text>. We’ll reach out if any clarification is needed.</Text>
                         </View>
 
-                        <Text style={[styles.label, { marginTop: 30 }]}>Example Screenshots</Text>
+                        <Text style={[styles.notesHeading, { marginTop: 30 }]}>Example Screenshots</Text>
                         <View style={styles.exampleRow}>
                             <Pressable onPress={() => {
                                 setActiveImage(require('@/assets/images/example-profile.jpg'));
@@ -162,9 +162,7 @@ const styles = StyleSheet.create({
     },
     heading: {
         fontSize: 24,
-        fontWeight: '700',
-        marginBottom: 20,
-        textAlign: 'center',
+        fontWeight: "bold",
     },
     label: {
         fontSize: 16,
