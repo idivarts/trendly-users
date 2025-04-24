@@ -1,7 +1,6 @@
 import { ISocials } from "@/shared-libs/firestore/trendly-pro/models/socials";
-import { AuthApp } from "@/utils/auth";
 import { FirestoreDB } from "@/utils/firestore";
-import { router } from "expo-router";
+import { usePathname, useRouter } from "expo-router";
 import { collection, onSnapshot } from "firebase/firestore";
 import {
   createContext,
@@ -32,6 +31,14 @@ export const SocialContextProvider = ({ children }: PropsWithChildren<{}>) => {
   const [primarySocial, setPrimarySocial] = useState<ISocials | null>(null);
   const [isFetchingSocials, setIsFetchingSocials] = useState(true);
 
+  const { replace } = useRouter();
+
+  const pathname = usePathname();
+  const allowedPaths = [
+    "/no-social-connected",
+    "/add-instagram-manual",
+  ];
+
   const fetchSocials = () => {
     if (!user || !user.id) {
       // setIsFetchingSocials(false);
@@ -61,14 +68,14 @@ export const SocialContextProvider = ({ children }: PropsWithChildren<{}>) => {
 
         setSocials(socialData);
 
-        if (socialData.length === 0) {
-          console.log("Provider", AuthApp.currentUser?.providerData[0]?.providerId);
+        console.log("Pathname", pathname);
 
-          if (AuthApp.currentUser?.providerData[0]?.providerId == "google.com") {
-            router.replace("/add-instagram-manual");
-          } else {
-            router.replace("/no-social-connected");
-          }
+        if (allowedPaths.includes(pathname)) {
+          return
+        }
+
+        if (socialData.length === 0) {
+          replace("/no-social-connected");
           return;
         }
 
@@ -81,7 +88,7 @@ export const SocialContextProvider = ({ children }: PropsWithChildren<{}>) => {
 
         if (!primary) {
           setPrimarySocial(null);
-          router.replace("/primary-social-select");
+          replace("/primary-social-select");
         } else {
           // @ts-ignore
           setPrimarySocial(primary);
