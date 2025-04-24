@@ -6,6 +6,7 @@ import Colors from '@/constants/Colors';
 import { useAWSContext } from '@/contexts/aws-context.provider';
 import AppLayout from '@/layouts/app-layout';
 import Toaster from '@/shared-uis/components/toaster/Toaster';
+import { HttpWrapper } from '@/utils/http-wrapper';
 import { useTheme } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import React, { useRef, useState } from 'react';
@@ -76,11 +77,29 @@ const AddInstagramManual = () => {
 
 
     const onClickContinue = async () => {
+        console.log("Instagram Manual", handle, profileImageUrl, dashboardImageUrl);
+
         if (!handle || !profileImageUrl || !dashboardImageUrl) {
             Toaster.error('Please fill all the fields');
             return;
         }
 
+        await HttpWrapper.fetch('/api/v1/socials/instagram/manual', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                handle: handle,
+                profileImage: profileImageUrl,
+                dashboardImage: dashboardImageUrl,
+            }),
+        }).then(response => {
+            Toaster.success('Instagram added successfully');
+        }).catch((error) => {
+            console.error(error);
+            Toaster.error('Error adding Instagram', error.message);
+        });
     }
 
     return (
