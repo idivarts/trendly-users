@@ -1,5 +1,6 @@
 import { ISocials } from "@/shared-libs/firestore/trendly-pro/models/socials";
 import { FirestoreDB } from "@/utils/firestore";
+import { resetAndNavigate } from "@/utils/router";
 import { usePathname, useRouter } from "expo-router";
 import { collection, onSnapshot } from "firebase/firestore";
 import {
@@ -90,6 +91,11 @@ export const SocialContextProvider = ({ children }: PropsWithChildren<{}>) => {
         } else {
           // @ts-ignore
           setPrimarySocial(primary);
+
+          // If user is stagnant on onboard page when social already exists, take users to Onboarding questions page
+          if (allowedPaths.includes(pathname)) {
+            resetAndNavigate("/questions")
+          }
         }
       });
 
