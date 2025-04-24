@@ -1,5 +1,6 @@
 import { View } from '@/components/theme/Themed';
-import Button from '@/components/ui/button';
+import ScreenHeader from '@/components/ui/screen-header';
+import TextInput from '@/components/ui/text-input';
 import Colors from '@/constants/Colors';
 import { useAuthContext } from '@/contexts';
 import AppLayout from '@/layouts/app-layout';
@@ -14,7 +15,6 @@ import {
     ScrollView,
     StyleSheet,
     Text,
-    TextInput,
     TouchableOpacity,
 } from 'react-native';
 
@@ -42,107 +42,87 @@ const AddInstagramManual = () => {
 
     return (
         <AppLayout withWebPadding>
-            <View
-                style={{
-                    flex: 1,
-                    backgroundColor: Colors(theme).background,
-                    padding: 16,
-                    justifyContent: "space-between",
-                    paddingBottom: 80,
-                }}
-            >
-                {/* Header */}
-                <View style={styles.header}>
-                    <Text style={styles.heading}>Trendly</Text>
-                    <Button
-                        mode="text"
-                        labelStyle={{
-                            color: Colors(theme).primary,
-                            fontSize: 16,
-                        }}
-                        onPress={signOutUser}
-                    >
-                        Logout
-                    </Button>
-                </View>
+            <ScreenHeader title='Add Instagram' />
 
-                <ScrollView contentContainerStyle={styles.container}>
+            <ScrollView contentContainerStyle={styles.container}>
 
-                    <Text style={styles.label}>Instagram Handle</Text>
-                    <TextInput
-                        style={styles.input}
-                        placeholder="@yourhandle"
-                        value={handle}
-                        onChangeText={setHandle}
-                    />
+                <Text style={styles.label}>Add your Instagram handle</Text>
+                <TextInput
+                    label="Instagram Handle (@...)"
+                    // value={name}
+                    style={{ width: '100%', marginTop: 8, marginBottom: 16 }}
+                    placeholderTextColor={Colors(theme).textSecondary}
+                    placeholder='@trendly'
+                    onChangeText={(name) => {
 
-                    <Text style={styles.label}>Upload Profile and Dashboard Screenshot</Text>
-                    <View style={{ display: "flex", flexDirection: "row", width: "100%", gap: 10 }}>
-                        <TouchableOpacity style={styles.uploadBox} onPress={() => pickImage(setProfileImage)}>
-                            {profileImage ? (
-                                <Image source={{ uri: profileImage }} style={styles.uploadedImage} />
-                            ) : (
-                                <Text style={styles.uploadText}>Upload Profile</Text>
-                            )}
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.uploadBox} onPress={() => pickImage(setDashboardImage)}>
-                            {dashboardImage ? (
-                                <Image source={{ uri: dashboardImage }} style={styles.uploadedImage} />
-                            ) : (
-                                <Text style={styles.uploadText}>Upload Dashboard</Text>
-                            )}
-                        </TouchableOpacity>
+                    }} />
 
-                    </View>
-
-                    {/* <Text style={styles.label}>Upload Dashboard Screenshot</Text> */}
-
-                    <View style={styles.noteContainer}>
-                        <Text style={styles.notesHeading}>Before You Continue</Text>
-                        <View style={styles.bulletPoint}>
-                            <Text style={styles.bulletSymbol}>{'\u2022'}</Text>
-                            <Text style={styles.bulletText}>Please ensure your Instagram account is set to <Text style={{ fontWeight: '600' }}>Professional</Text> and its visibility is <Text style={{ fontWeight: '600' }}>Public</Text>.</Text>
-                        </View>
-                        <View style={styles.bulletPoint}>
-                            <Text style={styles.bulletSymbol}>{'\u2022'}</Text>
-                            <Text style={styles.bulletText}>Upload <Text style={{ fontWeight: '600' }}>clear screenshots</Text> displaying your username, follower count, and other relevant details.</Text>
-                        </View>
-                        <View style={styles.bulletPoint}>
-                            <Text style={styles.bulletSymbol}>{'\u2022'}</Text>
-                            <Text style={styles.bulletText}>All uploads are <Text style={{ fontWeight: '600' }}>manually verified</Text>. We’ll reach out if any clarification is needed.</Text>
-                        </View>
-
-                        <Text style={[styles.notesHeading, { marginTop: 30 }]}>Example Screenshots</Text>
-                        <View style={styles.exampleRow}>
-                            <Pressable onPress={() => {
-                                setActiveImage(require('@/assets/images/example-profile.jpg'));
-                                setModalVisible(true);
-                            }}>
-                                <Image source={require('@/assets/images/example-profile.jpg')} style={styles.exampleImageSmall} />
-                            </Pressable>
-
-                            <Pressable onPress={() => {
-                                setActiveImage(require('@/assets/images/example-dashboard.png'));
-                                setModalVisible(true);
-                            }}>
-                                <Image source={require('@/assets/images/example-dashboard.png')} style={styles.exampleImageSmall} />
-                            </Pressable>
-                        </View>
-                    </View>
-
-                    {/* Fullscreen Modal */}
-                    <Modal visible={modalVisible} transparent animationType="fade">
-                        <Pressable style={styles.modalContainer} onPress={() => setModalVisible(false)}>
-                            <Image source={activeImage} style={styles.fullImage} resizeMode="contain" />
-                        </Pressable>
-                    </Modal>
-                </ScrollView>
-
-                <View style={styles.stickyFooter}>
-                    <TouchableOpacity style={styles.button}>
-                        <Text style={styles.buttonText}>Continue</Text>
+                <Text style={styles.label}>Upload Profile and Dashboard Screenshot</Text>
+                <View style={{ display: "flex", flexDirection: "row", width: "100%", gap: 10 }}>
+                    <TouchableOpacity style={styles.uploadBox} onPress={() => pickImage(setProfileImage)}>
+                        {profileImage ? (
+                            <Image source={{ uri: profileImage }} style={styles.uploadedImage} />
+                        ) : (
+                            <Text style={styles.uploadText}>Upload Profile</Text>
+                        )}
                     </TouchableOpacity>
+                    <TouchableOpacity style={styles.uploadBox} onPress={() => pickImage(setDashboardImage)}>
+                        {dashboardImage ? (
+                            <Image source={{ uri: dashboardImage }} style={styles.uploadedImage} />
+                        ) : (
+                            <Text style={styles.uploadText}>Upload Dashboard</Text>
+                        )}
+                    </TouchableOpacity>
+
                 </View>
+
+                {/* <Text style={styles.label}>Upload Dashboard Screenshot</Text> */}
+
+                <View style={styles.noteContainer}>
+                    <Text style={styles.notesHeading}>Before You Continue</Text>
+                    <View style={styles.bulletPoint}>
+                        <Text style={styles.bulletSymbol}>{'\u2022'}</Text>
+                        <Text style={styles.bulletText}>Please ensure your Instagram account is set to <Text style={{ fontWeight: '600' }}>Professional</Text> and its visibility is <Text style={{ fontWeight: '600' }}>Public</Text>.</Text>
+                    </View>
+                    <View style={styles.bulletPoint}>
+                        <Text style={styles.bulletSymbol}>{'\u2022'}</Text>
+                        <Text style={styles.bulletText}>Upload <Text style={{ fontWeight: '600' }}>clear screenshots</Text> displaying your username, follower count, and other relevant details.</Text>
+                    </View>
+                    <View style={styles.bulletPoint}>
+                        <Text style={styles.bulletSymbol}>{'\u2022'}</Text>
+                        <Text style={styles.bulletText}>All uploads are <Text style={{ fontWeight: '600' }}>manually verified</Text>. We’ll reach out if any clarification is needed.</Text>
+                    </View>
+
+                    <Text style={[styles.notesHeading, { marginTop: 30 }]}>Example Screenshots</Text>
+                    <View style={styles.exampleRow}>
+                        <Pressable onPress={() => {
+                            setActiveImage(require('@/assets/images/example-profile.jpg'));
+                            setModalVisible(true);
+                        }}>
+                            <Image source={require('@/assets/images/example-profile.jpg')} style={styles.exampleImageSmall} />
+                        </Pressable>
+
+                        <Pressable onPress={() => {
+                            setActiveImage(require('@/assets/images/example-dashboard.png'));
+                            setModalVisible(true);
+                        }}>
+                            <Image source={require('@/assets/images/example-dashboard.png')} style={styles.exampleImageSmall} />
+                        </Pressable>
+                    </View>
+                </View>
+
+                {/* Fullscreen Modal */}
+                <Modal visible={modalVisible} transparent animationType="fade">
+                    <Pressable style={styles.modalContainer} onPress={() => setModalVisible(false)}>
+                        <Image source={activeImage} style={styles.fullImage} resizeMode="contain" />
+                    </Pressable>
+                </Modal>
+            </ScrollView>
+
+            <View style={styles.stickyFooter}>
+                <TouchableOpacity style={styles.button}>
+                    <Text style={styles.buttonText}>Continue</Text>
+                </TouchableOpacity>
             </View>
         </AppLayout>
     );
@@ -150,8 +130,8 @@ const AddInstagramManual = () => {
 
 const styles = StyleSheet.create({
     container: {
-        // padding: 20,
-        paddingBottom: 40,
+        padding: 20,
+        paddingBottom: 120,
         backgroundColor: '#fff',
         alignItems: 'center',
     },
