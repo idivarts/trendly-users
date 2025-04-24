@@ -53,7 +53,7 @@ const TrendlyScreen = () => {
           <View>
             <View style={styles.imageContainer}>
               <Image
-                source={imageUrl(require("@/assets/images/illustration3.png"))} // Replace with your local image
+                source={imageUrl(require("@/assets/images/no-socials.png"))} // Replace with your local image
                 style={styles.image}
                 resizeMode="contain"
               />
@@ -97,11 +97,11 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     alignItems: "center",
-    marginVertical: 30,
+    // marginVertical: 0,
   },
   image: {
-    height: 200,
-    width: 200,
+    height: 300,
+    width: 300,
   },
   noAccountText: {
     textAlign: "center",

@@ -1,4 +1,5 @@
 import { View } from '@/components/theme/Themed';
+import Button from '@/components/ui/button';
 import ScreenHeader from '@/components/ui/screen-header';
 import TextInput from '@/components/ui/text-input';
 import Colors from '@/constants/Colors';
@@ -120,9 +121,10 @@ const AddInstagramManual = () => {
             </ScrollView>
 
             <View style={styles.stickyFooter}>
-                <TouchableOpacity style={styles.button}>
+                <Button size='medium' style={styles.button}>Continue</Button>
+                {/* <TouchableOpacity style={styles.button}>
                     <Text style={styles.buttonText}>Continue</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
             </View>
         </AppLayout>
     );
@@ -183,11 +185,11 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     button: {
-        backgroundColor: '#007aff',
-        paddingVertical: 14,
-        paddingHorizontal: 40,
-        borderRadius: 10,
-        marginTop: 30,
+        // backgroundColor: '#007aff',
+        paddingVertical: 8,
+        // paddingHorizontal: 40,
+        // borderRadius: 10,
+        marginTop: 16,
         width: '100%',
     },
     buttonText: {
