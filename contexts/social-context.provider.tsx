@@ -69,12 +69,7 @@ export const SocialContextProvider = ({ children }: PropsWithChildren<{}>) => {
         setSocials(socialData);
 
         console.log("Pathname", pathname);
-
-        if (allowedPaths.includes(pathname)) {
-          return
-        }
-
-        if (socialData.length === 0) {
+        if (socialData.length === 0 && !allowedPaths.includes(pathname)) {
           replace("/no-social-connected");
           return;
         }
