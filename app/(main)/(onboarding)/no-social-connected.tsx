@@ -48,35 +48,38 @@ const TrendlyScreen = () => {
           </Button>
         </View>
 
-        {/* Illustration */}
-        <View>
-          <View style={styles.imageContainer}>
-            <Image
-              source={imageUrl(require("@/assets/images/illustration3.png"))} // Replace with your local image
-              style={styles.image}
-              resizeMode="contain"
-            />
-          </View>
+        <View style={{ flex: 1, justifyContent: "center" }}>
+          {/* Illustration */}
+          <View>
+            <View style={styles.imageContainer}>
+              <Image
+                source={imageUrl(require("@/assets/images/illustration3.png"))} // Replace with your local image
+                style={styles.image}
+                resizeMode="contain"
+              />
+            </View>
 
-          {/* No Account Text */}
-          <Text style={styles.noAccountText}>No Social Account Found</Text>
-          <Text
-            style={{
-              textAlign: "center",
-              color: Colors(theme).gray100,
-              marginBottom: 30,
-            }}
-          >
-            Influencers can only join Trendly after they connect their social
-            media to Trendly App
-          </Text>
+            {/* No Account Text */}
+            <Text style={styles.noAccountText}>No Social Account Found</Text>
+            <Text
+              style={{
+                textAlign: "center",
+                color: Colors(theme).gray100,
+                marginBottom: 30,
+              }}
+            >
+              Influencers can only join Trendly after they connect their social
+              media to Trendly App
+            </Text>
+            <View style={styles.buttonContainer}>
+              <InstagramLoginButton />
+              <FacebookLoginButton />
+            </View>
+          </View>
         </View>
 
         {/* Buttons */}
-        <View style={styles.buttonContainer}>
-          <FacebookLoginButton />
-          <InstagramLoginButton />
-        </View>
+
       </View>
     </AppLayout>
   );
@@ -108,6 +111,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     alignItems: "center",
+    marginTop: 20,
   },
   button: {
     marginVertical: 10,
