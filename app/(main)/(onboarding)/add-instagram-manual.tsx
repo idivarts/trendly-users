@@ -9,6 +9,7 @@ import Toaster from '@/shared-uis/components/toaster/Toaster';
 import { HttpWrapper } from '@/utils/http-wrapper';
 import { useTheme } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
+import { router } from 'expo-router';
 import React, { useRef, useState } from 'react';
 import {
     Dimensions,
@@ -96,6 +97,7 @@ const AddInstagramManual = () => {
             }),
         }).then(response => {
             Toaster.success('Instagram added successfully');
+            router.back()
         }).catch((error) => {
             console.error(error);
             Toaster.error('Error adding Instagram', error.message);
