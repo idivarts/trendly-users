@@ -80,7 +80,7 @@ const AddInstagramManual = () => {
     const onClickContinue = async () => {
         console.log("Instagram Manual", handle, profileImageUrl, dashboardImageUrl);
 
-        if (!handle || !profileImageUrl || !dashboardImageUrl) {
+        if (handle.length > 1 || !profileImageUrl || !dashboardImageUrl) {
             Toaster.error('Please fill all the fields');
             return;
         }
@@ -91,7 +91,7 @@ const AddInstagramManual = () => {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                handle: handle,
+                handle: handle.substring(1),
                 profileImage: profileImageUrl,
                 dashboardImage: dashboardImageUrl,
             }),
