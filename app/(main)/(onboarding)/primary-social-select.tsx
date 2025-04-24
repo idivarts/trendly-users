@@ -2,7 +2,6 @@ import { Text, View } from "@/components/theme/Themed";
 import Colors from "@/constants/Colors";
 import { useAuthContext, useSocialContext } from "@/contexts";
 import AppLayout from "@/layouts/app-layout";
-import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { stylesFn } from "@/styles/Questions.styles";
 import { FirestoreDB } from "@/utils/firestore";
@@ -15,7 +14,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, updateDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { Pressable } from "react-native";
 
@@ -35,12 +34,7 @@ const PrimarySocialSelect = () => {
       if (!userId) return;
 
       const userDocRef = doc(FirestoreDB, "users", userId);
-      const userDoc = await getDoc(userDocRef);
-      const userData = userDoc.data() as IUsers;
-
-      userData.primarySocial = socialId;
-
-      await updateDoc(userDocRef, { primarySocial: userData.primarySocial })
+      await updateDoc(userDocRef, { primarySocial: socialId })
         .then(() => {
           HttpWrapper.fetch("/api/v1/chat/auth", { method: "POST", });
           Toaster.success("Social marked as primary");
