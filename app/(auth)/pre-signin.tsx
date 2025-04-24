@@ -9,7 +9,7 @@ import stylesFn from "@/styles/tab1.styles";
 import { AuthApp } from "@/utils/auth";
 import { FirestoreDB } from "@/utils/firestore";
 import { imageUrl } from "@/utils/url";
-import { faFacebook, faInstagram } from "@fortawesome/free-brands-svg-icons";
+import { faFacebook, faGoogle, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import { faArrowRight, faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
@@ -34,6 +34,7 @@ import BottomSheetActions from "@/components/BottomSheetActions";
 import ProfileOnboardLoader from "@/components/ProfileOnboardLoader";
 import { IS_BETA_ENABLED } from "@/constants/App";
 import { useBreakpoints } from "@/hooks";
+import { useGoogleLogin } from "@/hooks/requests/use-google-login";
 import { runOnJS, useSharedValue } from "react-native-reanimated";
 import Swiper from "react-native-swiper";
 
@@ -68,6 +69,8 @@ const PreSignIn = () => {
       setLoading,
       setError
     );
+
+  const { googleLogin } = useGoogleLogin(setLoading, setError);
 
   const skipToConnect = () => {
     const connectSlideIndex = slides.findIndex(
@@ -150,6 +153,11 @@ const PreSignIn = () => {
 
                 {item.key === "connect" && (
                   <View style={styles.socialContainer}>
+                    <SocialButton
+                      icon={faGoogle}
+                      label="Continue with Google"
+                      onPress={googleLogin}
+                    />
                     <SocialButton
                       icon={faFacebook}
                       label="Login with Facebook"
@@ -267,6 +275,11 @@ const PreSignIn = () => {
               <Paragraph style={styles.paragraph}>{slide.text}</Paragraph>
               {slide.key === "connect" && (
                 <View style={styles.socialContainer}>
+                  <SocialButton
+                    icon={faGoogle}
+                    label="Continue with Google"
+                    onPress={googleLogin}
+                  />
                   <SocialButton
                     icon={faFacebook}
                     label="Login with Facebook"
