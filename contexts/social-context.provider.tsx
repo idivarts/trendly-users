@@ -1,4 +1,5 @@
 import { ISocials } from "@/shared-libs/firestore/trendly-pro/models/socials";
+import { AuthApp } from "@/utils/auth";
 import { FirestoreDB } from "@/utils/firestore";
 import { router } from "expo-router";
 import { collection, onSnapshot } from "firebase/firestore";
@@ -61,7 +62,13 @@ export const SocialContextProvider = ({ children }: PropsWithChildren<{}>) => {
         setSocials(socialData);
 
         if (socialData.length === 0) {
-          router.replace("/no-social-connected");
+          console.log("Provider", AuthApp.currentUser?.providerData[0]?.providerId);
+
+          if (AuthApp.currentUser?.providerData[0]?.providerId == "google.com") {
+            router.replace("/add-instagram-manual");
+          } else {
+            router.replace("/no-social-connected");
+          }
           return;
         }
 
