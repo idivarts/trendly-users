@@ -60,7 +60,7 @@ const TrendlyScreen = () => {
             </View>
 
             {/* No Account Text */}
-            <Text style={styles.noAccountText}>No Social Account Found</Text>
+            <Text style={styles.noAccountText}>Showcase your Social Account</Text>
             <Text
               style={{
                 textAlign: "center",

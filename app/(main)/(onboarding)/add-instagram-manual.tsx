@@ -198,14 +198,17 @@ const styles = StyleSheet.create({
     },
     exampleRow: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'flex-start',
+        gap: 10,
         width: '100%',
         marginTop: 10,
+        backgroundColor: "unset"
     },
     exampleImageSmall: {
-        width: (width / 2) - 30,
-        height: 160,
+        maxWidth: Math.min(width / 2 - 60, 200),
+        maxHeight: 300,
         borderRadius: 10,
+        margin: 8
     },
     modalContainer: {
         flex: 1,
