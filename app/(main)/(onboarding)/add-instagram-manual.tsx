@@ -3,7 +3,9 @@ import Button from '@/components/ui/button';
 import ScreenHeader from '@/components/ui/screen-header';
 import TextInput from '@/components/ui/text-input';
 import Colors from '@/constants/Colors';
+import { useAWSContext } from '@/contexts/aws-context.provider';
 import AppLayout from '@/layouts/app-layout';
+import Toaster from '@/shared-uis/components/toaster/Toaster';
 import { useTheme } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import React, { useState } from 'react';
@@ -27,6 +29,7 @@ const AddInstagramManual = () => {
     const [modalVisible, setModalVisible] = useState(false);
     const [activeImage, setActiveImage] = useState<any>(null);
     const theme = useTheme();
+    const { uploadFileUris } = useAWSContext();
 
     const pickImage = async (setter: Function) => {
         const result = await ImagePicker.launchImageLibraryAsync({
@@ -40,7 +43,21 @@ const AddInstagramManual = () => {
     };
 
     const onClickContinue = async () => {
-
+        if (!handle || !profileImage || !dashboardImage) {
+            Toaster.error('Please fill all the fields');
+            return;
+        }
+        const uploadedAsseta = await uploadFileUris([{
+            id: profileImage,
+            type: 'image',
+            localUri: profileImage,
+            uri: profileImage,
+        }, {
+            id: profileImage,
+            type: 'image',
+            localUri: profileImage,
+            uri: profileImage,
+        }]);
     }
 
     return (
