@@ -1,6 +1,7 @@
 import { useFacebookLogin } from "@/hooks/requests";
 import { AuthApp } from "@/utils/auth";
 import { FirestoreDB } from "@/utils/firestore";
+import { HttpWrapper } from "@/utils/http-wrapper";
 import axios from "axios";
 import * as WebBrowser from "expo-web-browser";
 import { collection, doc } from "firebase/firestore";
@@ -37,28 +38,19 @@ const FacebookLoginButton: React.FC = () => {
 
       const user = await AuthApp.currentUser?.getIdToken();
 
-      const responseFacebook = await axios
-        .post(
-          "https://be.trendly.now/api/v1/socials/facebook",
-          {
-            accounts: graphAPIResponse.data.accounts,
-            name: graphAPIResponse.data.name,
-            id: graphAPIResponse.data.id,
-            accessToken: accessToken,
-            // expiresIn: Number(graphAPIResponse.data.expires_in),
-            // signedRequest: graphAPIResponse.data.signedRequest,
-            // graphDomain: graphAPIResponse.data.graphDomain,
-            // data_access_expiration_time: Number(
-            //   graphAPIResponse.data.data_access_expiration_time
-            // ),
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${user}`,
-            },
-          }
-        )
-        .then((res) => { });
+      let responseFacebook = await HttpWrapper.fetch("/api/v1/socials/facebook", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          accounts: graphAPIResponse.data.accounts,
+          name: graphAPIResponse.data.name,
+          id: graphAPIResponse.data.id,
+          accessToken: accessToken,
+        })
+      })
+
     } catch (error) {
       console.error(error);
     } finally {

@@ -1,4 +1,3 @@
-import axios from "axios";
 import * as AuthSession from "expo-auth-session";
 import { Auth, signInWithCustomToken } from "firebase/auth";
 import { collection, doc, Firestore, updateDoc } from "firebase/firestore";
@@ -8,6 +7,7 @@ import { Platform } from "react-native";
 import { FB_APP_ID } from "@/constants/Facebook";
 import { useAuthContext } from "@/contexts";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
+import { BACKEND_URL, HttpWrapper } from "@/utils/http-wrapper";
 import * as WebBrowser from "expo-web-browser";
 
 interface useInstagramLoginType {
@@ -35,7 +35,7 @@ const useInstagramLogin = (
   });
   // console.log("Redirect Uri for Instagram: ", redirectUri);
 
-  const authUrl = `https://be.trendly.now/instagram?redirect_type=${Platform.OS === "web" ? (isLocalhost ? 1 : 2) : 3}&`;
+  const authUrl = `${BACKEND_URL}/instagram?redirect_type=${Platform.OS === "web" ? (isLocalhost ? 1 : 2) : 3}&`;
 
   const [requestInstagram, responseInstagram, promptAsyncInstagram] =
     AuthSession.useAuthRequest(
@@ -64,29 +64,34 @@ const useInstagramLogin = (
       return;
     }
     setLoading(true);
-    await axios
-      .post("https://be.trendly.now/instagram/auth", {
+    await HttpWrapper.fetch("/api/v1/socials/instagram", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
         code: accessToken,
-        redirect_type: Platform.OS === "web" ? (isLocalhost ? "1" : "2") : "3",
-      })
-      .then(async (response) => {
-        const user = await signInWithCustomToken(
-          auth,
-          response.data.data.firebaseCustomToken
-        );
-        if (response.data.data.isExistingUser) {
-          firebaseSignIn(user.user.uid);
-        } else {
-          const userCollection = collection(firestore, "users");
-          const userDocRef = doc(userCollection, user.user.uid);
-          const userData = {
-            ...initialUserData,
-          };
+        redirect_type: Platform.OS === "web" ? (isLocalhost ? 1 : 2) : 3,
+      }),
+    }).then(async (response) => {
+      const data = await response.json();
+      const user = await signInWithCustomToken(
+        auth,
+        data.data.firebaseCustomToken
+      );
+      if (data.data.isExistingUser) {
+        firebaseSignIn(user.user.uid);
+      } else {
+        const userCollection = collection(firestore, "users");
+        const userDocRef = doc(userCollection, user.user.uid);
+        const userData = {
+          ...initialUserData,
+        };
 
-          await updateDoc(userDocRef, userData);
-          firebaseSignUp(user.user.uid, 1);
-        }
-      })
+        await updateDoc(userDocRef, userData);
+        firebaseSignUp(user.user.uid, 1);
+      }
+    })
       .catch((error: Error) => {
         console.error("Error signing in with Instagram: ", error);
       })

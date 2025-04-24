@@ -16,3 +16,4 @@ export class HttpWrapper {
         });
     }
 }
+export { BASE_URL as BACKEND_URL };

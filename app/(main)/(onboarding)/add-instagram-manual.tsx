@@ -3,7 +3,6 @@ import Button from '@/components/ui/button';
 import ScreenHeader from '@/components/ui/screen-header';
 import TextInput from '@/components/ui/text-input';
 import Colors from '@/constants/Colors';
-import { useAuthContext } from '@/contexts';
 import AppLayout from '@/layouts/app-layout';
 import { useTheme } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
@@ -28,7 +27,6 @@ const AddInstagramManual = () => {
     const [modalVisible, setModalVisible] = useState(false);
     const [activeImage, setActiveImage] = useState<any>(null);
     const theme = useTheme();
-    const { signOutUser } = useAuthContext();
 
     const pickImage = async (setter: Function) => {
         const result = await ImagePicker.launchImageLibraryAsync({
@@ -40,6 +38,10 @@ const AddInstagramManual = () => {
             setter(result.assets[0].uri);
         }
     };
+
+    const onClickContinue = async () => {
+
+    }
 
     return (
         <AppLayout withWebPadding>
@@ -125,10 +127,12 @@ const AddInstagramManual = () => {
             </ScrollView>
 
             <View style={styles.stickyFooter}>
-                <Button size='medium' style={styles.button}>Continue</Button>
-                {/* <TouchableOpacity style={styles.button}>
-                    <Text style={styles.buttonText}>Continue</Text>
-                </TouchableOpacity> */}
+                <Button size='medium'
+                    style={styles.button}
+                    onPress={onClickContinue}
+                    disabled={handle.length < 1 || !profileImage || !dashboardImage}>
+                    Continue
+                </Button>
             </View>
         </AppLayout>
     );
