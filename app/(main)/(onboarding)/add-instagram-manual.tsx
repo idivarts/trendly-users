@@ -50,12 +50,16 @@ const AddInstagramManual = () => {
                 <Text style={styles.label}>Add your Instagram handle</Text>
                 <TextInput
                     label="Instagram Handle (@...)"
-                    // value={name}
+                    value={handle}
                     style={{ width: '100%', marginTop: 8, marginBottom: 16 }}
                     placeholderTextColor={Colors(theme).textSecondary}
                     placeholder='@trendly'
                     onChangeText={(name) => {
-
+                        if (!name.startsWith('@') && name.length > 0) {
+                            setHandle("@" + name);
+                        } else {
+                            setHandle(name);
+                        }
                     }} />
 
                 <Text style={styles.label}>Upload Profile and Dashboard Screenshot</Text>
