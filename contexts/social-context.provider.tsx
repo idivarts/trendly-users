@@ -70,20 +70,19 @@ export const SocialContextProvider = ({ children }: PropsWithChildren<{}>) => {
         setSocials(socialData);
 
         console.log("Pathname", pathname);
-        if (allowedPaths.includes(pathname))
-          return;
 
         if (socialData.length === 0) {
-          replace("/no-social-connected");
+          if (!allowedPaths.includes(pathname))
+            replace("/no-social-connected");
           return;
         }
+
+        // It comes here if social is more than one and it can be on any path
 
         const primary = user.primarySocial
           // @ts-ignore
           ? socialData.find((social: ISocials) => social.id === user.primarySocial)
           : null;
-
-        // console.log("Firebase Sign --> Social data", socialData, user.primarySocial, primary);
 
         if (!primary) {
           setPrimarySocial(null);

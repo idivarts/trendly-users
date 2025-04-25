@@ -2,26 +2,25 @@ import FacebookLoginButton from "@/components/profile/ConnectWithFacebook";
 import InstagramLoginButton from "@/components/profile/ConnectWithInstagramManual";
 import Button from "@/components/ui/button";
 import Colors from "@/constants/Colors";
-import { useAuthContext, useSocialContext } from "@/contexts";
+import { useAuthContext } from "@/contexts";
 import AppLayout from "@/layouts/app-layout";
 import { imageUrl } from "@/utils/url";
 import { useTheme } from "@react-navigation/native";
-import { router } from "expo-router";
-import React, { useEffect } from "react";
+import React from "react";
 import { Image, StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 
 const TrendlyScreen = () => {
   const { signOutUser } = useAuthContext();
-  const { socials } = useSocialContext();
+  // const { socials } = useSocialContext();
   const theme = useTheme();
 
-  useEffect(() => {
-    if (socials.length > 0) {
-      // Redirect to the main screen
-      router.replace("/(main)/collaborations");
-    }
-  }, [socials]);
+  // useEffect(() => {
+  //   if (socials.length > 0) {
+  //     // Redirect to the main screen
+  //     router.replace("/(main)/collaborations");
+  //   }
+  // }, [socials]);
 
   return (
     <AppLayout withWebPadding>
