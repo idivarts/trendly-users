@@ -34,6 +34,7 @@ export const useGoogleLogin = (setLoading: Function, setError: Function) => {
                 name: result.user.displayName,
                 email: result.user.email || "",
                 profileImage: result.user.photoURL || "",
+                creationTime: Date.now(),
             };
             await setDoc(userRef, userData);
         }

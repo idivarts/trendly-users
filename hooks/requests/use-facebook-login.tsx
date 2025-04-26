@@ -112,6 +112,7 @@ const useFacebookLogin = (
             // @ts-ignore
             profileImage: user?.profile?.picture?.data?.url || "",
             fbid,
+            creationTime: Date.now(),
           };
           await setDoc(userDocRef, userData);
         }

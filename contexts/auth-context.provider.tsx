@@ -142,6 +142,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
         name,
         email,
         ...INITIAL_USER_DATA,
+        creationTime: Date.now(),
       });
 
       setSession(userCredential.user.uid);
