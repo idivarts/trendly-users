@@ -18,6 +18,7 @@ import { Invitation } from "@/types/Collaboration";
 import { AuthApp } from "@/utils/auth";
 import { FirestoreDB } from "@/utils/firestore";
 import { useIsFocused } from "@react-navigation/native";
+import { IOScrollView } from "react-native-intersection-observer";
 import CollaborationDetailsContent from "./CollaborationDetailsContent";
 
 export interface CollaborationDetail extends ICollaboration {
@@ -163,15 +164,17 @@ const CollaborationDetails: React.FC<CollaborationDetailsProps> = ({
   if (!collaboration) return null;
 
   return (
-    <CollaborationDetailsContent
-      cardType={cardTypeDetails}
-      applicationData={application}
-      collaborationDetail={collaboration}
-      invitationData={invitation}
-      totalApplications={totalApplications}
-      fetchCollaboration={fetchCollaboration}
-      pageID={pageID}
-    />
+    <IOScrollView>
+      <CollaborationDetailsContent
+        cardType={cardTypeDetails}
+        applicationData={application}
+        collaborationDetail={collaboration}
+        invitationData={invitation}
+        totalApplications={totalApplications}
+        fetchCollaboration={fetchCollaboration}
+        pageID={pageID}
+      />
+    </IOScrollView>
   );
 };
 
