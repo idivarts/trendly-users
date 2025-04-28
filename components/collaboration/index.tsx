@@ -21,6 +21,7 @@ import {
   Pressable,
   RefreshControl,
 } from "react-native";
+import { IOScrollView } from "react-native-intersection-observer";
 import BottomSheetActions from "../BottomSheetActions";
 import { View } from "../theme/Themed";
 import EmptyState from "../ui/empty-state";
@@ -225,47 +226,70 @@ const Collaboration = () => {
             setSearchQuery={setSearchQuery}
           />
         </View>
-        {filteredList.length === 0 ? (
-          <EmptyState
-            hideAction
-            image={require("@/assets/images/illustration1.png")}
-            subtitle="We are working hard to bring more brands and collaborations for you on Trendly. Thanks for your patience."
-            title="Oops! No Collaborations!"
-          />
-        ) : (
-          <FlatList
-            data={filteredList}
-            renderItem={({ item }) => (
-              <View
-                style={{
-                  width: "100%",
-                  borderWidth: 0.3,
-                  borderColor: Colors(theme).gray300,
-                  gap: 8,
-                  borderRadius: 5,
-                  paddingBottom: 16,
-                  overflow: "hidden",
-                }}
-              >
-                <CollaborationHeader
-                  cardId={item.id}
-                  cardType="collaboration"
-                  brand={{
-                    image: item.brandImage || "",
-                    name: item.brandName,
-                    paymentVerified: item.paymentVerified || false,
+        <IOScrollView>
+          {filteredList.length === 0 ? (
+            <EmptyState
+              hideAction
+              image={require("@/assets/images/illustration1.png")}
+              subtitle="We are working hard to bring more brands and collaborations for you on Trendly. Thanks for your patience."
+              title="Oops! No Collaborations!"
+            />
+          ) : (
+            <FlatList
+              data={filteredList}
+              renderItem={({ item }) => (
+                <View
+                  style={{
+                    width: "100%",
+                    borderWidth: 0.3,
+                    borderColor: Colors(theme).gray300,
+                    gap: 8,
+                    borderRadius: 5,
+                    paddingBottom: 16,
+                    overflow: "hidden",
                   }}
-                  collaboration={{
-                    collabId: item.id,
-                    collabName: item.name,
-                    timePosted: item.timeStamp,
-                  }}
-                  onOpenBottomSheet={() => openBottomSheet(item.id)}
-                />
-                {item.attachments && item.attachments.length > 0 && (
-                  <Carousel
-                    theme={theme}
-                    onImagePress={() => {
+                >
+                  <CollaborationHeader
+                    cardId={item.id}
+                    cardType="collaboration"
+                    brand={{
+                      image: item.brandImage || "",
+                      name: item.brandName,
+                      paymentVerified: item.paymentVerified || false,
+                    }}
+                    collaboration={{
+                      collabId: item.id,
+                      collabName: item.name,
+                      timePosted: item.timeStamp,
+                    }}
+                    onOpenBottomSheet={() => openBottomSheet(item.id)}
+                  />
+                  {item.attachments && item.attachments.length > 0 && (
+                    <Carousel
+                      theme={theme}
+                      onImagePress={() => {
+                        router.push({
+                          // @ts-ignore
+                          pathname: `/collaboration-details/${item.id}`,
+                          params: {
+                            cardType: "collaboration",
+                            cardId: item.id,
+                            collaborationID: item.id,
+                          },
+                        });
+                      }}
+                      data={
+                        item.attachments?.map((attachment) =>
+                          processRawAttachment(attachment)
+                        ) || []
+                      }
+                      carouselWidth={
+                        xl ? MAX_WIDTH_WEB : Dimensions.get("window").width
+                      }
+                    />
+                  )}
+                  <Pressable
+                    onPress={() => {
                       router.push({
                         // @ts-ignore
                         pathname: `/collaboration-details/${item.id}`,
@@ -276,64 +300,43 @@ const Collaboration = () => {
                         },
                       });
                     }}
-                    data={
-                      item.attachments?.map((attachment) =>
-                        processRawAttachment(attachment)
-                      ) || []
-                    }
-                    carouselWidth={
-                      xl ? MAX_WIDTH_WEB : Dimensions.get("window").width
-                    }
-                  />
-                )}
-                <Pressable
-                  onPress={() => {
-                    router.push({
-                      // @ts-ignore
-                      pathname: `/collaboration-details/${item.id}`,
-                      params: {
-                        cardType: "collaboration",
-                        cardId: item.id,
-                        collaborationID: item.id,
-                      },
-                    });
-                  }}
-                >
-                  <CollaborationDetails
-                    collaborationDetails={{
-                      collabDescription: item.description || "",
-                      promotionType: item.promotionType,
-                      location: item.location,
-                      platform: item.platform,
-                      contentType: item.contentFormat,
-                    }}
-                  />
-                  <CollaborationStats
-                    influencerCount={item.numberOfInfluencersNeeded}
-                    collabID={item.id}
-                    budget={item.budget ? item.budget : { min: 0, max: 0 }}
-                    brandHireRate={item.brandHireRate || ""}
-                  />
-                </Pressable>
-              </View>
-            )}
-            keyExtractor={(item) => item.id}
-            style={{
-              flexGrow: 1,
-              paddingTop: 8,
-            }}
-            contentContainerStyle={{
-              gap: 16,
-              paddingBottom: 24,
-            }}
-            refreshControl={
-              <RefreshControl
-                refreshing={refreshing}
-                onRefresh={handleRefresh}
-              />
-            }
-          />
-        )}
+                  >
+                    <CollaborationDetails
+                      collaborationDetails={{
+                        collabDescription: item.description || "",
+                        promotionType: item.promotionType,
+                        location: item.location,
+                        platform: item.platform,
+                        contentType: item.contentFormat,
+                      }}
+                    />
+                    <CollaborationStats
+                      influencerCount={item.numberOfInfluencersNeeded}
+                      collabID={item.id}
+                      budget={item.budget ? item.budget : { min: 0, max: 0 }}
+                      brandHireRate={item.brandHireRate || ""}
+                    />
+                  </Pressable>
+                </View>
+              )}
+              keyExtractor={(item) => item.id}
+              style={{
+                flexGrow: 1,
+                paddingTop: 8,
+              }}
+              contentContainerStyle={{
+                gap: 16,
+                paddingBottom: 24,
+              }}
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={handleRefresh}
+                />
+              }
+            />
+          )}
+        </IOScrollView>
       </View>
       {isVisible && (
         <BottomSheetActions
