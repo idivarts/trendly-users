@@ -230,7 +230,6 @@ const Applications = () => {
                     params: {
                       cardType: "collaboration",
                       cardId: item.id,
-                      collaborationID: item.id,
                     },
                   });
                 }}

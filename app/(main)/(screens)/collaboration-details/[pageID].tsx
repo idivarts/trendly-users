@@ -7,10 +7,10 @@ import CollaborationDetails from "@/components/collaboration/collaboration-detai
 import ScreenHeader from "@/components/ui/screen-header";
 import Colors from "@/constants/Colors";
 import AppLayout from "@/layouts/app-layout";
+import { resetAndNavigate } from "@/utils/router";
 import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
-import { resetAndNavigate } from "@/utils/router";
 
 const CollaborationDetailsScreen = () => {
   const theme = useTheme();
@@ -43,9 +43,7 @@ const CollaborationDetailsScreen = () => {
         }
       />
       <CollaborationDetails
-        cardId={cardId as string}
-        cardType={cardType as string}
-        collaborationID={collaborationID as string}
+        cardType={cardType as any}
         pageID={pageID as string}
       />
       <BottomSheetActions

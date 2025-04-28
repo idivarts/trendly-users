@@ -1,37 +1,35 @@
 import BottomSheetActions from "@/components/BottomSheetActions";
 import { Text, View } from "@/components/theme/Themed";
 import Colors from "@/constants/Colors";
+import { MAX_WIDTH_WEB } from "@/constants/Container";
+import { useAuthContext } from "@/contexts";
+import { useBreakpoints } from "@/hooks";
 import AppLayout from "@/layouts/app-layout";
+import Carousel from "@/shared-uis/components/carousel/carousel";
+import { stylesFn } from "@/styles/Proposal.styles";
+import { processRawAttachment } from "@/utils/attachments";
+import { FirestoreDB } from "@/utils/firestore";
 import { useTheme } from "@react-navigation/native";
 import { Link, router } from "expo-router";
-import { useEffect, useMemo, useState } from "react";
 import {
   collection,
+  collectionGroup,
+  doc as firebaseDoc,
+  getDoc,
   getDocs,
   query,
   where,
-  doc as firebaseDoc,
-  getDoc,
-  collectionGroup,
 } from "firebase/firestore";
+import { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
   Pressable,
   RefreshControl,
 } from "react-native";
-import { FirestoreDB } from "@/utils/firestore";
-import { AuthApp } from "@/utils/auth";
-import { stylesFn } from "@/styles/Proposal.styles";
-import EmptyState from "../ui/empty-state";
 import CollaborationDetails from "../collaboration/card-components/CollaborationDetails";
-import Carousel from "@/shared-uis/components/carousel/carousel";
-import { processRawAttachment } from "@/utils/attachments";
 import CollaborationHeader from "../collaboration/card-components/CollaborationHeader";
-import { Card } from "react-native-paper";
-import { useAuthContext } from "@/contexts";
-import { MAX_WIDTH_WEB } from "@/constants/Container";
-import { useBreakpoints } from "@/hooks";
+import EmptyState from "../ui/empty-state";
 
 const Invitations = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -210,7 +208,6 @@ const Invitations = () => {
                     params: {
                       cardType: "invitation",
                       cardId: item.applications.id,
-                      collaborationID: item.id,
                     },
                   });
                 }}

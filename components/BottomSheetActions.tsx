@@ -96,7 +96,6 @@ const BottomSheetActions = ({
                   params: {
                     cardType: "invitation",
                     cardId: invitationId,
-                    collaborationID: cardId,
                   },
                 });
                 handleClose();

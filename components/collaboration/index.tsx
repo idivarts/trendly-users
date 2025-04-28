@@ -273,8 +273,6 @@ const Collaboration = () => {
                           pathname: `/collaboration-details/${item.id}`,
                           params: {
                             cardType: "collaboration",
-                            cardId: item.id,
-                            collaborationID: item.id,
                           },
                         });
                       }}
@@ -295,8 +293,6 @@ const Collaboration = () => {
                         pathname: `/collaboration-details/${item.id}`,
                         params: {
                           cardType: "collaboration",
-                          cardId: item.id,
-                          collaborationID: item.id,
                         },
                       });
                     }}

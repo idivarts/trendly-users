@@ -32,16 +32,16 @@ export interface CollaborationDetail extends ICollaboration {
 }
 
 interface CollaborationDetailsProps {
-  cardId: string;
-  cardType: string; // "collaboration" | "invitation"
-  collaborationID: string;
+  cardType: string; // "invitation" | "application" | "contract" | "collaboration"
+  cardId?: string;
+  // collaborationID: string;
   pageID: string;
 }
 
 const CollaborationDetails: React.FC<CollaborationDetailsProps> = ({
   cardId,
-  cardType,
-  collaborationID,
+  cardType = "collaboration",
+  // collaborationID,
   pageID,
 }) => {
   const [collaboration, setCollaboration] = useState<
@@ -117,13 +117,13 @@ const CollaborationDetails: React.FC<CollaborationDetailsProps> = ({
 
   // Fetch Specific Invitation Data
   const fetchSpecificInvitation = async () => {
-    if (!collaborationID || !cardId) return;
+    if (!pageID || !cardId) return;
 
     try {
       const invitationRef = doc(
         FirestoreDB,
         "collaborations",
-        collaborationID,
+        pageID,
         "invitations",
         cardId
       );
@@ -145,7 +145,7 @@ const CollaborationDetails: React.FC<CollaborationDetailsProps> = ({
     if (cardType === "invitation") {
       fetchSpecificInvitation();
     }
-  }, [cardType, collaborationID, cardId]);
+  }, [cardType, pageID, cardId]);
 
   if (loading) {
     return (
