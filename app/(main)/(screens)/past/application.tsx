@@ -186,8 +186,6 @@ const PastApplicationPage = (props: any) => {
                     pathname: `/collaboration-details/${item.id}`,
                     params: {
                       cardType: "collaboration",
-                      cardId: item.id,
-                      collaborationID: item.id,
                     },
                   });
                 }}

@@ -93,9 +93,7 @@ const CollaborationDetailsScreen = () => {
       </Appbar.Header>
       {!loading ? <CollaborationDetails
         pageID={collaborationId as string}
-        cardId={null as any}
         cardType="public-collaboration"
-        collaborationID={collaborationId as string}
       /> : <ActivityIndicator size="small" color={Colors(theme).primary} />}
 
       {IS_BETA_ENABLED &&

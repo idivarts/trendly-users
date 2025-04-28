@@ -1,14 +1,14 @@
 import { Text, View } from "@/components/theme/Themed";
-import { FC } from "react";
-import { Pressable } from "react-native";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import Colors from "@/constants/Colors";
-import { faCheckCircle, faEllipsisH } from "@fortawesome/free-solid-svg-icons";
-import { useTheme } from "@react-navigation/native";
-import { router } from "expo-router";
-import { imageUrl } from "@/utils/url";
 import ImageComponent from "@/shared-uis/components/image-component";
 import { formatTimeToNow } from "@/utils/date";
+import { imageUrl } from "@/utils/url";
+import { faCheckCircle, faEllipsisH } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { useTheme } from "@react-navigation/native";
+import { router } from "expo-router";
+import { FC } from "react";
+import { Pressable } from "react-native";
 
 interface CollaborationHeaderProps {
   cardType: string;
@@ -49,7 +49,6 @@ const CollaborationHeader: FC<CollaborationHeaderProps> = ({
           params: {
             cardType: cardType,
             cardId: cardId,
-            collaborationID: collaboration.collabId,
           },
         });
       }}
