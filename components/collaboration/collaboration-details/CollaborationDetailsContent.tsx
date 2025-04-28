@@ -819,7 +819,7 @@ const CollborationDetailsContent = (
           cancelText="No"
           description="Are you sure you want to withdraw your application?"
         />
-        <AuthModal bottomSheetModalRef={authModalBottomSheetModalRef} />
+        <AuthModal bottomSheetModalRef={authModalBottomSheetModalRef} collaborationId={props.pageID} />
       </Portal>
     </ScrollView>
   );

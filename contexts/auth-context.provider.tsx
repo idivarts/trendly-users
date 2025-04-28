@@ -51,6 +51,8 @@ interface AuthContextProps {
   updateUser: (userId: string, user: Partial<User>) => Promise<void>;
   user: User | null;
   verifyEmail: () => void;
+  collaborationId?: string;
+  setCollaborationId?: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const AuthContext = createContext<AuthContextProps>({
@@ -77,6 +79,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
   const [[isLoading, session], setSession] = useStorageState("id");
   const [user, setUser] = useState<User | null>(null);
   const [isUserLoading, setIsUserLoading] = useState(true);
+  const [collaborationId, setCollaborationId] = useState<string>("");
 
   const fetchUser = async () => {
     if (!isLoading && session) {
@@ -164,7 +167,11 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
     setSession(uid);
     HttpWrapper.fetch("/api/v1/chat/auth", { method: "POST" });
 
-    resetAndNavigate("/collaborations");
+    if (collaborationId)
+      resetAndNavigate(`/collaboration-details/${collaborationId}`);
+    else
+      resetAndNavigate("/collaborations");
+
     Toaster.success("Signed In Successfully!");
   };
 
@@ -378,6 +385,8 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
         updateUser,
         user,
         verifyEmail,
+        collaborationId,
+        setCollaborationId
       }}
     >
       {children}
