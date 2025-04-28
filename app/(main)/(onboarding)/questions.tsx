@@ -3,6 +3,7 @@ import { Text, View } from "@/components/theme/Themed";
 import Select from "@/components/ui/select";
 import Colors from "@/constants/Colors";
 import { SURVEY_DATA } from "@/constants/SurveyData";
+import { useAuthContext } from "@/contexts";
 import AppLayout from "@/layouts/app-layout";
 import { stylesFn } from "@/styles/Questions.styles";
 import { SurveyAnswer } from "@/types/Survey";
@@ -57,7 +58,10 @@ const Questions = () => {
     if (currentQuestionIndex === SURVEY_DATA.length - 1) {
       submitSurvey(updatedAnswers)
         .then(() => {
-          resetAndNavigate("/collaborations");
+          if (collaborationId)
+            resetAndNavigate(`/collaboration-details/${collaborationId}`);
+          else
+            resetAndNavigate("/collaborations");
         })
         .catch((error) => {
           console.error("Error submitting survey:", error);
@@ -69,6 +73,8 @@ const Questions = () => {
       }
     }
   };
+
+  const { collaborationId } = useAuthContext()
 
   return (
     <AppLayout withWebPadding>

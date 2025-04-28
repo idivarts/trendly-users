@@ -11,6 +11,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { IS_BETA_ENABLED } from "@/constants/App";
 import Colors from "@/constants/Colors";
 import { INITIAL_USER_DATA } from "@/constants/User";
+import { useAuthContext } from "@/contexts";
 import { useFacebookLogin, useInstagramLogin } from "@/hooks/requests";
 import { useGoogleLogin } from "@/hooks/requests/use-google-login";
 import { AuthApp } from "@/utils/auth";
@@ -27,10 +28,12 @@ import SocialButton from "../ui/button/social-button";
 
 interface AuthModalProps {
   bottomSheetModalRef: React.RefObject<BottomSheetModal>;
+  collaborationId?: string;
 }
 
 const AuthModal: React.FC<AuthModalProps> = ({
   bottomSheetModalRef,
+  collaborationId
 }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -69,6 +72,13 @@ const AuthModal: React.FC<AuthModalProps> = ({
     setLoading,
     setError,
   );
+
+  const { setCollaborationId } = useAuthContext()
+
+  useEffect(() => {
+    if (collaborationId && setCollaborationId)
+      setCollaborationId(collaborationId)
+  }, [collaborationId])
 
   const { googleLogin } = useGoogleLogin(setLoading, setError);
 
