@@ -3,7 +3,7 @@ import { useAuthContext } from "@/contexts";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { AuthApp } from "@/utils/auth";
 import { FirestoreDB } from "@/utils/firestore";
-import { browserPopupRedirectResolver, GoogleAuthProvider, signInWithPopup, UserCredential } from "firebase/auth";
+import { GoogleAuthProvider, signInWithPopup, UserCredential } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 
 const provider = new GoogleAuthProvider();
@@ -48,7 +48,7 @@ export const useGoogleLogin = (setLoading: Function, setError: Function) => {
 
     const googleLogin = () => {
         try {
-            signInWithPopup(AuthApp, provider, browserPopupRedirectResolver).catch((error) => {
+            signInWithPopup(AuthApp, provider).catch((error) => {
                 Toaster.error('Error logging in with Google', error.message);
                 console.log(error);
             }).then((result) => {
