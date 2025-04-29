@@ -15,9 +15,8 @@ import { useEffect, useState } from "react";
 import { Animated, Keyboard, Platform, Pressable } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
 import ContentItem from "./ContentItem";
-import DragAndDropNative from "./grid/native/DragAndDropNative";
-import DragAndDropWeb from "./grid/web/DragAndDropWeb";
-import Wrapper from "./grid/wrapper";
+import DragAndDropGrid from "./grid/DragAndDropGrid";
+import Wrapper from "./wrapper";
 
 interface EditProfileProps {
   unsavedChanges?: boolean;
@@ -113,37 +112,17 @@ const EditProfile: React.FC<EditProfileProps> = ({
       }}
     >
       <Wrapper>
-        {
-          Platform.OS === 'web' ? (
-            <DragAndDropWeb
-              attachments={user?.profile?.attachments || []}
-              onAttachmentChange={(attachments) => {
-                if (user) {
-                  updateUser(user.id, {
-                    profile: {
-                      ...user?.profile,
-                      attachments: attachments
-                    }
-                  })
+        <DragAndDropGrid attachments={user?.profile?.attachments || []}
+          onAttachmentChange={(attachments) => {
+            if (user) {
+              updateUser(user.id, {
+                profile: {
+                  ...user?.profile,
+                  attachments: attachments
                 }
-              }}
-            />
-          ) : (
-            <DragAndDropNative
-              attachments={user?.profile?.attachments || []}
-              onAttachmentChange={async (attachments) => {
-                if (user) {
-                  await updateUser(user.id, {
-                    profile: {
-                      ...user?.profile,
-                      attachments: attachments
-                    }
-                  }).catch((e) => { console.error(e) })
-                }
-              }}
-            />
-          )
-        }
+              })
+            }
+          }} />
         <View
           style={styles.inputsContainer}
         >
