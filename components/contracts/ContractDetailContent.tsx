@@ -7,11 +7,11 @@ import {
 } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { IContracts } from "@/shared-libs/firestore/trendly-pro/models/contracts";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
+import { processRawAttachment } from "@/shared-libs/utils/attachments";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import Carousel from "@/shared-uis/components/carousel/carousel";
 import ImageComponent from "@/shared-uis/components/image-component";
 import { stylesFn } from "@/styles/CollaborationDetails.styles";
-import { processRawAttachment } from "@/utils/attachments";
 import { formatTimeToNow } from "@/utils/date";
 import { faCheckCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";

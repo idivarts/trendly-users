@@ -12,6 +12,7 @@ import { useBreakpoints } from "@/hooks";
 import { PromotionType } from "@/shared-libs/firestore/trendly-pro/constants/promotion-type";
 import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { IManagers } from "@/shared-libs/firestore/trendly-pro/models/managers";
+import { processRawAttachment } from "@/shared-libs/utils/attachments";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import Carousel from "@/shared-uis/components/carousel/carousel";
 import ScrollMedia from "@/shared-uis/components/carousel/scroll-media";
@@ -22,7 +23,6 @@ import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { stylesFn } from "@/styles/CollaborationDetails.styles";
 import { Invitation } from "@/types/Collaboration";
 import { Contract } from "@/types/Contract";
-import { processRawAttachment } from "@/utils/attachments";
 import { formatTimeToNow } from "@/utils/date";
 import { truncateText } from "@/utils/profile";
 import {

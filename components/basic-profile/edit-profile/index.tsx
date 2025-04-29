@@ -14,8 +14,8 @@ import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Animated, Keyboard, Platform, Pressable } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
+import DragAndDropGrid from "../../../shared-libs/functional-uis/grid/DragAndDropGrid";
 import ContentItem from "./ContentItem";
-import DragAndDropGrid from "./grid/DragAndDropGrid";
 import Wrapper from "./wrapper";
 
 interface EditProfileProps {

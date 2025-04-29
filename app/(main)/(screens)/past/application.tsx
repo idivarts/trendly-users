@@ -8,9 +8,9 @@ import { MAX_WIDTH_WEB } from "@/constants/Container";
 import { useAuthContext } from "@/contexts";
 import { useBreakpoints } from "@/hooks";
 import AppLayout from "@/layouts/app-layout";
+import { processRawAttachment } from "@/shared-libs/utils/attachments";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import ScrollMedia from "@/shared-uis/components/carousel/scroll-media";
-import { processRawAttachment } from "@/utils/attachments";
 import { useTheme } from "@react-navigation/native";
 import { router } from "expo-router";
 import {

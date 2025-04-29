@@ -6,10 +6,10 @@ import { useAuthContext } from "@/contexts";
 import { useBreakpoints } from "@/hooks";
 import AppLayout from "@/layouts/app-layout";
 import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
+import { processRawAttachment } from "@/shared-libs/utils/attachments";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import ScrollMedia from "@/shared-uis/components/carousel/scroll-media";
 import { stylesFn } from "@/styles/Proposal.styles";
-import { processRawAttachment } from "@/utils/attachments";
 import { useTheme } from "@react-navigation/native";
 import { Link, router } from "expo-router";
 import {
