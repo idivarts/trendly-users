@@ -1,30 +1,31 @@
-import React, { useEffect, useState } from "react";
-import { View, ScrollView } from "react-native";
-import { Text, Card, Portal } from "react-native-paper";
-import { useTheme } from "@react-navigation/native";
-import { stylesFn } from "@/styles/CollaborationDetails.styles";
+import UserResponse from "@/components/contract-card/UserResponse";
 import Colors from "@/constants/Colors";
-import Carousel from "@/shared-uis/components/carousel/carousel";
-import { processRawAttachment } from "@/utils/attachments";
+import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
 import {
   IApplications,
   ICollaboration,
 } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
-import UserResponse from "@/components/contract-card/UserResponse";
-import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
-import ActionContainer from "./ActionContainer";
 import { IContracts } from "@/shared-libs/firestore/trendly-pro/models/contracts";
-import MemberContainer from "./MemberContainer";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faCheckCircle } from "@fortawesome/free-solid-svg-icons";
-import FeedbackModal from "./FeedbackModal";
-import ReviseQuotationModal from "./ReviseQuotationModal";
-import { useLocalSearchParams } from "expo-router";
-import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
-import { doc, getDoc } from "firebase/firestore";
-import { FirestoreDB } from "@/utils/firestore";
+import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
+import { processRawAttachment } from "@/shared-libs/utils/attachments";
+import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
+import Carousel from "@/shared-uis/components/carousel/carousel";
 import ImageComponent from "@/shared-uis/components/image-component";
+import { stylesFn } from "@/styles/CollaborationDetails.styles";
 import { formatTimeToNow } from "@/utils/date";
+import { faCheckCircle } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { useTheme } from "@react-navigation/native";
+import { useLocalSearchParams } from "expo-router";
+import { doc, getDoc } from "firebase/firestore";
+import React, { useEffect, useState } from "react";
+import { ScrollView, View } from "react-native";
+import { Card, Portal, Text } from "react-native-paper";
+import ActionContainer from "./ActionContainer";
+import FeedbackModal from "./FeedbackModal";
+import MemberContainer from "./MemberContainer";
+import ReviseQuotationModal from "./ReviseQuotationModal";
+;
 
 export interface Application extends IApplications {
   id: string;
@@ -154,7 +155,7 @@ const ContractDetailsContent = (props: CollaborationDetailsContentProps) => {
             influencerQuestions={
               props?.collaborationDetail?.questionsToInfluencers
             }
-            setConfirmationModalVisible={() => {}}
+            setConfirmationModalVisible={() => { }}
           />
           <View
             style={{

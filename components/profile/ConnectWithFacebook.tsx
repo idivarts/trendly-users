@@ -1,7 +1,7 @@
 import { useFacebookLogin } from "@/hooks/requests";
-import { AuthApp } from "@/utils/auth";
-import { FirestoreDB } from "@/utils/firestore";
-import { HttpWrapper } from "@/utils/http-wrapper";
+import { AuthApp } from "@/shared-libs/utils/firebase/auth";
+import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
+import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import axios from "axios";
 import * as WebBrowser from "expo-web-browser";
 import { collection, doc } from "firebase/firestore";
@@ -9,6 +9,10 @@ import React, { useState } from "react";
 import { View } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
 import Button from "../ui/button";
+;
+;
+;
+;
 
 
 WebBrowser.maybeCompleteAuthSession();

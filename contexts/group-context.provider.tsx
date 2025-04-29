@@ -1,6 +1,6 @@
 import { IMessages } from "@/shared-libs/firestore/trendly-pro/models/groups";
+import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { Groups } from "@/types/Groups";
-import { FirestoreDB } from "@/utils/firestore";
 import {
   addDoc,
   collection,
@@ -26,6 +26,7 @@ import {
   type PropsWithChildren,
 } from "react";
 import { useAuthContext } from "./auth-context.provider";
+;
 
 interface Messages {
   firstMessage?: DocumentSnapshot | null;

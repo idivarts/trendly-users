@@ -5,9 +5,9 @@ import ScreenHeader from "@/components/ui/screen-header";
 import Colors from "@/constants/Colors";
 import { useAuthContext } from "@/contexts";
 import AppLayout from "@/layouts/app-layout";
+import { processRawAttachment } from "@/shared-libs/utils/attachments";
+import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import Carousel from "@/shared-uis/components/carousel/carousel";
-import { processRawAttachment } from "@/utils/attachments";
-import { FirestoreDB } from "@/utils/firestore";
 import { useTheme } from "@react-navigation/native";
 import {
   collection,
@@ -20,6 +20,7 @@ import {
 } from "firebase/firestore";
 import React, { useEffect } from "react";
 import { FlatList, View } from "react-native";
+;
 
 const PastApplicationPage = (props: any) => {
   const [isVisible, setIsVisible] = React.useState(false);

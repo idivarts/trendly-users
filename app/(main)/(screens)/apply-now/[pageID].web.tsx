@@ -6,13 +6,13 @@ import ListItem from "@/components/ui/list-item/ListItem";
 import ScreenHeader from "@/components/ui/screen-header";
 import TextInput from "@/components/ui/text-input";
 import Colors from "@/constants/Colors";
-import { AWSProgressUpdateSubject, useAWSContext } from "@/contexts/aws-context.provider";
 import AppLayout from "@/layouts/app-layout";
+import { AWSProgressUpdateSubject, useAWSContext } from "@/shared-libs/contexts/aws-context.provider";
 import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
+import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import ProgressLoader from "@/shared-uis/components/ProgressLoader";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { stylesFn } from "@/styles/ApplyNow.styles";
-import { FirestoreDB } from "@/utils/firestore";
 import { handleModalOrInputPage } from "@/utils/TextInput";
 import { faCircleQuestion } from "@fortawesome/free-regular-svg-icons";
 import {
@@ -35,6 +35,7 @@ import {
   IconButton,
   List
 } from "react-native-paper";
+;
 
 const ApplyScreenWeb = () => {
   const params = useLocalSearchParams();

@@ -1,16 +1,12 @@
 import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
-import { FC } from "react";
-import { Text, View } from "../theme/Themed";
-import { Button } from "react-native-paper";
-import { Pressable, ScrollView } from "react-native";
+import { processRawAttachment } from "@/shared-libs/utils/attachments";
 import RenderMediaItem from "@/shared-uis/components/carousel/render-media-item";
-import { processRawAttachment } from "@/utils/attachments";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faPaperclip } from "@fortawesome/free-solid-svg-icons";
-import { formatDistanceToNow } from "date-fns";
-import { router } from "expo-router";
-import Colors from "@/constants/Colors";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
+import { FC } from "react";
+import { ScrollView } from "react-native";
+import { Text, View } from "../theme/Themed";
 
 interface UserResponseProps {
   application?: IApplications;
@@ -66,7 +62,7 @@ const UserResponse: FC<UserResponseProps> = ({
               index={index}
               height={100}
               width={100}
-              handleImagePress={() => {}}
+              handleImagePress={() => { }}
             />
           ))}
         </ScrollView>

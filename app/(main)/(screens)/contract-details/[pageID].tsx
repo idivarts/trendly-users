@@ -15,7 +15,7 @@ import {
 } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { IContracts } from "@/shared-libs/firestore/trendly-pro/models/contracts";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
-import { FirestoreDB } from "@/utils/firestore";
+import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
@@ -25,6 +25,7 @@ import {
   getDoc
 } from "firebase/firestore";
 import { ActivityIndicator } from "react-native";
+;
 
 interface ICollaborationCard extends IContracts {
   userData: IUsers;

@@ -20,9 +20,11 @@ import { IS_BETA_ENABLED } from "@/constants/App";
 import { FB_APP_ID } from "@/constants/Facebook";
 import { useAuthContext } from "@/contexts";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
+import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
-import { HttpWrapper } from "@/utils/http-wrapper";
 import * as WebBrowser from "expo-web-browser";
+;
+;
 
 interface useFacebookLoginType {
   facebookLogin: () => void;

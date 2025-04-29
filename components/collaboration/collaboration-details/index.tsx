@@ -14,12 +14,14 @@ import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
 import {
   ICollaboration
 } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
+import { AuthApp } from "@/shared-libs/utils/firebase/auth";
+import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { Invitation } from "@/types/Collaboration";
-import { AuthApp } from "@/utils/auth";
-import { FirestoreDB } from "@/utils/firestore";
 import { useIsFocused } from "@react-navigation/native";
 import { IOScrollView } from "react-native-intersection-observer";
 import CollaborationDetailsContent from "./CollaborationDetailsContent";
+;
+;
 
 export interface CollaborationDetail extends ICollaboration {
   id: string;

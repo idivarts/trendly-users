@@ -5,6 +5,7 @@ import Select from "@/components/ui/select";
 import SelectGroup from "@/components/ui/select/select-group";
 import TextInput from "@/components/ui/text-input";
 import Colors from "@/constants/Colors";
+import { useAuthContext } from "@/contexts";
 import { useBreakpoints } from "@/hooks";
 import useEditProfile from "@/hooks/use-edit-profile";
 import { stylesFn } from "@/styles/edit-profile/EditProfile.styles";
@@ -13,10 +14,9 @@ import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Animated, Keyboard, Platform, Pressable } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
+import DragAndDropGrid from "../../../shared-libs/functional-uis/grid/DragAndDropGrid";
 import ContentItem from "./ContentItem";
-import DragAndDropNative from "./grid/native/DragAndDropNative";
-import DragAndDropWeb from "./grid/web/DragAndDropWeb";
-import Wrapper from "./grid/wrapper";
+import Wrapper from "./wrapper";
 
 interface EditProfileProps {
   unsavedChanges?: boolean;
@@ -100,6 +100,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
       <ActivityIndicator size={"large"} />
     </View>
   }
+  const { updateUser } = useAuthContext()
 
   return (
     <View
@@ -111,17 +112,17 @@ const EditProfile: React.FC<EditProfileProps> = ({
       }}
     >
       <Wrapper>
-        {
-          Platform.OS === 'web' ? (
-            <DragAndDropWeb
-              attachments={user?.profile?.attachments || []}
-            />
-          ) : (
-            <DragAndDropNative
-              attachments={user?.profile?.attachments || []}
-            />
-          )
-        }
+        <DragAndDropGrid attachments={user?.profile?.attachments || []}
+          onAttachmentChange={(attachments) => {
+            if (user) {
+              updateUser(user.id, {
+                profile: {
+                  ...user?.profile,
+                  attachments: attachments
+                }
+              })
+            }
+          }} />
         <View
           style={styles.inputsContainer}
         >

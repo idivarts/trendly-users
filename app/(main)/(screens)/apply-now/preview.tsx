@@ -11,16 +11,17 @@ import { useBreakpoints } from "@/hooks";
 import AppLayout from "@/layouts/app-layout";
 import { Attachment } from "@/shared-libs/firestore/trendly-pro/constants/attachment";
 import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
+import { processRawAttachment } from "@/shared-libs/utils/attachments";
+import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import Carousel from "@/shared-uis/components/carousel/carousel";
-import { processRawAttachment } from "@/utils/attachments";
 import { convertToKUnits } from "@/utils/conversion";
-import { FirestoreDB } from "@/utils/firestore";
 import { useTheme } from "@react-navigation/native";
 import { router, useLocalSearchParams } from "expo-router";
 import { collection, doc, setDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { Platform, ScrollView, Text, View } from "react-native";
 import { Card } from "react-native-paper";
+;
 
 const Preview = () => {
   const params = useLocalSearchParams();

@@ -3,10 +3,10 @@ import Button from '@/components/ui/button';
 import ScreenHeader from '@/components/ui/screen-header';
 import TextInput from '@/components/ui/text-input';
 import Colors from '@/constants/Colors';
-import { useAWSContext } from '@/contexts/aws-context.provider';
 import AppLayout from '@/layouts/app-layout';
+import { useAWSContext } from "@/shared-libs/contexts/aws-context.provider";
+import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import Toaster from '@/shared-uis/components/toaster/Toaster';
-import { HttpWrapper } from '@/utils/http-wrapper';
 import { useTheme } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import React, { useRef, useState } from 'react';
@@ -22,6 +22,7 @@ import {
     TouchableOpacity,
 } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
+;
 
 const { width } = Dimensions.get('window');
 

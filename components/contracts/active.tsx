@@ -9,8 +9,8 @@ import {
   ICollaboration,
 } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { IContracts } from "@/shared-libs/firestore/trendly-pro/models/contracts";
+import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { stylesFn } from "@/styles/Proposal.styles";
-import { FirestoreDB } from "@/utils/firestore";
 import { useTheme } from "@react-navigation/native";
 import { router } from "expo-router";
 import {
@@ -26,6 +26,7 @@ import { ActivityIndicator, FlatList, Pressable, RefreshControl } from "react-na
 import CollaborationHeader from "../collaboration/card-components/CollaborationHeader";
 import ContractDetails from "../contract-card/ContractDetails";
 import EmptyState from "../ui/empty-state";
+;
 
 interface ICollaborationCard extends IContracts {
   brandData: IBrands;

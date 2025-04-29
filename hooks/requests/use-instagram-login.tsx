@@ -7,8 +7,10 @@ import { Platform } from "react-native";
 import { FB_APP_ID } from "@/constants/Facebook";
 import { useAuthContext } from "@/contexts";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
-import { BACKEND_URL, HttpWrapper } from "@/utils/http-wrapper";
+import { BACKEND_URL, HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import * as WebBrowser from "expo-web-browser";
+;
+;
 
 interface useInstagramLoginType {
   instagramLogin: () => void;

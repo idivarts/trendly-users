@@ -7,9 +7,9 @@ import {
 } from "react";
 
 import { INotifications } from "@/shared-libs/firestore/trendly-pro/models/notifications";
+import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
+import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import { Notification, PushNotificationPayload } from "@/types/Notification";
-import { FirestoreDB } from "@/utils/firestore";
-import { HttpWrapper } from "@/utils/http-wrapper";
 import {
   addDoc,
   collection,
@@ -23,6 +23,9 @@ import {
   writeBatch,
 } from "firebase/firestore";
 import { useAuthContext } from "./auth-context.provider";
+;
+;
+;
 
 interface NotificationContextProps {
   createNotification: (

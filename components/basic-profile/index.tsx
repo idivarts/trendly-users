@@ -1,18 +1,18 @@
+import Colors from "@/constants/Colors";
+import { DUMMY_IMAGE } from "@/constants/User";
+import { useAuthContext } from "@/contexts";
+import { useBreakpoints } from "@/hooks";
+import { useAWSContext } from "@/shared-libs/contexts/aws-context.provider";
+import stylesFn from "@/styles/basic-profile/BasicProfile.styles";
+import { User } from "@/types/User";
+import { useTheme } from "@react-navigation/native";
+import { useState } from "react";
+import { Pressable } from "react-native";
 import { Avatar } from "react-native-paper";
 import { Text, View } from "../theme/Themed";
-import { Pressable } from "react-native";
-import Colors from "@/constants/Colors";
-import { useState } from "react";
-import { useAuthContext } from "@/contexts";
-import { User } from "@/types/User";
-import { useBreakpoints } from "@/hooks";
-import stylesFn from "@/styles/basic-profile/BasicProfile.styles";
-import { useTheme } from "@react-navigation/native";
-import { DUMMY_IMAGE } from "@/constants/User";
-import ImageUploadModal from "../ui/modal/ImageUploadModal";
-import { useAWSContext } from "@/contexts/aws-context.provider";
-import TextInput from "../ui/text-input";
 import Button from "../ui/button";
+import ImageUploadModal from "../ui/modal/ImageUploadModal";
+import TextInput from "../ui/text-input";
 
 interface BasicProfileProps {
   user: User;

@@ -1,10 +1,12 @@
 import { INITIAL_USER_DATA } from "@/constants/User";
 import { useAuthContext } from "@/contexts";
+import { AuthApp } from "@/shared-libs/utils/firebase/auth";
+import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
-import { AuthApp } from "@/utils/auth";
-import { FirestoreDB } from "@/utils/firestore";
 import { GoogleAuthProvider, signInWithPopup, UserCredential } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
+;
+;
 
 const provider = new GoogleAuthProvider();
 provider.addScope('profile');

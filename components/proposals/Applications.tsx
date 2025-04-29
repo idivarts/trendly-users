@@ -6,10 +6,10 @@ import { useAuthContext } from "@/contexts";
 import { useBreakpoints } from "@/hooks";
 import AppLayout from "@/layouts/app-layout";
 import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
+import { processRawAttachment } from "@/shared-libs/utils/attachments";
+import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import ScrollMedia from "@/shared-uis/components/carousel/scroll-media";
 import { stylesFn } from "@/styles/Proposal.styles";
-import { processRawAttachment } from "@/utils/attachments";
-import { FirestoreDB } from "@/utils/firestore";
 import { useTheme } from "@react-navigation/native";
 import { Link, router } from "expo-router";
 import {
@@ -32,6 +32,7 @@ import CollaborationDetails from "../collaboration/card-components/Collaboration
 import CollaborationHeader from "../collaboration/card-components/CollaborationHeader";
 import { MediaItem } from "../collaboration/render-media-item";
 import EmptyState from "../ui/empty-state";
+;
 
 const Applications = () => {
   const [isVisible, setIsVisible] = useState(false);
