@@ -2,10 +2,10 @@ import { Text, View } from "@/components/theme/Themed";
 import Colors from "@/constants/Colors";
 import { useAuthContext, useSocialContext } from "@/contexts";
 import AppLayout from "@/layouts/app-layout";
+import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
+import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { stylesFn } from "@/styles/Questions.styles";
-import { FirestoreDB } from "@/utils/firestore";
-import { HttpWrapper } from "@/utils/http-wrapper";
 import { resetAndNavigate } from "@/utils/router";
 import { faFacebook, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import {
@@ -17,6 +17,9 @@ import { useTheme } from "@react-navigation/native";
 import { doc, updateDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { Pressable } from "react-native";
+;
+;
+;
 
 const PrimarySocialSelect = () => {
   const { user } = useAuthContext();

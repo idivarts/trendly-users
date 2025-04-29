@@ -10,11 +10,11 @@ import {
   IApplications,
   ICollaboration,
 } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
+import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import ProgressLoader from "@/shared-uis/components/ProgressLoader";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { stylesFn } from "@/styles/ApplyNow.styles";
 import { AssetItem } from "@/types/Asset";
-import { FirestoreDB } from "@/utils/firestore";
 import { faCircleQuestion } from "@fortawesome/free-regular-svg-icons";
 import {
   faClapperboard,
@@ -39,6 +39,7 @@ import {
   Paragraph
 } from "react-native-paper";
 import Toast from "react-native-toast-message";
+;
 
 const EditApplicationScreen = () => {
   const params = useLocalSearchParams();

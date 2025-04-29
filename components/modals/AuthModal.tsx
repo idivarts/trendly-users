@@ -14,8 +14,8 @@ import { INITIAL_USER_DATA } from "@/constants/User";
 import { useAuthContext } from "@/contexts";
 import { useFacebookLogin, useInstagramLogin } from "@/hooks/requests";
 import { useGoogleLogin } from "@/hooks/requests/use-google-login";
-import { AuthApp } from "@/utils/auth";
-import { FirestoreDB } from "@/utils/firestore";
+import { AuthApp } from "@/shared-libs/utils/firebase/auth";
+import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { faFacebook, faGoogle, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -25,6 +25,8 @@ import { Portal } from "react-native-paper";
 import ProfileOnboardLoader from "../ProfileOnboardLoader";
 import { Text, View } from "../theme/Themed";
 import SocialButton from "../ui/button/social-button";
+;
+;
 
 interface AuthModalProps {
   bottomSheetModalRef: React.RefObject<BottomSheetModal>;

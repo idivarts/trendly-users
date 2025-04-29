@@ -6,10 +6,10 @@ import { useBreakpoints } from "@/hooks";
 import AppLayout from "@/layouts/app-layout";
 import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
 import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
+import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import Carousel from "@/shared-uis/components/carousel/carousel";
 import { stylesFn } from "@/styles/Collections.styles";
 import { processRawAttachment } from "@/utils/attachments";
-import { FirestoreDB } from "@/utils/firestore";
 import { useTheme } from "@react-navigation/native";
 import { router } from "expo-router";
 import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
@@ -28,6 +28,7 @@ import EmptyState from "../ui/empty-state";
 import CollaborationDetails from "./card-components/CollaborationDetails";
 import CollaborationHeader from "./card-components/CollaborationHeader";
 import CollaborationStats from "./card-components/CollaborationStats";
+;
 
 interface ICollaborationAddCardProps extends ICollaboration {
   name: string;

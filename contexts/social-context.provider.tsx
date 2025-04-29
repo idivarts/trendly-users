@@ -1,5 +1,5 @@
 import { ISocials } from "@/shared-libs/firestore/trendly-pro/models/socials";
-import { FirestoreDB } from "@/utils/firestore";
+import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { resetAndNavigate } from "@/utils/router";
 import { usePathname, useRouter } from "expo-router";
 import { collection, onSnapshot } from "firebase/firestore";
@@ -11,6 +11,7 @@ import {
   type PropsWithChildren,
 } from "react";
 import { useAuthContext } from "./auth-context.provider";
+;
 
 interface SocialContextProps {
   socials: ISocials[];

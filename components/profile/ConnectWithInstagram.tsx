@@ -2,14 +2,18 @@ import { IS_BETA_ENABLED } from "@/constants/App";
 import { FB_APP_ID as fbid } from "@/constants/Facebook";
 import { INITIAL_USER_DATA } from "@/constants/User";
 import { useInstagramLogin } from "@/hooks/requests";
-import { AuthApp } from "@/utils/auth";
-import { FirestoreDB } from "@/utils/firestore";
-import { HttpWrapper } from "@/utils/http-wrapper";
+import { AuthApp } from "@/shared-libs/utils/firebase/auth";
+import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
+import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import * as WebBrowser from "expo-web-browser";
 import React, { useState } from "react";
 import { Platform, View } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
 import Button from "../ui/button";
+;
+;
+;
+;
 
 WebBrowser.maybeCompleteAuthSession();
 

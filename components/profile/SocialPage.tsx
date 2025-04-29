@@ -3,11 +3,11 @@ import Colors from "@/constants/Colors";
 import { useAuthContext } from "@/contexts";
 import { SocialPlatform } from "@/shared-libs/firestore/trendly-pro/constants/social-platform";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
+import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
+import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import ImageComponent from "@/shared-uis/components/image-component";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { stylesFn } from "@/styles/profile/SocialPage.styles";
-import { FirestoreDB } from "@/utils/firestore";
-import { HttpWrapper } from "@/utils/http-wrapper";
 import { faFacebook, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import { faStar } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -16,6 +16,9 @@ import { doc, getDoc, updateDoc } from "firebase/firestore";
 import React, { useState } from "react";
 import { Linking } from "react-native";
 import { IconButton, Menu } from "react-native-paper";
+;
+;
+;
 
 interface SocialPageProps {
   name: string;

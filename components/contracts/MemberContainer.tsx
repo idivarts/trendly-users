@@ -1,14 +1,14 @@
-import { useTheme } from "@react-navigation/native";
-import { Text, View } from "../theme/Themed";
-import { FC, useEffect } from "react";
-import { ActivityIndicator } from "react-native-paper";
 import Colors from "@/constants/Colors";
-import React from "react";
 import { useAuthContext, useChatContext } from "@/contexts";
+import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
+import { useTheme } from "@react-navigation/native";
 import { doc, getDoc } from "firebase/firestore";
-import { FirestoreDB } from "@/utils/firestore";
+import React, { FC, useEffect } from "react";
 import { FlatList } from "react-native";
+import { ActivityIndicator } from "react-native-paper";
+import { Text, View } from "../theme/Themed";
 import MembersCard from "./members-card";
+;
 
 interface MemberContainerProps {
   channelId: string;

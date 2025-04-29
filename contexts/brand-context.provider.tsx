@@ -1,10 +1,11 @@
+import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import {
-  useContext,
   createContext,
+  useContext,
   type PropsWithChildren,
 } from "react";
-import { doc, getDoc } from "firebase/firestore";
-import { FirestoreDB } from "@/utils/firestore";
+;
 
 import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
 

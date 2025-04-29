@@ -1,28 +1,29 @@
 import Colors from "@/constants/Colors";
+import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
+import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
+import Toaster from "@/shared-uis/components/toaster/Toaster";
 import {
   faClockRotateLeft,
   faDollarSign,
 } from "@fortawesome/free-solid-svg-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useTheme } from "@react-navigation/native";
-import React, { FC, useEffect, useState } from "react";
-import {
-  View,
-  StyleSheet,
-  Modal,
-  TouchableOpacity,
-} from "react-native";
-import { Text } from "react-native-paper";
+import { router, useLocalSearchParams } from "expo-router";
 import {
   doc,
   updateDoc,
 } from "firebase/firestore";
-import { FirestoreDB } from "@/utils/firestore";
-import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
-import ListItem from "../ui/list-item/ListItem";
-import { router, useLocalSearchParams } from "expo-router";
-import Toaster from "@/shared-uis/components/toaster/Toaster";
+import React, { FC, useEffect, useState } from "react";
+import {
+  Modal,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { Text } from "react-native-paper";
 import Button from "../ui/button";
+import ListItem from "../ui/list-item/ListItem";
+;
 
 interface Application extends IApplications {
   id: string;

@@ -8,11 +8,11 @@ import { AWSProgressUpdateSubject, useAWSContext } from "@/contexts/aws-context.
 import AppLayout from "@/layouts/app-layout";
 import { Attachment } from "@/shared-libs/firestore/trendly-pro/constants/attachment";
 import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
+import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import ProgressLoader from "@/shared-uis/components/ProgressLoader";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { stylesFn } from "@/styles/ApplyNow.styles";
 import { AssetItem } from "@/types/Asset";
-import { FirestoreDB } from "@/utils/firestore";
 import { faCircleQuestion } from "@fortawesome/free-regular-svg-icons";
 import {
   faClapperboard,
@@ -37,6 +37,7 @@ import {
   List,
   Paragraph
 } from "react-native-paper";
+;
 
 const ApplyScreen = () => {
   const params = useLocalSearchParams();

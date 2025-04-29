@@ -4,10 +4,10 @@ import ConfirmationModal from "@/components/ui/modal/ConfirmationModal";
 import ScreenHeader from "@/components/ui/screen-header";
 import { useAuthContext } from "@/contexts";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
+import { AuthApp } from "@/shared-libs/utils/firebase/auth";
+import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
+import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import ProfileBottomSheet from "@/shared-uis/components/ProfileModal/Profile-Modal";
-import { AuthApp } from "@/utils/auth";
-import { FirestoreDB } from "@/utils/firestore";
-import { HttpWrapper } from "@/utils/http-wrapper";
 import { resetAndNavigate } from "@/utils/router";
 import {
   BottomSheetBackdrop,
@@ -19,6 +19,10 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Pressable } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+;
+;
+;
+;
 
 const EditProfileScreen: React.FC = () => {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);

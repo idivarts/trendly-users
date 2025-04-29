@@ -12,11 +12,12 @@ import Colors from "@/constants/Colors";
 import { useAuthContext } from "@/contexts";
 import { useBreakpoints } from "@/hooks";
 import AppLayout from "@/layouts/app-layout";
-import { AuthApp } from "@/utils/auth";
+import { AuthApp } from "@/shared-libs/utils/firebase/auth";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { signInAnonymously } from "firebase/auth";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Platform } from "react-native";
+;
 
 const CollaborationDetailsScreen = () => {
   const {

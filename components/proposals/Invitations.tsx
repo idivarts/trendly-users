@@ -5,10 +5,10 @@ import { MAX_WIDTH_WEB } from "@/constants/Container";
 import { useAuthContext } from "@/contexts";
 import { useBreakpoints } from "@/hooks";
 import AppLayout from "@/layouts/app-layout";
+import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import Carousel from "@/shared-uis/components/carousel/carousel";
 import { stylesFn } from "@/styles/Proposal.styles";
 import { processRawAttachment } from "@/utils/attachments";
-import { FirestoreDB } from "@/utils/firestore";
 import { useTheme } from "@react-navigation/native";
 import { Link, router } from "expo-router";
 import {
@@ -30,6 +30,7 @@ import {
 import CollaborationDetails from "../collaboration/card-components/CollaborationDetails";
 import CollaborationHeader from "../collaboration/card-components/CollaborationHeader";
 import EmptyState from "../ui/empty-state";
+;
 
 const Invitations = () => {
   const [isVisible, setIsVisible] = useState(false);

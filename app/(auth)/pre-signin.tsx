@@ -5,9 +5,9 @@ import { slides } from "@/constants/Slides";
 import { INITIAL_USER_DATA } from "@/constants/User";
 import { useFacebookLogin, useInstagramLogin } from "@/hooks/requests";
 import AppLayout from "@/layouts/app-layout";
+import { AuthApp } from "@/shared-libs/utils/firebase/auth";
+import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import stylesFn from "@/styles/tab1.styles";
-import { AuthApp } from "@/utils/auth";
-import { FirestoreDB } from "@/utils/firestore";
 import { imageUrl } from "@/utils/url";
 import { faFacebook, faGoogle, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import { faArrowRight, faEllipsis } from "@fortawesome/free-solid-svg-icons";
@@ -29,6 +29,7 @@ import Carousel, {
   ICarouselInstance,
   Pagination,
 } from "react-native-reanimated-carousel";
+;
 
 import BottomSheetActions from "@/components/BottomSheetActions";
 import ProfileOnboardLoader from "@/components/ProfileOnboardLoader";

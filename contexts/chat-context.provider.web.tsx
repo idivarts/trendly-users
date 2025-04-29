@@ -1,6 +1,8 @@
-import { HttpWrapper } from "@/utils/http-wrapper";
+import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import { createContext, PropsWithChildren, useContext } from "react";
 import { useAuthContext } from "./auth-context.provider";
+;
+;
 
 interface ChatContextProps {
   createGroupWithMembers: (

@@ -8,9 +8,9 @@ import { MAX_WIDTH_WEB } from "@/constants/Container";
 import { useAuthContext } from "@/contexts";
 import { useBreakpoints } from "@/hooks";
 import AppLayout from "@/layouts/app-layout";
+import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import ScrollMedia from "@/shared-uis/components/carousel/scroll-media";
 import { processRawAttachment } from "@/utils/attachments";
-import { FirestoreDB } from "@/utils/firestore";
 import { useTheme } from "@react-navigation/native";
 import { router } from "expo-router";
 import {
@@ -24,6 +24,7 @@ import {
 } from "firebase/firestore";
 import React, { useEffect } from "react";
 import { FlatList, Pressable, View } from "react-native";
+;
 
 const PastApplicationPage = (props: any) => {
   const [isVisible, setIsVisible] = React.useState(false);

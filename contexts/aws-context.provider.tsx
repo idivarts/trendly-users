@@ -1,6 +1,6 @@
 import { Attachment } from "@/shared-libs/firestore/trendly-pro/constants/attachment";
+import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import { AssetItem, NativeAssetItem, WebAssetItem } from "@/types/Asset";
-import { HttpWrapper } from "@/utils/http-wrapper";
 import * as FileSystem from "expo-file-system";
 import {
   createContext,
@@ -10,6 +10,8 @@ import {
 } from "react";
 import { Platform } from "react-native";
 import { Subject } from "rxjs";
+;
+;
 
 interface SubjectInterface { index: number, percentage: number }
 interface AWSContextProps {

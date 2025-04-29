@@ -1,5 +1,5 @@
 import { useStreamTheme } from "@/hooks";
-import { HttpWrapper } from "@/utils/http-wrapper";
+import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import { useTheme } from "@react-navigation/native";
 import {
   createContext,
@@ -11,6 +11,8 @@ import {
 import { Channel, DefaultGenerics, StreamChat } from "stream-chat";
 import { Chat, OverlayProvider } from "stream-chat-expo";
 import { useAuthContext } from "./auth-context.provider";
+;
+;
 
 const streamClient = StreamChat.getInstance(
   process.env.EXPO_PUBLIC_STREAM_API_KEY!

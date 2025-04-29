@@ -12,11 +12,11 @@ import {
   IApplications,
   ICollaboration,
 } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
+import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import ProgressLoader from "@/shared-uis/components/ProgressLoader";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { processRawAttachment } from "@/shared-uis/utils/attachments";
 import { stylesFn } from "@/styles/ApplyNow.styles";
-import { FirestoreDB } from "@/utils/firestore";
 import { handleModalOrInputPage } from "@/utils/TextInput";
 import { faCircleQuestion } from "@fortawesome/free-regular-svg-icons";
 import {
@@ -39,6 +39,7 @@ import {
   IconButton,
   List
 } from "react-native-paper";
+;
 
 const ApplyScreenWeb = () => {
   const params = useLocalSearchParams();
