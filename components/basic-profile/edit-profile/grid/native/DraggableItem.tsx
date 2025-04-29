@@ -1,5 +1,5 @@
 import Colors from '@/constants/Colors';
-import { useAWSContext } from '@/contexts/aws-context.provider';
+import { useAWSContext } from "@/shared-libs/contexts/aws-context.provider";
 import { Attachment } from '@/shared-libs/firestore/trendly-pro/constants/attachment';
 import { draggableGridStylesFn } from '@/styles/draggable-grid/DraggableGrid.styles';
 import { faClose, faPlus } from '@fortawesome/free-solid-svg-icons';

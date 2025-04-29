@@ -1,7 +1,7 @@
 import Colors from "@/constants/Colors";
 import { PLACEHOLDER_PERSON_IMAGE } from "@/constants/Placeholder";
 import { useAuthContext } from "@/contexts";
-import { useAWSContext } from "@/contexts/aws-context.provider";
+import { useAWSContext } from "@/shared-libs/contexts/aws-context.provider";
 import ImageComponent from "@/shared-uis/components/image-component";
 import stylesFn from "@/styles/profile/ProfileCard.styles";
 import { User } from "@/types/User";

@@ -1,5 +1,5 @@
 import { useAuthContext } from '@/contexts';
-import { useAWSContext } from '@/contexts/aws-context.provider';
+import { useAWSContext } from "@/shared-libs/contexts/aws-context.provider";
 import { Attachment } from '@/shared-libs/firestore/trendly-pro/constants/attachment';
 import { processRawAttachment } from '@/shared-uis/utils/attachments';
 import { WebAssetItem } from '@/types/Asset';
