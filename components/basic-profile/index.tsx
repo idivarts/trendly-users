@@ -41,7 +41,7 @@ const BasicProfile: React.FC<BasicProfileProps> = ({ user }) => {
 
     setIsSaving(true);
 
-    let imageUrl = "";
+    let imageUrl: string = "";
 
     if (capturedImage) {
       const uploadedImage = await uploadFileUri({
@@ -50,7 +50,7 @@ const BasicProfile: React.FC<BasicProfileProps> = ({ user }) => {
         uri: capturedImage,
         type: "image",
       });
-      imageUrl = uploadedImage.imageUrl;
+      imageUrl = uploadedImage.imageUrl || "";
     }
 
     await updateUser(user.id, {
