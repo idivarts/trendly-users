@@ -1,5 +1,5 @@
 import { Text } from '@/components/theme/Themed';
-import { useAuthContext } from '@/contexts';
+// import { useAuthContext } from '@/contexts';
 import { Attachment } from '@/shared-libs/firestore/trendly-pro/constants/attachment';
 import { gridStylesFn } from '@/styles/draggable-grid/DraggableGrid.styles';
 import { processRawAttachment } from '@/utils/attachments';
@@ -12,6 +12,7 @@ import DraggableItem, { AssetItem } from './DraggableItem';
 
 interface DragAndDropNativeProps {
   attachments: Attachment[]
+  onAttachmentChange: (attachments: Attachment[]) => void
 }
 
 const generateEmptyAssets = (
@@ -49,6 +50,7 @@ class DataHolder {
 let myData: DataHolder
 const DragAndDropNative: React.FC<DragAndDropNativeProps> = ({
   attachments,
+  onAttachmentChange
 }) => {
   const [assets, setAssets] = useState<AssetItem[]>(generateEmptyAssets(attachments));
   useEffect(() => {
@@ -58,7 +60,7 @@ const DragAndDropNative: React.FC<DragAndDropNativeProps> = ({
     }, {}), generateEmptyAssets(attachments))
     setAssets([...myData.assets])
   }, [])
-  const { user, updateUser } = useAuthContext()
+  // const { user, updateUser } = useAuthContext()
 
   const initialPositions = Object.assign({}, ...assets.map(item => item.id).map((id, index) => ({ [id]: index })));
   const positions = useSharedValue(initialPositions);
@@ -105,18 +107,7 @@ const DragAndDropNative: React.FC<DragAndDropNativeProps> = ({
       newAttachments.push(myData.myAttachments[id])
     }
     console.log("New Attachments", newAttachments);
-    if (user) {
-      // EditProfileSubject.next({
-      //   action: "profile",
-      //   data: newAttachments
-      // })
-      await updateUser(user.id, {
-        profile: {
-          ...user?.profile,
-          attachments: newAttachments
-        }
-      }).catch((e) => { console.error(e) })
-    }
+    onAttachmentChange(newAttachments)
   }
 
   // useEffect(() => {

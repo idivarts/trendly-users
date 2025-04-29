@@ -5,6 +5,7 @@ import Select from "@/components/ui/select";
 import SelectGroup from "@/components/ui/select/select-group";
 import TextInput from "@/components/ui/text-input";
 import Colors from "@/constants/Colors";
+import { useAuthContext } from "@/contexts";
 import { useBreakpoints } from "@/hooks";
 import useEditProfile from "@/hooks/use-edit-profile";
 import { stylesFn } from "@/styles/edit-profile/EditProfile.styles";
@@ -100,6 +101,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
       <ActivityIndicator size={"large"} />
     </View>
   }
+  const { updateUser } = useAuthContext()
 
   return (
     <View
@@ -115,10 +117,30 @@ const EditProfile: React.FC<EditProfileProps> = ({
           Platform.OS === 'web' ? (
             <DragAndDropWeb
               attachments={user?.profile?.attachments || []}
+              onAttachmentChange={(attachments) => {
+                if (user) {
+                  updateUser(user.id, {
+                    profile: {
+                      ...user?.profile,
+                      attachments: attachments
+                    }
+                  })
+                }
+              }}
             />
           ) : (
             <DragAndDropNative
               attachments={user?.profile?.attachments || []}
+              onAttachmentChange={async (attachments) => {
+                if (user) {
+                  await updateUser(user.id, {
+                    profile: {
+                      ...user?.profile,
+                      attachments: attachments
+                    }
+                  }).catch((e) => { console.error(e) })
+                }
+              }}
             />
           )
         }

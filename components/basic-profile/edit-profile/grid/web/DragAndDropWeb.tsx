@@ -1,4 +1,4 @@
-import { useAuthContext } from '@/contexts';
+// import { useAuthContext } from '@/contexts';
 import { useAWSContext } from "@/shared-libs/contexts/aws-context.provider";
 import { Attachment } from '@/shared-libs/firestore/trendly-pro/constants/attachment';
 import { processRawAttachment } from '@/shared-uis/utils/attachments';
@@ -27,9 +27,10 @@ import SortableItem from './SortableItem';
 
 interface DragAndDropWebProps {
   attachments: Attachment[];
+  onAttachmentChange: (attachments: Attachment[]) => void;
 }
 
-const DragAndDropWeb: React.FC<DragAndDropWebProps> = ({ attachments }) => {
+const DragAndDropWeb: React.FC<DragAndDropWebProps> = ({ attachments, onAttachmentChange }) => {
   const [assets, setAssets] = useState(attachments.map((a, index): WebAssetItem => ({
     ...processRawAttachment(a),
     id: "" + index,
@@ -39,7 +40,7 @@ const DragAndDropWeb: React.FC<DragAndDropWebProps> = ({ attachments }) => {
     return acc;
   }, {}))
   const [activeId, setActiveId] = useState<string | null>(null)
-  const { user, updateUser } = useAuthContext()
+  // const { user, updateUser } = useAuthContext()
   const { uploadFile } = useAWSContext()
 
   const sensors = useSensors(
@@ -111,14 +112,7 @@ const DragAndDropWeb: React.FC<DragAndDropWebProps> = ({ attachments }) => {
       newAttachments.push(myAttachments["" + id])
     }
     console.log("New Attachments", newAttachments);
-    if (user) {
-      updateUser(user.id, {
-        profile: {
-          ...user?.profile,
-          attachments: newAttachments
-        }
-      })
-    }
+    onAttachmentChange(newAttachments)
   }
 
   return (
