@@ -305,6 +305,7 @@ const ApplyScreenWeb = () => {
               small={true}
               leftIcon={faClockRotateLeft}
               content={<input
+                // @ts-ignore
                 ref={dateRef}
                 type="date"
                 onChange={(e) => setTimelineData(new Date(e.target.value))}
