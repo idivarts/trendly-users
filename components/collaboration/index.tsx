@@ -8,6 +8,7 @@ import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
 import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { processRawAttachment } from "@/shared-libs/utils/attachments";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
+import { useInfiniteScroll } from "@/shared-libs/utils/infinite-scroll";
 import Carousel from "@/shared-uis/components/carousel/carousel";
 import { stylesFn } from "@/styles/Collections.styles";
 import { useTheme } from "@react-navigation/native";
@@ -50,7 +51,7 @@ const Collaboration = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedJobType, setSelectedJobType] = useState("");
   const [salaryRange, setSalaryRange] = useState([0, 100000]);
-  const [collabs, setCollabs] = useState<ICollaborationAddCardProps[]>([]);
+  // const [collabs, setCollabs] = useState<ICollaborationAddCardProps[]>([]);
   const theme = useTheme();
   const [isVisible, setIsVisible] = useState(false);
   const [selectedCollabId, setSelectedCollabId] = useState<string | null>(null);
@@ -60,15 +61,26 @@ const Collaboration = () => {
   };
   const closeBottomSheet = () => setIsVisible(false);
 
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
   const { xl } = useBreakpoints();
 
+  const collabRef = collection(FirestoreDB, "collaborations");
+  const collabQuery = query(collabRef, where("status", "==", "active"), orderBy("timeStamp", "desc"));
+  const { onScrollEvent, data: collabs, loading } = useInfiniteScroll<ICollaborationAddCardProps>(collabQuery)
+
+  const [brandMap, setBrandMap] = useState<{
+    [key: string]: {
+      name: string;
+      paymentMethodVerified: boolean;
+      image: string;
+    };
+  }>({})
+
+
   const fetchData = async () => {
-    const fetchedBrands = await fetchBrands(); // Fetch brands and store in a variable
-    await fetchCollabs(fetchedBrands); // Pass the fetched brands to fetchCollabs
-    setLoading(false);
+    await fetchBrands(); // Fetch brands and store in a variable
   };
 
   useEffect(() => {
@@ -105,68 +117,29 @@ const Collaboration = () => {
       };
     });
 
-    return brandMap;
-  };
-
-  const fetchCollabs = async (brandsMap: {
-    [key: string]: {
-      name: string;
-      paymentMethodVerified: boolean;
-      image: string;
-    };
-  }) => {
-    const collabRef = collection(FirestoreDB, "collaborations");
-
-    // Use Firestore sorting by "timeStamp" in descending order (newest first)
-    const collabQuery = query(collabRef, where("status", "==", "active"), orderBy("timeStamp", "desc"));
-    const snapshot = await getDocs(collabQuery);
-
-    const data = snapshot.docs.map((doc) => {
-      const docData = doc.data() as ICollaborationAddCardProps;
-
-      return {
-        ...docData,
-        id: doc.id,
-      };
-    });
-
-    const collabsWithBrandNames = data.map((collab) => ({
-      ...collab,
-      brandName: brandsMap[collab.brandId]?.name || "Unknown Brand",
-      brandImage: brandsMap[collab.brandId]?.image || "",
-      paymentVerified:
-        brandsMap[collab.brandId]?.paymentMethodVerified || false,
-    }));
-
-    setCollabs(collabsWithBrandNames);
+    setBrandMap(brandMap)
   };
 
   const toggleFilterModal = () => {
     setFilterVisible(!filterVisible);
   };
 
-  const filteredList = collabs.filter((job) => {
-    return job.name.toLowerCase().includes(searchQuery.toLowerCase())
-      || job.description?.toLowerCase().includes(searchQuery.toLowerCase())
-    // return (job.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    //   searchQuery === "") &&
-    //   (selectedCategory === "" ||
-    //     job.promotionType.includes(selectedCategory) ||
-    //     selectedCategory === "All") &&
-    //   (selectedJobType === "" ||
-    //     job.contentFormat.includes(selectedJobType) ||
-    //     selectedJobType === "All") &&
-    //   job.budget &&
-    //   job.budget.min
-    //   ? job.budget.min >= salaryRange[0]
-    //   : true && job.budget && job.budget.max
-    //     ? job.budget.max <= salaryRange[1]
-    //     : true;
-  });
+  const filteredList = collabs.filter((collab) => {
+    return collab.name.toLowerCase().includes(searchQuery.toLowerCase())
+      || collab.description?.toLowerCase().includes(searchQuery.toLowerCase())
+    // Create a proper filter keys
+  }).map((collab) => ({
+    ...collab,
+    brandName: brandMap[collab.brandId]?.name || "Unknown Brand",
+    brandImage: brandMap[collab.brandId]?.image || "",
+    paymentVerified:
+      brandMap[collab.brandId]?.paymentMethodVerified || false,
+  }));
+
 
   const styles = stylesFn(theme);
 
-  if (loading) {
+  if (loading && collabs.length == 0) {
     return (
       <AppLayout>
         <View
@@ -227,7 +200,7 @@ const Collaboration = () => {
             setSearchQuery={setSearchQuery}
           />
         </View>
-        <IOScrollView>
+        <IOScrollView onScroll={onScrollEvent}>
           {filteredList.length === 0 ? (
             <EmptyState
               hideAction
@@ -236,39 +209,64 @@ const Collaboration = () => {
               title="Oops! No Collaborations!"
             />
           ) : (
-            <FlatList
-              data={filteredList}
-              renderItem={({ item }) => (
-                <View
-                  style={{
-                    width: "100%",
-                    borderWidth: 0.3,
-                    borderColor: Colors(theme).gray300,
-                    gap: 8,
-                    borderRadius: 5,
-                    paddingBottom: 16,
-                    overflow: "hidden",
-                  }}
-                >
-                  <CollaborationHeader
-                    cardId={item.id}
-                    cardType="collaboration"
-                    brand={{
-                      image: item.brandImage || "",
-                      name: item.brandName,
-                      paymentVerified: item.paymentVerified || false,
+            <>
+              <FlatList
+                initialNumToRender={5}
+                maxToRenderPerBatch={10}
+                windowSize={5}
+                data={filteredList}
+                renderItem={({ item }) => (
+                  <View
+                    key={item.id}
+                    style={{
+                      width: "100%",
+                      borderWidth: 0.3,
+                      borderColor: Colors(theme).gray300,
+                      gap: 8,
+                      borderRadius: 5,
+                      paddingBottom: 16,
+                      overflow: "hidden",
                     }}
-                    collaboration={{
-                      collabId: item.id,
-                      collabName: item.name,
-                      timePosted: item.timeStamp,
-                    }}
-                    onOpenBottomSheet={() => openBottomSheet(item.id)}
-                  />
-                  {item.attachments && item.attachments.length > 0 && (
-                    <Carousel
-                      theme={theme}
-                      onImagePress={() => {
+                  >
+                    <CollaborationHeader
+                      cardId={item.id}
+                      cardType="collaboration"
+                      brand={{
+                        image: item.brandImage || "",
+                        name: item.brandName,
+                        paymentVerified: item.paymentVerified || false,
+                      }}
+                      collaboration={{
+                        collabId: item.id,
+                        collabName: item.name,
+                        timePosted: item.timeStamp,
+                      }}
+                      onOpenBottomSheet={() => openBottomSheet(item.id)}
+                    />
+                    {item.attachments && item.attachments.length > 0 && (
+                      <Carousel
+                        theme={theme}
+                        onImagePress={() => {
+                          router.push({
+                            // @ts-ignore
+                            pathname: `/collaboration-details/${item.id}`,
+                            params: {
+                              cardType: "collaboration",
+                            },
+                          });
+                        }}
+                        data={
+                          item.attachments?.map((attachment) =>
+                            processRawAttachment(attachment)
+                          ) || []
+                        }
+                        carouselWidth={
+                          xl ? MAX_WIDTH_WEB : Dimensions.get("window").width
+                        }
+                      />
+                    )}
+                    <Pressable
+                      onPress={() => {
                         router.push({
                           // @ts-ignore
                           pathname: `/collaboration-details/${item.id}`,
@@ -277,61 +275,43 @@ const Collaboration = () => {
                           },
                         });
                       }}
-                      data={
-                        item.attachments?.map((attachment) =>
-                          processRawAttachment(attachment)
-                        ) || []
-                      }
-                      carouselWidth={
-                        xl ? MAX_WIDTH_WEB : Dimensions.get("window").width
-                      }
-                    />
-                  )}
-                  <Pressable
-                    onPress={() => {
-                      router.push({
-                        // @ts-ignore
-                        pathname: `/collaboration-details/${item.id}`,
-                        params: {
-                          cardType: "collaboration",
-                        },
-                      });
-                    }}
-                  >
-                    <CollaborationDetails
-                      collaborationDetails={{
-                        collabDescription: item.description || "",
-                        promotionType: item.promotionType,
-                        location: item.location,
-                        platform: item.platform,
-                        contentType: item.contentFormat,
-                      }}
-                    />
-                    <CollaborationStats
-                      influencerCount={item.numberOfInfluencersNeeded}
-                      collabID={item.id}
-                      budget={item.budget ? item.budget : { min: 0, max: 0 }}
-                      brandHireRate={item.brandHireRate || ""}
-                    />
-                  </Pressable>
-                </View>
-              )}
-              keyExtractor={(item) => item.id}
-              style={{
-                flexGrow: 1,
-                paddingTop: 8,
-              }}
-              contentContainerStyle={{
-                gap: 16,
-                paddingBottom: 24,
-              }}
-              refreshControl={
-                <RefreshControl
-                  refreshing={refreshing}
-                  onRefresh={handleRefresh}
-                />
-              }
-            />
+                    >
+                      <CollaborationDetails
+                        collaborationDetails={{
+                          collabDescription: item.description || "",
+                          promotionType: item.promotionType,
+                          location: item.location,
+                          platform: item.platform,
+                          contentType: item.contentFormat,
+                        }}
+                      />
+                      <CollaborationStats
+                        influencerCount={item.numberOfInfluencersNeeded}
+                        collabID={item.id}
+                        budget={item.budget ? item.budget : { min: 0, max: 0 }}
+                        brandHireRate={item.brandHireRate || ""}
+                      />
+                    </Pressable>
+                  </View>
+                )}
+                keyExtractor={(item) => item.id}
+                style={{
+                  flexGrow: 1,
+                  paddingTop: 8,
+                }}
+                contentContainerStyle={{
+                  gap: 16,
+                  paddingBottom: 24,
+                }}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={handleRefresh}
+                  />
+                }
+              />
+              {loading && <ActivityIndicator size={"small"} />}
+            </>
           )}
         </IOScrollView>
       </View>

@@ -23,8 +23,6 @@ import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import * as WebBrowser from "expo-web-browser";
-;
-;
 
 interface useFacebookLoginType {
   facebookLogin: () => void;
