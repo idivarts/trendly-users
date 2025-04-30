@@ -247,7 +247,7 @@ const ApplyScreenWeb = () => {
                 )}
                 onPress={() => inputRef.current?.click()}
               />
-              <Text style={{ fontSize: 14, color: Colors(theme).text }}>Select media from your gallery and apply</Text>
+              <Text style={{ fontSize: 14, color: Colors(theme).text, textAlign: "center" }}>Select photos or videos that would help us understand your content style</Text>
             </Card.Content>
           </Card>}
         <input
