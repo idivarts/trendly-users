@@ -211,6 +211,9 @@ const Collaboration = () => {
           ) : (
             <>
               <FlatList
+                initialNumToRender={5}
+                maxToRenderPerBatch={10}
+                windowSize={5}
                 data={filteredList}
                 renderItem={({ item }) => (
                   <View
