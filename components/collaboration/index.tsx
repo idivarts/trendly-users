@@ -68,7 +68,7 @@ const Collaboration = () => {
 
   const collabRef = collection(FirestoreDB, "collaborations");
   const collabQuery = query(collabRef, where("status", "==", "active"), orderBy("timeStamp", "desc"));
-  const { onScrollEvent, data: collabs, loading } = useInfiniteScroll<ICollaborationAddCardProps>(collabQuery, 4)
+  const { onScrollEvent, data: collabs, loading } = useInfiniteScroll<ICollaborationAddCardProps>(collabQuery)
 
   const [brandMap, setBrandMap] = useState<{
     [key: string]: {
