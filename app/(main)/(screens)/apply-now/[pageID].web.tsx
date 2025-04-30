@@ -22,12 +22,12 @@ import {
   faPaperclip,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import DateTimePicker from "@react-native-community/datetimepicker";
+// import DateTimePicker from "@react-native-community/datetimepicker";
 import { useTheme } from "@react-navigation/native";
 import * as DocumentPicker from "expo-document-picker";
 import { router, useLocalSearchParams } from "expo-router";
 import { doc, getDoc } from "firebase/firestore";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Platform, ScrollView, View } from "react-native";
 import {
   Card,
@@ -46,7 +46,8 @@ const ApplyScreenWeb = () => {
 
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [showDatePicker, setShowDatePicker] = useState(false);
+  const dateRef = useRef<HTMLInputElement>()
+  // const [showDatePicker, setShowDatePicker] = useState(false);
   const [timelineData, setTimelineData] = useState<Date | null>(null);
   const [quotation, setQuotation] = useState<string>("");
   const [questions, setQuestions] = useState<string[]>([]);
@@ -204,12 +205,12 @@ const ApplyScreenWeb = () => {
     setFiles(files.filter((f) => f.name !== id));
   };
 
-  const onDateChange = (event: any, selectedDate?: Date) => {
-    setShowDatePicker(false);
-    if (selectedDate) {
-      setTimelineData(selectedDate);
-    }
-  };
+  // const onDateChange = (event: any, selectedDate?: Date) => {
+  //   setShowDatePicker(false);
+  //   if (selectedDate) {
+  //     setTimelineData(selectedDate);
+  //   }
+  // };
 
   useEffect(() => {
     fetchQuestions();
@@ -303,34 +304,35 @@ const ApplyScreenWeb = () => {
               title="Timeline"
               small={true}
               leftIcon={faClockRotateLeft}
-              content=""
+              content={<input
+                // @ts-ignore
+                ref={dateRef}
+                type="date"
+                onChange={(e) => setTimelineData(new Date(e.target.value))}
+                value={
+                  timelineData ? timelineData.toISOString().split("T")[0] : ""
+                }
+                placeholder="Select a date"
+                style={{
+                  border: "none",
+                  backgroundColor: "transparent",
+                  fontSize: 16,
+                  color: Colors(theme).textSecondary,
+                  // color: "inherit",
+                  outline: "none",
+                  borderWidth: 0,
+                }}
+              />}
               rightContent={true}
-              onAction={() => setShowDatePicker(true)}
+              onAction={() => {
+                try {
+                  dateRef.current?.showPicker?.() || dateRef.current?.click()
+                } catch (e) {
+                  console.log(e);
+                }
+              }}
             />
-            <TextInput
-              mode="outlined"
-              onFocus={() => { }}
-              render={(props) => (
-                //@ts-ignore
-                <input
-                  {...props}
-                  type="date"
-                  onChange={(e) => setTimelineData(new Date(e.target.value))}
-                  value={
-                    timelineData ? timelineData.toISOString().split("T")[0] : ""
-                  }
-                  placeholder="Select a date"
-                  style={{
-                    border: "none",
-                    backgroundColor: "transparent",
-                    fontSize: 16,
-                    color: "inherit",
-                    outline: "none",
-                    borderWidth: 0,
-                  }}
-                />
-              )}
-            />
+
             <ListItem
               title="Attachments"
               small={true}
@@ -408,14 +410,14 @@ const ApplyScreenWeb = () => {
           </Button>
         </View>
       </ScrollView>
-      {showDatePicker && (
+      {/* {showDatePicker && (
         <DateTimePicker
           value={timelineData || new Date()} // Use the selected date or current date
           mode="date" // Show the date picker
           display="spinner" // Use spinner for iOS
           onChange={onDateChange} // Handle date changes
         />
-      )}
+      )} */}
       <TextModal
         isOpen={modalData.isOpen}
         onClose={() => setModalData({ ...modalData, isOpen: false })}

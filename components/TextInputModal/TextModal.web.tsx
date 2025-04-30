@@ -70,10 +70,10 @@ const styles = StyleSheet.create({
   modalContainer: {
     backgroundColor: "white",
     borderRadius: 12,
-    padding: 20,
-    marginHorizontal: 20,
+    padding: 16,
+    // marginHorizontal: 8,
     alignSelf: "center",
-    width: "80%",
+    width: "95%",
   },
   modalContent: {
     flexDirection: "column",
@@ -81,13 +81,13 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 10,
-    textAlign: "center",
+    marginBottom: 20,
+    textAlign: "left",
     color: "#333",
   },
   textInput: {
     backgroundColor: "#f9f9f9",
-    padding: 10,
+    // padding: 10,
     borderRadius: 8,
     fontSize: 16,
     textAlignVertical: "top",

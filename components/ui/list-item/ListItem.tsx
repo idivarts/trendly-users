@@ -11,7 +11,7 @@ import { Dimensions, Pressable } from "react-native";
 import { List } from "react-native-paper";
 
 interface ContentItemProps {
-  content: string;
+  content: any;
   empty?: boolean;
   leftIcon?: any;
   attachments?: any[];
@@ -90,16 +90,16 @@ const ListItem: React.FC<ContentItemProps> = ({
               gap: 12,
             }}
           >
-            {rightContent ? (
+            {rightContent ? (typeof content == "string" ?
               <Text
                 style={{
-                  color: Colors(theme).gray300,
+                  color: Colors(theme).textSecondary,
                   fontSize: small ? 14 : 18,
                   paddingVertical: 6,
                 }}
               >
                 {content}
-              </Text>
+              </Text> : content
             ) : null}
             <FontAwesomeIcon
               icon={empty ? faPlus : faChevronRight}
@@ -125,7 +125,7 @@ const ListItem: React.FC<ContentItemProps> = ({
               }}
               titleStyle={{
                 fontSize: small ? 16 : 18,
-                color: Colors(theme).gray300,
+                color: Colors(theme).textSecondary,
               }}
             />
           </Text>
