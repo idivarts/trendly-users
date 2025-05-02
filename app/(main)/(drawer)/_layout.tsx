@@ -27,6 +27,12 @@ const DrawerLayout = () => {
             headerShown: false,
           }}
         />
+        <Drawer.Screen
+          name="(screens)"
+          options={{
+            headerShown: false,
+          }}
+        />
       </Drawer>
     </SocialsProtectedScreen>
   );
