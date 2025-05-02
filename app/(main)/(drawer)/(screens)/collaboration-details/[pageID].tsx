@@ -22,7 +22,7 @@ const CollaborationDetailsScreen = () => {
   }
 
   return (
-    <AppLayout withWebPadding={true}>
+    <AppLayout withWebPadding={false}>
       <ScreenHeader
         title="Collaboration Details"
         rightAction
