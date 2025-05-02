@@ -28,8 +28,6 @@ const ChannelListWeb = () => {
   }
 
   useEffect(() => {
-    fetchToken()
-
     window.addEventListener('message', function (event) {
       console.log("Received event from ifram");
       if (event.data.type == "open-contract") {
@@ -39,6 +37,11 @@ const ChannelListWeb = () => {
       }
     });
   }, [])
+
+  useEffect(() => {
+    if (user)
+      fetchToken()
+  }, [user])
 
   if (loading) {
     return <AppLayout>
