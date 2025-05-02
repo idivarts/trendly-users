@@ -77,7 +77,7 @@ const Questions = () => {
   const { collaborationId } = useAuthContext()
 
   return (
-    <AppLayout withWebPadding>
+    <AppLayout withWebPadding={true}>
       <View style={styles.container}>
         <View style={styles.header}>
           <Pressable

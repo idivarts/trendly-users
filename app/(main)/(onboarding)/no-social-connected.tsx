@@ -23,7 +23,7 @@ const TrendlyScreen = () => {
   // }, [socials]);
 
   return (
-    <AppLayout withWebPadding>
+    <AppLayout withWebPadding={true}>
       <View
         style={{
           flex: 1,
