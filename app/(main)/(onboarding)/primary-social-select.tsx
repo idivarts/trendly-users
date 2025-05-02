@@ -59,7 +59,7 @@ const PrimarySocialSelect = () => {
   }, [socials])
 
   return (
-    <AppLayout withWebPadding>
+    <AppLayout withWebPadding={true}>
       <View style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.questionText}>

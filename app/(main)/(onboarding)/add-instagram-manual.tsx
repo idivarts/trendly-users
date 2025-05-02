@@ -111,7 +111,7 @@ const AddInstagramManual = () => {
     }
 
     return (
-        <AppLayout withWebPadding>
+        <AppLayout withWebPadding={true}>
             <ScreenHeader title='Add Instagram' />
 
             <ScrollView contentContainerStyle={styles.container}>
