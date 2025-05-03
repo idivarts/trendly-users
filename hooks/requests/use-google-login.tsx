@@ -23,7 +23,6 @@ export const useGoogleLogin = (setLoading: Function, setError: Function) => {
         if (!result)
             return;
 
-        Toaster.success('Logged in with Google successfully');
         setLoading(true)
         const userRef = await doc(FirestoreDB, "users", result.user.uid);
         const findUser = await getDoc(userRef);
@@ -46,6 +45,7 @@ export const useGoogleLogin = (setLoading: Function, setError: Function) => {
         } else {
             firebaseSignUp(result.user.uid, 0);
         }
+        Toaster.success('Logged in with Google successfully');
     }
 
     const googleLogin = () => {
@@ -53,8 +53,12 @@ export const useGoogleLogin = (setLoading: Function, setError: Function) => {
             signInWithPopup(AuthApp, provider).catch((error) => {
                 Toaster.error('Error logging in with Google', error.message);
                 console.log(error);
-            }).then((result) => {
-                evalResult(result);
+            }).then(async (result) => {
+                await evalResult(result);
+            }).catch(e => {
+                console.log("Error", e);
+                Toaster.error('Error logging in with Google');
+                setLoading(false);
             })
         } catch (e) {
             console.log("Error", e);

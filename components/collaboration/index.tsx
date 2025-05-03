@@ -130,6 +130,7 @@ const Collaboration = () => {
     // Create a proper filter keys
   }).map((collab) => ({
     ...collab,
+    id: collab.documentId,
     brandName: brandMap[collab.brandId]?.name || "Unknown Brand",
     brandImage: brandMap[collab.brandId]?.image || "",
     paymentVerified:

@@ -1,4 +1,3 @@
-import VerifiedIcon from "@/assets/icons/verified.svg";
 import { Text, View } from "@/components/theme/Themed";
 import Button from "@/components/ui/button";
 import Select from "@/components/ui/select";
@@ -8,6 +7,7 @@ import Colors from "@/constants/Colors";
 import { useAuthContext } from "@/contexts";
 import { useBreakpoints } from "@/hooks";
 import useEditProfile from "@/hooks/use-edit-profile";
+import { AuthApp } from "@/shared-libs/utils/firebase/auth";
 import { stylesFn } from "@/styles/edit-profile/EditProfile.styles";
 import { useTheme } from "@react-navigation/native";
 import { useRouter } from "expo-router";
@@ -101,6 +101,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
     </View>
   }
   const { updateUser } = useAuthContext()
+  const isGoogleLogin = AuthApp.currentUser?.providerData[0].providerId == "google.com";
 
   return (
     <View
@@ -149,12 +150,15 @@ const EditProfile: React.FC<EditProfileProps> = ({
                 }}
                 label="Email"
                 value={email}
+                disabled={isGoogleLogin}
                 onChangeText={(email) => {
+                  if (isGoogleLogin)
+                    return;
                   setEmail(email);
                   setUnsavedChanges && setUnsavedChanges(true);
                 }}
               />
-              {
+              {/* {
                 user?.emailVerified ? (
                   <VerifiedIcon
                     width={24}
@@ -177,7 +181,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
                     {user?.emailVerified ? 'Verified' : 'Verify'}
                   </Button>
                 )
-              }
+              } */}
             </View>
             <View
               style={styles.inputContainer}
