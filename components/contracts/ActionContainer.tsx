@@ -115,7 +115,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
                   }
                 }}
               >
-                Start Contract
+                Ask to Start Contract
               </Button>
               <Button
                 mode="contained"
@@ -124,7 +124,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
                 }}
                 onPress={showQuotationModal}
               >
-                Revise Quote
+                Revise Quotation
               </Button>
             </>
           )}
@@ -167,7 +167,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
               </Button>
             </>
           )}
-          {contract.status === 2 && !contract.feedbackFromInfluencer && (
+          {contract.status === 2 && (
             <>
               <Button
                 mode="contained"
@@ -182,7 +182,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
           )}
         </View>
       )}
-      {contract.feedbackFromBrand && (
+      {contract.status == 3 && contract.feedbackFromBrand && (
         <View
           style={{
             width: "100%",
@@ -236,7 +236,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
           </View>
         </View>
       )}
-      {contract.feedbackFromInfluencer && (
+      {contract.status == 3 && contract.feedbackFromInfluencer && (
         <View
           style={{
             borderWidth: 0.3,

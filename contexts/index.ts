@@ -6,10 +6,6 @@ import {
 } from "./brand-context.provider";
 import { ChatContextProvider, useChatContext } from "./chat-context.provider";
 import {
-  CloudMessagingContextProvider,
-  useCloudMessagingContext,
-} from "./cloud-messaging.provider";
-import {
   CollaborationContextProvider,
   useCollaborationContext,
 } from "./collaboration-context.provider";
@@ -29,6 +25,7 @@ import {
   SocialContextProvider,
   useSocialContext,
 } from "./social-context.provider";
+import { CloudMessagingContextProvider, useCloudMessagingContext } from "@/shared-libs/contexts/cloud-messaging.provider";
 
 export {
   AuthContextProvider,

@@ -111,7 +111,7 @@ const ContractDetailsScreen = () => {
   return (
     <AppLayout>
       <ScreenHeader
-        title="Collaboration Status"
+        title="Contract"
         rightAction
         action={() => {
           if (router.canGoBack()) {
