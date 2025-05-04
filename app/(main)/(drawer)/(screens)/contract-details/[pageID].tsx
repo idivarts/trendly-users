@@ -95,8 +95,10 @@ const ContractDetailsScreen = () => {
   };
 
   useEffect(() => {
+    if (!user)
+      return;
     fetchProposals();
-  }, []);
+  }, [user]);
 
   if (isLoading || !contract) {
     return (

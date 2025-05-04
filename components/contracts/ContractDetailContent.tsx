@@ -13,11 +13,12 @@ import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import Carousel from "@/shared-uis/components/carousel/carousel";
 import ScrollMedia from "@/shared-uis/components/carousel/scroll-media";
 import ImageComponent from "@/shared-uis/components/image-component";
+import ReadMore from "@/shared-uis/components/ReadMore";
 import { stylesFn } from "@/styles/CollaborationDetails.styles";
 import { formatTimeToNow } from "@/utils/date";
 import { faCheckCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { useTheme } from "@react-navigation/native";
+import { useIsFocused, useTheme } from "@react-navigation/native";
 import { useLocalSearchParams } from "expo-router";
 import { doc, getDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
@@ -49,6 +50,15 @@ const ContractDetailsContent = (props: CollaborationDetailsContentProps) => {
   const [feedbackModalVisible, setFeedbackModalVisible] = useState(false);
   const params = useLocalSearchParams();
   const [brandData, setBrandData] = useState<IBrands>();
+
+  const { giveFeedback } = useLocalSearchParams()
+  const isFocused = useIsFocused()
+
+  useEffect(() => {
+    if (giveFeedback && isFocused) {
+      setFeedbackModalVisible(true)
+    }
+  }, [giveFeedback, isFocused])
 
   const fetchBrandData = async () => {
     const brandRef = doc(
@@ -140,9 +150,11 @@ const ContractDetailsContent = (props: CollaborationDetailsContentProps) => {
             <View
               style={{
                 width: "100%",
+                marginTop: 16
               }}
             >
-              <Text
+              <ReadMore text={props.collaborationDetail.description || ""} />
+              {/* <Text
                 style={{
                   fontSize: 16,
                   color: Colors(theme).gray100,
@@ -151,7 +163,7 @@ const ContractDetailsContent = (props: CollaborationDetailsContentProps) => {
                 }}
               >
                 {props.collaborationDetail.description}
-              </Text>
+              </Text> */}
             </View>
           </View>
 

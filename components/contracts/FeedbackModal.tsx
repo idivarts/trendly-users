@@ -82,6 +82,9 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
         borderRadius: 10,
         padding: 20,
         marginHorizontal: 20,
+        width: "100%",
+        maxWidth: 600,
+        alignSelf: "center"
       }}
     >
       <KeyboardAvoidingView
