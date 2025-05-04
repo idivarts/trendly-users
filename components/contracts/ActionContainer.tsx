@@ -115,7 +115,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
                   }
                 }}
               >
-                Start Contract
+                Ask to Start Contract
               </Button>
               <Button
                 mode="contained"
@@ -124,7 +124,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
                 }}
                 onPress={showQuotationModal}
               >
-                Revise Quote
+                Revise Quotation
               </Button>
             </>
           )}

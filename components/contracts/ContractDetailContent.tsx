@@ -1,5 +1,6 @@
 import UserResponse from "@/components/contract-card/UserResponse";
 import Colors from "@/constants/Colors";
+import { useBreakpoints } from "@/hooks";
 import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
 import {
   IApplications,
@@ -10,6 +11,7 @@ import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { processRawAttachment } from "@/shared-libs/utils/attachments";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import Carousel from "@/shared-uis/components/carousel/carousel";
+import ScrollMedia from "@/shared-uis/components/carousel/scroll-media";
 import ImageComponent from "@/shared-uis/components/image-component";
 import { stylesFn } from "@/styles/CollaborationDetails.styles";
 import { formatTimeToNow } from "@/utils/date";
@@ -68,6 +70,8 @@ const ContractDetailsContent = (props: CollaborationDetailsContentProps) => {
     fetchBrandData();
   }, []);
 
+  const { xl } = useBreakpoints();
+
   return (
     <ScrollView
       contentContainerStyle={styles.scrollContainer}
@@ -78,14 +82,26 @@ const ContractDetailsContent = (props: CollaborationDetailsContentProps) => {
         {props?.collaborationDetail?.attachments &&
           props?.collaborationDetail?.attachments.length > 0 && (
             <View style={{ alignSelf: "center" }}>
-              <Carousel
+
+              {xl ? <ScrollMedia
+                media={props?.collaborationDetail?.attachments?.map((attachment) =>
+                  processRawAttachment(attachment)
+                ) || []}
+                MAX_WIDTH_WEB={"100%"}
+                xl={xl}
+                theme={theme}
+                mediaRes={{
+                  width: 300,
+                  height: 300
+                }}
+              /> : <Carousel
                 theme={theme}
                 data={
                   props?.collaborationDetail?.attachments?.map((attachment) =>
                     processRawAttachment(attachment)
                   ) || []
                 }
-              />
+              />}
             </View>
           )}
         <Card.Content style={styles.profileContent}>
