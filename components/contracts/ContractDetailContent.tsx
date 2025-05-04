@@ -150,6 +150,7 @@ const ContractDetailsContent = (props: CollaborationDetailsContentProps) => {
             <View
               style={{
                 width: "100%",
+                marginTop: 16
               }}
             >
               <ReadMore text={props.collaborationDetail.description || ""} />

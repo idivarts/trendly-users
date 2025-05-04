@@ -99,7 +99,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
           {contract.status === 0 && (
             <>
               <Button
-                mode="contained"
+                mode="outlined"
                 style={{
                   flex: 1,
                 }}
@@ -131,7 +131,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
           {contract.status === 1 && (
             <>
               <Button
-                mode="contained"
+                mode="contained-tonal"
                 style={{
                   flex: 1,
                 }}
@@ -149,7 +149,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
                   }
                 }}
               >
-                End Contract
+                Ask to End Contract
               </Button>
               <Button
                 mode="contained"
