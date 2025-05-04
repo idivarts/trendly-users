@@ -1,5 +1,7 @@
 
+import { PropsWithChildren } from "react";
 import { Platform } from "react-native";
+import { StreamChat } from "stream-chat";
 import {
   ChatContextProvider as ChatProviderNative,
   useChatContext as useChatContextNative,
@@ -8,7 +10,6 @@ import {
   ChatContextProvider as ChatProviderWeb,
   useChatContext as useChatContextWeb,
 } from "./chat-context.provider.web";
-import { PropsWithChildren } from "react";
 
 export const useChatContext = () => {
   if (Platform.OS === 'web') {
@@ -17,6 +18,11 @@ export const useChatContext = () => {
 
   return useChatContextNative();
 };
+
+
+export const streamClient = StreamChat.getInstance(
+  process.env.EXPO_PUBLIC_STREAM_API_KEY!
+);
 
 export const ChatContextProvider: React.FC<PropsWithChildren> = ({
   children,

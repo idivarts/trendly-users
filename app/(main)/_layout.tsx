@@ -1,17 +1,20 @@
-import { AWSContextProvider, BrandContextProvider, ChatContextProvider, CloudMessagingContextProvider, CollaborationContextProvider, ContractContextProvider, FirebaseStorageContextProvider, NotificationContextProvider, SocialContextProvider } from "@/contexts";
+import { AWSContextProvider, BrandContextProvider, ChatContextProvider, CollaborationContextProvider, ContractContextProvider, FirebaseStorageContextProvider, NotificationContextProvider, SocialContextProvider, useAuthContext } from "@/contexts";
+import { streamClient } from "@/contexts/chat-context.provider";
+import { CloudMessagingContextProvider } from "@/shared-libs/contexts/cloud-messaging.provider";
 import { Stack } from "expo-router";
 
 const MainLayout = () => {
+  const { user, updateUser } = useAuthContext()
   return (
-    <ChatContextProvider>
-      <SocialContextProvider>
-        <AWSContextProvider>
-          <FirebaseStorageContextProvider>
-            <BrandContextProvider>
-              <CollaborationContextProvider>
-                <ContractContextProvider>
-                  <NotificationContextProvider>
-                    <CloudMessagingContextProvider>
+    <SocialContextProvider>
+      <AWSContextProvider>
+        <FirebaseStorageContextProvider>
+          <BrandContextProvider>
+            <CollaborationContextProvider>
+              <ContractContextProvider>
+                <NotificationContextProvider>
+                  <CloudMessagingContextProvider streamClient={streamClient} userOrmanager={user} updateUserOrManager={updateUser}>
+                    <ChatContextProvider>
                       <Stack
                         screenOptions={{
                           animation: "ios",
@@ -39,15 +42,16 @@ const MainLayout = () => {
                           }}
                         />
                       </Stack>
-                    </CloudMessagingContextProvider>
-                  </NotificationContextProvider>
-                </ContractContextProvider>
-              </CollaborationContextProvider>
-            </BrandContextProvider>
-          </FirebaseStorageContextProvider>
-        </AWSContextProvider>
-      </SocialContextProvider>
-    </ChatContextProvider>
+                    </ChatContextProvider>
+                  </CloudMessagingContextProvider>
+                </NotificationContextProvider>
+              </ContractContextProvider>
+            </CollaborationContextProvider>
+          </BrandContextProvider>
+        </FirebaseStorageContextProvider>
+      </AWSContextProvider>
+    </SocialContextProvider>
+
   );
 };
 
