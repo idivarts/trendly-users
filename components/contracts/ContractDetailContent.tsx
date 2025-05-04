@@ -77,14 +77,16 @@ const ContractDetailsContent = (props: CollaborationDetailsContentProps) => {
       <View style={styles.profileCard}>
         {props?.collaborationDetail?.attachments &&
           props?.collaborationDetail?.attachments.length > 0 && (
-            <Carousel
-              theme={theme}
-              data={
-                props?.collaborationDetail?.attachments?.map((attachment) =>
-                  processRawAttachment(attachment)
-                ) || []
-              }
-            />
+            <View style={{ alignSelf: "center" }}>
+              <Carousel
+                theme={theme}
+                data={
+                  props?.collaborationDetail?.attachments?.map((attachment) =>
+                    processRawAttachment(attachment)
+                  ) || []
+                }
+              />
+            </View>
           )}
         <Card.Content style={styles.profileContent}>
           {/* About Collaboration */}
