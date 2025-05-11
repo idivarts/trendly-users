@@ -1,8 +1,9 @@
 import { Text, View } from "@/components/theme/Themed";
 import Colors from "@/constants/Colors";
-import { useAuthContext } from "@/contexts";
 import { IContracts } from "@/shared-libs/firestore/trendly-pro/models/contracts";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
+import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
+import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { faClose, faStar } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
@@ -39,7 +40,6 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
   const theme = useTheme();
   const [selectedStar, setSelectedStar] = useState(star);
   const [textFeedback, setTextFeedback] = useState("");
-  const { user } = useAuthContext();
 
   const provideFeedback = async () => {
     try {
@@ -48,8 +48,11 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
         "contracts",
         contract.streamChannelId
       );
+      if (contract.status != 2) {
+        Toaster.error("The contract has still not ended. You cant rate it still")
+      }
       if (textFeedback === "" || selectedStar === 0) {
-        alert("Please provide feedback and rating before submitting");
+        Toaster.error("Please provide feedback and rating before submitting")
         return;
       }
       const date = new Date();
@@ -59,13 +62,12 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
           ratings: selectedStar,
           timeSubmitted: date.getTime(),
         },
-      });
+        status: 3,
+      })
+      HttpWrapper.fetch(`/api/v1/contracts/${contract.streamChannelId}/feedback`, {
+        method: "POST"
+      })
 
-      if (contract.feedbackFromBrand?.feedbackReview) {
-        await updateDoc(contractRef, {
-          status: 3,
-        });
-      }
       setVisibility(false);
       refreshData();
     } catch (e) {
