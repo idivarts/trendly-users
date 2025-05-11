@@ -18,7 +18,7 @@ export const streamClient = StreamChat.getInstance(
 interface ChatContextProps {
   connectUser: () => Promise<string>;
   fetchMembers: (channel: string) => Promise<any>;
-  sendSystemMessage: (channel: string, message: string) => void;
+  // sendSystemMessage: (channel: string, message: string) => void;
   fetchChannelCid: (channelId: string) => Promise<string>;
   hasError?: boolean;
 }
@@ -26,7 +26,7 @@ interface ChatContextProps {
 const ChatContext = createContext<ChatContextProps>({
   connectUser: async () => "",
   fetchMembers: async () => { },
-  sendSystemMessage: async () => { },
+  // sendSystemMessage: async () => { },
   fetchChannelCid: async () => "",
   hasError: false,
 });
@@ -110,18 +110,18 @@ export const ChatContextProvider: React.FC<PropsWithChildren> = ({
     return membersList;
   };
 
-  const sendSystemMessage = async (channel: string, message: string) => {
-    const channelToWatch = streamClient.channel("messaging", channel);
-    const messageToSend = {
-      text: message,
-      user: {
-        id: "system",
-        name: "system",
-      },
-      type: "system",
-    };
-    channelToWatch.sendMessage(messageToSend);
-  };
+  // const sendSystemMessage = async (channel: string, message: string) => {
+  //   const channelToWatch = streamClient.channel("messaging", channel);
+  //   const messageToSend = {
+  //     text: message,
+  //     user: {
+  //       id: "system",
+  //       name: "system",
+  //     },
+  //     type: "system",
+  //   };
+  //   channelToWatch.sendMessage(messageToSend);
+  // };
 
   const fetchChannelCid = async (channelId: string) => {
     const channel = streamClient.channel("messaging", channelId);
@@ -134,7 +134,7 @@ export const ChatContextProvider: React.FC<PropsWithChildren> = ({
       value={{
         connectUser,
         fetchMembers,
-        sendSystemMessage,
+        // sendSystemMessage,
         fetchChannelCid,
         hasError,
       }}

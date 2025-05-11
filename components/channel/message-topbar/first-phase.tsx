@@ -1,13 +1,13 @@
-import React, { useEffect, useRef, useState } from "react";
 import QuotationBottomSheet from "@/components/modals/quotation-bottom-sheet";
 import { View } from "@/components/theme/Themed";
 import Button from "@/components/ui/button";
 import { CHAT_MESSAGE_TOPBAR_DESCRIPTION } from "@/constants/ChatMessageTopbar";
-import MessageTopbar from "@/shared-uis/components/chat-message-bar";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import { useChatContext, useCollaborationContext } from "@/contexts";
-import { Contract } from "@/types/Contract";
+import { useCollaborationContext } from "@/contexts";
 import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
+import MessageTopbar from "@/shared-uis/components/chat-message-bar";
+import { Contract } from "@/types/Contract";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import React, { useEffect, useRef, useState } from "react";
 
 interface FirstPhaseProps {
   contract: Contract;
@@ -22,10 +22,6 @@ const FirstPhase: React.FC<FirstPhaseProps> = ({
   const [timeline, setTimeline] = useState<Date | null>(null);
 
   const {
-    sendSystemMessage
-  } = useChatContext();
-
-  const {
     getApplicationById,
     updateApplication,
   } = useCollaborationContext();
@@ -33,7 +29,7 @@ const FirstPhase: React.FC<FirstPhaseProps> = ({
   const fetchApplication = async () => {
     const application = await getApplicationById(contract.userId, contract.collaborationId);
     setApplication(application);
-    setQuotation(application?.quotation || "");
+    setQuotation("" + (application?.quotation || ""));
     setTimeline(application?.timeline ? new Date(application?.timeline) : null);
   };
 
@@ -55,7 +51,7 @@ const FirstPhase: React.FC<FirstPhaseProps> = ({
       data
     ).then(() => {
       fetchApplication();
-      sendSystemMessage(contract.id, "The Quotation for this collaboration is revised.");
+      // sendSystemMessage(contract.id, "The Quotation for this collaboration is revised.");
       bottomSheetModalRef.current?.close();
     });
   }
@@ -75,7 +71,7 @@ const FirstPhase: React.FC<FirstPhaseProps> = ({
               size="small"
               mode="text"
               onPress={() => {
-                sendSystemMessage(contract.id, "Start Contract");
+                // sendSystemMessage(contract.id, "Start Contract");
               }}
             >
               Start Contract
