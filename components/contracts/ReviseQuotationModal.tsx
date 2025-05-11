@@ -1,6 +1,7 @@
 import Colors from "@/constants/Colors";
 import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
+import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import {
   faClockRotateLeft,
@@ -64,6 +65,11 @@ const ReviseQuotationModal: FC<ReviseQuotationModalProps> = ({
         quotation: quotation,
         timeline: timeline?.getTime(),
       });
+
+      HttpWrapper.fetch(`/api/v1/collaborations/${application?.collaborationId}/application/${application?.id}`, {
+        method: "PUT"
+      })
+
       Toaster.success("Quotation updated successfully");
       onDismiss();
       refreshData();
@@ -77,7 +83,7 @@ const ReviseQuotationModal: FC<ReviseQuotationModalProps> = ({
     if (application) {
       const date = new Date(application.timeline);
       setTimeline(date);
-      setQuotation(application.quotation);
+      setQuotation("" + application.quotation);
     }
   }, [application]);
 
