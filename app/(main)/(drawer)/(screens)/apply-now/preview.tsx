@@ -1,7 +1,4 @@
-import { CardActions } from "@/components/collaboration/card-components/secondary/card-actions";
-import { CardDescription } from "@/components/collaboration/card-components/secondary/card-description";
 import { CardFooter } from "@/components/collaboration/card-components/secondary/card-footer";
-import { CardHeader } from "@/components/collaboration/card-components/secondary/card-header";
 import { useApplication } from "@/components/proposals/useApplication";
 import Button from "@/components/ui/button";
 import ScreenHeader from "@/components/ui/screen-header";
@@ -10,17 +7,14 @@ import { MAX_WIDTH_WEB } from "@/constants/Container";
 import { useAuthContext } from "@/contexts";
 import { useBreakpoints } from "@/hooks";
 import AppLayout from "@/layouts/app-layout";
-import { Attachment } from "@/shared-libs/firestore/trendly-pro/constants/attachment";
 import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { processRawAttachment } from "@/shared-libs/utils/attachments";
-import Carousel from "@/shared-uis/components/carousel/carousel";
+import InfluencerCard from "@/shared-uis/components/InfluencerCard";
 import { convertToKUnits } from "@/utils/conversion";
 import { useTheme } from "@react-navigation/native";
 import { router, useLocalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Platform, ScrollView, Text, View } from "react-native";
-import { Card } from "react-native-paper";
-;
 
 const Preview = () => {
   const params = useLocalSearchParams();
@@ -163,41 +157,37 @@ const Preview = () => {
     }
   };
 
+  // const { user } = useAuthContext()
+  console.log("Raw attachments", rawAttachments);
+
   return (
     <AppLayout withWebPadding={true}>
       <ScreenHeader title="Preview" />
       <ScrollView>
-        <Card
-          style={[{
-            paddingVertical: 16,
-          }, Platform.OS === "web" ? { alignSelf: "center", maxWidth: MAX_WIDTH_WEB, marginVertical: 8 } : {}]}
-        >
-          <CardHeader
-            avatar={user?.profileImage || ""}
-            handle={user?.socials?.[0]}
-            isVerified={user?.isVerified}
-            name={user?.name || ""}
-          />
-          <Carousel
-            data={rawAttachments.map((attachment: Attachment) =>
-              processRawAttachment(attachment)
-            )}
-            theme={theme}
-          />
-          <CardActions
-            metrics={{
-              followers: user?.backend?.followers || 0,
-              reach: user?.backend?.reach || 0,
-              rating: user?.backend?.rating || 0,
+        {user &&
+          <InfluencerCard
+            style={[{
+              paddingVertical: 16,
+            }, Platform.OS === "web" ? { alignSelf: "center", maxWidth: MAX_WIDTH_WEB, marginVertical: 8 } : {}]}
+            influencer={{
+              ...user, profile: {
+                ...user.profile,
+                content: {
+                  ...user.profile?.content,
+                  about: note
+                }
+              }
             }}
+            customAttachments={rawAttachments}
+            ToggleModal={() => { }}
+            openProfile={() => { }}
+            type="application"
+            footerNode={<CardFooter
+              quote={convertToKUnits(Number(quotation)) as string}
+              timeline={new Date(timeline).toLocaleDateString("en-US")}
+            />}
           />
-          <CardDescription text={note} />
-          <CardFooter
-            quote={convertToKUnits(Number(quotation)) as string}
-            timeline={new Date(timeline).toLocaleDateString("en-US")}
-          />
-        </Card>
-
+        }
       </ScrollView>
       <View style={{ paddingHorizontal: 16, paddingBottom: 8 }}>
         <Text
