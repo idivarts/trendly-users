@@ -1,4 +1,3 @@
-import { CardActions } from "@/components/collaboration/card-components/secondary/card-actions";
 import { CardDescription } from "@/components/collaboration/card-components/secondary/card-description";
 import { CardFooter } from "@/components/collaboration/card-components/secondary/card-footer";
 import { CardHeader } from "@/components/collaboration/card-components/secondary/card-header";
@@ -14,6 +13,7 @@ import { Attachment } from "@/shared-libs/firestore/trendly-pro/constants/attach
 import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { processRawAttachment } from "@/shared-libs/utils/attachments";
 import Carousel from "@/shared-uis/components/carousel/carousel";
+import { InfluencerMetrics } from "@/shared-uis/components/influencers/influencer-metrics";
 import { convertToKUnits } from "@/utils/conversion";
 import { useTheme } from "@react-navigation/native";
 import { router, useLocalSearchParams } from "expo-router";
@@ -184,13 +184,7 @@ const Preview = () => {
             )}
             theme={theme}
           />
-          <CardActions
-            metrics={{
-              followers: user?.backend?.followers || 0,
-              reach: user?.backend?.reach || 0,
-              rating: user?.backend?.rating || 0,
-            }}
-          />
+          {user && <InfluencerMetrics user={user} />}
           <CardDescription text={note} />
           <CardFooter
             quote={convertToKUnits(Number(quotation)) as string}

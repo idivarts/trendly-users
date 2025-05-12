@@ -1,16 +1,12 @@
 import Colors from "@/constants/Colors";
 import Carousel from "@/shared-uis/components/carousel/carousel";
 import ImageComponent from "@/shared-uis/components/image-component";
+import { InfluencerMetrics } from "@/shared-uis/components/influencers/influencer-metrics";
 import { stylesFn } from "@/styles/InfluencerCard.styles";
-import { convertToKUnits } from "@/utils/conversion";
-import { faStar } from "@fortawesome/free-regular-svg-icons";
 import {
-  faArrowTrendUp,
   faCheck,
   faEllipsis,
-  faMessage,
-  faPeopleGroup,
-  faPlus,
+  faPlus
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
@@ -47,9 +43,9 @@ interface InfluencerCardPropsType {
     handle: string;
     profilePic: string;
     media: MediaItem[];
-    followers: number | string;
-    reach: number | string;
-    rating: number | string;
+    followers: number;
+    reach: number;
+    rating: number;
     bio: string;
     jobsCompleted: number | string;
     successRate: number | string;
@@ -190,47 +186,13 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
           </Text>
         </TouchableOpacity>
 
-        <View style={styles.content}>
-          <View style={styles.stats}>
-            <View style={styles.statsContainer}>
-              <View style={styles.statItem}>
-                <FontAwesomeIcon
-                  icon={faPeopleGroup}
-                  color={Colors(theme).primary}
-                  size={20}
-                />
-                <Text style={styles.statsText}>
-                  {convertToKUnits(Number(influencer.followers))}
-                </Text>
-              </View>
-              <View style={styles.statItem}>
-                <FontAwesomeIcon
-                  icon={faArrowTrendUp}
-                  color={Colors(theme).primary}
-                  size={20}
-                />
-                <Text style={styles.statsText}>
-                  {convertToKUnits(Number(influencer.reach))}
-                </Text>
-              </View>
-              <View style={styles.statItem}>
-                <FontAwesomeIcon
-                  icon={faStar}
-                  color={Colors(theme).primary}
-                  size={20}
-                />
-                <Text style={styles.statsText}>{influencer.rating}</Text>
-              </View>
-            </View>
-            <View style={styles.statItem}>
-              <FontAwesomeIcon
-                icon={faMessage}
-                color={Colors(theme).primary}
-                size={18}
-              />
-            </View>
-          </View>
-        </View>
+        <InfluencerMetrics user={{
+          backend: {
+            followers: influencer.followers,
+            rating: influencer.rating,
+            reach: influencer.reach
+          }
+        }} />
       </Card>
 
       <Modal visible={isZoomed} transparent={true} animationType="fade">
