@@ -186,13 +186,15 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
           </Text>
         </TouchableOpacity>
 
-        <InfluencerMetrics user={{
-          backend: {
-            followers: influencer.followers,
-            rating: influencer.rating,
-            reach: influencer.reach
-          }
-        }} />
+        <View style={{ paddingHorizontal: 16 }}>
+          <InfluencerMetrics user={{
+            backend: {
+              followers: influencer.followers,
+              rating: influencer.rating,
+              reach: influencer.reach
+            }
+          }} />
+        </View>
       </Card>
 
       <Modal visible={isZoomed} transparent={true} animationType="fade">

@@ -17,7 +17,7 @@ import { InfluencerMetrics } from "@/shared-uis/components/influencers/influence
 import { convertToKUnits } from "@/utils/conversion";
 import { useTheme } from "@react-navigation/native";
 import { router, useLocalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Platform, ScrollView, Text, View } from "react-native";
 import { Card } from "react-native-paper";
 ;
@@ -184,7 +184,9 @@ const Preview = () => {
             )}
             theme={theme}
           />
-          {user && <InfluencerMetrics user={user} />}
+          <View style={{ paddingHorizontal: 16 }}>
+            {user && <InfluencerMetrics user={user} />}
+          </View>
           <CardDescription text={note} />
           <CardFooter
             quote={convertToKUnits(Number(quotation)) as string}
