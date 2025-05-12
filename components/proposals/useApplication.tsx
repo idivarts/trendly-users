@@ -15,12 +15,12 @@ export const useApplication = () => {
         const applicantColRef = collection(
             FirestoreDB,
             "collaborations",
-            uid,
+            collaborationId,
             "applications"
         );
         if (typeof application.quotation != "number")
             application.quotation = parseInt(application.quotation)
-        const applicantDocRef = doc(applicantColRef, user?.id);
+        const applicantDocRef = doc(applicantColRef, uid);
         await setDoc(applicantDocRef, application)
         HttpWrapper.fetch(`/api/v1/collaborations/${collaborationId}/applications/${uid}`, {
             method: "POST"
@@ -35,10 +35,10 @@ export const useApplication = () => {
         const applicantColRef = collection(
             FirestoreDB,
             "collaborations",
-            uid,
+            collaborationId,
             "applications"
         );
-        const applicantDocRef = doc(applicantColRef, user?.id);
+        const applicantDocRef = doc(applicantColRef, uid);
         if (application.quotation && typeof application.quotation != "number")
             application.quotation = parseInt(application.quotation)
         await updateDoc(applicantDocRef, application)

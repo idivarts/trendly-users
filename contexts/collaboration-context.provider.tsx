@@ -1,5 +1,5 @@
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
-import { collection, doc, getDoc, updateDoc } from "firebase/firestore";
+import { collection, doc, getDoc } from "firebase/firestore";
 import {
   createContext,
   useContext,
@@ -7,6 +7,7 @@ import {
 } from "react";
 ;
 
+import { useApplication } from "@/components/proposals/useApplication";
 import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { Application } from "@/types/Collaboration";
 
@@ -32,6 +33,7 @@ export const useCollaborationContext = () => useContext(CollaborationContext);
 export const CollaborationContextProvider: React.FC<PropsWithChildren> = ({
   children,
 }) => {
+  const { updateApplication: mainUpdateApplication } = useApplication()
   const getApplicationById = async (
     userId: string,
     collaborationId: string
@@ -61,15 +63,7 @@ export const CollaborationContextProvider: React.FC<PropsWithChildren> = ({
     collaborationId: string,
     application: Partial<IApplications>,
   ) => {
-    const applicationColRef = collection(
-      FirestoreDB,
-      "collaborations",
-      collaborationId,
-      "applications"
-    );
-
-    const applicationDocRef = doc(applicationColRef, userId);
-    await updateDoc(applicationDocRef, application);
+    await mainUpdateApplication(collaborationId, application)
   }
 
   return (
