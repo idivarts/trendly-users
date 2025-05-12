@@ -1,3 +1,4 @@
+import { useApplication } from "@/components/proposals/useApplication";
 import { TextModal } from "@/components/TextInputModal/TextModal.web";
 import AssetsPreview from "@/components/ui/assets-preview";
 import Button from "@/components/ui/button";
@@ -30,7 +31,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { useTheme } from "@react-navigation/native";
 import * as DocumentPicker from "expo-document-picker";
 import { router, useLocalSearchParams } from "expo-router";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { Platform, ScrollView, View } from "react-native";
 import {
@@ -55,7 +56,7 @@ const ApplyScreenWeb = () => {
   const [quotation, setQuotation] = useState<string>("");
   const [questions, setQuestions] = useState<string[]>([]);
   const [originalAttachments, setOriginalAttachments] = useState<any[]>([]);
-  const [answers, setAnswers] = useState<{ [key: string]: string }>(
+  const [answers, setAnswers] = useState<{ [key: number]: string }>(
     params.answers ? JSON.parse(params.answers as string) : {}
   );
 
@@ -93,11 +94,12 @@ const ApplyScreenWeb = () => {
 
   const {
     processMessage,
-    processPercentage,
     setProcessMessage,
     uploadFiles,
     uploadAttachments,
   } = useAWSContext();
+
+  const { updateApplication } = useApplication()
 
   const handleFileSelection = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = event.target.files;
@@ -152,7 +154,7 @@ const ApplyScreenWeb = () => {
 
     if (applicationData) {
       setNote(applicationData.message || "");
-      setQuotation(applicationData.quotation || "");
+      setQuotation("" + (applicationData.quotation || ""));
       setTimelineData(
         applicationData.timeline ? new Date(applicationData.timeline) : null
       );
@@ -248,27 +250,20 @@ const ApplyScreenWeb = () => {
 
       const timelineTimestamp = timelineData?.getTime() || 0;
 
-      const applicationRef = doc(
-        FirestoreDB,
-        "collaborations",
-        params.collaborationId as string,
-        "applications",
-        pageID
-      );
-
-      await updateDoc(applicationRef, {
+      await updateApplication(params.collaborationId as string, {
         message: note,
         attachments: finalMedia,
         quotation: quotation,
         timeline: timelineTimestamp,
         fileAttachments: finalFileAttachments,
+        // @ts-ignore
         answersFromInfluencer: Object.entries(answers).map(
           ([question, answer]) => ({
             question,
             answer,
           })
         ),
-      });
+      })
 
       Toaster.success("Application updated successfully");
       setLoading(false);

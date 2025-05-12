@@ -2,6 +2,7 @@ import { CardActions } from "@/components/collaboration/card-components/secondar
 import { CardDescription } from "@/components/collaboration/card-components/secondary/card-description";
 import { CardFooter } from "@/components/collaboration/card-components/secondary/card-footer";
 import { CardHeader } from "@/components/collaboration/card-components/secondary/card-header";
+import { useApplication } from "@/components/proposals/useApplication";
 import Button from "@/components/ui/button";
 import ScreenHeader from "@/components/ui/screen-header";
 import Colors from "@/constants/Colors";
@@ -12,12 +13,10 @@ import AppLayout from "@/layouts/app-layout";
 import { Attachment } from "@/shared-libs/firestore/trendly-pro/constants/attachment";
 import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { processRawAttachment } from "@/shared-libs/utils/attachments";
-import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import Carousel from "@/shared-uis/components/carousel/carousel";
 import { convertToKUnits } from "@/utils/conversion";
 import { useTheme } from "@react-navigation/native";
 import { router, useLocalSearchParams } from "expo-router";
-import { collection, doc, setDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { Platform, ScrollView, Text, View } from "react-native";
 import { Card } from "react-native-paper";
@@ -47,6 +46,8 @@ const Preview = () => {
   const { xl } = useBreakpoints();
 
   const { user } = useAuthContext();
+
+  const { insertApplication } = useApplication();
 
   useEffect(() => {
     try {
@@ -145,25 +146,15 @@ const Preview = () => {
         timeline,
       };
 
-      const applicantColRef = collection(
-        FirestoreDB,
-        "collaborations",
-        pageID,
-        "applications"
-      );
+      await insertApplication(pageID, applicantData).then(() => {
+        setErrorMessage("Application submitted successfully");
+        setTimeout(() => {
+          router.navigate("/collaborations");
+        }, 1000); // Give user time to see success message
+      }).catch((e) => {
+        setErrorMessage("Failed to submit application");
+      });
 
-      // Application Id as userId
-      const applicantDocRef = doc(applicantColRef, user?.id);
-      await setDoc(applicantDocRef, applicantData)
-        .then(() => {
-          setErrorMessage("Application submitted successfully");
-          setTimeout(() => {
-            router.navigate("/collaborations");
-          }, 1000); // Give user time to see success message
-        })
-        .catch((e) => {
-          setErrorMessage("Failed to submit application");
-        });
     } catch (e) {
       console.error(e);
       setErrorMessage("Error submitting application");
