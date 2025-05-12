@@ -1,3 +1,4 @@
+import { useApplication } from "@/components/proposals/useApplication";
 import AssetsPreview from "@/components/ui/assets-preview";
 import Button from "@/components/ui/button";
 import ListItem from "@/components/ui/list-item/ListItem";
@@ -28,7 +29,7 @@ import { useIsFocused, useTheme } from "@react-navigation/native";
 import * as DocumentPicker from "expo-document-picker";
 import * as MediaLibrary from "expo-media-library";
 import { router, useLocalSearchParams } from "expo-router";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { Platform, ScrollView, View } from "react-native";
 import {
@@ -102,11 +103,12 @@ const EditApplicationScreen = () => {
 
   const {
     processMessage,
-    processPercentage,
     setProcessMessage,
     uploadFileUris,
     uploadAttachments,
   } = useAWSContext();
+
+  const { updateApplication } = useApplication()
 
   const handleAssetUpload = async () => {
     try {
@@ -213,27 +215,21 @@ const EditApplicationScreen = () => {
       ];
       const timelineTimestamp = timelineData?.getTime();
 
-      const applicationRef = doc(
-        FirestoreDB,
-        "collaborations",
-        params.collaborationId as string,
-        "applications",
-        pageID
-      );
-
-      await updateDoc(applicationRef, {
+      await updateApplication(params.collaborationId as string, {
         message: note,
+        // @ts-ignore
         attachments: finalFilesSending,
         quotation: quotation,
         timeline: timelineTimestamp,
         fileAttachments: finalFileAttachment,
+        // @ts-ignore
         answersFromInfluencer: Object.entries(answers).map(
           ([question, answer]) => ({
             question,
             answer,
           })
         ),
-      });
+      })
 
       Toaster.success("Application updated successfully");
       setLoading(false);
@@ -354,7 +350,7 @@ const EditApplicationScreen = () => {
 
     if (applicationData) {
       setNote(applicationData.message || "");
-      setQuotation(applicationData.quotation || "");
+      setQuotation("" + (applicationData.quotation || ""));
       setTimelineData(
         applicationData.timeline ? new Date(applicationData.timeline) : null
       );

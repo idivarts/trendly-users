@@ -1,6 +1,5 @@
 import Colors from "@/constants/Colors";
 import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
-import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import {
   faClockRotateLeft,
@@ -9,10 +8,6 @@ import {
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useTheme } from "@react-navigation/native";
 import { router, useLocalSearchParams } from "expo-router";
-import {
-  doc,
-  updateDoc,
-} from "firebase/firestore";
 import React, { FC, useEffect, useState } from "react";
 import {
   Modal,
@@ -21,6 +16,7 @@ import {
   View,
 } from "react-native";
 import { Text } from "react-native-paper";
+import { useApplication } from "../proposals/useApplication";
 import Button from "../ui/button";
 import ListItem from "../ui/list-item/ListItem";
 ;
@@ -49,21 +45,15 @@ const ReviseQuotationModal: FC<ReviseQuotationModalProps> = ({
   const [timeline, setTimeline] = useState<Date | null>();
   const [quotation, setQuotation] = useState("");
   const params = useLocalSearchParams();
-
-  const updateApplication = async () => {
+  const { updateApplication } = useApplication()
+  const updateMyApplication = async () => {
     try {
       if (!application) return;
-      const applicationRef = doc(
-        FirestoreDB,
-        "collaborations",
-        application?.collaborationId,
-        "applications",
-        application?.id
-      );
-      await updateDoc(applicationRef, {
+      await updateApplication(application.collaborationId, {
         quotation: quotation,
         timeline: timeline?.getTime(),
-      });
+      })
+
       Toaster.success("Quotation updated successfully");
       onDismiss();
       refreshData();
@@ -77,7 +67,7 @@ const ReviseQuotationModal: FC<ReviseQuotationModalProps> = ({
     if (application) {
       const date = new Date(application.timeline);
       setTimeline(date);
-      setQuotation(application.quotation);
+      setQuotation("" + application.quotation);
     }
   }, [application]);
 
@@ -133,7 +123,7 @@ const ReviseQuotationModal: FC<ReviseQuotationModalProps> = ({
           content={timeline ? timeline.toLocaleDateString() : ""}
           onAction={() => setShowDatePicker(true)}
         />
-        <Button mode="contained" style={{}} onPress={updateApplication}>
+        <Button mode="contained" style={{}} onPress={updateMyApplication}>
           Revise Quotation
         </Button>
       </View>

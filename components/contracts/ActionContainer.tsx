@@ -4,6 +4,7 @@ import { IContracts } from "@/shared-libs/firestore/trendly-pro/models/contracts
 import { IManagers } from "@/shared-libs/firestore/trendly-pro/models/managers";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
+import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import ImageComponent from "@/shared-uis/components/image-component";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import {
@@ -37,7 +38,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
 }) => {
   const theme = useTheme();
   const [manager, setManager] = useState<IManagers>();
-  const { sendSystemMessage, fetchChannelCid } = useChatContext();
+  const { fetchChannelCid } = useChatContext();
 
   const renderStars = (rating: number) => {
     const fullStars = Math.floor(rating);
@@ -105,11 +106,12 @@ const ActionContainer: FC<ActionContainerProps> = ({
                 }}
                 onPress={() => {
                   try {
-                    sendSystemMessage(
-                      contract.streamChannelId,
-                      "Let's start the contract"
-                    );
-                    Toaster.success("Sent message to the brand");
+                    Toaster.success("Successfully informed brand to start the collaboration");
+                    HttpWrapper.fetch(`/api/v1/contracts/${contract.streamChannelId}`, {
+                      method: "POST"
+                    }).catch(e => {
+                      Toaster.error("Successfully went wrong!!");
+                    })
                   } catch (e) {
                     console.log(e);
                   }
@@ -138,11 +140,12 @@ const ActionContainer: FC<ActionContainerProps> = ({
                 onPress={() => {
                   {
                     try {
-                      sendSystemMessage(
-                        contract.streamChannelId,
-                        "Let's end the contract"
-                      );
-                      Toaster.success("Sent message to the brand");
+                      Toaster.success("Successfully informed brand to end the collaboration");
+                      HttpWrapper.fetch(`/api/v1/contracts/${contract.streamChannelId}/end`, {
+                        method: "POST"
+                      }).catch(r => {
+                        Toaster.error("Something went wrong");
+                      })
                     } catch (e) {
                       console.log(e);
                     }

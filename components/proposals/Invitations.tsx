@@ -5,6 +5,7 @@ import { MAX_WIDTH_WEB } from "@/constants/Container";
 import { useAuthContext } from "@/contexts";
 import { useBreakpoints } from "@/hooks";
 import AppLayout from "@/layouts/app-layout";
+import { Attachment } from "@/shared-libs/firestore/trendly-pro/constants/attachment";
 import { processRawAttachment } from "@/shared-libs/utils/attachments";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import Carousel from "@/shared-uis/components/carousel/carousel";
@@ -194,7 +195,7 @@ const Invitations = () => {
                 <Carousel
                   theme={theme}
                   data={
-                    user?.profile?.attachments?.map((attachment) =>
+                    item.attachments?.map((attachment: Attachment) =>
                       processRawAttachment(attachment)
                     ) || []
                   }
