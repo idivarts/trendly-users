@@ -18,6 +18,8 @@ export const useApplication = () => {
             uid,
             "applications"
         );
+        if (typeof application.quotation != "number")
+            application.quotation = parseInt(application.quotation)
         const applicantDocRef = doc(applicantColRef, user?.id);
         await setDoc(applicantDocRef, application)
         HttpWrapper.fetch(`/api/v1/collaborations/${collaborationId}/applications/${uid}`, {
@@ -37,6 +39,8 @@ export const useApplication = () => {
             "applications"
         );
         const applicantDocRef = doc(applicantColRef, user?.id);
+        if (application.quotation && typeof application.quotation != "number")
+            application.quotation = parseInt(application.quotation)
         await updateDoc(applicantDocRef, application)
         HttpWrapper.fetch(`/api/v1/collaborations/${collaborationId}/applications/${uid}`, {
             method: "PUT"
