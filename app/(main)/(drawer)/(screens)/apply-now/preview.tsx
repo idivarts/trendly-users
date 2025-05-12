@@ -3,6 +3,7 @@ import { useApplication } from "@/components/proposals/useApplication";
 import Button from "@/components/ui/button";
 import ScreenHeader from "@/components/ui/screen-header";
 import Colors from "@/constants/Colors";
+import { MAX_WIDTH_WEB } from "@/constants/Container";
 import { useAuthContext } from "@/contexts";
 import { useBreakpoints } from "@/hooks";
 import AppLayout from "@/layouts/app-layout";
@@ -13,8 +14,7 @@ import { convertToKUnits } from "@/utils/conversion";
 import { useTheme } from "@react-navigation/native";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { ScrollView, Text, View } from "react-native";
-;
+import { Platform, ScrollView, Text, View } from "react-native";
 
 const Preview = () => {
   const params = useLocalSearchParams();
@@ -158,6 +158,7 @@ const Preview = () => {
   };
 
   // const { user } = useAuthContext()
+  console.log("Raw attachments", rawAttachments);
 
   return (
     <AppLayout withWebPadding={true}>
@@ -165,6 +166,9 @@ const Preview = () => {
       <ScrollView>
         {user &&
           <InfluencerCard
+            style={[{
+              paddingVertical: 16,
+            }, Platform.OS === "web" ? { alignSelf: "center", maxWidth: MAX_WIDTH_WEB, marginVertical: 8 } : {}]}
             influencer={{
               ...user, profile: {
                 ...user.profile,
@@ -182,7 +186,8 @@ const Preview = () => {
               quote={convertToKUnits(Number(quotation)) as string}
               timeline={new Date(timeline).toLocaleDateString("en-US")}
             />}
-          />}
+          />
+        }
       </ScrollView>
       <View style={{ paddingHorizontal: 16, paddingBottom: 8 }}>
         <Text
