@@ -214,15 +214,6 @@ const Applications = () => {
                   (attachment: MediaItem) => processRawAttachment(attachment)
                 ) || []} MAX_WIDTH_WEB={MAX_WIDTH_WEB} />
 
-              {/* <Carousel
-                theme={theme}
-                data={
-                  item.applications[index].attachments.map(
-                    (attachment: MediaItem) => processRawAttachment(attachment)
-                  ) || []
-                }
-                carouselWidth={MAX_WIDTH_WEB}
-              /> */}
               <Pressable
                 onPress={() => {
                   router.push({

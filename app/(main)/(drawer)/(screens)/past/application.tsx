@@ -169,17 +169,6 @@ const PastApplicationPage = (props: any) => {
                   []
                 }
               />
-              {/* <Carousel
-                theme={theme}
-                data={
-                  (item.applications[index].attachments &&
-                    item.applications[index].attachments.map(
-                      (attachment: MediaItem) =>
-                        processRawAttachment(attachment)
-                    )) ||
-                  []
-                }
-              /> */}
               <Pressable
                 onPress={() => {
                   router.push({

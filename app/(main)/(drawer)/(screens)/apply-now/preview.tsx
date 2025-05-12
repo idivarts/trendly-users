@@ -183,30 +183,6 @@ const Preview = () => {
               timeline={new Date(timeline).toLocaleDateString("en-US")}
             />}
           />}
-        {/* <Card
-          style={[{
-            paddingVertical: 16,
-          }, Platform.OS === "web" ? { alignSelf: "center", maxWidth: MAX_WIDTH_WEB, marginVertical: 8 } : {}]}
-        >
-          <CardHeader
-            avatar={user?.profileImage || ""}
-            handle={user?.socials?.[0]}
-            isVerified={user?.isVerified}
-            name={user?.name || ""}
-          />
-          <Carousel
-            data={rawAttachments.map((attachment: Attachment) =>
-              processRawAttachment(attachment)
-            )}
-            theme={theme}
-          />
-          <View style={{ paddingHorizontal: 16 }}>
-            {user && <InfluencerMetrics user={user} />}
-          </View>
-          <CardDescription text={note} />
-          
-        </Card> */}
-
       </ScrollView>
       <View style={{ paddingHorizontal: 16, paddingBottom: 8 }}>
         <Text
