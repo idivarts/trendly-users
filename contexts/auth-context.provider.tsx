@@ -175,7 +175,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
     else
       resetAndNavigate("/collaborations");
 
-    if (user?.settings?.accountStatus != AccountStatus.Activated)
+    if (user?.settings?.accountStatus == AccountStatus.Deactivated)
       updateUser(uid, {
         settings: {
           ...user?.settings,
