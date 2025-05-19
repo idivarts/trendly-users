@@ -60,9 +60,9 @@ export const useGoogleLogin = (setLoading: Function, setError: Function) => {
                 await evalResult(result);
             } else {
                 const result = await promptAsync();
-                if (result?.type === 'success') {
+                if (result?.type === 'success' && result.authentication) {
                     setLoading(true);
-                    const credential = GoogleAuthProvider.credential(null, result.authentication?.accessToken);
+                    const credential = GoogleAuthProvider.credential(result.authentication.idToken, result.authentication.accessToken);
                     const firebaseResult = await signInWithCredential(AuthApp, credential);
                     await evalResult(firebaseResult);
                 } else {
