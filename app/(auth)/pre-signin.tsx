@@ -9,7 +9,7 @@ import { AuthApp } from "@/shared-libs/utils/firebase/auth";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import stylesFn from "@/styles/tab1.styles";
 import { imageUrl } from "@/utils/url";
-import { faFacebook, faGoogle, faInstagram } from "@fortawesome/free-brands-svg-icons";
+import { faApple, faFacebook, faGoogle, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
@@ -35,6 +35,7 @@ import BottomSheetActions from "@/components/BottomSheetActions";
 import ProfileOnboardLoader from "@/components/ProfileOnboardLoader";
 import { IS_BETA_ENABLED } from "@/constants/App";
 import { useBreakpoints } from "@/hooks";
+import { useAppleLogin } from "@/hooks/requests/use-apple-login";
 import { useGoogleLogin } from "@/hooks/requests/use-google-login";
 import { runOnJS, useSharedValue } from "react-native-reanimated";
 import Swiper from "react-native-swiper";
@@ -72,6 +73,7 @@ const PreSignIn = () => {
     );
 
   const { googleLogin } = useGoogleLogin(setLoading, setError);
+  const { appleLogin } = useAppleLogin(setLoading, setError);
 
   const skipToConnect = () => {
     const connectSlideIndex = slides.findIndex(
@@ -158,6 +160,12 @@ const PreSignIn = () => {
                     label="Continue with Google"
                     onPress={googleLogin}
                   />
+                  {Platform.OS == "ios" &&
+                    <SocialButton
+                      icon={faApple}
+                      label="Continue with Apple"
+                      onPress={appleLogin}
+                    />}
                   {IS_BETA_ENABLED &&
                     <SocialButton
                       icon={faFacebook}
