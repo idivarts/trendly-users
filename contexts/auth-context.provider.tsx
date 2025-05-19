@@ -178,6 +178,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
     if (user?.settings?.accountStatus != AccountStatus.Activated)
       updateUser(uid, {
         settings: {
+          ...user?.settings,
           accountStatus: AccountStatus.Activated
         }
       })
