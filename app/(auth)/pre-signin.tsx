@@ -158,11 +158,12 @@ const PreSignIn = () => {
                     label="Continue with Google"
                     onPress={googleLogin}
                   />
-                  <SocialButton
-                    icon={faFacebook}
-                    label="Login with Facebook"
-                    onPress={facebookLogin}
-                  />
+                  {IS_BETA_ENABLED &&
+                    <SocialButton
+                      icon={faFacebook}
+                      label="Login with Facebook"
+                      onPress={facebookLogin}
+                    />}
                   {IS_BETA_ENABLED &&
                     <SocialButton
                       icon={faInstagram}

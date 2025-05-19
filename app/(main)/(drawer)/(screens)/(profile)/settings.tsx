@@ -3,9 +3,10 @@ import { Text, View } from "@/components/theme/Themed";
 import ScreenHeader from "@/components/ui/screen-header";
 import { useAuthContext } from "@/contexts";
 import AppLayout from "@/layouts/app-layout";
-import { AccountStatus } from "@/shared-libs/firestore/trendly-pro/models/users";
+import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { User } from "@/types/User";
+import { resetAndNavigate } from "@/utils/router";
 import { useState } from "react";
 import { Pressable } from "react-native";
 import Toast from "react-native-toast-message";
@@ -32,29 +33,31 @@ const SettingsScreen = () => {
 
   const handleDeactivate = async () => {
     setIsDeactivating(true);
-    const updatedUser = {
-      ...user,
-      settings: {
-        accountStatus: AccountStatus.Deactivated,
-      }
-    };
-
-    await updateUser(updatedUser.id, updatedUser).then(() => {
-      setIsDeactivating(false);
+    await HttpWrapper.fetch("/api/v1/users/deactivate", { method: "DELETE" }).then(r => {
       Toaster.success('Account deactivated successfully');
-
-      logout();
-    });
+      logout().catch(e => {
+        resetAndNavigate("/pre-signin")
+      })
+    }).catch(() => {
+      Toaster.error('Error Deactivating account');
+    }).finally(() => {
+      setIsDeactivating(false)
+    })
   }
 
   const handleDelete = async () => {
     setIsDeleting(true);
-    await deleteUserAccount(user.id).then(() => {
-      setIsDeleting(false);
+    await HttpWrapper.fetch("/api/v1/users/delete", { method: "DELETE" }).then(r => {
       Toaster.success('Account deleted successfully');
+      logout().catch(e => {
+        resetAndNavigate("/pre-signin")
+      })
+    }).catch(() => {
+      Toaster.error('Error Deleting account');
+    }).finally(() => {
+      setIsDeleting(false)
+    })
 
-      logout();
-    });
   }
 
   const handleSave = async () => {

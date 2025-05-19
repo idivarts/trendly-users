@@ -1,5 +1,6 @@
 import { INITIAL_USER_DATA } from "@/constants/User";
 import { useStorageState } from "@/hooks";
+import { AccountStatus } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { analyticsLogEvent } from "@/shared-libs/utils/firebase/analytics";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
@@ -48,7 +49,7 @@ interface AuthContextProps {
   isUserLoading: boolean;
   session?: string | null;
   signIn: (email: string, password: string) => void;
-  signOutUser: () => void;
+  signOutUser: () => Promise<void>;
   signUp: (name: string, email: string, password: string) => void;
   updateUser: (userId: string, user: Partial<User>) => Promise<void>;
   user: User | null;
@@ -66,7 +67,7 @@ const AuthContext = createContext<AuthContextProps>({
   isUserLoading: false,
   session: null,
   signIn: (email: string, password: string) => null,
-  signOutUser: () => null,
+  signOutUser: async () => { },
   signUp: (name: string, email: string, password: string) => null,
   updateUser: () => Promise.resolve(),
   user: null,
@@ -174,6 +175,14 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
     else
       resetAndNavigate("/collaborations");
 
+    if (user?.settings?.accountStatus != AccountStatus.Activated)
+      updateUser(uid, {
+        settings: {
+          ...user?.settings,
+          accountStatus: AccountStatus.Activated
+        }
+      })
+
     Toaster.success("Signed In Successfully!");
   };
 
@@ -240,15 +249,19 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
   };
 
   const signOutUser = async () => {
-    if (Platform.OS !== "web") {
-      // Remove push notification token from the database
-      const newUpdatedTokens = await updatedTokens(user);
+    try {
+      if (Platform.OS !== "web") {
+        // Remove push notification token from the database
+        const newUpdatedTokens = await updatedTokens(user);
 
-      if (newUpdatedTokens) {
-        await updateUser(session as string, {
-          pushNotificationToken: newUpdatedTokens,
-        });
+        if (newUpdatedTokens) {
+          await updateUser(session as string, {
+            pushNotificationToken: newUpdatedTokens,
+          });
+        }
       }
+    } catch (e) {
+      console.log("Issues while removing tokens", e);
     }
 
     signOut(AuthApp)

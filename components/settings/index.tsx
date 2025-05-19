@@ -1,20 +1,19 @@
-import { useEffect, useState } from "react";
-import { View } from "../theme/Themed";
-import stylesFn from "@/styles/settings/Settings.styles";
-import { useTheme } from "@react-navigation/native";
-import ContentWrapper from "../ui/content-wrapper";
-import { Selector } from "../ui/select/selector";
-import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
-import SelectGroup from "../ui/select/select-group";
-import { ScrollView } from "react-native";
-import Button from "../ui/button";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import Colors from "@/constants/Colors";
-import { User } from "@/types/User";
 import { AccountStatus } from "@/shared-libs/firestore/trendly-pro/models/users";
-import ConfirmationModal from "../ui/modal/ConfirmationModal";
-import Toaster from "@/shared-uis/components/toaster/Toaster";
+import stylesFn from "@/styles/settings/Settings.styles";
+import { User } from "@/types/User";
 import { faCalendarXmark, faThumbsUp } from "@fortawesome/free-regular-svg-icons";
+import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { useTheme } from "@react-navigation/native";
+import { useEffect, useState } from "react";
+import { ScrollView } from "react-native";
+import { View } from "../theme/Themed";
+import Button from "../ui/button";
+import ContentWrapper from "../ui/content-wrapper";
+import ConfirmationModal from "../ui/modal/ConfirmationModal";
+import SelectGroup from "../ui/select/select-group";
+import { Selector } from "../ui/select/selector";
 
 interface SettingsProps {
   handleDeactivate: () => Promise<void>;
@@ -199,11 +198,11 @@ const Settings: React.FC<SettingsProps> = ({
         confirmAction={() => {
           handleDeactivate().then(() => {
             setDeactivationModalVisible(false);
-            Toaster.success('Account deactivated successfully');
+            // Toaster.success('Account deactivated successfully');
           });
         }}
         confirmText="Deactivate"
-        description="Are you sure you want to deactivate your account?"
+        description="Are you sure you want to deactivate your account? You can anytime login to activate your account"
         setVisible={setDeactivationModalVisible}
         visible={deactivationModalVisible}
       />
@@ -214,7 +213,7 @@ const Settings: React.FC<SettingsProps> = ({
         confirmAction={() => {
           setDeletionModalVisible(false);
           handleDelete().then(() => {
-            Toaster.success('Account deleted successfully');
+            // Toaster.success('Account deleted successfully');
           });
         }}
         confirmText="Delete"
