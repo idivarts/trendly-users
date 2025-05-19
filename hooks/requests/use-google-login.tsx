@@ -3,21 +3,25 @@ import { useAuthContext } from "@/contexts";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
-import { GoogleAuthProvider, signInWithPopup, UserCredential } from "firebase/auth";
+import * as Google from 'expo-auth-session/providers/google';
+import * as WebBrowser from 'expo-web-browser';
+import { GoogleAuthProvider, signInWithCredential, signInWithPopup, UserCredential } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-;
-;
+import { Platform } from 'react-native';
 
 const provider = new GoogleAuthProvider();
 provider.addScope('profile');
 provider.addScope('email');
-// provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
-// provider.setCustomParameters({
-//     'login_hint': 'user@example.com'
-// });
+
+WebBrowser.maybeCompleteAuthSession();
 
 export const useGoogleLogin = (setLoading: Function, setError: Function) => {
     const { firebaseSignIn, firebaseSignUp } = useAuthContext();
+
+    const [request, response, promptAsync] = Google.useAuthRequest({
+        iosClientId: 'pro.trendly.creators',
+        androidClientId: 'pro.trendly.creators',
+    });
 
     const evalResult = async (result: void | UserCredential) => {
         if (!result)
@@ -48,24 +52,32 @@ export const useGoogleLogin = (setLoading: Function, setError: Function) => {
         Toaster.success('Logged in with Google successfully');
     }
 
-    const googleLogin = () => {
+    const googleLogin = async () => {
         try {
-            signInWithPopup(AuthApp, provider).catch((error) => {
-                Toaster.error('Error logging in with Google', error.message);
-                console.log(error);
-            }).then(async (result) => {
+            if (Platform.OS === 'web') {
+                setLoading(true);
+                const result = await signInWithPopup(AuthApp, provider);
                 await evalResult(result);
-            }).catch(e => {
-                console.log("Error", e);
-                Toaster.error('Error logging in with Google');
-                setLoading(false);
-            })
-        } catch (e) {
-            console.log("Error", e);
+            } else {
+                const result = await promptAsync();
+                if (result?.type === 'success') {
+                    setLoading(true);
+                    const credential = GoogleAuthProvider.credential(null, result.authentication?.accessToken);
+                    const firebaseResult = await signInWithCredential(AuthApp, credential);
+                    await evalResult(firebaseResult);
+                } else {
+                    Toaster.error('Google sign-in cancelled or failed');
+                    setError('cancelled');
+                }
+            }
+        } catch (error: any) {
+            console.log("Error logging in with Google:", error);
+            Toaster.error('Error logging in with Google', error?.message);
+            setError(error.message);
         } finally {
             setLoading(false);
         }
-    }
+    };
 
     return {
         googleLogin

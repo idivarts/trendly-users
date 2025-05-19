@@ -212,6 +212,7 @@ const PreSignIn = () => {
                   />
                 </Pressable>
               )}
+              {/* {error && <Text style={{ color: "red", marginTop: 16 }}>Error: {error}</Text>} */}
               {item.key === "connect" && loading && (
                 <Portal>
                   <ProfileOnboardLoader />
@@ -244,7 +245,6 @@ const PreSignIn = () => {
         />
       </View>
 
-      {error && <Text style={{ color: "red" }}>Error: {error}</Text>}
       <BottomSheetActions
         isVisible={visible}
         cardType="pre-signin"

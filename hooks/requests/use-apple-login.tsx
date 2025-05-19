@@ -3,8 +3,10 @@ import { useAuthContext } from "@/contexts";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
-import { OAuthProvider, signInWithPopup, UserCredential } from "firebase/auth";
+import * as AppleAuthentication from 'expo-apple-authentication';
+import { OAuthProvider, signInWithCredential, signInWithPopup, UserCredential } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
+import { Platform } from 'react-native';
 
 const provider = new OAuthProvider('apple.com');
 provider.addScope('email');
@@ -42,20 +44,35 @@ export const useAppleLogin = (setLoading: Function, setError: Function) => {
         Toaster.success('Logged in with Apple successfully');
     };
 
-    const appleLogin = () => {
+    const appleLogin = async () => {
+        setLoading(true);
         try {
-            signInWithPopup(AuthApp, provider).catch((error) => {
-                Toaster.error('Error logging in with Apple', error.message);
-                console.log(error);
-            }).then(async (result) => {
+            if (Platform.OS === 'web') {
+                const result = await signInWithPopup(AuthApp, provider);
                 await evalResult(result);
-            }).catch(e => {
-                console.log("Error", e);
-                Toaster.error('Error logging in with Apple');
-                setLoading(false);
-            });
-        } catch (e) {
-            console.log("Error", e);
+            } else {
+                const appleCredential = await AppleAuthentication.signInAsync({
+                    requestedScopes: [
+                        AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+                        AppleAuthentication.AppleAuthenticationScope.EMAIL,
+                    ],
+                });
+                // @ts-ignore
+                const { identityToken, nonce } = appleCredential;
+                if (!identityToken) throw new Error("No identity token returned");
+
+                const credential = OAuthProvider.credentialFromJSON({
+                    idToken: identityToken,
+                    rawNonce: nonce,
+                });
+
+                const result = await signInWithCredential(AuthApp, credential);
+                await evalResult(result);
+            }
+        } catch (error: any) {
+            console.log("Error logging in with Apple:", error);
+            Toaster.error('Error logging in with Apple', error?.message || '');
+            setError(error.message);
         } finally {
             setLoading(false);
         }
