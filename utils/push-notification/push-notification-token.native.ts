@@ -1,7 +1,7 @@
-import messaging from "@react-native-firebase/messaging";
-import { Platform } from "react-native";
+import { messaging } from "@/shared-libs/utils/firebase/messaging";
 import { User } from "@/types/User";
 import { removeToken } from "@/utils/token";
+import { Platform } from "react-native";
 
 export const updatedTokens = async (user: User | null) => {
   if (!user) return null;
