@@ -48,7 +48,7 @@ interface AuthContextProps {
   isUserLoading: boolean;
   session?: string | null;
   signIn: (email: string, password: string) => void;
-  signOutUser: () => void;
+  signOutUser: () => Promise<void>;
   signUp: (name: string, email: string, password: string) => void;
   updateUser: (userId: string, user: Partial<User>) => Promise<void>;
   user: User | null;
@@ -66,7 +66,7 @@ const AuthContext = createContext<AuthContextProps>({
   isUserLoading: false,
   session: null,
   signIn: (email: string, password: string) => null,
-  signOutUser: () => null,
+  signOutUser: async () => { },
   signUp: (name: string, email: string, password: string) => null,
   updateUser: () => Promise.resolve(),
   user: null,
