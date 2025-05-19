@@ -202,7 +202,7 @@ const Settings: React.FC<SettingsProps> = ({
           });
         }}
         confirmText="Deactivate"
-        description="Are you sure you want to deactivate your account?"
+        description="Are you sure you want to deactivate your account? You can anytime login to activate your account"
         setVisible={setDeactivationModalVisible}
         visible={deactivationModalVisible}
       />

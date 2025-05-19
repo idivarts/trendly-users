@@ -1,5 +1,6 @@
 import { INITIAL_USER_DATA } from "@/constants/User";
 import { useStorageState } from "@/hooks";
+import { AccountStatus } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { analyticsLogEvent } from "@/shared-libs/utils/firebase/analytics";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
@@ -173,6 +174,13 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
       resetAndNavigate(`/collaboration-details/${collaborationId}`);
     else
       resetAndNavigate("/collaborations");
+
+    if (user?.settings?.accountStatus != AccountStatus.Activated)
+      updateUser(uid, {
+        settings: {
+          accountStatus: AccountStatus.Activated
+        }
+      })
 
     Toaster.success("Signed In Successfully!");
   };
