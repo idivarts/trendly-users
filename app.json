@@ -25,6 +25,7 @@
       }
     },
     "ios": {
+      "usesAppleSignIn": true,
       "supportsTablet": false,
       "bundleIdentifier": "pro.trendly.creators",
       "googleServicesFile": "./GoogleService-Info.plist",
@@ -70,6 +71,7 @@
     },
     "plugins": [
       "expo-router",
+      "expo-apple-authentication",
       [
         "expo-build-properties",
         {

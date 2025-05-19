@@ -35,6 +35,7 @@ install! 'cocoapods',
 prepare_react_native_project!
 
 target 'Trendly' do
+  pod 'FirebaseAppCheck'
   use_expo_modules!
   config = use_native_modules!
 

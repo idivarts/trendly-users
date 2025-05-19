@@ -45,9 +45,9 @@ export const useAppleLogin = (setLoading: Function, setError: Function) => {
     };
 
     const appleLogin = async () => {
-        setLoading(true);
         try {
             if (Platform.OS === 'web') {
+                setLoading(true);
                 const result = await signInWithPopup(AuthApp, provider);
                 await evalResult(result);
             } else {
@@ -57,13 +57,13 @@ export const useAppleLogin = (setLoading: Function, setError: Function) => {
                         AppleAuthentication.AppleAuthenticationScope.EMAIL,
                     ],
                 });
-                // @ts-ignore
-                const { identityToken, nonce } = appleCredential;
+                console.log("Apple credential:", appleCredential);
+                const { identityToken } = appleCredential;
                 if (!identityToken) throw new Error("No identity token returned");
 
-                const credential = OAuthProvider.credentialFromJSON({
+                setLoading(true);
+                const credential = provider.credential({
                     idToken: identityToken,
-                    rawNonce: nonce,
                 });
 
                 const result = await signInWithCredential(AuthApp, credential);

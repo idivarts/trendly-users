@@ -155,11 +155,12 @@ const PreSignIn = () => {
 
               {item.key === "connect" && (
                 <View style={styles.socialContainer}>
-                  <SocialButton
-                    icon={faGoogle}
-                    label="Continue with Google"
-                    onPress={googleLogin}
-                  />
+                  {Platform.OS != "ios" &&
+                    <SocialButton
+                      icon={faGoogle}
+                      label="Continue with Google"
+                      onPress={googleLogin}
+                    />}
                   {Platform.OS == "ios" &&
                     <SocialButton
                       icon={faApple}

@@ -3,9 +3,8 @@ import { useAuthContext } from "@/contexts";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
-import * as Google from 'expo-auth-session/providers/google';
 import * as WebBrowser from 'expo-web-browser';
-import { GoogleAuthProvider, signInWithCredential, signInWithPopup, UserCredential } from "firebase/auth";
+import { GoogleAuthProvider, signInWithPopup, UserCredential } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { Platform } from 'react-native';
 
@@ -18,10 +17,10 @@ WebBrowser.maybeCompleteAuthSession();
 export const useGoogleLogin = (setLoading: Function, setError: Function) => {
     const { firebaseSignIn, firebaseSignUp } = useAuthContext();
 
-    const [request, response, promptAsync] = Google.useAuthRequest({
-        iosClientId: '799278694891-6cubib0gjb4kp81vq5bi8ulu4q7amduv.apps.googleusercontent.com',
-        androidClientId: '799278694891-n7ab0u2o9cfqol8b07mr51imdham6ioe.apps.googleusercontent.com',
-    });
+    // const [request, response, promptAsync] = Google.useAuthRequest({
+    //     iosClientId: '799278694891-6cubib0gjb4kp81vq5bi8ulu4q7amduv.apps.googleusercontent.com',
+    //     androidClientId: '799278694891-n7ab0u2o9cfqol8b07mr51imdham6ioe.apps.googleusercontent.com',
+    // });
 
     const evalResult = async (result: void | UserCredential) => {
         if (!result)
@@ -59,17 +58,17 @@ export const useGoogleLogin = (setLoading: Function, setError: Function) => {
                 const result = await signInWithPopup(AuthApp, provider);
                 await evalResult(result);
             } else {
-                const result = await promptAsync();
-                if (result?.type === 'success' && result.authentication) {
-                    setLoading(true);
-                    const credential = GoogleAuthProvider.credential(result.authentication.idToken, result.authentication.accessToken);
-                    const firebaseResult = await signInWithCredential(AuthApp, credential);
-                    await evalResult(firebaseResult);
-                } else {
-                    Toaster.error('Google sign-in cancelled or failed');
-                    console.log("Google sign-in cancelled or failed", result);
-                    setError('cancelled');
-                }
+                // const result = await promptAsync();
+                // if (result?.type === 'success' && result.authentication) {
+                //     setLoading(true);
+                //     const credential = GoogleAuthProvider.credential(result.authentication.idToken, result.authentication.accessToken);
+                //     const firebaseResult = await signInWithCredential(AuthApp, credential);
+                //     await evalResult(firebaseResult);
+                // } else {
+                //     Toaster.error('Google sign-in cancelled or failed');
+                //     console.log("Google sign-in cancelled or failed", result);
+                //     setError('cancelled');
+                // }
             }
         } catch (error: any) {
             console.log("Error logging in with Google:", error);
