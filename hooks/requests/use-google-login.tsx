@@ -19,8 +19,8 @@ export const useGoogleLogin = (setLoading: Function, setError: Function) => {
     const { firebaseSignIn, firebaseSignUp } = useAuthContext();
 
     const [request, response, promptAsync] = Google.useAuthRequest({
-        iosClientId: 'pro.trendly.creators',
-        androidClientId: 'pro.trendly.creators',
+        iosClientId: '799278694891-6cubib0gjb4kp81vq5bi8ulu4q7amduv.apps.googleusercontent.com',
+        androidClientId: '799278694891-n7ab0u2o9cfqol8b07mr51imdham6ioe.apps.googleusercontent.com',
     });
 
     const evalResult = async (result: void | UserCredential) => {
@@ -67,6 +67,7 @@ export const useGoogleLogin = (setLoading: Function, setError: Function) => {
                     await evalResult(firebaseResult);
                 } else {
                     Toaster.error('Google sign-in cancelled or failed');
+                    console.log("Google sign-in cancelled or failed", result);
                     setError('cancelled');
                 }
             }
