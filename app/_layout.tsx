@@ -9,6 +9,7 @@ import { resetAndNavigate } from "@/utils/router";
 import { queryParams } from "@/utils/url";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import '@react-native-firebase/crashlytics';
 import {
   DarkTheme,
   DefaultTheme as ExpoDefaultTheme,
