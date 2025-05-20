@@ -7,7 +7,6 @@ import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { User } from "@/types/User";
-import { updatedTokens } from "@/utils/push-notification/push-notification-token.native";
 import { resetAndNavigate } from "@/utils/router";
 import {
   createUserWithEmailAndPassword,
@@ -252,13 +251,13 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
     try {
       if (Platform.OS !== "web") {
         // Remove push notification token from the database
-        const newUpdatedTokens = await updatedTokens(user);
+        // const newUpdatedTokens = await updatedTokens(user);
 
-        if (newUpdatedTokens) {
-          await updateUser(session as string, {
-            pushNotificationToken: newUpdatedTokens,
-          });
-        }
+        // if (newUpdatedTokens) {
+        //   await updateUser(session as string, {
+        //     pushNotificationToken: newUpdatedTokens,
+        //   });
+        // }
       }
     } catch (e) {
       console.log("Issues while removing tokens", e);
