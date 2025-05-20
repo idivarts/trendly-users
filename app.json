@@ -82,26 +82,7 @@
       ],
       "@react-native-firebase/app",
       "@react-native-firebase/crashlytics",
-      "@react-native-firebase/analytics",
       "@react-native-firebase/messaging",
-      [
-        "expo-application",
-        {
-          "iosBundleIdentifier": "pro.trendly.creators"
-        }
-      ],
-      [
-        "expo-crypto",
-        {
-          "iosUsesAppTransportSecurity": true
-        }
-      ],
-      [
-        "expo-clipboard",
-        {
-          "clipboardPermission": "Trendly requires access to your clipboard to copy important links that can be shared."
-        }
-      ],
       [
         "expo-av",
         {
