@@ -54,8 +54,8 @@ export const useGoogleLogin = (setLoading: Function, setError: Function) => {
     const googleLogin = async () => {
         try {
             if (Platform.OS === 'web') {
-                setLoading(true);
                 const result = await signInWithPopup(AuthApp, provider);
+                setLoading(true);
                 await evalResult(result);
             } else {
                 // const result = await promptAsync();
