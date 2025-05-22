@@ -1,3 +1,5 @@
+import "react-native-reanimated";
+
 import { useColorScheme } from "@/components/theme/useColorScheme";
 import { APP_SCHEME } from "@/constants/App";
 import CustomPaperTheme from "@/constants/Theme";
@@ -24,7 +26,7 @@ import { Linking } from "react-native";
 import { setJSExceptionHandler } from 'react-native-exception-handler';
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Provider } from "react-native-paper";
-import "react-native-reanimated";
+
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary
