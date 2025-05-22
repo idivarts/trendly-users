@@ -45,6 +45,7 @@ interface AuthContextProps {
   firebaseSignUp: (token: string, hasSocials?: number) => void;
   getUser: (userId: string) => Promise<User | null>;
   isLoading: boolean;
+  isLoggedIn: boolean;
   isUserLoading: boolean;
   session?: string | null;
   signIn: (email: string, password: string) => void;
@@ -64,6 +65,7 @@ const AuthContext = createContext<AuthContextProps>({
   getUser: () => Promise.resolve(null),
   isLoading: false,
   isUserLoading: false,
+  isLoggedIn: false,
   session: null,
   signIn: (email: string, password: string) => null,
   signOutUser: async () => { },
@@ -82,6 +84,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
   const [user, setUser] = useState<User | null>(null);
   const [isUserLoading, setIsUserLoading] = useState(true);
   const [collaborationId, setCollaborationId] = useState<string>("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
 
   const fetchUser = async () => {
     if (!isLoading && session) {
@@ -94,6 +97,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
             ...(userSnap.data() as User),
             id: userSnap.id as string,
           };
+          setIsLoggedIn(true);
           setUser(userData);
           setIsUserLoading(false);
         } else {
@@ -107,7 +111,13 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
   };
 
   useEffect(() => {
-    fetchUser();
+    if (!isLoading && !session) {
+      setIsLoggedIn(false);
+      setIsUserLoading(false);
+      setUser(null);
+      resetAndNavigate("/pre-signin");
+    } else
+      fetchUser();
   }, [session, isLoading]);
 
   const signIn = async (email: string, password: string) => {
@@ -266,6 +276,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
     signOut(AuthApp)
       .then(() => {
         setSession("");
+        setIsLoggedIn(false);
         setUser(null);
 
         analyticsLogEvent("signed_out", {
@@ -290,6 +301,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
         ...(userSnap.data() as User),
         id: userSnap.id as string,
       };
+      setIsLoggedIn(true);
       setUser(userData);
       return userData;
     }
@@ -392,6 +404,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
         getUser,
         isLoading,
         isUserLoading,
+        isLoggedIn,
         session,
         signIn,
         signOutUser,
