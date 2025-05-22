@@ -21,6 +21,7 @@ import { Href, Stack, useGlobalSearchParams, usePathname, useRouter, useSegments
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { Linking } from "react-native";
+import { setJSExceptionHandler } from 'react-native-exception-handler';
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Provider } from "react-native-paper";
 import "react-native-reanimated";
@@ -36,6 +37,10 @@ export const unstable_settings = {
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
+
+setJSExceptionHandler((error, isFatal) => {
+  console.log("Caught JS Error:", error, isFatal);
+});
 
 const RootLayout = () => {
   const [loaded, error] = useFonts({
