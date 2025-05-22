@@ -11,8 +11,8 @@
     "web": "expo start --web",
     "test": "jest --watchAll",
     "build": "expo export -p web",
-    "build-ios": "expo run:ios",
-    "postinstall": "sh shared-libs/scripts/setup-hooks.sh && npm install --prefix shared-libs && npm install --prefix shared-uis && npm install --prefix shared-constants && node react-native-web-fix.js",
+    "build-ios": "export $(cat .env.local | xargs) &&  eas build --platform ios --profile production --local",
+    "postinstall": "npm install --prefix shared-libs && npm install --prefix shared-uis && npm install --prefix shared-constants && node react-native-web-fix.js",
     "populate": "ts-node scripts/populate.ts"
   },
   "jest": {
