@@ -204,8 +204,6 @@ const Collaboration = () => {
           />
         </View>
         <IOScrollView ref={scrollRef} onScroll={(e) => {
-          // console.log("Scroll Y", e.nativeEvent.contentOffset?.y);
-          // setScHeight(e.nativeEvent.contentOffset?.y)
           setScrollHeight?.(e.nativeEvent.contentOffset?.y || 0)
           onScrollEvent(e)
         }}>
