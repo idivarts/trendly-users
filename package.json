@@ -11,7 +11,8 @@
     "web": "expo start --web",
     "test": "jest --watchAll",
     "build": "expo export -p web",
-    "build-ios": "export $(cat .env.local | xargs) &&  eas build --platform ios --profile production --local --output build/",
+    "simulator": "export $(cat .env.local | xargs) &&  eas build --platform ios --profile simulator --local --output build/Trendly.app",
+    "build-ios": "export $(cat .env.local | xargs) &&  eas build --platform ios --profile production --local --output build/Trendly.ipa",
     "submit-ios": "eas submit -p ios --path",
     "postinstall": "npm install --prefix shared-libs && npm install --prefix shared-uis && npm install --prefix shared-constants && node react-native-web-fix.js",
     "populate": "ts-node scripts/populate.ts"
