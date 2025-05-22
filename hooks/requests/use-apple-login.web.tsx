@@ -3,10 +3,8 @@ import { useAuthContext } from "@/contexts";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
-import * as AppleAuthentication from 'expo-apple-authentication';
-import { OAuthProvider, signInWithCredential, UserCredential } from "firebase/auth";
+import { OAuthProvider, signInWithPopup, UserCredential } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import { useEffect, useState } from "react";
 
 const provider = new OAuthProvider('apple.com');
 provider.addScope('email');
@@ -14,13 +12,6 @@ provider.addScope('name');
 
 export const useAppleLogin = (setLoading: Function, setError: Function) => {
     const { firebaseSignIn, firebaseSignUp } = useAuthContext();
-    const [isAppleAvailable, setIsAppleAvailable] = useState(false)
-    useEffect(() => {
-        (async () => {
-            const b = await AppleAuthentication.isAvailableAsync()
-            setIsAppleAvailable(b)
-        })()
-    }, [])
 
     const evalResult = async (result: void | UserCredential) => {
         if (!result) return;
@@ -53,22 +44,8 @@ export const useAppleLogin = (setLoading: Function, setError: Function) => {
 
     const appleLogin = async () => {
         try {
-            const appleCredential = await AppleAuthentication.signInAsync({
-                requestedScopes: [
-                    AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
-                    AppleAuthentication.AppleAuthenticationScope.EMAIL,
-                ],
-            });
-            console.log("Apple credential:", appleCredential);
-            const { identityToken } = appleCredential;
-            if (!identityToken) throw new Error("No identity token returned");
-
             setLoading(true);
-            const credential = provider.credential({
-                idToken: identityToken,
-            });
-
-            const result = await signInWithCredential(AuthApp, credential);
+            const result = await signInWithPopup(AuthApp, provider);
             await evalResult(result);
         } catch (error: any) {
             console.log("Error logging in with Apple:", error);
@@ -81,6 +58,6 @@ export const useAppleLogin = (setLoading: Function, setError: Function) => {
 
     return {
         appleLogin,
-        isAppleAvailable
+        isAppleAvailable: true
     };
 };

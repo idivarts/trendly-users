@@ -73,7 +73,7 @@ const PreSignIn = () => {
     );
 
   const { googleLogin } = useGoogleLogin(setLoading, setError);
-  const { appleLogin } = useAppleLogin(setLoading, setError);
+  const { appleLogin, isAppleAvailable } = useAppleLogin(setLoading, setError);
 
   const skipToConnect = () => {
     const connectSlideIndex = slides.findIndex(
@@ -161,7 +161,7 @@ const PreSignIn = () => {
                       label="Continue with Google"
                       onPress={googleLogin}
                     />}
-                  {Platform.OS == "ios" &&
+                  {(Platform.OS == "ios" && isAppleAvailable) &&
                     <SocialButton
                       icon={faApple}
                       label="Continue with Apple"
