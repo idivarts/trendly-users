@@ -106,6 +106,7 @@ const PreSignIn = () => {
         <Carousel
           data={slides}
           width={xl ? Dimensions.get("window").width - 120 * 4 : Dimensions.get("window").width}
+          height={Dimensions.get("window").height - 60}
           pagingEnabled
           ref={swiperRef}
           loop={false}
