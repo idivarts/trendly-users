@@ -115,7 +115,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
       setIsLoggedIn(false);
       setIsUserLoading(false);
       setUser(null);
-      resetAndNavigate("/pre-signin");
+      // resetAndNavigate("/pre-signin");
     } else
       fetchUser();
   }, [session, isLoading]);
