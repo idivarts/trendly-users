@@ -6,12 +6,12 @@ const stylesFn = (theme: Theme) => StyleSheet.create({
   socialButton: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: Colors(theme).background,
+    backgroundColor: theme.dark ? Colors(theme).secondary : Colors(theme).background,
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 25,
     marginHorizontal: 10,
-    shadowColor: Colors(theme).black,
+    shadowColor: theme.dark ? Colors(theme).white : Colors(theme).black,
     shadowOffset: {
       width: 0,
       height: 2,

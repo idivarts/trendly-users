@@ -1,6 +1,5 @@
 import React from 'react'
-import { ScrollView } from 'react-native'
-import { Text } from '../theme/Themed'
+import { ScrollView, Text } from 'react-native'
 
 const TermsAndCondition = () => {
     return (
