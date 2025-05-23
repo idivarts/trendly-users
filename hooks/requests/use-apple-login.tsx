@@ -23,6 +23,21 @@ export const useAppleLogin = (setLoading: Function, setError: Function) => {
         })()
     }, [])
 
+    const extractNameFromEmail = (email: string): string => {
+        if (!email) return "Apple User";
+
+        const namePart = email.split('@')[0];
+
+        // Split on common delimiters like '.', '_', or '-' and filter empty values
+        const parts = namePart.split(/[\.\_\-]/).filter(Boolean);
+
+        // Capitalize each word
+        const capitalized = parts.map(word =>
+            word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+        );
+
+        return capitalized.join(' ');
+    };
     const evalResult = async (result: void | UserCredential, appleCredential: AppleAuthentication.AppleAuthenticationCredential) => {
         if (!result) return;
 
@@ -35,7 +50,7 @@ export const useAppleLogin = (setLoading: Function, setError: Function) => {
             const userData = {
                 ...INITIAL_DATA,
                 isVerified: true,
-                name: appleCredential.fullName?.givenName || "Apple User",
+                name: appleCredential.fullName?.givenName || extractNameFromEmail(result.user.email || ""),
                 email: result.user.email || "",
                 profileImage: "",
                 creationTime: Date.now(),
