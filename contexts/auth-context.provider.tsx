@@ -8,6 +8,7 @@ import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { User } from "@/types/User";
 import { resetAndNavigate } from "@/utils/router";
+import { useSegments } from "expo-router";
 import {
   createUserWithEmailAndPassword,
   deleteUser,
@@ -86,6 +87,10 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
   const [collaborationId, setCollaborationId] = useState<string>("");
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const INITIAL_DATA = useInitialUserData()
+  const segments = useSegments();
+  const inAuthGroup = segments[0] === "(auth)";
+  const inMainGroup = segments[0] === "(main)";
+  const inPublicGroup = segments[0] === "(public)";
 
   const fetchUser = async () => {
     if (isLoading || !session)
@@ -126,7 +131,9 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
     AuthApp.authStateReady().then(() => {
       if (!AuthApp.currentUser) {
         setIsUserLoading(false);
-        signOutUser();
+        if (inMainGroup) {
+          signOutUser();
+        }
         // resetAndNavigate("/pre-signin");
       } else {
         fetchUser();
