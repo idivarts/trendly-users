@@ -23,7 +23,7 @@ export const useAppleLogin = (setLoading: Function, setError: Function) => {
         })()
     }, [])
 
-    const evalResult = async (result: void | UserCredential) => {
+    const evalResult = async (result: void | UserCredential, appleCredential: AppleAuthentication.AppleAuthenticationCredential) => {
         if (!result) return;
 
         setLoading(true);
@@ -35,9 +35,9 @@ export const useAppleLogin = (setLoading: Function, setError: Function) => {
             const userData = {
                 ...INITIAL_DATA,
                 isVerified: true,
-                name: result.user.displayName || "Apple User",
+                name: appleCredential.fullName?.givenName || "Apple User",
                 email: result.user.email || "",
-                profileImage: result.user.photoURL || "",
+                profileImage: "",
                 creationTime: Date.now(),
             };
             await setDoc(userRef, userData);
@@ -70,7 +70,7 @@ export const useAppleLogin = (setLoading: Function, setError: Function) => {
             });
 
             const result = await signInWithCredential(AuthApp, credential);
-            await evalResult(result);
+            await evalResult(result, appleCredential);
         } catch (error: any) {
             console.log("Error logging in with Apple:", error);
             Toaster.error('Error logging in with Apple', error?.message || '');
