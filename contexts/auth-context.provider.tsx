@@ -197,15 +197,17 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
     else
       resetAndNavigate("/collaborations");
 
-    if (user?.settings?.accountStatus == AccountStatus.Deactivated)
+    if (user?.settings?.accountStatus == AccountStatus.Deactivated) {
+      Toaster.success("Your account is successfuly activated")
       updateUser(uid, {
         settings: {
           ...user?.settings,
           accountStatus: AccountStatus.Activated
         }
       })
-
-    Toaster.success("Signed In Successfully!");
+    } else {
+      Toaster.success("Signed In Successfully!");
+    }
   };
 
   const firebaseSignUp = async (uid: string, hasSocials?: number) => {
