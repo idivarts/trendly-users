@@ -88,9 +88,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const INITIAL_DATA = useInitialUserData()
   const segments = useSegments();
-  const inAuthGroup = segments[0] === "(auth)";
   const inMainGroup = segments[0] === "(main)";
-  const inPublicGroup = segments[0] === "(public)";
 
   const fetchUser = async () => {
     if (isLoading || !session)
