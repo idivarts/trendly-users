@@ -1,12 +1,13 @@
 import { IS_BETA_ENABLED } from "@/constants/App";
 import { DUMMY_PASSWORD, DUMMY_USER_CREDENTIALS } from "@/constants/User";
 import { useAuthContext } from "@/contexts";
+import { View } from "@/shared-uis/components/theme/Themed";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { setStringAsync } from "expo-clipboard";
 import { Href, useRouter } from "expo-router";
 import React from "react";
-import { Modal, Pressable, StyleSheet, View } from "react-native";
+import { Modal, Pressable, StyleSheet } from "react-native";
 import { List } from "react-native-paper";
 import TermsAndCondition from "./bottomSheets/TermsAndCondition";
 interface BottomSheetActionsProps {
