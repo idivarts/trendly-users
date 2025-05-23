@@ -101,7 +101,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
     </View>
   }
   const { updateUser } = useAuthContext()
-  const isGoogleLogin = AuthApp.currentUser?.providerData[0].providerId == "google.com";
+  const canEditEmail = AuthApp.currentUser?.providerData[0].providerId == "google.com" || AuthApp.currentUser?.providerData[0].providerId == "apple.com";
 
   return (
     <View
@@ -150,9 +150,9 @@ const EditProfile: React.FC<EditProfileProps> = ({
                 }}
                 label="Email"
                 value={email}
-                disabled={isGoogleLogin}
+                disabled={canEditEmail}
                 onChangeText={(email) => {
-                  if (isGoogleLogin)
+                  if (canEditEmail)
                     return;
                   setEmail(email);
                   setUnsavedChanges && setUnsavedChanges(true);
