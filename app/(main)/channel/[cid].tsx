@@ -1,5 +1,6 @@
 import ChannelNative from "@/components/channel/channel";
 import ChannelWeb from "@/components/channel/channel.web";
+import AppLayout from "@/layouts/app-layout";
 import { Platform } from "react-native";
 
 const ChannelScreen = () => {
@@ -7,7 +8,9 @@ const ChannelScreen = () => {
     return <ChannelWeb />
   }
   return (
-    <ChannelNative />
+    <AppLayout>
+      <ChannelNative />
+    </AppLayout>
   );
 }
 
