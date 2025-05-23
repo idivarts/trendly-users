@@ -7,7 +7,7 @@ import AppLayout from '@/layouts/app-layout';
 import { useAWSContext } from "@/shared-libs/contexts/aws-context.provider";
 import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import Toaster from '@/shared-uis/components/toaster/Toaster';
-import { useTheme } from '@react-navigation/native';
+import { Theme, useTheme } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import React, { useRef, useState } from 'react';
 import {
@@ -27,6 +27,7 @@ import { ActivityIndicator } from 'react-native-paper';
 const { width } = Dimensions.get('window');
 
 const AddInstagramManual = () => {
+    const theme = useTheme();
     const [handle, setHandle] = useState('');
     const [profileImage, setProfileImage] = useState<string | null>(null);
     const [dashboardImage, setDashboardImage] = useState<string | null>(null);
@@ -34,10 +35,11 @@ const AddInstagramManual = () => {
     const [dashboardImageUrl, setDashboardImageUrl] = useState<string | null>(null);
     const [modalVisible, setModalVisible] = useState(false);
     const [activeImage, setActiveImage] = useState<any>(null);
-    const theme = useTheme();
     const { uploadFileUri, uploadFile } = useAWSContext();
     const pRef = useRef<any>()
     const dRef = useRef<any>()
+
+    const styles = stylesFn(theme);
 
     const [apiLoading, setApiLoading] = useState(false)
     const [blockLoading, setBlockLoading] = useState(false)
@@ -114,9 +116,9 @@ const AddInstagramManual = () => {
         <AppLayout withWebPadding={true}>
             <ScreenHeader title='Add Instagram' />
 
-            <ScrollView contentContainerStyle={styles.container}>
+            <ScrollView contentContainerStyle={[styles.container, { backgroundColor: Colors(theme).background }]}>
 
-                <Text style={styles.label}>Add your Instagram handle</Text>
+                <Text style={[styles.label, { color: Colors(theme).text }]}>Add your Instagram handle</Text>
                 <TextInput
                     label="Instagram Handle (@...)"
                     value={handle}
@@ -131,9 +133,9 @@ const AddInstagramManual = () => {
                         }
                     }} />
 
-                <Text style={styles.label}>Upload Profile and Dashboard Screenshot</Text>
+                <Text style={[styles.label, { color: Colors(theme).text }]}>Upload Profile and Dashboard Screenshot</Text>
                 <View style={{ display: "flex", flexDirection: "row", width: "100%", gap: 10, marginTop: 8 }}>
-                    <TouchableOpacity style={styles.uploadBox} onPress={() =>
+                    <TouchableOpacity style={[styles.uploadBox, { backgroundColor: Colors(theme).cardBackground, borderColor: Colors(theme).border }]} onPress={() =>
                         Platform.OS === 'web' ? pRef.current.click() : pickImage(setProfileImage, setProfileImageUrl)}>
                         {profileImage ? (
                             <>
@@ -142,13 +144,13 @@ const AddInstagramManual = () => {
                             </>
                         ) : (
                             <>
-                                <Text style={styles.uploadText}>Upload Profile</Text>
+                                <Text style={[styles.uploadText, { color: Colors(theme).textSecondary }]}>Upload Profile</Text>
                                 {Platform.OS === 'web' && <input type='file' ref={pRef} accept='image/*' hidden
                                     onChange={(e) => pickFile(e, setProfileImage, setProfileImageUrl)} />}
                             </>
                         )}
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.uploadBox} onPress={() =>
+                    <TouchableOpacity style={[styles.uploadBox, { backgroundColor: Colors(theme).cardBackground, borderColor: Colors(theme).border }]} onPress={() =>
                         Platform.OS === 'web' ? dRef.current.click() : pickImage(setDashboardImage, setDashboardImageUrl)}>
                         {dashboardImage ? (
                             <>
@@ -157,7 +159,7 @@ const AddInstagramManual = () => {
                             </>
                         ) : (
                             <>
-                                <Text style={styles.uploadText}>Upload Dashboard</Text>
+                                <Text style={[styles.uploadText, { color: Colors(theme).textSecondary }]}>Upload Dashboard</Text>
                                 {Platform.OS === 'web' && <input type='file' ref={dRef} accept='image/*' hidden
                                     onChange={(e) => pickFile(e, setDashboardImage, setDashboardImageUrl)} />}
                             </>
@@ -168,22 +170,22 @@ const AddInstagramManual = () => {
 
                 {/* <Text style={styles.label}>Upload Dashboard Screenshot</Text> */}
 
-                <View style={styles.noteContainer}>
-                    <Text style={styles.notesHeading}>Before You Continue</Text>
+                <View style={[styles.noteContainer, { backgroundColor: Colors(theme).cardBackground, borderColor: Colors(theme).border }]}>
+                    <Text style={[styles.notesHeading, { color: Colors(theme).text }]}>Before You Continue</Text>
                     <View style={styles.bulletPoint}>
-                        <Text style={styles.bulletSymbol}>{'\u2022'}</Text>
-                        <Text style={styles.bulletText}>Please ensure your Instagram account is set to <Text style={{ fontWeight: '600' }}>Professional</Text> and its visibility is <Text style={{ fontWeight: '600' }}>Public</Text>.</Text>
+                        <Text style={[styles.bulletSymbol, { color: Colors(theme).text }]}>{'\u2022'}</Text>
+                        <Text style={[styles.bulletText, { color: Colors(theme).text }]}>Please ensure your Instagram account is set to <Text style={{ fontWeight: '600' }}>Professional</Text> and its visibility is <Text style={{ fontWeight: '600' }}>Public</Text>.</Text>
                     </View>
                     <View style={styles.bulletPoint}>
-                        <Text style={styles.bulletSymbol}>{'\u2022'}</Text>
-                        <Text style={styles.bulletText}>Upload <Text style={{ fontWeight: '600' }}>clear screenshots</Text> displaying your username, follower count, and other relevant details.</Text>
+                        <Text style={[styles.bulletSymbol, { color: Colors(theme).text }]}>{'\u2022'}</Text>
+                        <Text style={[styles.bulletText, { color: Colors(theme).text }]}>Upload <Text style={{ fontWeight: '600' }}>clear screenshots</Text> displaying your username, follower count, and other relevant details.</Text>
                     </View>
                     <View style={styles.bulletPoint}>
-                        <Text style={styles.bulletSymbol}>{'\u2022'}</Text>
-                        <Text style={styles.bulletText}>All uploads are <Text style={{ fontWeight: '600' }}>manually verified</Text>. We’ll reach out if any clarification is needed.</Text>
+                        <Text style={[styles.bulletSymbol, { color: Colors(theme).text }]}>{'\u2022'}</Text>
+                        <Text style={[styles.bulletText, { color: Colors(theme).text }]}>All uploads are <Text style={{ fontWeight: '600' }}>manually verified</Text>. We’ll reach out if any clarification is needed.</Text>
                     </View>
 
-                    <Text style={[styles.notesHeading, { marginTop: 30 }]}>Example Screenshots</Text>
+                    <Text style={[styles.notesHeading, { marginTop: 30, color: Colors(theme).text }]}>Example Screenshots</Text>
                     <View style={styles.exampleRow}>
                         <Pressable onPress={() => {
                             setActiveImage(require('@/assets/images/example-profile.jpg'));
@@ -225,11 +227,10 @@ const AddInstagramManual = () => {
     );
 };
 
-const styles = StyleSheet.create({
+const stylesFn = (theme: Theme) => StyleSheet.create({
     container: {
         padding: 20,
         paddingBottom: 120,
-        backgroundColor: '#fff',
         alignItems: 'center',
     },
     header: {
@@ -250,19 +251,15 @@ const styles = StyleSheet.create({
     input: {
         width: '100%',
         borderWidth: 1,
-        borderColor: '#ccc',
         borderRadius: 10,
         padding: 12,
         fontSize: 16,
-        backgroundColor: '#fafafa',
     },
     uploadBox: {
         flex: 1,
         height: 250,
         borderWidth: 1,
-        borderColor: '#ccc',
         borderRadius: 10,
-        backgroundColor: '#f0f0f0',
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 10,
@@ -276,11 +273,11 @@ const styles = StyleSheet.create({
         resizeMode: 'cover',
     },
     uploadText: {
-        color: '#999',
         fontSize: 16,
     },
     button: {
-        // backgroundColor: '#007aff',
+        backgroundColor: Colors(theme).primary,
+        color: Colors(theme).text,
         paddingVertical: 8,
         // paddingHorizontal: 40,
         // borderRadius: 10,
@@ -288,7 +285,6 @@ const styles = StyleSheet.create({
         width: '100%',
     },
     buttonText: {
-        color: '#fff',
         fontWeight: '600',
         fontSize: 16,
         textAlign: 'center',
@@ -319,12 +315,10 @@ const styles = StyleSheet.create({
     },
     noteContainer: {
         width: '100%',
-        backgroundColor: '#f9f9f9',
         padding: 16,
         borderRadius: 10,
         marginTop: 30,
         marginBottom: 20,
-        borderColor: '#ddd',
         borderWidth: 1,
     },
     notesHeading: {
@@ -346,17 +340,16 @@ const styles = StyleSheet.create({
         flex: 1,
         fontSize: 15,
         lineHeight: 22,
-        color: '#333',
     },
     stickyFooter: {
         position: 'absolute',
         bottom: 0,
         left: 0,
         right: 0,
-        backgroundColor: '#fff',
+        backgroundColor: Colors(theme).background,
         padding: 16,
         borderTopWidth: 1,
-        borderColor: '#ddd',
+        borderColor: Colors(theme).border,
     },
 });
 

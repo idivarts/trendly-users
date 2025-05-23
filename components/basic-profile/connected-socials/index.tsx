@@ -1,5 +1,5 @@
 import FacebookLoginButton from "@/components/profile/ConnectWithFacebook";
-import InstagramLoginButton from "@/components/profile/ConnectWithInstagram";
+import InstagramLoginButton from "@/components/profile/ConnectWithInstagramManual";
 import SocialPage from "@/components/profile/SocialPage";
 import { View } from "@/components/theme/Themed";
 import { useSocialContext } from "@/contexts";
