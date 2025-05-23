@@ -87,8 +87,11 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
   const [isLoggedIn, setIsLoggedIn] = useState(false)
 
   const fetchUser = async () => {
-    if (!isLoading && session) {
-      // setIsUserLoading(true);
+    if (isLoading || !session)
+      return
+
+    // setIsUserLoading(true);
+    try {
       const userDocRef = doc(FirestoreDB, "users", session);
 
       const unsubscribe = onSnapshot(userDocRef, (userSnap) => {
@@ -107,18 +110,28 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
       });
 
       return unsubscribe;
+    } catch (error) {
+      setIsLoggedIn(false);
+      setUser(null);
+    } finally {
+      setIsUserLoading(false);
     }
   };
+  const cUser = AuthApp.currentUser
 
   useEffect(() => {
-    if (!isLoading && !session) {
-      setIsLoggedIn(false);
-      setIsUserLoading(false);
-      setUser(null);
-      // resetAndNavigate("/pre-signin");
-    } else
-      fetchUser();
-  }, [session, isLoading]);
+    if (isLoading)
+      return
+    AuthApp.authStateReady().then(() => {
+      if (!AuthApp.currentUser) {
+        setIsUserLoading(false);
+        signOutUser();
+        // resetAndNavigate("/pre-signin");
+      } else {
+        fetchUser();
+      }
+    })
+  }, [session, isLoading, cUser]);
 
   const signIn = async (email: string, password: string) => {
     try {
@@ -275,21 +288,19 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
 
     signOut(AuthApp)
       .then(() => {
-        setSession("");
-        setIsLoggedIn(false);
-        setUser(null);
-
         analyticsLogEvent("signed_out", {
           id: user?.id,
           email: user?.email,
         });
-
-        resetAndNavigate("/pre-signin");
         Toaster.success("Signed Out Successfully!");
-      })
-      .catch((error) => {
+      }).catch((error) => {
         console.error("Error signing out: ", error);
-      });
+      }).finally(() => {
+        setSession("");
+        setIsLoggedIn(false);
+        setUser(null);
+        resetAndNavigate("/pre-signin");
+      })
   };
 
   const getUser = async (userId: string): Promise<User | null> => {
