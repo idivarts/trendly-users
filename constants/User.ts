@@ -18,7 +18,7 @@ export const useInitialUserData = (): Partial<IUsers> => {
   };
 };
 
-export const INITIAL_USER_DATA: Partial<IUsers> = {
+const INITIAL_USER_DATA: Partial<IUsers> = {
   isVerified: false,
   profile: {
     completionPercentage: 0,
