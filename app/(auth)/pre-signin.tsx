@@ -187,7 +187,7 @@ const PreSignIn = () => {
                     flexDirection: "row",
                     alignItems: "center",
                     justifyContent: "center",
-                    marginTop: 15,
+                    marginTop: 40,
                     backgroundColor: Colors(theme).primary,
                     paddingHorizontal: 20,
                     paddingVertical: 10,
@@ -215,7 +215,7 @@ const PreSignIn = () => {
               )}
               {/* {error && <Text style={{ color: "red", marginTop: 16 }}>Error: {error}</Text>} */}
               {item.key === "connect" && (
-                <View style={{ marginTop: 16, paddingHorizontal: 20 }}>
+                <View style={{ marginTop: 40, paddingHorizontal: 20 }}>
                   <Text style={{ fontSize: 12, textAlign: "center", color: Colors(theme).text }}>
                     By proceeding to signup, you agree to{" "}
                     <Text

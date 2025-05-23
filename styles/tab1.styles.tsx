@@ -51,7 +51,7 @@ const styles = (theme: Theme) =>
       flexDirection: "column",
       gap: 10,
       justifyContent: "space-between",
-      marginTop: 20,
+      marginTop: 40,
     },
     pagination: {
       bottom: 30,
