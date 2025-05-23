@@ -277,7 +277,7 @@ const PreSignIn = () => {
         isVisible={termsCondition}
         cardType="terms-condition"
         onClose={() => setTermsCondition(false)}
-        snapPointsRange={["90%", "90%"]}
+        snapPointsRange={["85%", "85%"]}
       />
 
     </AppLayout>
