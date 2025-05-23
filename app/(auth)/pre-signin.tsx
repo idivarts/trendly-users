@@ -13,7 +13,6 @@ import { faApple, faFacebook, faGoogle, faInstagram } from "@fortawesome/free-br
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
-import { useRouter } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import React, { useRef, useState } from "react";
 import {
@@ -49,11 +48,10 @@ const PreSignIn = () => {
   const [error, setError] = useState<string | null>(null);
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [index, setIndex] = useState(0);
-  const router = useRouter();
   const swiperRef = useRef<ICarouselInstance>(null);
   const nativeRef = useRef<Swiper>(null);
   const progress = useSharedValue(0);
+  const [termsCondition, setTermsCondition] = useState(false);
 
   const { instagramLogin, requestInstagram } =
     useInstagramLogin(
@@ -216,6 +214,27 @@ const PreSignIn = () => {
                 </Pressable>
               )}
               {/* {error && <Text style={{ color: "red", marginTop: 16 }}>Error: {error}</Text>} */}
+              {item.key === "connect" && (
+                <View style={{ marginTop: 16, paddingHorizontal: 20 }}>
+                  <Text style={{ fontSize: 12, textAlign: "center", color: Colors(theme).text }}>
+                    By proceeding to signup, you agree to{" "}
+                    <Text
+                      style={{ color: Colors(theme).primary, textDecorationLine: "underline" }}
+                      onPress={() => setTermsCondition(true)}
+                    >
+                      Terms & Condition (EULA)
+                    </Text>{" "}
+                    {/* and{" "}
+                    <Text
+                      style={{ color: Colors(theme).primary, textDecorationLine: "underline" }}
+                      onPress={() => setTermsCondition(true)}
+                    >
+                      Privacy Policy
+                    </Text>{" "} */}
+                    of Trendly
+                  </Text>
+                </View>
+              )}
               {item.key === "connect" && loading && (
                 <Portal>
                   <ProfileOnboardLoader />
@@ -253,6 +272,12 @@ const PreSignIn = () => {
         cardType="pre-signin"
         onClose={() => setVisible(false)}
         snapPointsRange={["25%", "40%"]}
+      />
+      <BottomSheetActions
+        isVisible={termsCondition}
+        cardType="terms-condition"
+        onClose={() => setTermsCondition(false)}
+        snapPointsRange={["90%", "90%"]}
       />
 
     </AppLayout>

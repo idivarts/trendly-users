@@ -8,13 +8,15 @@ import { Href, useRouter } from "expo-router";
 import React from "react";
 import { Modal, Pressable, StyleSheet, View } from "react-native";
 import { List } from "react-native-paper";
+import TermsAndCondition from "./bottomSheets/TermsAndCondition";
 interface BottomSheetActionsProps {
   cardType:
   | "collaboration"
   | "proposal"
   | "invitation"
   | "details"
-  | "pre-signin";
+  | "pre-signin"
+  | "terms-condition";
   cardId?: string;
   invitationId?: string | null;
   isVisible: boolean;
@@ -162,6 +164,8 @@ const BottomSheetActions = ({
 
           </List.Section>
         );
+      case "terms-condition":
+        return <TermsAndCondition />
       default:
         return null;
     }
