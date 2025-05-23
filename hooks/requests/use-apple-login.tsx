@@ -1,4 +1,4 @@
-import { INITIAL_USER_DATA } from "@/constants/User";
+import { useInitialUserData } from "@/constants/User";
 import { useAuthContext } from "@/contexts";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
@@ -13,6 +13,7 @@ provider.addScope('email');
 provider.addScope('name');
 
 export const useAppleLogin = (setLoading: Function, setError: Function) => {
+    const INITIAL_DATA = useInitialUserData()
     const { firebaseSignIn, firebaseSignUp } = useAuthContext();
     const [isAppleAvailable, setIsAppleAvailable] = useState(false)
     useEffect(() => {
@@ -32,7 +33,7 @@ export const useAppleLogin = (setLoading: Function, setError: Function) => {
 
         if (!isExistingUser) {
             const userData = {
-                ...INITIAL_USER_DATA,
+                ...INITIAL_DATA,
                 isVerified: true,
                 name: result.user.displayName || "Apple User",
                 email: result.user.email || "",

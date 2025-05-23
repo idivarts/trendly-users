@@ -1,4 +1,4 @@
-import { INITIAL_USER_DATA } from "@/constants/User";
+import { useInitialUserData } from "@/constants/User";
 import { useStorageState } from "@/hooks";
 import { AccountStatus } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { analyticsLogEvent } from "@/shared-libs/utils/firebase/analytics";
@@ -85,6 +85,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
   const [isUserLoading, setIsUserLoading] = useState(true);
   const [collaborationId, setCollaborationId] = useState<string>("");
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const INITIAL_DATA = useInitialUserData()
 
   const fetchUser = async () => {
     if (isLoading || !session)
@@ -169,7 +170,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
       await setDoc(doc(FirestoreDB, "users", userCredential.user.uid), {
         name,
         email,
-        ...INITIAL_USER_DATA,
+        ...INITIAL_DATA,
         creationTime: Date.now(),
       });
 

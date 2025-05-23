@@ -1,4 +1,4 @@
-import { INITIAL_USER_DATA } from "@/constants/User";
+import { useInitialUserData } from "@/constants/User";
 import { useAuthContext } from "@/contexts";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
@@ -15,6 +15,7 @@ WebBrowser.maybeCompleteAuthSession();
 
 export const useGoogleLogin = (setLoading: Function, setError: Function) => {
     const { firebaseSignIn, firebaseSignUp } = useAuthContext();
+    const INTIAL_DATA = useInitialUserData()
 
     const evalResult = async (result: void | UserCredential) => {
         if (!result)
@@ -27,7 +28,7 @@ export const useGoogleLogin = (setLoading: Function, setError: Function) => {
 
         if (!isExistingUser) {
             const userData = {
-                ...INITIAL_USER_DATA,
+                ...INTIAL_DATA,
                 isVerified: true,
                 name: result.user.displayName,
                 email: result.user.email || "",

@@ -10,7 +10,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { IS_BETA_ENABLED } from "@/constants/App";
 import Colors from "@/constants/Colors";
-import { INITIAL_USER_DATA } from "@/constants/User";
+import { useInitialUserData } from "@/constants/User";
 import { useAuthContext } from "@/contexts";
 import { useFacebookLogin, useInstagramLogin } from "@/hooks/requests";
 import { useAppleLogin } from "@/hooks/requests/use-apple-login";
@@ -40,6 +40,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
 }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const INITIAL_DATA = useInitialUserData();
 
   const snapPoints = useMemo(() => ["35%", "35%", "35%"], []);
 
@@ -60,7 +61,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
   } = useInstagramLogin(
     AuthApp,
     FirestoreDB,
-    INITIAL_USER_DATA,
+    INITIAL_DATA,
     setLoading,
     setError,
   );
@@ -71,7 +72,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
   } = useFacebookLogin(
     AuthApp,
     FirestoreDB,
-    INITIAL_USER_DATA,
+    INITIAL_DATA,
     setLoading,
     setError,
   );

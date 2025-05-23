@@ -2,7 +2,7 @@ import Button from "@/components/ui/button";
 import SocialButton from "@/components/ui/button/social-button";
 import Colors from "@/constants/Colors";
 import { slides } from "@/constants/Slides";
-import { INITIAL_USER_DATA } from "@/constants/User";
+import { useInitialUserData } from "@/constants/User";
 import { useFacebookLogin, useInstagramLogin } from "@/hooks/requests";
 import AppLayout from "@/layouts/app-layout";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
@@ -44,6 +44,7 @@ WebBrowser.maybeCompleteAuthSession();
 
 const PreSignIn = () => {
   const theme = useTheme();
+  const INITIAL_DATA = useInitialUserData();
   const styles = stylesFn(theme);
   const [error, setError] = useState<string | null>(null);
   const [visible, setVisible] = useState(false);
@@ -58,7 +59,7 @@ const PreSignIn = () => {
     useInstagramLogin(
       AuthApp,
       FirestoreDB,
-      INITIAL_USER_DATA,
+      INITIAL_DATA,
       setLoading,
       setError
     );
@@ -67,7 +68,7 @@ const PreSignIn = () => {
     useFacebookLogin(
       AuthApp,
       FirestoreDB,
-      INITIAL_USER_DATA,
+      INITIAL_DATA,
       setLoading,
       setError
     );
