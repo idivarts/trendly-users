@@ -308,14 +308,14 @@ const ActionContainer: FC<ActionContainerProps> = ({
         }}
       >
         <FontAwesomeIcon icon={faCircleInfo} size={20} />
-        <Text style={{ fontSize: 16, width: "95%" }}>
+        <Text style={{ fontSize: 16, flex: 1, marginRight: 12 }}>
           {contract.status === 0
-            ? "Please make sure to use this chat to first understand the the influencer. Post that, you can start your collaboration here"
+            ? "Please make sure you chat with the brands before you ask them to start collaboration."
             : contract.status === 1
-              ? "Please note, if your collaboration is done, we would need you to close the collaboration here. Having open collaborations idle for a long time can end up reducing the rating"
+              ? "Please note, if your collaboration is done, ask the brand to end the collaboration and rate you."
               : contract.status === 2
                 ? "Feedbacks are important for us. Our platform works on what people give feedback to each other. You see that other persons feedback only if you give your feedback"
-                : "You can create new collaboration and invite user to collaboration"}
+                : "Collaboration has ended! However you can continue to chat with the brand for any future opportunities."}
         </Text>
       </View>
     </View>
