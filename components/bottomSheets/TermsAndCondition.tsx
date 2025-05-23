@@ -52,7 +52,7 @@ const TermsAndCondition = () => {
 
             <Text style={{ fontWeight: 'bold', marginBottom: 6 }}>8. Contact Us</Text>
             <Text style={{ marginBottom: 20 }}>
-                If you have any questions or concerns about these Terms or wish to report content, please contact us at support@trendly.pro.
+                If you have any questions or concerns about these Terms or wish to report content, please contact us at support@trendly.now.
             </Text>
         </ScrollView>
         // </View>
