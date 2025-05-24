@@ -4,36 +4,24 @@ import { Theme } from "@react-navigation/native";
 export const ColorsStatic = {
   primary: "rgb(5, 68, 99)",
   secondary: "rgb(83, 139, 166)",
-  tintColorLight: "rgb(255, 109, 45)",
-  tintColorDark: "rgb(255, 255, 255)",
 
   // Some Default colours
   aliceBlue: "rgb(233, 241, 247)",
-  amber: "rgb(255, 191, 0)",
-  unicornSilver: "rgb(232, 232, 232)",
-  danger: "rgb(125, 82, 96)",
   eerieBlack: "rgb(27, 27, 27)",
-  whiteSmoke: "rgb(245, 245, 245)",
   gold: "rgb(236, 214, 148)",
   green: "rgb(157, 213, 134)",
   yellow: "rgb(232, 185, 49)",
   yellow100: "rgba(166, 159, 91, 0.839)",
-  pink: "rgb(248, 215, 218)",
-  pinkForeground: "rgb(220, 53, 69)",
-  backdrop: "rgba(0, 0, 0, 0.5)",
   black: "rgb(0, 0, 0)",
   lightgray: "lightgray",
-  orange: "#F64740",
-  platinum: "rgb(219, 219, 219)",
   red: "red",
   gray100: "rgb(85, 85, 85)",
   gray200: "rgb(249, 249, 249)",
   gray300: "rgb(117, 117, 117)",
   white: "rgb(255, 255, 255)",
-  secondaryContainer: "rgb(83, 139, 166)",
-  onSecondaryContainer: "rgb(255, 255, 255)",
   transparent: "transparent",
 
+  backdrop: "rgba(0, 0, 0, 0.5)",
   success: "rgb(2, 202, 48)",
   successForeground: "rgb(40, 167, 69)",
   cardDark: "rgb(30, 30, 30)",
@@ -57,35 +45,35 @@ export default (theme: Theme) => ({
   ...ColorsStatic,
   ...(theme.dark
     ? {
-      primary: ColorsStatic.secondary,
-      card: ColorsStatic.eerieBlack,
-      text: ColorsStatic.white,
-      textSecondary: ColorsStatic.gray300,
-      tint: ColorsStatic.secondary,
-      tabIconDefault: ColorsStatic.gray300,
-      tabIconSelected: ColorsStatic.secondary,
-      onSurface: ColorsStatic.gray300,
-      tag: ColorsStatic.gray100,
-      tagForeground: ColorsStatic.white,
-      outline: ColorsStatic.gray300,
-      background: ColorsStatic.black,
-      reverseBackground: ColorsStatic.white,
-      modalBackground: ColorsStatic.eerieBlack,
+      primary: ColorsStatic.secondary, // Main accent color
+      card: ColorsStatic.eerieBlack, // Card background color
+      text: ColorsStatic.white, // Primary text color
+      textSecondary: ColorsStatic.gray300, // Secondary text, captions
+      tint: ColorsStatic.secondary, // Tint for icons/buttons
+      tabIconDefault: ColorsStatic.gray300, // Inactive tab icons
+      tabIconSelected: ColorsStatic.secondary, // Active tab icons
+      onSurface: ColorsStatic.gray300, // Surface overlay color
+      tag: ColorsStatic.gray100, // Tag background
+      tagForeground: ColorsStatic.white, // Tag text/icon color
+      outline: ColorsStatic.gray300, // Borders and outlines
+      background: ColorsStatic.black, // App background
+      reverseBackground: ColorsStatic.white, // Opposite of background for contrast
+      modalBackground: ColorsStatic.eerieBlack, // Modal or overlay background
     }
     : {
-      primary: ColorsStatic.primary,
-      card: ColorsStatic.white,
-      text: ColorsStatic.black,
-      textSecondary: ColorsStatic.gray100,
-      tint: ColorsStatic.primary,
-      tabIconDefault: ColorsStatic.gray300,
-      tabIconSelected: ColorsStatic.primary,
-      onSurface: ColorsStatic.gray300,
-      tag: ColorsStatic.gray200,
-      tagForeground: ColorsStatic.black,
-      outline: ColorsStatic.gray300,
-      background: ColorsStatic.white,
-      reverseBackground: ColorsStatic.black,
-      modalBackground: ColorsStatic.white,
+      primary: ColorsStatic.primary, // Main accent color
+      card: ColorsStatic.white, // Card background color
+      text: ColorsStatic.black, // Primary text color
+      textSecondary: ColorsStatic.gray100, // Secondary text, captions
+      tint: ColorsStatic.primary, // Tint for icons/buttons
+      tabIconDefault: ColorsStatic.gray300, // Inactive tab icons
+      tabIconSelected: ColorsStatic.primary, // Active tab icons
+      onSurface: ColorsStatic.gray300, // Surface overlay color
+      tag: ColorsStatic.gray200, // Tag background
+      tagForeground: ColorsStatic.black, // Tag text/icon color
+      outline: ColorsStatic.gray300, // Borders and outlines
+      background: ColorsStatic.white, // App background
+      reverseBackground: ColorsStatic.black, // Opposite of background for contrast
+      modalBackground: ColorsStatic.white, // Modal or overlay background
     }),
 });
