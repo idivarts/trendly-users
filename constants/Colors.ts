@@ -58,42 +58,34 @@ export default (theme: Theme) => ({
   ...(theme.dark
     ? {
       primary: ColorsStatic.secondary,
-
-      card: ColorsStatic.cardDark,
+      card: ColorsStatic.eerieBlack,
       text: ColorsStatic.white,
-      textSecondary: ColorsStatic.gray100,
-
-
-      tint: ColorsStatic.tintColorDark,
-      tabIconDefault: ColorsStatic.tabIconDefault,
-      tabIconSelected: ColorsStatic.tintColorDark,
-      onSurface: ColorsStatic.onSurfaceDark,
-      tag: ColorsStatic.tagDark,
-      tagForeground: ColorsStatic.tagForegroundDark,
-      outline: ColorsStatic.outlineDark,
-
-      background: ColorsStatic.backgroundDark,
+      textSecondary: ColorsStatic.gray300,
+      tint: ColorsStatic.secondary,
+      tabIconDefault: ColorsStatic.gray300,
+      tabIconSelected: ColorsStatic.secondary,
+      onSurface: ColorsStatic.gray300,
+      tag: ColorsStatic.gray100,
+      tagForeground: ColorsStatic.white,
+      outline: ColorsStatic.gray300,
+      background: ColorsStatic.black,
       reverseBackground: ColorsStatic.white,
-      modalBackground: ColorsStatic.modalBackgroundDark,
+      modalBackground: ColorsStatic.eerieBlack,
     }
     : {
       primary: ColorsStatic.primary,
-
       card: ColorsStatic.white,
-      text: ColorsStatic.textLight,
-      textSecondary: ColorsStatic.textSecondaryLight,
-
-      tint: ColorsStatic.tintColorLight,
-      tabIconDefault: ColorsStatic.tabIconDefault,
-      tabIconSelected: ColorsStatic.tintColorLight,
-
-      onSurface: ColorsStatic.outlineLight,
-      tag: ColorsStatic.tagLight,
-      tagForeground: ColorsStatic.tagForegroundLight,
-      outline: ColorsStatic.outlineLight,
-
+      text: ColorsStatic.black,
+      textSecondary: ColorsStatic.gray100,
+      tint: ColorsStatic.primary,
+      tabIconDefault: ColorsStatic.gray300,
+      tabIconSelected: ColorsStatic.primary,
+      onSurface: ColorsStatic.gray300,
+      tag: ColorsStatic.gray200,
+      tagForeground: ColorsStatic.black,
+      outline: ColorsStatic.gray300,
       background: ColorsStatic.white,
-      reverseBackground: ColorsStatic.backgroundDark,
-      modalBackground: ColorsStatic.modalBackgroundLight,
+      reverseBackground: ColorsStatic.black,
+      modalBackground: ColorsStatic.white,
     }),
 });
