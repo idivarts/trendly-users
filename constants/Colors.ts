@@ -6,6 +6,8 @@ export const ColorsStatic = {
   secondary: "rgb(83, 139, 166)",
   tintColorLight: "rgb(255, 109, 45)",
   tintColorDark: "rgb(255, 255, 255)",
+
+  // Some Default colours
   aliceBlue: "rgb(233, 241, 247)",
   amber: "rgb(255, 191, 0)",
   unicornSilver: "rgb(232, 232, 232)",
@@ -47,8 +49,8 @@ export default (theme: Theme) => ({
       primary: ColorsStatic.secondary,
 
       card: "rgb(30, 30, 30)",
-      text: "rgb(255, 255, 255)",
-      textSecondary: "rgb(102, 102, 102)",
+      text: ColorsStatic.white,
+      textSecondary: ColorsStatic.gray100,
 
 
       tint: ColorsStatic.tintColorDark,
