@@ -200,8 +200,11 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
 
     if (collaborationId)
       resetAndNavigate(`/collaboration-details/${collaborationId}`);
-    else
+    else if ((user?.profile?.completionPercentage || 0) < 60) {
+      resetAndNavigate("/profile");
+    } else {
       resetAndNavigate("/collaborations");
+    }
 
     if (user?.settings?.accountStatus == AccountStatus.Deactivated) {
       Toaster.success("Your account is successfuly activated")

@@ -1,5 +1,6 @@
 import { Text, View } from "@/components/theme/Themed";
 import Colors from "@/constants/Colors";
+import { useAuthContext } from "@/contexts";
 import { resetAndNavigate } from "@/utils/router";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -23,12 +24,15 @@ const ScreenHeader: React.FC<ScreenHeaderProps> = ({
 }) => {
   const theme = useTheme();
   const navigation = useNavigation();
+  const { user } = useAuthContext();
 
   const handleAction = () => {
     if (action) {
       action();
     } else if (navigation.canGoBack()) {
       navigation.goBack();
+    } else if ((user?.profile?.completionPercentage || 0) < 60) {
+      resetAndNavigate("/profile");
     } else {
       resetAndNavigate("/collaborations");
     }
