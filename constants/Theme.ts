@@ -21,6 +21,9 @@ const CustomPaperTheme = (theme: Theme): MD3Theme => ({
     surfaceVariant: Colors(theme).background, // Variant of surface for sections
     onSurfaceVariant: Colors(theme).textSecondary, // Subtle text on variant surfaces
 
+    // surfaceDisabled: Colors(theme).text, // Variant of surface for sections
+    onSurfaceDisabled: Colors(theme).gray300, // Disabled text/icons on surface
+
     primaryContainer: Colors(theme).primary, // Container using primary background
     onPrimaryContainer: Colors(theme).white, // Text/icons on primary container
 

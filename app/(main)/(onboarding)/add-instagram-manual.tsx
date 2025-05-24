@@ -276,11 +276,7 @@ const stylesFn = (theme: Theme) => StyleSheet.create({
         fontSize: 16,
     },
     button: {
-        backgroundColor: Colors(theme).primary,
-        color: Colors(theme).text,
         paddingVertical: 8,
-        // paddingHorizontal: 40,
-        // borderRadius: 10,
         marginTop: 16,
         width: '100%',
     },
