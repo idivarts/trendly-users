@@ -63,7 +63,6 @@ export default (theme: Theme) => ({
 
       background: "rgb(0, 0, 0)",
       reverseBackground: "rgb(255, 255, 255)",
-      cardBackground: "rgb(52, 52, 52)",
       modalBackground: "rgb(33, 33, 33)",
     }
     : {
@@ -82,7 +81,6 @@ export default (theme: Theme) => ({
       tag: "rgb(241, 243, 244)",
       tagForeground: "rgb(95, 99, 104)",
       outline: "rgb(5, 68, 99)",
-      cardBackground: "rgb(234, 234, 234)",
       modalBackground: "rgb(255, 255, 255)",
     }),
 });

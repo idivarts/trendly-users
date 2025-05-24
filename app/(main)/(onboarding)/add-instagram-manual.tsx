@@ -135,7 +135,7 @@ const AddInstagramManual = () => {
 
                 <Text style={[styles.label, { color: Colors(theme).text }]}>Upload Profile and Dashboard Screenshot</Text>
                 <View style={{ display: "flex", flexDirection: "row", width: "100%", gap: 10, marginTop: 8 }}>
-                    <TouchableOpacity style={[styles.uploadBox, { backgroundColor: Colors(theme).cardBackground, borderColor: Colors(theme).border }]} onPress={() =>
+                    <TouchableOpacity style={[styles.uploadBox, { backgroundColor: Colors(theme).card, borderColor: Colors(theme).border }]} onPress={() =>
                         Platform.OS === 'web' ? pRef.current.click() : pickImage(setProfileImage, setProfileImageUrl)}>
                         {profileImage ? (
                             <>
@@ -150,7 +150,7 @@ const AddInstagramManual = () => {
                             </>
                         )}
                     </TouchableOpacity>
-                    <TouchableOpacity style={[styles.uploadBox, { backgroundColor: Colors(theme).cardBackground, borderColor: Colors(theme).border }]} onPress={() =>
+                    <TouchableOpacity style={[styles.uploadBox, { backgroundColor: Colors(theme).card, borderColor: Colors(theme).border }]} onPress={() =>
                         Platform.OS === 'web' ? dRef.current.click() : pickImage(setDashboardImage, setDashboardImageUrl)}>
                         {dashboardImage ? (
                             <>
@@ -170,7 +170,7 @@ const AddInstagramManual = () => {
 
                 {/* <Text style={styles.label}>Upload Dashboard Screenshot</Text> */}
 
-                <View style={[styles.noteContainer, { backgroundColor: Colors(theme).cardBackground, borderColor: Colors(theme).border }]}>
+                <View style={[styles.noteContainer, { backgroundColor: Colors(theme).card, borderColor: Colors(theme).border }]}>
                     <Text style={[styles.notesHeading, { color: Colors(theme).text }]}>Before You Continue</Text>
                     <View style={styles.bulletPoint}>
                         <Text style={[styles.bulletSymbol, { color: Colors(theme).text }]}>{'\u2022'}</Text>
