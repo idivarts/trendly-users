@@ -21,7 +21,7 @@ const _layout = () => {
                 action={() => router.push("/profile")}
                 actionLabel="Complete Profile Now"
                 image={require("@/assets/images/incomplete-profile.png")}
-                subtitle={"For better collaboration applications we only allow influencers with more than 60% profile completion to apply"}
+                subtitle={"For better applications we only allow influencers with more than 60% profile-completion to apply on the collaborations"}
                 title="Your Profile is incomplete!"
             />
         </View>
