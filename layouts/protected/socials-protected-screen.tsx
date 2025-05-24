@@ -13,7 +13,7 @@ const SocialsProtectedScreen: React.FC<SocialsProtectedScreenProps> = ({
   children,
 }) => {
   const {
-    isUserLoading, signOutUser
+    isUserLoading //, signOutUser
   } = useAuthContext();
   const {
     isFetchingSocials,

@@ -91,12 +91,12 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
   const inMainGroup = segments[0] === "(main)";
 
   const fetchUser = async () => {
-    if (isLoading || !session)
+    if (isLoading || !session || !AuthApp.currentUser)
       return
 
     // setIsUserLoading(true);
     try {
-      const userDocRef = doc(FirestoreDB, "users", session);
+      const userDocRef = doc(FirestoreDB, "users", AuthApp.currentUser.uid);
 
       const unsubscribe = onSnapshot(userDocRef, (userSnap) => {
         if (userSnap.exists()) {
@@ -115,8 +115,9 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
 
       return unsubscribe;
     } catch (error) {
-      setIsLoggedIn(false);
-      setUser(null);
+      if (inMainGroup) {
+        signOutUser();
+      }
     } finally {
       setIsUserLoading(false);
     }
