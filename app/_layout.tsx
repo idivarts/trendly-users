@@ -1,3 +1,5 @@
+import "react-native-reanimated";
+
 import { useColorScheme } from "@/components/theme/useColorScheme";
 import { APP_SCHEME } from "@/constants/App";
 import CustomPaperTheme from "@/constants/Theme";
@@ -9,6 +11,7 @@ import { resetAndNavigate } from "@/utils/router";
 import { queryParams } from "@/utils/url";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import '@react-native-firebase/crashlytics';
 import {
   DarkTheme,
   DefaultTheme as ExpoDefaultTheme,
@@ -20,9 +23,10 @@ import { Href, Stack, useGlobalSearchParams, usePathname, useRouter, useSegments
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { Linking } from "react-native";
+import { setJSExceptionHandler } from 'react-native-exception-handler';
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Provider } from "react-native-paper";
-import "react-native-reanimated";
+
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary
@@ -35,6 +39,10 @@ export const unstable_settings = {
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
+
+setJSExceptionHandler((error, isFatal) => {
+  console.log("Caught JS Error:", error, isFatal);
+});
 
 const RootLayout = () => {
   const [loaded, error] = useFonts({

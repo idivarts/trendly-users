@@ -1,71 +1,63 @@
-import { INITIAL_USER_DATA } from "@/constants/User";
-import { useAuthContext } from "@/contexts";
-import { AuthApp } from "@/shared-libs/utils/firebase/auth";
-import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
-import { GoogleAuthProvider, signInWithPopup, UserCredential } from "firebase/auth";
-import { doc, getDoc, setDoc } from "firebase/firestore";
-;
-;
-
-const provider = new GoogleAuthProvider();
-provider.addScope('profile');
-provider.addScope('email');
-// provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
-// provider.setCustomParameters({
-//     'login_hint': 'user@example.com'
-// });
 
 export const useGoogleLogin = (setLoading: Function, setError: Function) => {
-    const { firebaseSignIn, firebaseSignUp } = useAuthContext();
+    // const { firebaseSignIn, firebaseSignUp } = useAuthContext();
 
-    const evalResult = async (result: void | UserCredential) => {
-        if (!result)
-            return;
+    // const [request, response, promptAsync] = Google.useAuthRequest({
+    //     iosClientId: '799278694891-6cubib0gjb4kp81vq5bi8ulu4q7amduv.apps.googleusercontent.com',
+    //     androidClientId: '799278694891-n7ab0u2o9cfqol8b07mr51imdham6ioe.apps.googleusercontent.com',
+    // });
 
-        setLoading(true)
-        const userRef = await doc(FirestoreDB, "users", result.user.uid);
-        const findUser = await getDoc(userRef);
-        const isExistingUser = findUser.exists();
+    // const evalResult = async (result: void | UserCredential) => {
+    //     if (!result)
+    //         return;
 
-        if (!isExistingUser) {
-            const userData = {
-                ...INITIAL_USER_DATA,
-                isVerified: true,
-                name: result.user.displayName,
-                email: result.user.email || "",
-                profileImage: result.user.photoURL || "",
-                creationTime: Date.now(),
-            };
-            await setDoc(userRef, userData);
-        }
-        // userRef.
-        if (isExistingUser) {
-            firebaseSignIn(result.user.uid);
-        } else {
-            firebaseSignUp(result.user.uid, 0);
-        }
-        Toaster.success('Logged in with Google successfully');
-    }
+    //     setLoading(true)
+    //     const userRef = await doc(FirestoreDB, "users", result.user.uid);
+    //     const findUser = await getDoc(userRef);
+    //     const isExistingUser = findUser.exists();
 
-    const googleLogin = () => {
+    //     if (!isExistingUser) {
+    //         const userData = {
+    //             ...INITIAL_USER_DATA,
+    //             isVerified: true,
+    //             name: result.user.displayName,
+    //             email: result.user.email || "",
+    //             profileImage: result.user.photoURL || "",
+    //             creationTime: Date.now(),
+    //         };
+    //         await setDoc(userRef, userData);
+    //     }
+    //     // userRef.
+    //     if (isExistingUser) {
+    //         firebaseSignIn(result.user.uid);
+    //     } else {
+    //         firebaseSignUp(result.user.uid, 0);
+    //     }
+    //     Toaster.success('Logged in with Google successfully');
+    // }
+
+    const googleLogin = async () => {
         try {
-            signInWithPopup(AuthApp, provider).catch((error) => {
-                Toaster.error('Error logging in with Google', error.message);
-                console.log(error);
-            }).then(async (result) => {
-                await evalResult(result);
-            }).catch(e => {
-                console.log("Error", e);
-                Toaster.error('Error logging in with Google');
-                setLoading(false);
-            })
-        } catch (e) {
-            console.log("Error", e);
+            // const result = await promptAsync();
+            // if (result?.type === 'success' && result.authentication) {
+            //     setLoading(true);
+            //     const credential = GoogleAuthProvider.credential(result.authentication.idToken, result.authentication.accessToken);
+            //     const firebaseResult = await signInWithCredential(AuthApp, credential);
+            //     await evalResult(firebaseResult);
+            // } else {
+            //     Toaster.error('Google sign-in cancelled or failed');
+            //     console.log("Google sign-in cancelled or failed", result);
+            //     setError('cancelled');
+            // }
+        } catch (error: any) {
+            console.log("Error logging in with Google:", error);
+            Toaster.error('Error logging in with Google', error?.message);
+            setError(error.message);
         } finally {
             setLoading(false);
         }
-    }
+    };
 
     return {
         googleLogin

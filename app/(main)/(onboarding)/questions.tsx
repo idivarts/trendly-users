@@ -61,7 +61,7 @@ const Questions = () => {
           if (collaborationId)
             resetAndNavigate(`/collaboration-details/${collaborationId}`);
           else
-            resetAndNavigate("/collaborations");
+            resetAndNavigate("/profile");
         })
         .catch((error) => {
           console.error("Error submitting survey:", error);
@@ -136,7 +136,7 @@ const Questions = () => {
           )}
 
           <Pressable
-            onPress={() => resetAndNavigate("/collaborations")}
+            onPress={() => resetAndNavigate("/profile")}
             style={styles.skipButton}
           >
             <Text style={styles.skipText}>Skip</Text>

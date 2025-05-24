@@ -1,6 +1,6 @@
 import { IS_BETA_ENABLED } from "@/constants/App";
 import { FB_APP_ID as fbid } from "@/constants/Facebook";
-import { INITIAL_USER_DATA } from "@/constants/User";
+import { useInitialUserData } from "@/constants/User";
 import { useInstagramLogin } from "@/hooks/requests";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
@@ -21,8 +21,9 @@ const InstagramLoginButton: React.FC = () => {
   const FB_APP_ID = fbid;
   const [isLoading, setIsLoading] = useState(false);
   const user = AuthApp.currentUser;
+  const INITIAL_DATA = useInitialUserData();
 
-  const { instagramLogin } = useInstagramLogin(AuthApp, FirestoreDB, INITIAL_USER_DATA, () => { }, () => { }, (code) => {
+  const { instagramLogin } = useInstagramLogin(AuthApp, FirestoreDB, INITIAL_DATA, () => { }, () => { }, (code) => {
     handleAddAccount(code);
   });
 

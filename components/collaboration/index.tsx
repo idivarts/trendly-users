@@ -4,6 +4,7 @@ import Colors from "@/constants/Colors";
 import { MAX_WIDTH_WEB } from "@/constants/Container";
 import { useBreakpoints } from "@/hooks";
 import AppLayout from "@/layouts/app-layout";
+import { useScrollContext } from "@/shared-libs/contexts/scroll-context";
 import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
 import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { processRawAttachment } from "@/shared-libs/utils/attachments";
@@ -137,7 +138,8 @@ const Collaboration = () => {
       brandMap[collab.brandId]?.paymentMethodVerified || false,
   }));
 
-
+  // const [scHeight, setScHeight] = useState(0)
+  const { scrollRef, setScrollHeight } = useScrollContext()
   const styles = stylesFn(theme);
 
   if (loading && collabs.length == 0) {
@@ -201,7 +203,10 @@ const Collaboration = () => {
             setSearchQuery={setSearchQuery}
           />
         </View>
-        <IOScrollView onScroll={onScrollEvent}>
+        <IOScrollView ref={scrollRef} onScroll={(e) => {
+          setScrollHeight?.(e.nativeEvent.contentOffset?.y || 0)
+          onScrollEvent(e)
+        }}>
           {filteredList.length === 0 ? (
             <EmptyState
               hideAction

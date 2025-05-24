@@ -1,4 +1,4 @@
-import { INITIAL_USER_DATA } from "@/constants/User";
+import { useInitialUserData } from "@/constants/User";
 import { useStorageState } from "@/hooks";
 import { AccountStatus } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { analyticsLogEvent } from "@/shared-libs/utils/firebase/analytics";
@@ -7,8 +7,8 @@ import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { User } from "@/types/User";
-import { updatedTokens } from "@/utils/push-notification/push-notification-token.native";
 import { resetAndNavigate } from "@/utils/router";
+import { useSegments } from "expo-router";
 import {
   createUserWithEmailAndPassword,
   deleteUser,
@@ -46,6 +46,7 @@ interface AuthContextProps {
   firebaseSignUp: (token: string, hasSocials?: number) => void;
   getUser: (userId: string) => Promise<User | null>;
   isLoading: boolean;
+  isLoggedIn: boolean;
   isUserLoading: boolean;
   session?: string | null;
   signIn: (email: string, password: string) => void;
@@ -65,6 +66,7 @@ const AuthContext = createContext<AuthContextProps>({
   getUser: () => Promise.resolve(null),
   isLoading: false,
   isUserLoading: false,
+  isLoggedIn: false,
   session: null,
   signIn: (email: string, password: string) => null,
   signOutUser: async () => { },
@@ -83,10 +85,17 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
   const [user, setUser] = useState<User | null>(null);
   const [isUserLoading, setIsUserLoading] = useState(true);
   const [collaborationId, setCollaborationId] = useState<string>("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const INITIAL_DATA = useInitialUserData()
+  const segments = useSegments();
+  const inMainGroup = segments[0] === "(main)";
 
   const fetchUser = async () => {
-    if (!isLoading && session) {
-      // setIsUserLoading(true);
+    if (isLoading || !session)
+      return
+
+    // setIsUserLoading(true);
+    try {
       const userDocRef = doc(FirestoreDB, "users", session);
 
       const unsubscribe = onSnapshot(userDocRef, (userSnap) => {
@@ -95,6 +104,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
             ...(userSnap.data() as User),
             id: userSnap.id as string,
           };
+          setIsLoggedIn(true);
           setUser(userData);
           setIsUserLoading(false);
         } else {
@@ -104,12 +114,30 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
       });
 
       return unsubscribe;
+    } catch (error) {
+      setIsLoggedIn(false);
+      setUser(null);
+    } finally {
+      setIsUserLoading(false);
     }
   };
+  const cUser = AuthApp.currentUser
 
   useEffect(() => {
-    fetchUser();
-  }, [session, isLoading]);
+    if (isLoading)
+      return
+    AuthApp.authStateReady().then(() => {
+      if (!AuthApp.currentUser) {
+        setIsUserLoading(false);
+        if (inMainGroup) {
+          signOutUser();
+        }
+        // resetAndNavigate("/pre-signin");
+      } else {
+        fetchUser();
+      }
+    })
+  }, [session, isLoading, cUser]);
 
   const signIn = async (email: string, password: string) => {
     try {
@@ -147,7 +175,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
       await setDoc(doc(FirestoreDB, "users", userCredential.user.uid), {
         name,
         email,
-        ...INITIAL_USER_DATA,
+        ...INITIAL_DATA,
         creationTime: Date.now(),
       });
 
@@ -172,18 +200,23 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
 
     if (collaborationId)
       resetAndNavigate(`/collaboration-details/${collaborationId}`);
-    else
+    else if ((user?.profile?.completionPercentage || 0) < 60) {
+      resetAndNavigate("/profile");
+    } else {
       resetAndNavigate("/collaborations");
+    }
 
-    if (user?.settings?.accountStatus != AccountStatus.Activated)
+    if (user?.settings?.accountStatus == AccountStatus.Deactivated) {
+      Toaster.success("Your account is successfuly activated")
       updateUser(uid, {
         settings: {
           ...user?.settings,
           accountStatus: AccountStatus.Activated
         }
       })
-
-    Toaster.success("Signed In Successfully!");
+    } else {
+      Toaster.success("Signed In Successfully!");
+    }
   };
 
   const firebaseSignUp = async (uid: string, hasSocials?: number) => {
@@ -252,13 +285,13 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
     try {
       if (Platform.OS !== "web") {
         // Remove push notification token from the database
-        const newUpdatedTokens = await updatedTokens(user);
+        // const newUpdatedTokens = await updatedTokens(user);
 
-        if (newUpdatedTokens) {
-          await updateUser(session as string, {
-            pushNotificationToken: newUpdatedTokens,
-          });
-        }
+        // if (newUpdatedTokens) {
+        //   await updateUser(session as string, {
+        //     pushNotificationToken: newUpdatedTokens,
+        //   });
+        // }
       }
     } catch (e) {
       console.log("Issues while removing tokens", e);
@@ -266,20 +299,19 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
 
     signOut(AuthApp)
       .then(() => {
-        setSession("");
-        setUser(null);
-
         analyticsLogEvent("signed_out", {
           id: user?.id,
           email: user?.email,
         });
-
-        resetAndNavigate("/pre-signin");
         Toaster.success("Signed Out Successfully!");
-      })
-      .catch((error) => {
+      }).catch((error) => {
         console.error("Error signing out: ", error);
-      });
+      }).finally(() => {
+        setSession("");
+        setIsLoggedIn(false);
+        setUser(null);
+        resetAndNavigate("/pre-signin");
+      })
   };
 
   const getUser = async (userId: string): Promise<User | null> => {
@@ -291,6 +323,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
         ...(userSnap.data() as User),
         id: userSnap.id as string,
       };
+      setIsLoggedIn(true);
       setUser(userData);
       return userData;
     }
@@ -393,6 +426,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
         getUser,
         isLoading,
         isUserLoading,
+        isLoggedIn,
         session,
         signIn,
         signOutUser,

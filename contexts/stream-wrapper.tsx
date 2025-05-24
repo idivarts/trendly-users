@@ -9,7 +9,7 @@ import React, {
 } from 'react';
 import { Chat, OverlayProvider } from "stream-chat-expo";
 
-import { streamClient } from './chat-context.provider';
+import { streamClient } from './streamClient';
 
 const StreamWrapper: FC<PropsWithChildren> = ({ children }) => {
     const theme = useTheme();

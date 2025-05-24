@@ -1,9 +1,10 @@
-import FirstPhase from "./message-topbar/first-phase";
-import FourthPhase from "./message-topbar/fourth-phase";
-import SecondPhase from "./message-topbar/second-phase";
-import ThirdPhase from "./message-topbar/third-phase";
+import { CHAT_MESSAGE_TOPBAR_DESCRIPTION } from "@/constants/ChatMessageTopbar";
+import MessageTopbar from "@/shared-uis/components/chat-message-bar";
+import { View } from "@/shared-uis/components/theme/Themed";
 import { Contract } from "@/types/Contract";
+import { useRouter } from "expo-router";
 import { useState } from "react";
+import Button from "../ui/button";
 
 interface ChatMessageTopbarProps {
   contract: Contract;
@@ -13,21 +14,31 @@ const ChatMessageTopbar: React.FC<ChatMessageTopbarProps> = ({
   contract,
 }) => {
   const [status, setStatus] = useState(contract.status);
+  const router = useRouter();
 
-  if (status === 0) {
-    return <FirstPhase contract={contract} />;
-  } else if (status === 1) {
-    return <SecondPhase setStatus={setStatus} />;
-  } else if (status === 2) {
-    return (
-      <ThirdPhase
-        contract={contract}
-        contractId={contract.id}
-        setStatus={setStatus}
-      />
-    );
-  } else if (status === 3) {
-    return <FourthPhase />;
+  if (status === 0 || status == 2) {
+    return <MessageTopbar
+      actions={
+        <View
+          style={{
+            flexDirection: 'row-reverse',
+            gap: 16,
+            justifyContent: 'space-between',
+          }}
+        >
+          <Button
+            size="small"
+            mode="text"
+            onPress={() => {
+              router.push(`/contract-details/${contract.streamChannelId}`)
+            }}
+          >
+            {contract.status == 0 ? "Open Collaboration Application" : "Give Feedback"}
+          </Button>
+        </View>
+      }
+      description={contract.status == 0 ? CHAT_MESSAGE_TOPBAR_DESCRIPTION.first : CHAT_MESSAGE_TOPBAR_DESCRIPTION.third}
+    />
   } else {
     return null;
   }

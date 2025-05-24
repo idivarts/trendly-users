@@ -10,13 +10,14 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { IS_BETA_ENABLED } from "@/constants/App";
 import Colors from "@/constants/Colors";
-import { INITIAL_USER_DATA } from "@/constants/User";
+import { useInitialUserData } from "@/constants/User";
 import { useAuthContext } from "@/contexts";
 import { useFacebookLogin, useInstagramLogin } from "@/hooks/requests";
+import { useAppleLogin } from "@/hooks/requests/use-apple-login";
 import { useGoogleLogin } from "@/hooks/requests/use-google-login";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
-import { faFacebook, faGoogle, faInstagram } from "@fortawesome/free-brands-svg-icons";
+import { faApple, faFacebook, faGoogle, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import React from "react";
@@ -39,6 +40,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
 }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const INITIAL_DATA = useInitialUserData();
 
   const snapPoints = useMemo(() => ["35%", "35%", "35%"], []);
 
@@ -59,7 +61,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
   } = useInstagramLogin(
     AuthApp,
     FirestoreDB,
-    INITIAL_USER_DATA,
+    INITIAL_DATA,
     setLoading,
     setError,
   );
@@ -70,7 +72,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
   } = useFacebookLogin(
     AuthApp,
     FirestoreDB,
-    INITIAL_USER_DATA,
+    INITIAL_DATA,
     setLoading,
     setError,
   );
@@ -83,6 +85,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
   }, [collaborationId])
 
   const { googleLogin } = useGoogleLogin(setLoading, setError);
+  const { appleLogin, isAppleAvailable } = useAppleLogin(setLoading, setError);
 
   const renderBackdrop = (props: any) => {
     return (
@@ -143,42 +146,60 @@ const AuthModal: React.FC<AuthModalProps> = ({
                 gap: 16,
               }}
             >
-              <SocialButton
-                icon={faGoogle}
-                iconColor={Colors(theme).white}
-                customStyles={{
-                  backgroundColor: Colors(theme).primary,
-                  justifyContent: "center",
 
-                }}
-                label="Continue with Google"
-                labelStyles={{
-                  color: Colors(theme).white,
-                }}
-                onPress={googleLogin}
-              />
-              <SocialButton
-                icon={faFacebook}
-                iconColor={Colors(theme).white}
-                customStyles={{
-                  backgroundColor: Colors(theme).primary,
-                  justifyContent: "center",
+              {Platform.OS != "ios" &&
+                <SocialButton
+                  icon={faApple}
+                  iconColor={Colors(theme).white}
+                  customStyles={{
+                    backgroundColor: Colors(theme).primary,
+                    justifyContent: "center",
 
-                }}
-                label="Continue with Facebook"
-                labelStyles={{
-                  color: Colors(theme).white,
-                }}
-                onPress={() => {
-                  if (Platform.OS === "web") {
-                    facebookLogin();
-                  } else {
-                    if (requestFacebook) {
+                  }}
+                  label="Continue with Apple"
+                  labelStyles={{
+                    color: Colors(theme).white,
+                  }}
+                  onPress={appleLogin}
+                />}
+              {(Platform.OS == "ios" && isAppleAvailable) &&
+                <SocialButton
+                  icon={faGoogle}
+                  iconColor={Colors(theme).white}
+                  customStyles={{
+                    backgroundColor: Colors(theme).primary,
+                    justifyContent: "center",
+
+                  }}
+                  label="Continue with Google"
+                  labelStyles={{
+                    color: Colors(theme).white,
+                  }}
+                  onPress={googleLogin}
+                />}
+              {IS_BETA_ENABLED &&
+                <SocialButton
+                  icon={faFacebook}
+                  iconColor={Colors(theme).white}
+                  customStyles={{
+                    backgroundColor: Colors(theme).primary,
+                    justifyContent: "center",
+
+                  }}
+                  label="Continue with Facebook"
+                  labelStyles={{
+                    color: Colors(theme).white,
+                  }}
+                  onPress={() => {
+                    if (Platform.OS === "web") {
                       facebookLogin();
+                    } else {
+                      if (requestFacebook) {
+                        facebookLogin();
+                      }
                     }
-                  }
-                }}
-              />
+                  }}
+                />}
               {IS_BETA_ENABLED &&
                 <SocialButton
                   icon={faInstagram}

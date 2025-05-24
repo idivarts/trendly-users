@@ -1,5 +1,5 @@
-import { ActivityIndicator } from "react-native";
 import { useTheme } from "@react-navigation/native";
+import { ActivityIndicator } from "react-native";
 
 import { View } from "@/components/theme/Themed";
 import Colors from "@/constants/Colors";
@@ -15,6 +15,7 @@ const Index = () => {
         alignItems: 'center',
       }}
     >
+      {/* <Text style={{ marginBottom: 20 }}>Welcome to Trendly</Text> */}
       <ActivityIndicator
         size="large"
         color={Colors(theme).primary}

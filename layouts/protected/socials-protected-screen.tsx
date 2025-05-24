@@ -13,12 +13,18 @@ const SocialsProtectedScreen: React.FC<SocialsProtectedScreenProps> = ({
   children,
 }) => {
   const {
-    isUserLoading,
+    isUserLoading
   } = useAuthContext();
   const {
     isFetchingSocials,
   } = useSocialContext();
 
+  // useEffect(() => {
+  //   if (!isUserLoading && !isLoggedIn) {
+  //     // Redirect to login page
+  //     resetAndNavigate("/pre-signin");
+  //   }
+  // }, [isUserLoading])
 
   return <>
     {(isUserLoading || isFetchingSocials) && <LoadingScreen />}

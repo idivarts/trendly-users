@@ -57,6 +57,7 @@ const ProfileScreen = () => {
               padding: 10,
               paddingHorizontal: 16,
               marginHorizontal: 16,
+              marginTop: 8,
               borderRadius: 10,
             }}
           >

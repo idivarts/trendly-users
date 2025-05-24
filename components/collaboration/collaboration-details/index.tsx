@@ -10,6 +10,7 @@ import {
 
 import { View } from "@/components/theme/Themed";
 import { useAuthContext } from "@/contexts";
+import { useScrollContext } from "@/shared-libs/contexts/scroll-context";
 import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
 import {
   ICollaboration
@@ -149,6 +150,8 @@ const CollaborationDetails: React.FC<CollaborationDetailsProps> = ({
     }
   }, [cardType, pageID, cardId]);
 
+  const { scrollRef, setScrollHeight } = useScrollContext()
+
   if (loading) {
     return (
       <View
@@ -166,7 +169,9 @@ const CollaborationDetails: React.FC<CollaborationDetailsProps> = ({
   if (!collaboration) return null;
 
   return (
-    <IOScrollView>
+    <IOScrollView ref={scrollRef} onScroll={(e) => {
+      setScrollHeight?.(e.nativeEvent.contentOffset?.y || 0)
+    }}>
       <CollaborationDetailsContent
         cardType={cardTypeDetails}
         applicationData={application}

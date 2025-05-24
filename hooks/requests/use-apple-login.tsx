@@ -1,0 +1,102 @@
+import { useInitialUserData } from "@/constants/User";
+import { useAuthContext } from "@/contexts";
+import { AuthApp } from "@/shared-libs/utils/firebase/auth";
+import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
+import Toaster from "@/shared-uis/components/toaster/Toaster";
+import * as AppleAuthentication from 'expo-apple-authentication';
+import { OAuthProvider, signInWithCredential, UserCredential } from "firebase/auth";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { useEffect, useState } from "react";
+
+const provider = new OAuthProvider('apple.com');
+provider.addScope('email');
+provider.addScope('name');
+
+export const useAppleLogin = (setLoading: Function, setError: Function) => {
+    const INITIAL_DATA = useInitialUserData()
+    const { firebaseSignIn, firebaseSignUp } = useAuthContext();
+    const [isAppleAvailable, setIsAppleAvailable] = useState(false)
+    useEffect(() => {
+        (async () => {
+            const b = await AppleAuthentication.isAvailableAsync()
+            setIsAppleAvailable(b)
+        })()
+    }, [])
+
+    const extractNameFromEmail = (email: string): string => {
+        if (!email) return "Apple User";
+
+        const namePart = email.split('@')[0];
+
+        // Split on common delimiters like '.', '_', or '-' and filter empty values
+        const parts = namePart.split(/[\.\_\-]/).filter(Boolean);
+
+        // Capitalize each word
+        const capitalized = parts.map(word =>
+            word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+        );
+
+        return capitalized.join(' ');
+    };
+    const evalResult = async (result: void | UserCredential, appleCredential: AppleAuthentication.AppleAuthenticationCredential) => {
+        if (!result) return;
+
+        setLoading(true);
+        const userRef = doc(FirestoreDB, "users", result.user.uid);
+        const findUser = await getDoc(userRef);
+        const isExistingUser = findUser.exists();
+
+        if (!isExistingUser) {
+            const userData = {
+                ...INITIAL_DATA,
+                isVerified: true,
+                name: appleCredential.fullName?.givenName || extractNameFromEmail(result.user.email || ""),
+                email: result.user.email || "",
+                profileImage: "",
+                creationTime: Date.now(),
+            };
+            await setDoc(userRef, userData);
+        }
+
+        if (isExistingUser) {
+            firebaseSignIn(result.user.uid);
+        } else {
+            firebaseSignUp(result.user.uid, 0);
+        }
+
+        Toaster.success('Logged in with Apple successfully');
+    };
+
+    const appleLogin = async () => {
+        try {
+            const appleCredential = await AppleAuthentication.signInAsync({
+                requestedScopes: [
+                    AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+                    AppleAuthentication.AppleAuthenticationScope.EMAIL,
+                ],
+            });
+            console.log("Apple credential:", appleCredential);
+            const { identityToken } = appleCredential;
+            if (!identityToken) throw new Error("No identity token returned");
+
+            setLoading(true);
+            const credential = provider.credential({
+                idToken: identityToken,
+            });
+
+            const result = await signInWithCredential(AuthApp, credential);
+            await evalResult(result, appleCredential);
+        } catch (error: any) {
+            console.log("Error logging in with Apple:", error);
+            Toaster.error('Error logging in with Apple', error?.message || '');
+            setError(error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return {
+        appleLogin,
+        isAppleAvailable
+    };
+};

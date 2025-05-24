@@ -1,72 +1,79 @@
 import { Theme } from "@react-navigation/native";
 
-const tintColorLight = "#ff6d2d";
-const tintColorDark = "#fff";
+
+export const ColorsStatic = {
+  primary: "rgb(5, 68, 99)",
+  secondary: "rgb(83, 139, 166)",
+
+  // Some Default colours
+  aliceBlue: "rgb(233, 241, 247)",
+  eerieBlack: "rgb(27, 27, 27)",
+  gold: "rgb(236, 214, 148)",
+  green: "rgb(157, 213, 134)",
+  yellow: "rgb(232, 185, 49)",
+  yellow100: "rgba(166, 159, 91, 0.839)",
+  black: "rgb(0, 0, 0)",
+  lightgray: "lightgray",
+  red: "red",
+  gray100: "rgb(85, 85, 85)",
+  gray200: "rgb(249, 249, 249)",
+  gray300: "rgb(117, 117, 117)",
+  white: "rgb(255, 255, 255)",
+  transparent: "transparent",
+
+  backdrop: "rgba(0, 0, 0, 0.5)",
+  success: "rgb(2, 202, 48)",
+  successForeground: "rgb(40, 167, 69)",
+  cardDark: "rgb(30, 30, 30)",
+  textLight: "rgb(0, 0, 0)",
+  textSecondaryLight: "rgb(102, 102, 102)",
+  tabIconDefault: "rgb(204, 204, 204)",
+  onSurfaceDark: "rgb(83, 139, 166)",
+  tagDark: "rgb(95, 99, 104)",
+  tagForegroundDark: "rgb(241, 243, 244)",
+  outlineDark: "rgb(83, 139, 166)",
+  backgroundDark: "rgb(0, 0, 0)",
+  modalBackgroundDark: "rgb(33, 33, 33)",
+  tagLight: "rgb(241, 243, 244)",
+  tagForegroundLight: "rgb(95, 99, 104)",
+  outlineLight: "rgb(5, 68, 99)",
+  modalBackgroundLight: "rgb(255, 255, 255)",
+}
 
 export default (theme: Theme) => ({
   ...theme.colors,
+  ...ColorsStatic,
   ...(theme.dark
     ? {
-      card: "#1E1E1E",
-      text: "#fff",
-      textSecondary: "#666666",
-      background: "#000",
-      reverseBackground: "#fff",
-      tint: tintColorDark,
-      tabIconDefault: "#ccc",
-      tabIconSelected: tintColorDark,
-      primary: "#538BA6",
-      onSurface: "#538BA6",
-      tag: "#5f6368",
-      tagForeground: "#f1f3f4",
-      outline: "#538BA6",
+      primary: ColorsStatic.secondary, // Main accent color
+      card: ColorsStatic.eerieBlack, // Card background color
+      text: ColorsStatic.white, // Primary text color
+      textSecondary: ColorsStatic.gray300, // Secondary text, captions
+      tint: ColorsStatic.secondary, // Tint for icons/buttons
+      tabIconDefault: ColorsStatic.gray300, // Inactive tab icons
+      tabIconSelected: ColorsStatic.secondary, // Active tab icons
+      onSurface: ColorsStatic.gray300, // Surface overlay color
+      tag: ColorsStatic.gray100, // Tag background
+      tagForeground: ColorsStatic.white, // Tag text/icon color
+      outline: ColorsStatic.gray300, // Borders and outlines
+      background: ColorsStatic.black, // App background
+      reverseBackground: ColorsStatic.white, // Opposite of background for contrast
+      modalBackground: ColorsStatic.eerieBlack, // Modal or overlay background
     }
     : {
-      card: "#fff",
-      text: "#000",
-      textSecondary: "#666666",
-      background: "#fff",
-      reverseBackground: "#000",
-      tint: tintColorLight,
-      tabIconDefault: "#ccc",
-      tabIconSelected: tintColorLight,
-      primary: "#054463",
-      onSurface: "#054463",
-      tag: "#f1f3f4",
-      tagForeground: "#5f6368",
-      outline: "#054463",
+      primary: ColorsStatic.primary, // Main accent color
+      card: ColorsStatic.white, // Card background color
+      text: ColorsStatic.black, // Primary text color
+      textSecondary: ColorsStatic.gray100, // Secondary text, captions
+      tint: ColorsStatic.primary, // Tint for icons/buttons
+      tabIconDefault: ColorsStatic.gray300, // Inactive tab icons
+      tabIconSelected: ColorsStatic.primary, // Active tab icons
+      onSurface: ColorsStatic.gray300, // Surface overlay color
+      tag: ColorsStatic.gray200, // Tag background
+      tagForeground: ColorsStatic.black, // Tag text/icon color
+      outline: ColorsStatic.gray300, // Borders and outlines
+      background: ColorsStatic.white, // App background
+      reverseBackground: ColorsStatic.black, // Opposite of background for contrast
+      modalBackground: ColorsStatic.white, // Modal or overlay background
     }),
-  aliceBlue: "#E9F1F7",
-  amber: "#FFBF00",
-  unicornSilver: "#e8e8e8",
-  danger: "#7d5260",
-  eerieBlack: "#1b1b1b",
-  whiteSmoke: "#f5f5f5",
-  success: "#02ca30",
-  successForeground: "#28a745",
-  gold: "#ECD694",
-  green: "#9DD586",
-  yellow: "#E8B931",
-  yellow100: "#A69F5BD6",
-  pink: "#f8d7da",
-  pinkForeground: "#dc3545",
-  backdrop: "rgba(0, 0, 0, 0.5)",
-  black: "#000",
-  lightgray: "lightgray",
-  modalBackground: "rgba(0, 0, 0, 0.5)",
-  orange: "#F64740",
-  platinum: "#DBDBDB",
-  red: "red",
-  gray100: "#555",
-  gray200: "#f9f9f9",
-  gray300: "#757575",
-  surface: "#ffffff",
-  surfaceVariant: "#ffffff",
-  white: "#ffffff",
-  onPrimary: "#ffffff",
-  secondary: "#054463",
-  secondaryContainer: "#538BA6",
-  onSecondaryContainer: "#ffffff",
-  transparent: "transparent",
-  notificationDot: "red",
 });

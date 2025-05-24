@@ -1,4 +1,4 @@
-import { useAuthContext } from "@/contexts";
+import { useAuthContext } from "@/contexts/auth-context.provider";
 import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";

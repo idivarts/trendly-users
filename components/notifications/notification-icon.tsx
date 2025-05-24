@@ -1,12 +1,12 @@
 import Colors from "@/constants/Colors";
 import { useNotificationContext } from "@/contexts";
+import { faBell } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
 import { Link } from "expo-router";
 import { Pressable } from "react-native";
 import { Badge } from "react-native-paper";
 import { View } from "../theme/Themed";
-import { faBell } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 
 const NotificationIcon: React.FC = () => {
   const theme = useTheme();
@@ -28,9 +28,9 @@ const NotificationIcon: React.FC = () => {
             <Badge
               visible={unreadNotifications !== 0}
               size={20}
-              selectionColor={Colors(theme).notificationDot}
+              selectionColor={Colors(theme).red}
               style={{
-                backgroundColor: Colors(theme).notificationDot,
+                backgroundColor: Colors(theme).red,
                 zIndex: 1,
                 position: "absolute",
                 top: -7,

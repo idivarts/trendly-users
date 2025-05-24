@@ -1,11 +1,8 @@
+import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import { useTheme } from '@react-navigation/native';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faBell } from '@fortawesome/free-solid-svg-icons';
 
 import AppLayout from '@/layouts/app-layout';
-import Colors from '@/constants/Colors';
 import Shimmer from '@/shared-uis/components/shimmer';
 import { View } from '../theme/Themed';
 
@@ -19,11 +16,7 @@ const CollaborationsShimmer = () => {
           <View style={styles.headerLeft}>
             <Shimmer width={100} height={36} />
           </View>
-          <FontAwesomeIcon
-            icon={faBell}
-            size={22}
-            color={Colors(theme).text}
-          />
+          <Shimmer width={22} height={22} />
         </View>
 
         <View style={styles.searchContainer}>

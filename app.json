@@ -8,11 +8,10 @@
       "android",
       "web"
     ],
+    "jsEngine": "hermes",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": [
-      "trendly-creators"
-    ],
+    "scheme": "trendly-creators",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.png",
@@ -25,6 +24,7 @@
       }
     },
     "ios": {
+      "usesAppleSignIn": true,
       "supportsTablet": false,
       "bundleIdentifier": "pro.trendly.creators",
       "googleServicesFile": "./GoogleService-Info.plist",
@@ -32,10 +32,8 @@
         "applinks:creators.trendly.now"
       ],
       "infoPlist": {
-        "NSCameraUsageDescription": "Trendly requires access to your camera to take and upload photos or videos for your profile and collaboration applications.",
-        "NSPhotoLibraryUsageDescription": "Trendly requires access to your photo library to select and upload images or videos for your profile and collaborations.",
-        "NSPhotoLibraryAddUsageDescription": "Trendly needs permission to save collaboration-related images and videos to your photo library.",
-        "NSMicrophoneUsageDescription": "Trendly requires access to your microphone to send audio messages and to create content for your profile and collaborations."
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSUserNotificationUsageDescription": "Trendly would like to send you notifications about new collaborations, updates, and important activity related to your account."
       }
     },
     "android": {
@@ -70,6 +68,7 @@
     },
     "plugins": [
       "expo-router",
+      "expo-apple-authentication",
       [
         "expo-build-properties",
         {
@@ -81,16 +80,18 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
-          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
+          "cameraPermission": "Trendly requires access to your camera to take and upload photos or videos for your profile and collaboration applications.",
+          "microphonePermission": "Trendly requires access to your microphone to send audio messages and to create content for your profile and collaborations.",
           "recordAudioAndroid": true
         }
       ],
       "@react-native-firebase/app",
+      "@react-native-firebase/crashlytics",
+      "@react-native-firebase/messaging",
       [
         "expo-av",
         {
-          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone."
+          "microphonePermission": "Trendly requires access to your microphone to send audio messages and to create content for your profile and collaborations."
         }
       ],
       [
@@ -113,8 +114,8 @@
       [
         "expo-media-library",
         {
-          "photosPermission": "Allow $(PRODUCT_NAME) to access your photos.",
-          "savePhotosPermission": "Allow $(PRODUCT_NAME) to save photos.",
+          "photosPermission": "Trendly requires access to your photo library to select and upload images or videos for your profile and collaborations.",
+          "savePhotosPermission": "Trendly needs permission to save collaboration-related images and videos to your photo library.",
           "isAccessMediaLocationEnabled": true
         }
       ]
