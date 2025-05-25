@@ -106,10 +106,11 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
           };
           setIsLoggedIn(true);
           setUser(userData);
-          setIsUserLoading(false);
         } else {
           console.error("User not found");
-          setIsUserLoading(false);
+          if (inMainGroup) {
+            signOutUser();
+          }
         }
       }, (error) => {
         console.error("Error fetching user data: ", error);
