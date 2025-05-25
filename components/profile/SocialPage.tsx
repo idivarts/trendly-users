@@ -2,7 +2,6 @@ import { Text, View } from "@/components/theme/Themed";
 import Colors from "@/constants/Colors";
 import { useAuthContext } from "@/contexts";
 import { SocialPlatform } from "@/shared-libs/firestore/trendly-pro/constants/social-platform";
-import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import ImageComponent from "@/shared-uis/components/image-component";
@@ -12,9 +11,8 @@ import { faFacebook, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import { faStar } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { deleteDoc, doc, updateDoc } from "firebase/firestore";
 import React, { useState } from "react";
-import { Linking } from "react-native";
 import { IconButton, Menu } from "react-native-paper";
 ;
 ;
@@ -46,23 +44,16 @@ const SocialPage: React.FC<SocialPageProps> = ({
 
   const { user } = useAuthContext();
 
-  const handleExpandEvents = (page: any) => {
-    if (page.userName) {
-      Linking.openURL("https://www.instagram.com/" + page.userName);
-    }
-  };
-
   const makePrimary = async () => {
     const userId = user?.id;
     if (!userId) return;
 
     const userDocRef = doc(FirestoreDB, "users", userId);
-    const userDoc = await getDoc(userDocRef);
-    const userData = userDoc.data() as IUsers;
+    // const userDoc = await getDoc(userDocRef);
+    // const userData = userDoc.data() as IUsers;
+    // userData.primarySocial = id;
 
-    userData.primarySocial = id;
-
-    await updateDoc(userDocRef, { primarySocial: userData.primarySocial })
+    await updateDoc(userDocRef, { primarySocial: id })
       .then(() => {
         HttpWrapper.fetch("/api/v1/chat/auth", { method: "POST" });
         Toaster.success("Social marked as primary");
@@ -70,7 +61,28 @@ const SocialPage: React.FC<SocialPageProps> = ({
       .catch((error) => {
         Toaster.error("Error marking social as primary");
       });
+    toggleMenu();
   };
+  const disconnectSocial = async () => {
+    const userId = user?.id;
+    if (!userId) return;
+
+    if (user.primarySocial == id) {
+      Toaster.error("Disconnecting primary social!", "You must set another social as primary before disconnecting this one.");
+      toggleMenu();
+      return;
+    }
+
+    const socialDocRef = doc(FirestoreDB, "users", userId, "socials", id);
+    await deleteDoc(socialDocRef)
+      .then(() => {
+        Toaster.success("Social disconnected successfully");
+      })
+      .catch((error) => {
+        Toaster.error("Error disconnecting social");
+      });
+    toggleMenu();
+  }
 
   return (
     <View style={styles.row}>
@@ -163,7 +175,7 @@ const SocialPage: React.FC<SocialPageProps> = ({
             titleStyle={styles.menuTitleStyle}
           />
           <Menu.Item
-            onPress={() => { }}
+            onPress={() => { disconnectSocial() }}
             title="Disconnect"
             style={styles.menuStyle}
             titleStyle={styles.menuTitleStyle}
