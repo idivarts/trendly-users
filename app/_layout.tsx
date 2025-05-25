@@ -1,5 +1,6 @@
 import "react-native-reanimated";
 
+import DownloadApp from "@/components/download";
 import { useColorScheme } from "@/components/theme/useColorScheme";
 import { APP_SCHEME } from "@/constants/App";
 import CustomPaperTheme from "@/constants/Theme";
@@ -139,6 +140,7 @@ const RootLayoutStack = () => {
   return (
     <ThemeProvider value={appTheme === "dark" ? DarkTheme : ExpoDefaultTheme}>
       <Provider theme={CustomPaperTheme(theme)}>
+        <DownloadApp />
         <Stack
           screenOptions={{
             animation: "ios",
