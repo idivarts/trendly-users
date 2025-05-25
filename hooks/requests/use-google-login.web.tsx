@@ -1,6 +1,7 @@
 import { useInitialUserData } from "@/constants/User";
 import { useAuthContext } from "@/contexts";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
+import { CrashLog } from "@/shared-libs/utils/firebase/crashlytics";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import * as WebBrowser from 'expo-web-browser';
@@ -52,7 +53,7 @@ export const useGoogleLogin = (setLoading: Function, setError: Function) => {
             setLoading(true);
             await evalResult(result);
         } catch (error: any) {
-            console.log("Error logging in with Google:", error);
+            CrashLog.log("Error logging in with Google:", error);
             Toaster.error('Error logging in with Google', error?.message);
             setError(error.message);
         } finally {

@@ -1,4 +1,5 @@
 import { useCloudMessagingContext } from "@/shared-libs/contexts/cloud-messaging.provider";
+import { CrashLog } from "@/shared-libs/utils/firebase/crashlytics";
 import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import {
   createContext,
@@ -58,10 +59,10 @@ export const ChatContextProvider: React.FC<PropsWithChildren> = ({
 
   const connectUser = async () => {
     if (token) {
-      console.log("Already connected to Chat")
+      CrashLog.log("Already connected to Chat")
       return token
     }
-    console.log("Connecting to Chat")
+    CrashLog.log("Connecting to Chat")
     try {
       const response = await HttpWrapper.fetch("/api/v1/chat/connect", {
         method: "POST",
@@ -79,7 +80,7 @@ export const ChatContextProvider: React.FC<PropsWithChildren> = ({
         throw { message: "No token provided" }
       }
     } catch (error) {
-      console.log("Error connecting to chat", error);
+      CrashLog.log("Error connecting to chat", error);
       setToken("")
       setHasError(true)
     }

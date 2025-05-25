@@ -80,7 +80,7 @@ export const useAppleLogin = (setLoading: Function, setError: Function) => {
                     AppleAuthentication.AppleAuthenticationScope.EMAIL,
                 ],
             });
-            console.log("Apple credential:", appleCredential);
+            CrashLog.log("Apple credential:", appleCredential);
             const { identityToken } = appleCredential;
             if (!identityToken) throw new Error("No identity token returned");
 

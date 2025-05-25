@@ -1,19 +1,7 @@
+import { CrashLog } from "@/shared-libs/utils/firebase/crashlytics";
 import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
-import { getAuth, signInAnonymously } from "firebase/auth";
-import { dummyBrands } from "./dummy-data/brands";
-import { dummyGroups } from "./dummy-data/groups";
-import { dummyManagers } from "./dummy-data/managers";
-import { dummyUsers } from "./dummy-data/users";
-import { populateBrands } from "./brands";
-import { populateGroups } from "./groups";
-import { populateManagers } from "./managers";
-import { populateUsers } from "./users";
-import { populateCollaborations } from "./collaboration";
-import { populateApplications } from "./invitations";
-import { dummyInvitations } from "./dummy-data/invitations";
-import { populateContracts } from "./contracts";
-import { dummyContracts } from "./dummy-data/contracts";
 
 const firebaseConfig = {
   apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY!,
@@ -52,10 +40,10 @@ const populateFirestore = async () => {
 
 populateFirestore()
   .then(() => {
-    console.log("All data added successfully.");
+    CrashLog.log("All data added successfully.");
     process.exit(0);
   })
   .catch((error) => {
-    console.error("Error populating Firestore:", error);
+    CrashLog.error(error, "Error populating Firestore");
     process.exit(1);
   });

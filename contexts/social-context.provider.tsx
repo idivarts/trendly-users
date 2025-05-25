@@ -1,4 +1,5 @@
 import { ISocials } from "@/shared-libs/firestore/trendly-pro/models/socials";
+import { CrashLog } from "@/shared-libs/utils/firebase/crashlytics";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { resetAndNavigate } from "@/utils/router";
 import { usePathname, useRouter } from "expo-router";
@@ -70,7 +71,7 @@ export const SocialContextProvider = ({ children }: PropsWithChildren<{}>) => {
 
         setSocials(socialData);
 
-        console.log("Pathname", pathname);
+        CrashLog.log("Pathname", pathname);
 
         if (socialData.length === 0) {
           if (!allowedPaths.includes(pathname))

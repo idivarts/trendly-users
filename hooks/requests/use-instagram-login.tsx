@@ -7,6 +7,7 @@ import { Platform } from "react-native";
 import { FB_APP_ID } from "@/constants/Facebook";
 import { useAuthContext } from "@/contexts";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
+import { CrashLog } from "@/shared-libs/utils/firebase/crashlytics";
 import { BACKEND_URL, HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import * as WebBrowser from "expo-web-browser";
 ;
@@ -104,14 +105,14 @@ const useInstagramLogin = (
 
   const receiveMessage = (event: StorageEvent) => {
     if (event.key === 'insta_code') {
-      console.log('Received update:', event.newValue);
+      CrashLog.log('Received update:', event.newValue);
       handleInstagramSignIn("" + event.newValue);
       window.removeEventListener('storage', receiveMessage);
     }
   };
 
   useEffect(() => {
-    console.log("Auth Result Response: ", responseInstagram);
+    CrashLog.log("Auth Result Response: ", responseInstagram);
     if (
       responseInstagram?.type === "success" ||
       responseInstagram?.type === "error"
@@ -120,7 +121,7 @@ const useInstagramLogin = (
       if (code) {
         handleInstagramSignIn(code);
       } else {
-        console.log("Instagram login failed. Please try again.");
+        CrashLog.log("Instagram login failed. Please try again.");
       }
     }
   }, [responseInstagram]);
