@@ -9,6 +9,7 @@ import { useBreakpoints } from "@/hooks";
 import AppLayout from "@/layouts/app-layout";
 import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { processRawAttachment } from "@/shared-libs/utils/attachments";
+import { CrashLog } from "@/shared-libs/utils/firebase/crashlytics";
 import InfluencerCard from "@/shared-uis/components/InfluencerCard";
 import { convertToKUnits } from "@/utils/conversion";
 import { useTheme } from "@react-navigation/native";
@@ -158,7 +159,7 @@ const Preview = () => {
   };
 
   // const { user } = useAuthContext()
-  console.log("Raw attachments", rawAttachments);
+  CrashLog.log("Raw attachments", rawAttachments);
 
   return (
     <AppLayout withWebPadding={true}>

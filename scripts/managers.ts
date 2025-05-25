@@ -1,3 +1,4 @@
+import { CrashLog } from "@/shared-libs/utils/firebase/crashlytics";
 import { addDoc, collection, Firestore } from "firebase/firestore";
 
 export const populateManagers = async (db: Firestore, dummyManagers: any[]) => {
@@ -12,7 +13,7 @@ export const populateManagers = async (db: Firestore, dummyManagers: any[]) => {
       dateOfBirth: manager.dateOfBirth,
     });
 
-    console.log(`Manager ${manager.name} added successfully.`);
+    CrashLog.log(`Manager ${manager.name} added successfully.`);
 
     const notificationsCollection = collection(managerRef, "notifications");
 
@@ -24,7 +25,7 @@ export const populateManagers = async (db: Firestore, dummyManagers: any[]) => {
       type: "message",
     });
 
-    console.log(
+    CrashLog.log(
       `Notifications for manager ${manager.name} added successfully.`
     );
   }

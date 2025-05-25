@@ -1,6 +1,7 @@
 import { useInitialUserData } from "@/constants/User";
 import { useAuthContext } from "@/contexts";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
+import { CrashLog } from "@/shared-libs/utils/firebase/crashlytics";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { OAuthProvider, signInWithPopup, UserCredential } from "firebase/auth";
@@ -49,7 +50,7 @@ export const useAppleLogin = (setLoading: Function, setError: Function) => {
             const result = await signInWithPopup(AuthApp, provider);
             await evalResult(result);
         } catch (error: any) {
-            console.log("Error logging in with Apple:", error);
+            CrashLog.log("Error logging in with Apple:", error);
             Toaster.error('Error logging in with Apple', error?.message || '');
             setError(error.message);
         } finally {

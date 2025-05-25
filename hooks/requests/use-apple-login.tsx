@@ -1,6 +1,7 @@
 import { useInitialUserData } from "@/constants/User";
 import { useAuthContext } from "@/contexts";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
+import { CrashLog } from "@/shared-libs/utils/firebase/crashlytics";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import * as AppleAuthentication from 'expo-apple-authentication';
@@ -14,7 +15,7 @@ provider.addScope('name');
 
 export const useAppleLogin = (setLoading: Function, setError: Function) => {
     const INITIAL_DATA = useInitialUserData()
-    const { firebaseSignIn, firebaseSignUp } = useAuthContext();
+    const { firebaseSignIn, firebaseSignUp, signOutUser } = useAuthContext();
     const [isAppleAvailable, setIsAppleAvailable] = useState(false)
     useEffect(() => {
         (async () => {
@@ -39,7 +40,11 @@ export const useAppleLogin = (setLoading: Function, setError: Function) => {
         return capitalized.join(' ');
     };
     const evalResult = async (result: void | UserCredential, appleCredential: AppleAuthentication.AppleAuthenticationCredential) => {
-        if (!result) return;
+        if (!result) throw new Error("No result returned from signInWithCredential");
+        if (!result.user) throw new Error("No user found in the result");
+        if (!result.user.uid) throw new Error("No user ID found in the user object");
+        if (!result.user.email) throw new Error("No email found in the user object");
+        if (!appleCredential) throw new Error("No Apple credential returned");
 
         setLoading(true);
         const userRef = doc(FirestoreDB, "users", result.user.uid);
@@ -75,7 +80,7 @@ export const useAppleLogin = (setLoading: Function, setError: Function) => {
                     AppleAuthentication.AppleAuthenticationScope.EMAIL,
                 ],
             });
-            console.log("Apple credential:", appleCredential);
+            CrashLog.log("Apple credential:", appleCredential);
             const { identityToken } = appleCredential;
             if (!identityToken) throw new Error("No identity token returned");
 
@@ -84,12 +89,19 @@ export const useAppleLogin = (setLoading: Function, setError: Function) => {
                 idToken: identityToken,
             });
 
-            const result = await signInWithCredential(AuthApp, credential);
+            const result = await signInWithCredential(AuthApp, credential).catch((error) => {
+                CrashLog.log(error, "signInWithCredential Error");
+                throw new Error("Failed to sign in with Apple -" + error.message);
+            })
             await evalResult(result, appleCredential);
         } catch (error: any) {
-            console.log("Error logging in with Apple:", error);
-            Toaster.error('Error logging in with Apple', error?.message || '');
+            CrashLog.error(error, "Apple Signin Error");
+            if (AuthApp.currentUser)
+                Toaster.error('Error with User - ' + AuthApp.currentUser.uid, error?.message || '');
+            else
+                Toaster.error('Error logging in with Apple', error?.message || '');
             setError(error.message);
+            signOutUser().catch(e => { CrashLog.log(e, "Error Logging out") }) // For whatever reason if not successful signup - Logout
         } finally {
             setLoading(false);
         }

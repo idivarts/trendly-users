@@ -1,5 +1,6 @@
 import "react-native-reanimated";
 
+import DownloadApp from "@/components/download";
 import { useColorScheme } from "@/components/theme/useColorScheme";
 import { APP_SCHEME } from "@/constants/App";
 import CustomPaperTheme from "@/constants/Theme";
@@ -7,6 +8,7 @@ import {
   AuthContextProvider,
   useAuthContext
 } from "@/contexts";
+import { CrashLog } from "@/shared-libs/utils/firebase/crashlytics";
 import { resetAndNavigate } from "@/utils/router";
 import { queryParams } from "@/utils/url";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
@@ -41,7 +43,10 @@ export const unstable_settings = {
 SplashScreen.preventAutoHideAsync();
 
 setJSExceptionHandler((error, isFatal) => {
-  console.log("Caught JS Error:", error, isFatal);
+  if (!isFatal)
+    CrashLog.error(error);
+  else
+    CrashLog.crash();
 });
 
 const RootLayout = () => {
@@ -88,6 +93,7 @@ const RootLayoutStack = () => {
   const appTheme = user?.settings?.theme || colorScheme;
 
   const linkingWorkaround = () => {
+    CrashLog.log("Linking workaround initiated", "RootLayout");
     const subscription = Linking.addEventListener("url", ({ url }) => {
       const match = url.match(new RegExp(`^${APP_SCHEME}://(.*)`));
       if (match) {
@@ -101,6 +107,8 @@ const RootLayoutStack = () => {
   }
 
   useEffect(() => {
+    // CrashLog.log("App started", "RootLayout");
+    // CrashLog.crash()
     linkingWorkaround();
   }, []);
 
@@ -132,6 +140,7 @@ const RootLayoutStack = () => {
   return (
     <ThemeProvider value={appTheme === "dark" ? DarkTheme : ExpoDefaultTheme}>
       <Provider theme={CustomPaperTheme(theme)}>
+        <DownloadApp />
         <Stack
           screenOptions={{
             animation: "ios",

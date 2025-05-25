@@ -7,6 +7,7 @@ import { ChannelList } from "stream-chat-expo";
 import { View } from "@/components/theme/Themed";
 import Colors from "@/constants/Colors";
 import { useAuthContext, useChatContext } from "@/contexts";
+import { CrashLog } from "@/shared-libs/utils/firebase/crashlytics";
 import stylesFn from "@/styles/searchbar/Searchbar.styles";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -27,7 +28,7 @@ const ChannelListNative = () => {
   useFocusEffect(
     useCallback(() => {
       if (hasError) {
-        console.log("Messages is in focus.. Running connectUser");
+        CrashLog.log("Messages is in focus.. Running connectUser");
         connectUser();
       }
     }, [])

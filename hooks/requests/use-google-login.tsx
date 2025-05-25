@@ -1,3 +1,4 @@
+import { CrashLog } from "@/shared-libs/utils/firebase/crashlytics";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 
 export const useGoogleLogin = (setLoading: Function, setError: Function) => {
@@ -51,7 +52,7 @@ export const useGoogleLogin = (setLoading: Function, setError: Function) => {
             //     setError('cancelled');
             // }
         } catch (error: any) {
-            console.log("Error logging in with Google:", error);
+            CrashLog.log("Error logging in with Google:", error);
             Toaster.error('Error logging in with Google', error?.message);
             setError(error.message);
         } finally {

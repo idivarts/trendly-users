@@ -9,6 +9,7 @@ import Colors from "@/constants/Colors";
 import AppLayout from "@/layouts/app-layout";
 import { AWSProgressUpdateSubject, useAWSContext } from "@/shared-libs/contexts/aws-context.provider";
 import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
+import { CrashLog } from "@/shared-libs/utils/firebase/crashlytics";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import ProgressLoader from "@/shared-uis/components/ProgressLoader";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
@@ -327,8 +328,8 @@ const ApplyScreenWeb = () => {
               onAction={() => {
                 try {
                   dateRef.current?.showPicker?.() || dateRef.current?.click()
-                } catch (e) {
-                  console.log(e);
+                } catch (e: any) {
+                  CrashLog.error(e);
                 }
               }}
             />

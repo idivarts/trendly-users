@@ -3,6 +3,7 @@ import { useStorageState } from "@/hooks";
 import { AccountStatus } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { analyticsLogEvent } from "@/shared-libs/utils/firebase/analytics";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
+import { CrashLog } from "@/shared-libs/utils/firebase/crashlytics";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
@@ -91,12 +92,12 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
   const inMainGroup = segments[0] === "(main)";
 
   const fetchUser = async () => {
-    if (isLoading || !session)
+    if (isLoading || !session || !AuthApp.currentUser)
       return
 
     // setIsUserLoading(true);
     try {
-      const userDocRef = doc(FirestoreDB, "users", session);
+      const userDocRef = doc(FirestoreDB, "users", AuthApp.currentUser.uid);
 
       const unsubscribe = onSnapshot(userDocRef, (userSnap) => {
         if (userSnap.exists()) {
@@ -106,17 +107,25 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
           };
           setIsLoggedIn(true);
           setUser(userData);
-          setIsUserLoading(false);
         } else {
-          console.error("User not found");
-          setIsUserLoading(false);
+          CrashLog.log("User not found");
+          if (inMainGroup) {
+            signOutUser();
+          }
         }
-      });
+      }, (error) => {
+        CrashLog.error(error, "Error fetching user data");
+        if (inMainGroup) {
+          signOutUser();
+        }
+      })
 
       return unsubscribe;
-    } catch (error) {
-      setIsLoggedIn(false);
-      setUser(null);
+    } catch (error: any) {
+      CrashLog.error(error, "User Snapshot catch error");
+      if (inMainGroup) {
+        signOutUser();
+      }
     } finally {
       setIsUserLoading(false);
     }
@@ -132,7 +141,6 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
         if (inMainGroup) {
           signOutUser();
         }
-        // resetAndNavigate("/pre-signin");
       } else {
         fetchUser();
       }
@@ -282,6 +290,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
   };
 
   const signOutUser = async () => {
+    CrashLog.log("Signing out user", "AuthContextProvider");
     try {
       if (Platform.OS !== "web") {
         // Remove push notification token from the database
@@ -293,8 +302,8 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
         //   });
         // }
       }
-    } catch (e) {
-      console.log("Issues while removing tokens", e);
+    } catch (e: any) {
+      CrashLog.error(e, "Issues while removing tokens");
     }
 
     signOut(AuthApp)
@@ -305,7 +314,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
         });
         Toaster.success("Signed Out Successfully!");
       }).catch((error) => {
-        console.error("Error signing out: ", error);
+        CrashLog.error(error, "Error signing out");
       }).finally(() => {
         setSession("");
         setIsLoggedIn(false);

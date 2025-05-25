@@ -1,3 +1,4 @@
+import { CrashLog } from "@/shared-libs/utils/firebase/crashlytics";
 import { addDoc, collection, Firestore } from "firebase/firestore";
 
 export const populateUsers = async (db: Firestore, dummyUsers: any[]) => {
@@ -13,7 +14,7 @@ export const populateUsers = async (db: Firestore, dummyUsers: any[]) => {
       preferences: user.preferences,
     });
 
-    console.log(`User ${user.name} added successfully.`);
+    CrashLog.log(`User ${user.name} added successfully.`);
 
     const notificationsCollection = collection(userRef, "notifications");
 
@@ -37,7 +38,7 @@ export const populateUsers = async (db: Firestore, dummyUsers: any[]) => {
       });
     }
 
-    console.log(`Notifications for user ${user.name} added successfully.`);
+    CrashLog.log(`Notifications for user ${user.name} added successfully.`);
 
     const socialsCollection = collection(userRef, "socials");
 
@@ -56,6 +57,6 @@ export const populateUsers = async (db: Firestore, dummyUsers: any[]) => {
       }
     }
 
-    console.log(`Socials for user ${user.name} added successfully.`);
+    CrashLog.log(`Socials for user ${user.name} added successfully.`);
   }
 };

@@ -1,4 +1,5 @@
-import { addDoc, collection, Firestore, setDoc, doc } from "firebase/firestore";
+import { CrashLog } from "@/shared-libs/utils/firebase/crashlytics";
+import { addDoc, collection, doc, Firestore, setDoc } from "firebase/firestore";
 
 export const populateBrands = async (
   db: Firestore,
@@ -15,7 +16,7 @@ export const populateBrands = async (
       paymentMethodVerfied: brand.paymentMethodVerified,
     });
 
-    console.log(`Brand ${brand.name} added successfully.`);
+    CrashLog.log(`Brand ${brand.name} added successfully.`);
 
     const notificationsCollection = collection(brandRef, "notifications");
 
@@ -39,7 +40,7 @@ export const populateBrands = async (
       });
     }
 
-    console.log(`Notifications for brand ${brand.name} added successfully.`);
+    CrashLog.log(`Notifications for brand ${brand.name} added successfully.`);
 
     const membersCollection = collection(brandRef, "members");
 
@@ -56,6 +57,6 @@ export const populateBrands = async (
       }
     }
 
-    console.log(`Members for brand ${brand.name} added successfully.`);
+    CrashLog.log(`Members for brand ${brand.name} added successfully.`);
   }
 };

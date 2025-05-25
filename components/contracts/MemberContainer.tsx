@@ -1,5 +1,6 @@
 import Colors from "@/constants/Colors";
 import { useAuthContext, useChatContext } from "@/contexts";
+import { CrashLog } from "@/shared-libs/utils/firebase/crashlytics";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { useTheme } from "@react-navigation/native";
 import { doc, getDoc } from "firebase/firestore";
@@ -54,7 +55,7 @@ const MemberContainer: FC<MemberContainerProps> = ({
       setMembersFromBrand(validMembers);
       setLoading(false);
     } catch (e) {
-      console.log(e);
+      CrashLog.error(e);
     }
   };
 

@@ -1,6 +1,7 @@
 import { Text, View } from "@/components/theme/Themed";
 import Colors from "@/constants/Colors";
 import { IContracts } from "@/shared-libs/firestore/trendly-pro/models/contracts";
+import { CrashLog } from "@/shared-libs/utils/firebase/crashlytics";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
@@ -71,7 +72,7 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
       setVisibility(false);
       refreshData();
     } catch (e) {
-      console.log(e);
+      CrashLog.error(e);
     }
   };
 

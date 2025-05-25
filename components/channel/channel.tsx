@@ -87,7 +87,7 @@ const ChannelNative = () => {
     resetBadgeCount();
   }, []);
 
-  if (!channel || !contract) {
+  if (!channel) {
     return (
       <View
         style={{
@@ -112,9 +112,9 @@ const ChannelNative = () => {
     >
       <ScreenHeader
         title={channel?.data?.name || 'Chat'}
-        rightAction
+        rightAction={!!contract}
         rightActionButton={
-          <Pressable
+          !!contract && <Pressable
             style={{
               // marginRight: 8,
               paddingHorizontal: 16
@@ -133,12 +133,12 @@ const ChannelNative = () => {
           </Pressable>
         }
       />
-      <ChatMessageTopbar
+      {!!contract && <ChatMessageTopbar
         contract={{
           ...contract,
           id: channel?.data?.contractId as string,
         }}
-      />
+      />}
       <MessageList />
       <MessageInput
         AttachmentPickerSelectionBar={AttachmentPickerSelectionBar}

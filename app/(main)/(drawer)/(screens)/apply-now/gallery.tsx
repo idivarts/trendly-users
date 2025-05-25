@@ -4,6 +4,7 @@ import ScreenHeader from "@/components/ui/screen-header";
 import Colors from "@/constants/Colors";
 import { useAuthContext } from "@/contexts";
 import { processRawAttachment } from "@/shared-libs/utils/attachments";
+import { CrashLog } from "@/shared-libs/utils/firebase/crashlytics";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { stylesFn } from "@/styles/apply-now/gallery.styles";
 import { AssetItem } from "@/types/Asset";
@@ -104,7 +105,7 @@ const GalleryScreen = () => {
   const fetchAssets = async (after?: string): Promise<MediaLibrary.AssetInfo | undefined> => {
     if (reachedEnd)
       return undefined;
-    console.log("---------------> Fetching New Assets", after);
+    CrashLog.log("---------------> Fetching New Assets", after);
 
     const album = await MediaLibrary.getAssetsAsync({
       mediaType: ["photo", "video"],
@@ -141,8 +142,8 @@ const GalleryScreen = () => {
       }
 
       // mutex.useOnce(() => console.log("Trying again...")); // Error: Already used
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      CrashLog.error(error);
     }
 
   };
@@ -284,7 +285,7 @@ const GalleryScreen = () => {
 
     // Handle the captured media
     if (!result.canceled && result.assets.length > 0) {
-      console.log("Captured:", result.assets[0].uri);
+      CrashLog.log("Captured:", result.assets[0].uri);
       await MediaLibrary.saveToLibraryAsync(result.assets[0].uri);
       let mAsset = await fetchAssets();
       if (mAsset) {
