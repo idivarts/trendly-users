@@ -101,6 +101,7 @@ const RootLayoutStack = () => {
   }
 
   useEffect(() => {
+    // CrashLog.log("App started", "RootLayout");
     linkingWorkaround();
   }, []);
 
