@@ -1,7 +1,7 @@
 import { useInitialUserData } from "@/constants/User";
 import { useAuthContext } from "@/contexts";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
-import { CrashLog } from "@/shared-libs/utils/firebase/cashlytics";
+import { CrashLog } from "@/shared-libs/utils/firebase/crashlytics";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import * as AppleAuthentication from 'expo-apple-authentication';

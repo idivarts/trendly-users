@@ -3,7 +3,7 @@ import { useStorageState } from "@/hooks";
 import { AccountStatus } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { analyticsLogEvent } from "@/shared-libs/utils/firebase/analytics";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
-import { CrashLog } from "@/shared-libs/utils/firebase/cashlytics";
+import { CrashLog } from "@/shared-libs/utils/firebase/crashlytics";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
