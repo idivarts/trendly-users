@@ -84,7 +84,9 @@ export const useAppleLogin = (setLoading: Function, setError: Function) => {
                 idToken: identityToken,
             });
 
-            const result = await signInWithCredential(AuthApp, credential);
+            const result = await signInWithCredential(AuthApp, credential).catch(e => {
+                throw new Error("Error signing in with Apple - " + e.message);
+            });
             await evalResult(result, appleCredential);
         } catch (error: any) {
             console.log("Error logging in with Apple:", error);
