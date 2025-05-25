@@ -15,7 +15,7 @@ provider.addScope('name');
 
 export const useAppleLogin = (setLoading: Function, setError: Function) => {
     const INITIAL_DATA = useInitialUserData()
-    const { firebaseSignIn, firebaseSignUp } = useAuthContext();
+    const { firebaseSignIn, firebaseSignUp, signOutUser } = useAuthContext();
     const [isAppleAvailable, setIsAppleAvailable] = useState(false)
     useEffect(() => {
         (async () => {
@@ -44,6 +44,7 @@ export const useAppleLogin = (setLoading: Function, setError: Function) => {
         if (!result.user) throw new Error("No user found in the result");
         if (!result.user.uid) throw new Error("No user ID found in the user object");
         if (!result.user.email) throw new Error("No email found in the user object");
+        if (!appleCredential) throw new Error("No Apple credential returned");
 
         setLoading(true);
         const userRef = doc(FirestoreDB, "users", result.user.uid);
@@ -95,8 +96,12 @@ export const useAppleLogin = (setLoading: Function, setError: Function) => {
             await evalResult(result, appleCredential);
         } catch (error: any) {
             CrashLog.error(error, "Apple Signin Error");
-            Toaster.error('Error logging in with Apple', error?.message || '');
+            if (AuthApp.currentUser)
+                Toaster.error('Error with User - ' + AuthApp.currentUser.uid, error?.message || '');
+            else
+                Toaster.error('Error logging in with Apple', error?.message || '');
             setError(error.message);
+            signOutUser().catch(e => { CrashLog.log(e, "Error Logging out") }) // For whatever reason if not successful signup - Logout
         } finally {
             setLoading(false);
         }
