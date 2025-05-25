@@ -1,6 +1,7 @@
 import { useInitialUserData } from "@/constants/User";
 import { useAuthContext } from "@/contexts";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
+import { CrashLog } from "@/shared-libs/utils/firebase/cashlytics";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import * as AppleAuthentication from 'expo-apple-authentication';
@@ -84,12 +85,10 @@ export const useAppleLogin = (setLoading: Function, setError: Function) => {
                 idToken: identityToken,
             });
 
-            const result = await signInWithCredential(AuthApp, credential).catch(e => {
-                throw new Error("Error signing in with Apple - " + e.message);
-            });
+            const result = await signInWithCredential(AuthApp, credential)
             await evalResult(result, appleCredential);
         } catch (error: any) {
-            console.log("Error logging in with Apple:", error);
+            CrashLog.error(error, "Apple Signin Error");
             Toaster.error('Error logging in with Apple', error?.message || '');
             setError(error.message);
         } finally {
