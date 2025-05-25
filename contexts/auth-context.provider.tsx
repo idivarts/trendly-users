@@ -111,7 +111,12 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
           console.error("User not found");
           setIsUserLoading(false);
         }
-      });
+      }, (error) => {
+        console.error("Error fetching user data: ", error);
+        if (inMainGroup) {
+          signOutUser();
+        }
+      })
 
       return unsubscribe;
     } catch (error) {
