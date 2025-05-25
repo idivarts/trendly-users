@@ -3,12 +3,15 @@ import Button from '@/components/ui/button';
 import ScreenHeader from '@/components/ui/screen-header';
 import TextInput from '@/components/ui/text-input';
 import Colors from '@/constants/Colors';
+import { useSocialContext } from '@/contexts';
 import AppLayout from '@/layouts/app-layout';
 import { useAWSContext } from "@/shared-libs/contexts/aws-context.provider";
 import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import Toaster from '@/shared-uis/components/toaster/Toaster';
+import { resetAndNavigate } from '@/utils/router';
 import { Theme, useTheme } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
+import { useRouter } from 'expo-router';
 import React, { useRef, useState } from 'react';
 import {
     Dimensions,
@@ -38,6 +41,8 @@ const AddInstagramManual = () => {
     const { uploadFileUri, uploadFile } = useAWSContext();
     const pRef = useRef<any>()
     const dRef = useRef<any>()
+    const { primarySocial } = useSocialContext()
+    const router = useRouter();
 
     const styles = stylesFn(theme);
 
@@ -103,7 +108,15 @@ const AddInstagramManual = () => {
             }),
         }).then(response => {
             Toaster.success('Instagram added successfully');
-            setBlockLoading(true);
+            if (primarySocial) {
+                if (router.canGoBack()) {
+                    router.back();
+                } else {
+                    resetAndNavigate('/connected-socials');
+                }
+            } else {
+                setBlockLoading(true);
+            }
         }).catch((error) => {
             console.error(error);
             Toaster.error('Error adding Instagram', error.message);
