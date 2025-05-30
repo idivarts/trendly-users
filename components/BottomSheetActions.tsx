@@ -213,6 +213,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-end",
     zIndex: 2,
+    backgroundColor: "transparent",
   },
   bottomSheet: {
     zIndex: 9999,
