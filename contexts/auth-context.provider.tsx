@@ -1,9 +1,8 @@
 import { useInitialUserData } from "@/constants/User";
 import { useStorageState } from "@/hooks";
 import { AccountStatus } from "@/shared-libs/firestore/trendly-pro/models/users";
-import { analyticsLogEvent } from "@/shared-libs/utils/firebase/analytics";
-import { AuthApp } from "@/shared-libs/utils/firebase/auth";
 import { Console } from "@/shared-libs/utils/console";
+import { AuthApp } from "@/shared-libs/utils/firebase/auth";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
@@ -159,7 +158,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
 
       HttpWrapper.fetch("/api/v1/chat/auth", { method: "POST", });
 
-      await analyticsLogEvent("signed_in", {
+      await Console.analytics("signed_in", {
         id: userCredential.user.uid,
         name: userCredential.user.displayName,
         email: userCredential.user.email,
@@ -308,7 +307,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
 
     signOut(AuthApp)
       .then(() => {
-        analyticsLogEvent("signed_out", {
+        Console.analytics("signed_out", {
           id: user?.id,
           email: user?.email,
         });
