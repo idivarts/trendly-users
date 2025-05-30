@@ -4,6 +4,7 @@ import CollaborationHeader from "@/components/collaboration/card-components/Coll
 import ScreenHeader from "@/components/ui/screen-header";
 import { useAuthContext } from "@/contexts";
 import AppLayout from "@/layouts/app-layout";
+import { useScrollContext } from "@/shared-libs/contexts/scroll-context";
 import { processRawAttachment } from "@/shared-libs/utils/attachments";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import Carousel from "@/shared-uis/components/carousel/carousel";
@@ -20,6 +21,7 @@ import {
 } from "firebase/firestore";
 import React, { useEffect } from "react";
 import { FlatList, View } from "react-native";
+import { IOScrollView } from "react-native-intersection-observer";
 ;
 
 const PastApplicationPage = (props: any) => {
@@ -103,72 +105,76 @@ const PastApplicationPage = (props: any) => {
   useEffect(() => {
     fetchInvitations();
   }, []);
-
+  const { scrollRef, setScrollHeight } = useScrollContext()
   return (
     <AppLayout withWebPadding>
       <ScreenHeader title="Past Invitations" />
-      <View
-        style={{
-          flex: 1,
-        }}
-      >
-        <FlatList
-          data={proposals}
-          renderItem={({ item }) => (
-            <View
-              style={{
-                width: "100%",
-                borderWidth: 0.3,
-                borderColor: Colors(theme).gray300,
-                gap: 8,
-                borderRadius: 5,
-                paddingBottom: 16,
-                overflow: "hidden",
-              }}
-            >
-              <CollaborationHeader
-                cardId={item.id}
-                cardType="invitation"
-                brand={{
-                  image: item.brandImage,
-                  name: item.brandName,
-                  paymentVerified: item.paymentVerified,
-                }}
-                collaboration={{
-                  collabId: item.id,
-                  collabName: item.name,
-                  timePosted: item.timeStamp,
-                }}
-                onOpenBottomSheet={() => openBottomSheet(item.id)}
-              />
-              {item.attachments && item.attachments.length > 0 && (
-                <Carousel
-                  theme={theme}
-                  data={
-                    item.attachments?.map((attachment: any) =>
-                      processRawAttachment(attachment)
-                    ) || []
-                  }
-                />
-              )}
-              <CollaborationDetails
-                collaborationDetails={{
-                  collabDescription: item.description || "",
-                  promotionType: item.promotionType,
-                  location: item.location,
-                  platform: item.platform,
-                  contentType: item.contentFormat,
-                }}
-              />
-            </View>
-          )}
-          contentContainerStyle={{
-            padding: 16,
-            gap: 16,
+      <IOScrollView ref={scrollRef} onScroll={(e) => {
+        setScrollHeight?.(e.nativeEvent.contentOffset?.y || 0)
+      }}>
+        <View
+          style={{
+            flex: 1,
           }}
-          keyExtractor={(item) => item.id}
-        />
-      </View>
+        >
+          <FlatList
+            data={proposals}
+            renderItem={({ item }) => (
+              <View
+                style={{
+                  width: "100%",
+                  borderWidth: 0.3,
+                  borderColor: Colors(theme).gray300,
+                  gap: 8,
+                  borderRadius: 5,
+                  paddingBottom: 16,
+                  overflow: "hidden",
+                }}
+              >
+                <CollaborationHeader
+                  cardId={item.id}
+                  cardType="invitation"
+                  brand={{
+                    image: item.brandImage,
+                    name: item.brandName,
+                    paymentVerified: item.paymentVerified,
+                  }}
+                  collaboration={{
+                    collabId: item.id,
+                    collabName: item.name,
+                    timePosted: item.timeStamp,
+                  }}
+                  onOpenBottomSheet={() => openBottomSheet(item.id)}
+                />
+                {item.attachments && item.attachments.length > 0 && (
+                  <Carousel
+                    theme={theme}
+                    data={
+                      item.attachments?.map((attachment: any) =>
+                        processRawAttachment(attachment)
+                      ) || []
+                    }
+                  />
+                )}
+                <CollaborationDetails
+                  collaborationDetails={{
+                    collabDescription: item.description || "",
+                    promotionType: item.promotionType,
+                    location: item.location,
+                    platform: item.platform,
+                    contentType: item.contentFormat,
+                  }}
+                />
+              </View>
+            )}
+            contentContainerStyle={{
+              padding: 16,
+              gap: 16,
+            }}
+            keyExtractor={(item) => item.id}
+          />
+        </View>
+      </IOScrollView>
       {isVisible && (
         <BottomSheetActions
           cardId={selectedCollabId || ""}

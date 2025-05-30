@@ -4,6 +4,7 @@ import { MAX_WIDTH_WEB } from "@/constants/Container";
 import { useAuthContext } from "@/contexts";
 import { useBreakpoints } from "@/hooks";
 import AppLayout from "@/layouts/app-layout";
+import { useScrollContext } from "@/shared-libs/contexts/scroll-context";
 import { Attachment } from "@/shared-libs/firestore/trendly-pro/constants/attachment";
 import { processRawAttachment } from "@/shared-libs/utils/attachments";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
@@ -28,6 +29,7 @@ import {
   Pressable,
   RefreshControl,
 } from "react-native";
+import { IOScrollView } from "react-native-intersection-observer";
 import CollaborationDetails from "../collaboration/card-components/CollaborationDetails";
 import CollaborationHeader from "../collaboration/card-components/CollaborationHeader";
 import EmptyState from "../ui/empty-state";
@@ -143,191 +145,195 @@ const Invitations = () => {
       </AppLayout>
     );
   }
-
+  const { scrollRef, setScrollHeight } = useScrollContext()
   return (
-    <View
-      style={{
-        flex: 1,
-        width: xl ? MAX_WIDTH_WEB : "100%",
-        marginHorizontal: "auto",
-      }}
-    >
-      {pendingInvitations.length === 0 && notPendingInvitations === 0 ? (
-        <EmptyState
-          hideAction
-          image={require("@/assets/images/illustration5.png")}
-          subtitle="Start building your profile today to have better reach. If any brand invites you to collaborate we would show it here"
-          title="No Invitations yet"
-        />
-      ) : pendingInvitations.length !== 0 ? (
-        <FlatList
-          data={pendingInvitations}
-          renderItem={({ item }) => (
-            <View
-              style={{
-                width: "100%",
-                borderWidth: 0.3,
-                borderColor: Colors(theme).gray300,
-                gap: 8,
-                borderRadius: 5,
-                overflow: "hidden",
-                paddingBottom: 16,
-              }}
-            >
-              <CollaborationHeader
-                cardId={item.id}
-                cardType="invitation"
-                brand={{
-                  image: item.brandImage,
-                  name: item.brandName,
-                  paymentVerified: item.paymentVerified,
-                }}
-                collaboration={{
-                  collabId: item.id,
-                  collabName: item.name,
-                  timePosted: item.timeStamp,
-                }}
-                onOpenBottomSheet={() =>
-                  openBottomSheet(item.id, item.applications.id)
-                }
-              />
-              {item.attachments && item.attachments.length > 0 && (
-                <Carousel
-                  theme={theme}
-                  data={
-                    item.attachments?.map((attachment: Attachment) =>
-                      processRawAttachment(attachment)
-                    ) || []
-                  }
-                  carouselWidth={MAX_WIDTH_WEB}
-                />
-              )}
-              <Pressable
-                onPress={() => {
-                  router.push({
-                    // @ts-ignore
-                    pathname: `/collaboration-details/${item.id}`,
-                    params: {
-                      cardType: "invitation",
-                      cardId: item.applications.id,
-                    },
-                  });
-                }}
-              >
-                <CollaborationDetails
-                  collaborationDetails={{
-                    collabDescription: item.description || "",
-                    promotionType: item.promotionType,
-                    location: item.location,
-                    platform: item.platform,
-                    contentType: item.contentFormat,
-                  }}
-                />
-              </Pressable>
-            </View>
-          )}
-          keyExtractor={(item, index) => index.toString()}
-          ListFooterComponent={
-            <View
-              style={{
-                alignItems: "center",
-                justifyContent: "center",
-                padding: 20,
-              }}
-            >
-              {notPendingInvitations !== 0 && (
-                <View>
-                  <Text
-                    style={[
-                      styles.title,
-                      {
-                        marginBottom: 10,
-                        color: Colors(theme).text,
-                      },
-                    ]}
-                  >
-                    Looking for past invitations
-                  </Text>
-                  <View
-                    style={{
-                      backgroundColor: Colors(theme).card,
-                      padding: 10,
-                      borderRadius: 5,
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                  >
-                    <Link href={"/past/invitation"} style={{}}>
-                      <Text>View Past Invitations</Text>
-                    </Link>
-                  </View>
-                </View>
-              )}
-            </View>
-          }
-          contentContainerStyle={{
-            padding: 16,
-            paddingTop: 8,
-            gap: 16,
-          }}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={handleRefresh}
-              colors={[Colors(theme).primary]} // Customize color based on theme
-            />
-          }
-        />
-      ) : (
-        <View>
-          {pendingInvitations.length === 0 && notPendingInvitations !== 0 && (
-            <View
-              style={{
-                alignItems: "center",
-                justifyContent: "center",
-                padding: 20,
-              }}
-            >
-              <Text
-                style={[
-                  styles.title,
-                  {
-                    marginBottom: 10,
-                    color: Colors(theme).text,
-                  },
-                ]}
-              >
-                Looking for past invitations
-              </Text>
+    <IOScrollView ref={scrollRef} onScroll={(e) => {
+      setScrollHeight?.(e.nativeEvent.contentOffset?.y || 0)
+    }}>
+      <View
+        style={{
+          flex: 1,
+          width: xl ? MAX_WIDTH_WEB : "100%",
+          marginHorizontal: "auto",
+        }}
+      >
+        {pendingInvitations.length === 0 && notPendingInvitations === 0 ? (
+          <EmptyState
+            hideAction
+            image={require("@/assets/images/illustration5.png")}
+            subtitle="Start building your profile today to have better reach. If any brand invites you to collaborate we would show it here"
+            title="No Invitations yet"
+          />
+        ) : pendingInvitations.length !== 0 ? (
+          <FlatList
+            data={pendingInvitations}
+            renderItem={({ item }) => (
               <View
                 style={{
-                  backgroundColor: Colors(theme).card,
-                  padding: 10,
+                  width: "100%",
+                  borderWidth: 0.3,
+                  borderColor: Colors(theme).gray300,
+                  gap: 8,
                   borderRadius: 5,
-                  justifyContent: "center",
-                  alignItems: "center",
+                  overflow: "hidden",
+                  paddingBottom: 16,
                 }}
               >
-                <Link href={"/past/invitation"} style={{}}>
-                  <Text>View Past Invitations</Text>
-                </Link>
+                <CollaborationHeader
+                  cardId={item.id}
+                  cardType="invitation"
+                  brand={{
+                    image: item.brandImage,
+                    name: item.brandName,
+                    paymentVerified: item.paymentVerified,
+                  }}
+                  collaboration={{
+                    collabId: item.id,
+                    collabName: item.name,
+                    timePosted: item.timeStamp,
+                  }}
+                  onOpenBottomSheet={() =>
+                    openBottomSheet(item.id, item.applications.id)
+                  }
+                />
+                {item.attachments && item.attachments.length > 0 && (
+                  <Carousel
+                    theme={theme}
+                    data={
+                      item.attachments?.map((attachment: Attachment) =>
+                        processRawAttachment(attachment)
+                      ) || []
+                    }
+                    carouselWidth={MAX_WIDTH_WEB}
+                  />
+                )}
+                <Pressable
+                  onPress={() => {
+                    router.push({
+                      // @ts-ignore
+                      pathname: `/collaboration-details/${item.id}`,
+                      params: {
+                        cardType: "invitation",
+                        cardId: item.applications.id,
+                      },
+                    });
+                  }}
+                >
+                  <CollaborationDetails
+                    collaborationDetails={{
+                      collabDescription: item.description || "",
+                      promotionType: item.promotionType,
+                      location: item.location,
+                      platform: item.platform,
+                      contentType: item.contentFormat,
+                    }}
+                  />
+                </Pressable>
               </View>
-            </View>
-          )}
-        </View>
-      )}
-      {isVisible && (
-        <BottomSheetActions
-          cardId={selectedCollabId || ""}
-          cardType="proposal"
-          invitationId={invitationID}
-          isVisible={isVisible}
-          onClose={closeBottomSheet}
-          snapPointsRange={["20%", "50%"]}
-          key={selectedCollabId}
-        />
-      )}
-    </View>
+            )}
+            keyExtractor={(item, index) => index.toString()}
+            ListFooterComponent={
+              <View
+                style={{
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: 20,
+                }}
+              >
+                {notPendingInvitations !== 0 && (
+                  <View>
+                    <Text
+                      style={[
+                        styles.title,
+                        {
+                          marginBottom: 10,
+                          color: Colors(theme).text,
+                        },
+                      ]}
+                    >
+                      Looking for past invitations
+                    </Text>
+                    <View
+                      style={{
+                        backgroundColor: Colors(theme).card,
+                        padding: 10,
+                        borderRadius: 5,
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Link href={"/past/invitation"} style={{}}>
+                        <Text>View Past Invitations</Text>
+                      </Link>
+                    </View>
+                  </View>
+                )}
+              </View>
+            }
+            contentContainerStyle={{
+              padding: 16,
+              paddingTop: 8,
+              gap: 16,
+            }}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={handleRefresh}
+                colors={[Colors(theme).primary]} // Customize color based on theme
+              />
+            }
+          />
+        ) : (
+          <View>
+            {pendingInvitations.length === 0 && notPendingInvitations !== 0 && (
+              <View
+                style={{
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: 20,
+                }}
+              >
+                <Text
+                  style={[
+                    styles.title,
+                    {
+                      marginBottom: 10,
+                      color: Colors(theme).text,
+                    },
+                  ]}
+                >
+                  Looking for past invitations
+                </Text>
+                <View
+                  style={{
+                    backgroundColor: Colors(theme).card,
+                    padding: 10,
+                    borderRadius: 5,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <Link href={"/past/invitation"} style={{}}>
+                    <Text>View Past Invitations</Text>
+                  </Link>
+                </View>
+              </View>
+            )}
+          </View>
+        )}
+        {isVisible && (
+          <BottomSheetActions
+            cardId={selectedCollabId || ""}
+            cardType="proposal"
+            invitationId={invitationID}
+            isVisible={isVisible}
+            onClose={closeBottomSheet}
+            snapPointsRange={["20%", "50%"]}
+            key={selectedCollabId}
+          />
+        )}
+      </View>
+    </IOScrollView>
   );
 };
 
