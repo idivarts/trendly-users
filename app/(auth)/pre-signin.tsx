@@ -113,7 +113,15 @@ const PreSignIn = () => {
           }}
           renderItem={({ item }) => (
             <View style={styles.slide}>
-              {item.key === "connect" &&
+              <View style={styles.imageContainer}>
+                <Image source={imageUrl(item.image)} style={styles.image} />
+              </View>
+              <Title style={[styles.title, { color: Colors(theme).primary }]}>
+                {item.title}
+              </Title>
+              <Paragraph style={styles.paragraph}>{item.text}</Paragraph>
+
+              {item.key === "connect" ?
                 <>
                   {Platform.OS == "web" ?
                     <Button
@@ -131,25 +139,15 @@ const PreSignIn = () => {
                         size={24}
                         style={styles.skipIcon} />
                     </Pressable>}
-                </>
-              }
-              {item.key !== "connect" && (
-                <Button
-                  mode="outlined"
-                  style={styles.skipButton}
-                  onPress={skipToConnect}
-                >
-                  Skip
-                </Button>
-              )}
-              <View style={styles.imageContainer}>
-                <Image source={imageUrl(item.image)} style={styles.image} />
-              </View>
-              <Title style={[styles.title, { color: Colors(theme).primary }]}>
-                {item.title}
-              </Title>
-              <Paragraph style={styles.paragraph}>{item.text}</Paragraph>
-
+                </> : (
+                  <Button
+                    mode="outlined"
+                    style={styles.skipButton}
+                    onPress={skipToConnect}
+                  >
+                    Skip
+                  </Button>
+                )}
               {item.key === "connect" && (
                 <View style={styles.socialContainer}>
                   {Platform.OS != "ios" &&
