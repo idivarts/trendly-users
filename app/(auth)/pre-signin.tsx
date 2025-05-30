@@ -274,7 +274,7 @@ const PreSignIn = () => {
         isVisible={visible}
         cardType="pre-signin"
         onClose={() => setVisible(false)}
-        snapPointsRange={["25%", "40%"]}
+        snapPointsRange={["15%", "15%"]}
       />
       <BottomSheetActions
         isVisible={termsCondition}
