@@ -135,6 +135,7 @@ const PreSignIn = () => {
                     }}>
                       <FontAwesomeIcon
                         icon={faEllipsis}
+                        size={24}
                         style={styles.skipIcon}></FontAwesomeIcon>
                     </Pressable>}
                 </>
@@ -274,7 +275,7 @@ const PreSignIn = () => {
         isVisible={visible}
         cardType="pre-signin"
         onClose={() => setVisible(false)}
-        snapPointsRange={["15%", "15%"]}
+        snapPointsRange={IS_BETA_ENABLED ? ["25%", "25%"] : ["15%", "15%"]}
       />
       <BottomSheetActions
         isVisible={termsCondition}
