@@ -22,6 +22,7 @@ export const ColorsStatic = {
   transparent: "transparent",
 
   backdrop: "rgba(0, 0, 0, 0.5)",
+  backdropDark: "rgba(255, 255, 255, 0.5)",
   success: "rgb(2, 202, 48)",
   successForeground: "rgb(40, 167, 69)",
   cardDark: "rgb(30, 30, 30)",
@@ -59,6 +60,8 @@ export default (theme: Theme) => ({
       background: ColorsStatic.black, // App background
       reverseBackground: ColorsStatic.white, // Opposite of background for contrast
       modalBackground: ColorsStatic.eerieBlack, // Modal or overlay background
+
+      backdrop: ColorsStatic.backdropDark, // Backdrop color for modals
     }
     : {
       primary: ColorsStatic.primary, // Main accent color
@@ -75,5 +78,7 @@ export default (theme: Theme) => ({
       background: ColorsStatic.white, // App background
       reverseBackground: ColorsStatic.black, // Opposite of background for contrast
       modalBackground: ColorsStatic.white, // Modal or overlay background
+
+      backdrop: ColorsStatic.backdrop, // Backdrop color for modals
     }),
 });

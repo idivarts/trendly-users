@@ -98,7 +98,7 @@ const PreSignIn = () => {
         <Carousel
           data={slides}
           width={xl ? Dimensions.get("window").width - 120 * 4 : Dimensions.get("window").width}
-          height={Dimensions.get("window").height - 60}
+          height={Dimensions.get("window").height - 120}
           pagingEnabled
           ref={swiperRef}
           loop={false}
@@ -114,13 +114,6 @@ const PreSignIn = () => {
           renderItem={({ item }) => (
             <View style={styles.slide}>
               {item.key === "connect" &&
-                // <Pressable style={styles.skipButton} onPress={() => {
-                //   setVisible(true)
-                // }}>
-                //   <FontAwesomeIcon
-                //     icon={faEllipsis}
-                //     style={styles.skipButton}></FontAwesomeIcon>
-                // </Pressable>
                 <>
                   {Platform.OS == "web" ?
                     <Button
@@ -130,13 +123,13 @@ const PreSignIn = () => {
                     >
                       Options
                     </Button> :
-                    <Pressable style={[styles.skipButton, { padding: 20 }]} onPress={() => {
+                    <Pressable style={[styles.skipButton, { padding: 20, flex: 1 }]} onPress={() => {
                       setVisible(true)
                     }}>
                       <FontAwesomeIcon
                         icon={faEllipsis}
                         size={24}
-                        style={styles.skipIcon}></FontAwesomeIcon>
+                        style={styles.skipIcon} />
                     </Pressable>}
                 </>
               }
@@ -275,7 +268,7 @@ const PreSignIn = () => {
         isVisible={visible}
         cardType="pre-signin"
         onClose={() => setVisible(false)}
-        snapPointsRange={IS_BETA_ENABLED ? ["25%", "25%"] : ["15%", "15%"]}
+        snapPointsRange={IS_BETA_ENABLED ? ["25%", "25%"] : ["20%", "20%"]}
       />
       <BottomSheetActions
         isVisible={termsCondition}
