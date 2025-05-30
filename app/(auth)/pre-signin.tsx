@@ -1,12 +1,12 @@
 import Button from "@/components/ui/button";
 import SocialButton from "@/components/ui/button/social-button";
-import Colors from "@/constants/Colors";
 import { slides } from "@/constants/Slides";
 import { useInitialUserData } from "@/constants/User";
 import { useFacebookLogin, useInstagramLogin } from "@/hooks/requests";
 import AppLayout from "@/layouts/app-layout";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
+import Colors from "@/shared-uis/constants/Colors";
 import stylesFn from "@/styles/tab1.styles";
 import { imageUrl } from "@/utils/url";
 import { faApple, faFacebook, faGoogle, faInstagram } from "@fortawesome/free-brands-svg-icons";

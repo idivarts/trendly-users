@@ -1,5 +1,4 @@
 import UserResponse from "@/components/contract-card/UserResponse";
-import Colors from "@/constants/Colors";
 import { useBreakpoints } from "@/hooks";
 import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
 import {
@@ -14,6 +13,7 @@ import Carousel from "@/shared-uis/components/carousel/carousel";
 import ScrollMedia from "@/shared-uis/components/carousel/scroll-media";
 import ImageComponent from "@/shared-uis/components/image-component";
 import ReadMore from "@/shared-uis/components/ReadMore";
+import Colors from "@/shared-uis/constants/Colors";
 import { stylesFn } from "@/styles/CollaborationDetails.styles";
 import { formatTimeToNow } from "@/utils/date";
 import { faCheckCircle } from "@fortawesome/free-solid-svg-icons";

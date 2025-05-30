@@ -1,5 +1,5 @@
-import Colors from "@/constants/Colors";
 import { AccountStatus } from "@/shared-libs/firestore/trendly-pro/models/users";
+import Colors from "@/shared-uis/constants/Colors";
 import stylesFn from "@/styles/settings/Settings.styles";
 import { User } from "@/types/User";
 import { faCalendarXmark, faThumbsUp } from "@fortawesome/free-regular-svg-icons";

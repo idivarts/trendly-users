@@ -2,8 +2,8 @@ import { StatusBar as ExpoStatusBar } from "expo-status-bar";
 import React, { PropsWithChildren, useMemo } from "react";
 import { Platform, SafeAreaView, StatusBar, StyleSheet } from "react-native";
 
-import Colors from "@/constants/Colors";
 import { useBreakpoints } from "@/hooks";
+import Colors from "@/shared-uis/constants/Colors";
 import { useTheme } from "@react-navigation/native";
 import Toast from "react-native-toast-message";
 

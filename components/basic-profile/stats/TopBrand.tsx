@@ -1,10 +1,10 @@
+import { Text, View } from "@/components/theme/Themed";
+import Colors from "@/shared-uis/constants/Colors";
+import { faStar, faStarHalfStroke } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { useTheme } from "@react-navigation/native";
 import React from "react";
 import { Avatar, Card } from "react-native-paper";
-import { Text, View } from "@/components/theme/Themed";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faStar, faStarHalfStroke } from "@fortawesome/free-solid-svg-icons";
-import Colors from "@/constants/Colors";
-import { useTheme } from "@react-navigation/native";
 
 interface TopBrandProps {
   name: string;

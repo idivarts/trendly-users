@@ -2,8 +2,8 @@ import { useTheme } from "@react-navigation/native";
 import { ActivityIndicator } from "react-native";
 
 import { Text, View } from "@/components/theme/Themed";
-import Colors from "@/constants/Colors";
 import { Console } from "@/shared-libs/utils/console";
+import Colors from "@/shared-uis/constants/Colors";
 import { useURL } from "expo-linking";
 import { useEffect } from "react";
 

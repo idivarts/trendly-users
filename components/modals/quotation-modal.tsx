@@ -1,12 +1,11 @@
-import Colors from "@/constants/Colors";
+import Colors from "@/shared-uis/constants/Colors";
+import { faClose } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { Theme, useTheme } from "@react-navigation/native";
-import { useState } from "react";
 import { Modal, Pressable, StyleSheet } from "react-native";
 import { Text, View } from "../theme/Themed";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faClose } from "@fortawesome/free-solid-svg-icons";
-import TextInput from "../ui/text-input";
 import Button from "../ui/button";
+import TextInput from "../ui/text-input";
 
 interface QuotationModalProps {
   isVisible: boolean;

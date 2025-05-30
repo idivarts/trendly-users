@@ -1,9 +1,9 @@
-import Colors from "@/constants/Colors";
+import Colors from "@/shared-uis/constants/Colors";
 import { useTheme } from "@react-navigation/native";
 import {
   TextInput as RNTextInput,
   TextInputProps as RNTextInputProps,
-} from "react-native-paper"
+} from "react-native-paper";
 
 interface TextInputProps extends RNTextInputProps { }
 

@@ -1,5 +1,5 @@
 import { Text, View } from "@/components/theme/Themed";
-import Colors from "@/constants/Colors";
+import Colors from "@/shared-uis/constants/Colors";
 import stylesFn from "@/styles/assets-preview/AssetsPreview.styles";
 import { imageUrl } from "@/utils/url";
 import { faAdd, faTrash } from "@fortawesome/free-solid-svg-icons";

@@ -1,9 +1,9 @@
-import React from 'react';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
-import { Theme, useTheme } from '@react-navigation/native';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import Colors from '@/shared-uis/constants/Colors';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
-import Colors from '@/constants/Colors';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { Theme, useTheme } from '@react-navigation/native';
+import React from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 interface OptionType {
   icon: IconProp;

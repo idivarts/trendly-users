@@ -1,8 +1,8 @@
-import { useTheme } from '@react-navigation/native';
-import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, ScrollView, Pressable } from 'react-native';
-import Colors from '@/constants/Colors';
+import Colors from '@/shared-uis/constants/Colors';
 import { stylesFn } from '@/styles/top-tab-navigation/TopTabNavigation.styles';
+import { useTheme } from '@react-navigation/native';
+import React, { useEffect, useRef, useState } from 'react';
+import { Pressable, ScrollView, Text, View } from 'react-native';
 
 interface TopTabNavigationProps {
   tabs: {

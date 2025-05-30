@@ -1,14 +1,14 @@
-import { Pressable } from "react-native";
-import { Text, View } from "../theme/Themed";
-import Colors from "@/constants/Colors";
+import { COMPLETION_PERCENTAGE } from "@/constants/CompletionPercentage";
+import { useAuthContext } from "@/contexts";
+import Colors from "@/shared-uis/constants/Colors";
 import stylesFn from "@/styles/profile/ProfileItemCard.styles";
-import { useTheme } from "@react-navigation/native";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
   faCaretRight,
 } from "@fortawesome/free-solid-svg-icons";
-import { useAuthContext } from "@/contexts";
-import { COMPLETION_PERCENTAGE } from "@/constants/CompletionPercentage";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { useTheme } from "@react-navigation/native";
+import { Pressable } from "react-native";
+import { Text, View } from "../theme/Themed";
 
 interface ProfileItemCardProps {
   item: any;

@@ -7,7 +7,6 @@ import ContractDetailsContent, {
 } from "@/components/contracts/ContractDetailContent";
 import { View } from "@/components/theme/Themed";
 import ScreenHeader from "@/components/ui/screen-header";
-import Colors from "@/constants/Colors";
 import { useAuthContext } from "@/contexts";
 import AppLayout from "@/layouts/app-layout";
 import {
@@ -16,6 +15,7 @@ import {
 import { IContracts } from "@/shared-libs/firestore/trendly-pro/models/contracts";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
+import Colors from "@/shared-uis/constants/Colors";
 import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";

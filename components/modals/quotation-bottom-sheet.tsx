@@ -1,25 +1,25 @@
-import React, { useMemo, useState } from "react";
-import { useSharedValue } from "react-native-reanimated";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Theme, useTheme } from "@react-navigation/native";
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
+import { Theme, useTheme } from "@react-navigation/native";
+import React, { useMemo, useState } from "react";
+import { useSharedValue } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { Text, View } from "../theme/Themed";
-import Colors from "@/constants/Colors";
-import { Pressable, StyleSheet } from "react-native";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import Colors from "@/shared-uis/constants/Colors";
 import {
   faClockRotateLeft,
   faClose,
   faDollarSign,
 } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { Pressable, StyleSheet } from "react-native";
+import { List } from "react-native-paper";
+import { Text, View } from "../theme/Themed";
 import Button from "../ui/button";
 import ListItem from "../ui/list-item/ListItem";
-import { List } from "react-native-paper";
 import QuotationModal from "./quotation-modal";
 import TimelineModal from "./timeline-modal";
 

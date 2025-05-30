@@ -1,6 +1,5 @@
 import CollaborationFilter from "@/components/FilterModal";
 import SearchComponent from "@/components/SearchComponent";
-import Colors from "@/constants/Colors";
 import { MAX_WIDTH_WEB } from "@/constants/Container";
 import { useBreakpoints } from "@/hooks";
 import AppLayout from "@/layouts/app-layout";
@@ -11,6 +10,7 @@ import { processRawAttachment } from "@/shared-libs/utils/attachments";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { useInfiniteScroll } from "@/shared-libs/utils/infinite-scroll";
 import Carousel from "@/shared-uis/components/carousel/carousel";
+import Colors from "@/shared-uis/constants/Colors";
 import { stylesFn } from "@/styles/Collections.styles";
 import { useTheme } from "@react-navigation/native";
 import { router } from "expo-router";

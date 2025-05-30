@@ -1,4 +1,4 @@
-import Colors from '@/constants/Colors';
+import Colors from '@/shared-uis/constants/Colors';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import React, { useState } from 'react';
 import type { GestureResponderEvent, LayoutChangeEvent, LayoutRectangle } from 'react-native';
@@ -6,10 +6,10 @@ import { Pressable } from 'react-native';
 
 import { ChannelContextValue, DefaultStreamChatGenerics, useAttachmentPickerContext, useMessageInputContext, useTheme } from 'stream-chat-expo';
 
-import { useTheme as useAppTheme } from '@react-navigation/native';
 import { faSquarePlus } from '@fortawesome/free-regular-svg-icons';
-import { NativeAttachmentPicker } from './native-attachment-picker';
+import { useTheme as useAppTheme } from '@react-navigation/native';
 import { isImageMediaLibraryAvailable } from './native';
+import { NativeAttachmentPicker } from './native-attachment-picker';
 
 type AttachButtonPropsWithContext<
   StreamChatGenerics extends DefaultStreamChatGenerics = DefaultStreamChatGenerics,

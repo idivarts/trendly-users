@@ -1,8 +1,8 @@
 import Button from "@/components/ui/button";
 import TextInput from "@/components/ui/text-input";
 import { IS_BETA_ENABLED } from "@/constants/App";
-import Colors from "@/constants/Colors";
 import { useAuthContext } from "@/contexts";
+import Colors from "@/shared-uis/constants/Colors";
 import fnStyles from "@/styles/login.styles";
 import { useTheme } from "@react-navigation/native";
 import { useRouter } from "expo-router";

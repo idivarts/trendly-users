@@ -1,6 +1,6 @@
-import { StyleSheet } from "react-native";
+import Colors from "@/shared-uis/constants/Colors";
 import { Theme } from "@react-navigation/native";
-import Colors from "@/constants/Colors";
+import { StyleSheet } from "react-native";
 
 export const stylesFn = (theme: Theme) => StyleSheet.create({
   tag: {

@@ -4,8 +4,8 @@ import { ActivityIndicator, Platform } from "react-native";
 
 import CollaborationsShimmer from "@/components/shimmers/collaborations-shimmer";
 import { View } from "@/components/theme/Themed";
-import Colors from "@/constants/Colors";
 import { useAuthContext, useSocialContext } from "@/contexts";
+import Colors from "@/shared-uis/constants/Colors";
 
 interface SocialsProtectedScreenProps extends PropsWithChildren { }
 

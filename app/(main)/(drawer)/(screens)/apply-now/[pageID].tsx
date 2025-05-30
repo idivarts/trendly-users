@@ -3,7 +3,6 @@ import Button from "@/components/ui/button";
 import ListItem from "@/components/ui/list-item/ListItem";
 import ScreenHeader from "@/components/ui/screen-header";
 import TextInput from "@/components/ui/text-input";
-import Colors from "@/constants/Colors";
 import AppLayout from "@/layouts/app-layout";
 import { AWSProgressUpdateSubject, useAWSContext } from "@/shared-libs/contexts/aws-context.provider";
 import { Attachment } from "@/shared-libs/firestore/trendly-pro/constants/attachment";
@@ -11,6 +10,7 @@ import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/colla
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import ProgressLoader from "@/shared-uis/components/ProgressLoader";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
+import Colors from "@/shared-uis/constants/Colors";
 import { stylesFn } from "@/styles/ApplyNow.styles";
 import { AssetItem } from "@/types/Asset";
 import { faCircleQuestion } from "@fortawesome/free-regular-svg-icons";

@@ -1,6 +1,6 @@
 import { Text, View } from "@/components/theme/Themed";
-import Colors from "@/constants/Colors";
 import { useAuthContext } from "@/contexts";
+import Colors from "@/shared-uis/constants/Colors";
 import { resetAndNavigate } from "@/utils/router";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";

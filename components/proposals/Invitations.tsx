@@ -1,6 +1,5 @@
 import BottomSheetActions from "@/components/BottomSheetActions";
 import { Text, View } from "@/components/theme/Themed";
-import Colors from "@/constants/Colors";
 import { MAX_WIDTH_WEB } from "@/constants/Container";
 import { useAuthContext } from "@/contexts";
 import { useBreakpoints } from "@/hooks";
@@ -9,6 +8,7 @@ import { Attachment } from "@/shared-libs/firestore/trendly-pro/constants/attach
 import { processRawAttachment } from "@/shared-libs/utils/attachments";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import Carousel from "@/shared-uis/components/carousel/carousel";
+import Colors from "@/shared-uis/constants/Colors";
 import { stylesFn } from "@/styles/Proposal.styles";
 import { useTheme } from "@react-navigation/native";
 import { Link, router } from "expo-router";

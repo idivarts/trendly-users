@@ -1,6 +1,6 @@
 import Button from "@/components/ui/button";
-import Colors from "@/constants/Colors";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
+import Colors from "@/shared-uis/constants/Colors";
 import { stylesFn } from "@/styles/apply-now/gallery.styles";
 import { AssetItem } from "@/types/Asset";
 import { faCamera, faVideo } from "@fortawesome/free-solid-svg-icons";

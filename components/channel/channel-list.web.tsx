@@ -1,8 +1,8 @@
-import Colors from "@/constants/Colors";
 import { useAuthContext } from "@/contexts";
 import { useChatContext } from "@/contexts/chat-context.provider";
 import AppLayout from "@/layouts/app-layout";
 import WebMessageWrapper from "@/shared-libs/contexts/web-message-wrapper";
+import Colors from "@/shared-uis/constants/Colors";
 import { useTheme } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import { ActivityIndicator } from "react-native-paper";

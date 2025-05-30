@@ -1,5 +1,5 @@
-import { View, Text } from "@/components/theme/Themed";
-import Colors from "@/constants/Colors";
+import { Text, View } from "@/components/theme/Themed";
+import Colors from "@/shared-uis/constants/Colors";
 import { imageUrl } from "@/utils/url";
 import { useTheme } from "@react-navigation/native";
 import { FC } from "react";

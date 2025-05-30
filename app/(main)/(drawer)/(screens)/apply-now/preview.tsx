@@ -2,7 +2,6 @@ import { CardFooter } from "@/components/collaboration/card-components/secondary
 import { useApplication } from "@/components/proposals/useApplication";
 import Button from "@/components/ui/button";
 import ScreenHeader from "@/components/ui/screen-header";
-import Colors from "@/constants/Colors";
 import { MAX_WIDTH_WEB } from "@/constants/Container";
 import { useAuthContext } from "@/contexts";
 import { useBreakpoints } from "@/hooks";
@@ -11,6 +10,7 @@ import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collab
 import { processRawAttachment } from "@/shared-libs/utils/attachments";
 import { Console } from "@/shared-libs/utils/console";
 import InfluencerCard from "@/shared-uis/components/InfluencerCard";
+import Colors from "@/shared-uis/constants/Colors";
 import { convertToKUnits } from "@/utils/conversion";
 import { useTheme } from "@react-navigation/native";
 import { router, useLocalSearchParams } from "expo-router";

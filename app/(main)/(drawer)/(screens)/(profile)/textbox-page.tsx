@@ -1,9 +1,9 @@
 import Component from "@/components/textbox-rtf/TextBox";
 import { Text, View } from "@/components/theme/Themed";
-import Colors from "@/constants/Colors";
 import { useAuthContext } from "@/contexts";
 import AppLayout from "@/layouts/app-layout";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
+import Colors from "@/shared-uis/constants/Colors";
 import { Profile } from "@/types/Profile";
 import { User } from "@/types/User";
 import { calculateProfileCompletion } from "@/utils/profile";

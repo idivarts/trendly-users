@@ -1,11 +1,11 @@
 import RenderMediaItem from "@/components/collaboration/render-media-item";
 import Button from "@/components/ui/button";
 import ScreenHeader from "@/components/ui/screen-header";
-import Colors from "@/constants/Colors";
 import { useAuthContext } from "@/contexts";
 import { processRawAttachment } from "@/shared-libs/utils/attachments";
 import { Console } from "@/shared-libs/utils/console";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
+import Colors from "@/shared-uis/constants/Colors";
 import { stylesFn } from "@/styles/apply-now/gallery.styles";
 import { AssetItem } from "@/types/Asset";
 import { faImage, faVideo } from "@fortawesome/free-solid-svg-icons";

@@ -1,10 +1,10 @@
 import { submitSurvey } from "@/components/surverHandlers";
 import { Text, View } from "@/components/theme/Themed";
 import Select from "@/components/ui/select";
-import Colors from "@/constants/Colors";
 import { SURVEY_DATA } from "@/constants/SurveyData";
 import { useAuthContext } from "@/contexts";
 import AppLayout from "@/layouts/app-layout";
+import Colors from "@/shared-uis/constants/Colors";
 import { stylesFn } from "@/styles/Questions.styles";
 import { SurveyAnswer } from "@/types/Survey";
 import { resetAndNavigate } from "@/utils/router";

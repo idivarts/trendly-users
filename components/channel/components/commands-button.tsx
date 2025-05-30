@@ -1,13 +1,13 @@
-import Colors from '@/constants/Colors';
-import { faBolt, faBoltLightning } from '@fortawesome/free-solid-svg-icons';
+import Colors from '@/shared-uis/constants/Colors';
+import { faBolt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import {
+  useTheme as useAppTheme,
+} from '@react-navigation/native';
 import React from 'react';
 import type { GestureResponderEvent } from 'react-native';
 import { Pressable } from 'react-native';
 import { DefaultStreamChatGenerics, isSuggestionCommand, SuggestionsContextValue, useSuggestionsContext, useTheme } from 'stream-chat-expo';
-import {
-  useTheme as useAppTheme,
-} from '@react-navigation/native';
 
 type CommandsButtonPropsWithContext<
   StreamChatGenerics extends DefaultStreamChatGenerics = DefaultStreamChatGenerics,

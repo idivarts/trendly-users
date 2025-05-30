@@ -9,7 +9,6 @@ import { useSharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { IS_BETA_ENABLED } from "@/constants/App";
-import Colors from "@/constants/Colors";
 import { useInitialUserData } from "@/constants/User";
 import { useAuthContext } from "@/contexts";
 import { useFacebookLogin, useInstagramLogin } from "@/hooks/requests";
@@ -17,6 +16,7 @@ import { useAppleLogin } from "@/hooks/requests/use-apple-login";
 import { useGoogleLogin } from "@/hooks/requests/use-google-login";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
+import Colors from "@/shared-uis/constants/Colors";
 import { faApple, faFacebook, faGoogle, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";

@@ -1,8 +1,8 @@
-import Colors from "@/constants/Colors";
 import { PLACEHOLDER_PERSON_IMAGE } from "@/constants/Placeholder";
 import { useAuthContext } from "@/contexts";
 import { useAWSContext } from "@/shared-libs/contexts/aws-context.provider";
 import ImageComponent from "@/shared-uis/components/image-component";
+import Colors from "@/shared-uis/constants/Colors";
 import stylesFn from "@/styles/profile/ProfileCard.styles";
 import { User } from "@/types/User";
 import { faChevronRight, faPen } from "@fortawesome/free-solid-svg-icons";

@@ -1,13 +1,13 @@
-import Colors from "@/constants/Colors";
+import Colors from "@/shared-uis/constants/Colors";
+import DateTimePicker from "@react-native-community/datetimepicker";
 import { Theme, useTheme } from "@react-navigation/native";
 import { Modal, Pressable, StyleSheet } from "react-native";
-import DateTimePicker from "@react-native-community/datetimepicker";
 
-import { Text, View } from "../theme/Themed";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faClose } from "@fortawesome/free-solid-svg-icons";
-import Button from "../ui/button";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
+import { faClose } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { Text, View } from "../theme/Themed";
+import Button from "../ui/button";
 
 interface TimelineModalProps {
   isVisible: boolean;

@@ -1,5 +1,5 @@
-import Colors from "@/constants/Colors";
 import { useNotificationContext } from "@/contexts";
+import Colors from "@/shared-uis/constants/Colors";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";

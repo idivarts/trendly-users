@@ -1,12 +1,12 @@
-import React from "react";
-import { Image, StyleSheet, Pressable } from "react-native";
-import { Theme, useTheme } from "@react-navigation/native";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
-import Colors from "@/constants/Colors";
-import { Avatar } from "react-native-paper";
-import { imageUrl } from "@/utils/url";
 import { Text, View } from "@/components/theme/Themed";
+import Colors from "@/shared-uis/constants/Colors";
+import { imageUrl } from "@/utils/url";
+import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { Theme, useTheme } from "@react-navigation/native";
+import React from "react";
+import { Image, Pressable, StyleSheet } from "react-native";
+import { Avatar } from "react-native-paper";
 
 type CardHeaderProps = {
   avatar: string;

@@ -1,7 +1,7 @@
-import Colors from "@/constants/Colors";
 import { useAuthContext, useChatContext } from "@/contexts";
 import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
+import Colors from "@/shared-uis/constants/Colors";
 import { useTheme } from "@react-navigation/native";
 import { doc, getDoc } from "firebase/firestore";
 import React, { FC, useEffect } from "react";

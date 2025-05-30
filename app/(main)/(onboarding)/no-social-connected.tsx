@@ -1,9 +1,9 @@
 import FacebookLoginButton from "@/components/profile/ConnectWithFacebook";
 import InstagramLoginButton from "@/components/profile/ConnectWithInstagramManual";
 import Button from "@/components/ui/button";
-import Colors from "@/constants/Colors";
 import { useAuthContext } from "@/contexts";
 import AppLayout from "@/layouts/app-layout";
+import Colors from "@/shared-uis/constants/Colors";
 import { imageUrl } from "@/utils/url";
 import { useTheme } from "@react-navigation/native";
 import React from "react";

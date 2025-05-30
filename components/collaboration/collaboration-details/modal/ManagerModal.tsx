@@ -1,12 +1,10 @@
-import { Image, Pressable, Linking } from "react-native";
 import { useTheme } from "@react-navigation/native";
 
 import { Text, View } from "@/components/theme/Themed";
-import stylesFn from "@/styles/modal/UploadModal.styles";
-import { Chip, Modal } from "react-native-paper";
-import Colors from "@/constants/Colors";
-import { imageUrl } from "@/utils/url";
 import ImageComponent from "@/shared-uis/components/image-component";
+import Colors from "@/shared-uis/constants/Colors";
+import stylesFn from "@/styles/modal/UploadModal.styles";
+import { Modal } from "react-native-paper";
 
 interface ManagerModalProps {
   manager: {

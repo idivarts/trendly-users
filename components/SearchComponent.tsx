@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import { View, Pressable } from "react-native";
-import { Searchbar } from "react-native-paper";
-import Colors from "@/constants/Colors";
-import { useTheme } from "@react-navigation/native";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faFilter, faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+import Colors from "@/shared-uis/constants/Colors";
 import stylesFn from "@/styles/searchbar/Searchbar.styles";
 import searchComponentStylesFn from "@/styles/searchbar/SearchComponent.styles";
+import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { useTheme } from "@react-navigation/native";
+import React, { useState } from "react";
+import { View } from "react-native";
+import { Searchbar } from "react-native-paper";
 
 interface SearchComponentProps {
   ToggleModal?: (show: boolean) => void;

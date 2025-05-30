@@ -1,6 +1,6 @@
-import Colors from "@/constants/Colors";
 import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
+import Colors from "@/shared-uis/constants/Colors";
 import {
   faClockRotateLeft,
   faDollarSign,

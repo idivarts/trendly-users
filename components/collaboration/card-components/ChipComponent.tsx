@@ -1,10 +1,9 @@
 import { Text, View } from "@/components/theme/Themed";
-import Colors from "@/constants/Colors";
+import Colors from "@/shared-uis/constants/Colors";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
 import { FC } from "react";
-import { Chip } from "react-native-paper";
 
 interface ChipCardProps {
   chipText: string;

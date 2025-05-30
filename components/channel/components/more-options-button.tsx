@@ -1,11 +1,11 @@
+import Colors from '@/shared-uis/constants/Colors';
+import { faChevronCircleRight } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { useTheme as useAppTheme } from '@react-navigation/native';
 import React from 'react';
 import type { GestureResponderEvent } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useTheme } from 'stream-chat-expo';
-import { useTheme as useAppTheme } from '@react-navigation/native';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import Colors from '@/constants/Colors';
-import { faChevronCircleRight } from '@fortawesome/free-solid-svg-icons';
 
 export type MoreOptionsButtonProps = {
   /** Function that opens attachment options bottom sheet */

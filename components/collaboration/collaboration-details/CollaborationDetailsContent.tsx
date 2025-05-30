@@ -2,7 +2,6 @@ import CreateCollaborationMap from "@/components/create-collaboration/CreateColl
 import AuthModal from "@/components/modals/AuthModal";
 import Button from "@/components/ui/button";
 import ConfirmationModal from "@/components/ui/modal/ConfirmationModal";
-import Colors from "@/constants/Colors";
 import {
   useAuthContext,
   useContractContext,
@@ -20,6 +19,7 @@ import ImageComponent from "@/shared-uis/components/image-component";
 import RatingSection from "@/shared-uis/components/rating-section";
 import ReadMore from "@/shared-uis/components/ReadMore";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
+import Colors from "@/shared-uis/constants/Colors";
 import { stylesFn } from "@/styles/CollaborationDetails.styles";
 import { Invitation } from "@/types/Collaboration";
 import { Contract } from "@/types/Contract";

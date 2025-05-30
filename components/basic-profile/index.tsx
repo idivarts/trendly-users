@@ -1,8 +1,8 @@
-import Colors from "@/constants/Colors";
 import { DUMMY_IMAGE } from "@/constants/User";
 import { useAuthContext } from "@/contexts";
 import { useBreakpoints } from "@/hooks";
 import { useAWSContext } from "@/shared-libs/contexts/aws-context.provider";
+import Colors from "@/shared-uis/constants/Colors";
 import stylesFn from "@/styles/basic-profile/BasicProfile.styles";
 import { User } from "@/types/User";
 import { useTheme } from "@react-navigation/native";

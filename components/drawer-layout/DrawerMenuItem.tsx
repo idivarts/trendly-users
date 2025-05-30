@@ -1,11 +1,11 @@
+import { IconProp } from "@fortawesome/fontawesome-svg-core";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
 import { usePathname, useRouter } from "expo-router";
 import { Pressable, StyleSheet } from "react-native";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { IconProp } from "@fortawesome/fontawesome-svg-core";
 
+import Colors from "@/shared-uis/constants/Colors";
 import { Text, View } from "../theme/Themed";
-import Colors from "@/constants/Colors";
 
 export interface IconPropFn {
   focused: boolean;

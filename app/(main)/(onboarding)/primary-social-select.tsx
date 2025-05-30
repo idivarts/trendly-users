@@ -1,10 +1,10 @@
 import { Text, View } from "@/components/theme/Themed";
-import Colors from "@/constants/Colors";
 import { useAuthContext, useSocialContext } from "@/contexts";
 import AppLayout from "@/layouts/app-layout";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
+import Colors from "@/shared-uis/constants/Colors";
 import { stylesFn } from "@/styles/Questions.styles";
 import { resetAndNavigate } from "@/utils/router";
 import { faFacebook, faInstagram } from "@fortawesome/free-brands-svg-icons";

@@ -1,11 +1,11 @@
-import { Pressable } from 'react-native';
 import { DrawerActions, useTheme } from '@react-navigation/native';
 import { useNavigation } from "expo-router";
+import { Pressable } from 'react-native';
 
-import Colors from '@/constants/Colors';
 import { View } from '@/components/theme/Themed';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import Colors from '@/shared-uis/constants/Colors';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 
 interface DrawerToggleButtonProps extends React.ComponentProps<typeof Pressable> { }
 

@@ -1,23 +1,23 @@
-import React from "react";
+import { TopBrandCard } from "@/components/basic-profile/stats/TopBrand";
 import { Text, View } from "@/components/theme/Themed";
 import ScreenHeader from "@/components/ui/screen-header";
 import AppLayout from "@/layouts/app-layout";
-import { ScrollView, Dimensions, StyleSheet, Platform } from "react-native";
-import { Card } from "react-native-paper";
-import { LineChart, PieChart } from "react-native-gifted-charts";
-import Colors from "@/constants/Colors";
+import Colors from "@/shared-uis/constants/Colors";
 import { Theme, useTheme } from "@react-navigation/native";
-import { TopBrandCard } from "@/components/basic-profile/stats/TopBrand";
+import React from "react";
+import { Dimensions, Platform, ScrollView, StyleSheet } from "react-native";
+import { LineChart, PieChart } from "react-native-gifted-charts";
+import { Card } from "react-native-paper";
 //@ts-ignore
 import FunnelChart from "react-native-funnel-chart";
 
-import {
-  EARNING_TIMELINE_DATA as earningTimelineData,
-  PIE_CHART_DATA as pieChartData,
-  FUNNEL_DATA as demo_data,
-} from "@/constants/Chart";
 import FunnelChartWeb from "@/components/basic-profile/stats/funnel-chart/FunnelChart";
 import Button from "@/components/ui/button";
+import {
+  FUNNEL_DATA as demo_data,
+  EARNING_TIMELINE_DATA as earningTimelineData,
+  PIE_CHART_DATA as pieChartData,
+} from "@/constants/Chart";
 
 const MyStatsScreen = () => {
   const screenWidth = Dimensions.get("window").width;
