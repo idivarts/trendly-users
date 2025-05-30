@@ -1,3 +1,5 @@
+import Colors from "@/constants/Colors";
+import { useTheme } from "@react-navigation/native";
 import {
   Button as RNPButton,
   ButtonProps as RNPButtonProps,
@@ -13,6 +15,7 @@ const Button: React.FC<ButtonProps> = ({
   size,
   ...props
 }) => {
+  const theme = useTheme();
   return (
     <RNPButton
       mode="contained"
@@ -37,6 +40,7 @@ const Button: React.FC<ButtonProps> = ({
           fontSize: 20,
         },
       ]}
+      textColor={props.mode == "outlined" ? (theme.dark ? Colors(theme).secondary : Colors(theme).primary) : undefined}
       {...props}
     />
   );
