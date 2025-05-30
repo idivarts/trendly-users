@@ -1,7 +1,7 @@
 import { useInitialUserData } from "@/constants/User";
 import { useAuthContext } from "@/contexts";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
-import { CrashLog } from "@/shared-libs/utils/firebase/crashlytics";
+import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import * as AppleAuthentication from 'expo-apple-authentication';
@@ -80,7 +80,7 @@ export const useAppleLogin = (setLoading: Function, setError: Function) => {
                     AppleAuthentication.AppleAuthenticationScope.EMAIL,
                 ],
             });
-            CrashLog.log("Apple credential:", appleCredential);
+            Console.log("Apple credential:", appleCredential);
             const { identityToken } = appleCredential;
             if (!identityToken) throw new Error("No identity token returned");
 
@@ -90,18 +90,18 @@ export const useAppleLogin = (setLoading: Function, setError: Function) => {
             });
 
             const result = await signInWithCredential(AuthApp, credential).catch((error) => {
-                CrashLog.log(error, "signInWithCredential Error");
+                Console.log(error, "signInWithCredential Error");
                 throw new Error("Failed to sign in with Apple -" + error.message);
             })
             await evalResult(result, appleCredential);
         } catch (error: any) {
-            CrashLog.error(error, "Apple Signin Error");
+            Console.error(error, "Apple Signin Error");
             if (AuthApp.currentUser)
                 Toaster.error('Error with User - ' + AuthApp.currentUser.uid, error?.message || '');
             else
                 Toaster.error('Error logging in with Apple', error?.message || '');
             setError(error.message);
-            signOutUser().catch(e => { CrashLog.log(e, "Error Logging out") }) // For whatever reason if not successful signup - Logout
+            signOutUser().catch(e => { Console.log(e, "Error Logging out") }) // For whatever reason if not successful signup - Logout
         } finally {
             setLoading(false);
         }

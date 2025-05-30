@@ -3,7 +3,7 @@ import { useStorageState } from "@/hooks";
 import { AccountStatus } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { analyticsLogEvent } from "@/shared-libs/utils/firebase/analytics";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
-import { CrashLog } from "@/shared-libs/utils/firebase/crashlytics";
+import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
@@ -108,13 +108,13 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
           setIsLoggedIn(true);
           setUser(userData);
         } else {
-          CrashLog.log("User not found");
+          Console.log("User not found");
           if (inMainGroup) {
             signOutUser();
           }
         }
       }, (error) => {
-        CrashLog.error(error, "Error fetching user data");
+        Console.error(error, "Error fetching user data");
         if (inMainGroup) {
           signOutUser();
         }
@@ -122,7 +122,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
 
       return unsubscribe;
     } catch (error: any) {
-      CrashLog.error(error, "User Snapshot catch error");
+      Console.error(error, "User Snapshot catch error");
       if (inMainGroup) {
         signOutUser();
       }
@@ -290,7 +290,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
   };
 
   const signOutUser = async () => {
-    CrashLog.log("Signing out user", "AuthContextProvider");
+    Console.log("Signing out user", "AuthContextProvider");
     try {
       if (Platform.OS !== "web") {
         // Remove push notification token from the database
@@ -303,7 +303,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
         // }
       }
     } catch (e: any) {
-      CrashLog.error(e, "Issues while removing tokens");
+      Console.error(e, "Issues while removing tokens");
     }
 
     signOut(AuthApp)
@@ -314,7 +314,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
         });
         Toaster.success("Signed Out Successfully!");
       }).catch((error) => {
-        CrashLog.error(error, "Error signing out");
+        Console.error(error, "Error signing out");
       }).finally(() => {
         setSession("");
         setIsLoggedIn(false);

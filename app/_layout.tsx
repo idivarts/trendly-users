@@ -8,7 +8,7 @@ import {
   AuthContextProvider,
   useAuthContext
 } from "@/contexts";
-import { CrashLog } from "@/shared-libs/utils/firebase/crashlytics";
+import { Console } from "@/shared-libs/utils/console";
 import { resetAndNavigate } from "@/utils/router";
 import { queryParams } from "@/utils/url";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
@@ -28,6 +28,7 @@ import { Linking } from "react-native";
 import { setJSExceptionHandler } from 'react-native-exception-handler';
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Provider } from "react-native-paper";
+import { CrashLog } from "@/shared-libs/utils/firebase/crashlytics";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -44,7 +45,7 @@ SplashScreen.preventAutoHideAsync();
 
 setJSExceptionHandler((error, isFatal) => {
   if (!isFatal)
-    CrashLog.error(error);
+    Console.error(error);
   else
     CrashLog.crash();
 });
@@ -93,7 +94,7 @@ const RootLayoutStack = () => {
   const appTheme = user?.settings?.theme || colorScheme;
 
   const linkingWorkaround = () => {
-    CrashLog.log("Linking workaround initiated", "RootLayout");
+    Console.log("Linking workaround initiated", "RootLayout");
     const subscription = Linking.addEventListener("url", ({ url }) => {
       const match = url.match(new RegExp(`^${APP_SCHEME}://(.*)`));
       if (match) {
@@ -107,7 +108,7 @@ const RootLayoutStack = () => {
   }
 
   useEffect(() => {
-    // CrashLog.log("App started", "RootLayout");
+    // Console.log("App started", "RootLayout");
     // CrashLog.crash()
     linkingWorkaround();
   }, []);

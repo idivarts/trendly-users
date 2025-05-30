@@ -1,4 +1,4 @@
-import { CrashLog } from "@/shared-libs/utils/firebase/crashlytics";
+import { Console } from "@/shared-libs/utils/console";
 import { addDoc, collection, Firestore, getDocs } from "firebase/firestore";
 import { collaborationsData } from "./dummy-data/collaboration";
 
@@ -46,13 +46,13 @@ export async function populateCollaborations(FirestoreDB: Firestore) {
           managerId: managerDocs.docs[0].id,
         });
       } else {
-        CrashLog.log(`No members found for brand ${doc.id}`);
+        Console.log(`No members found for brand ${doc.id}`);
       }
     }
 
     await helper(FirestoreDB, brandsList);
   } catch (e) {
-    CrashLog.error(e);
+    Console.error(e);
   }
 }
 

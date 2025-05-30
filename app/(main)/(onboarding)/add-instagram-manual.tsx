@@ -6,7 +6,7 @@ import Colors from '@/constants/Colors';
 import { useSocialContext } from '@/contexts';
 import AppLayout from '@/layouts/app-layout';
 import { useAWSContext } from "@/shared-libs/contexts/aws-context.provider";
-import { CrashLog } from '@/shared-libs/utils/firebase/crashlytics';
+import { Console } from '@/shared-libs/utils/console';
 import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import Toaster from '@/shared-uis/components/toaster/Toaster';
 import { resetAndNavigate } from '@/utils/router';
@@ -89,7 +89,7 @@ const AddInstagramManual = () => {
 
 
     const onClickContinue = async () => {
-        CrashLog.log("Instagram Manual", handle, profileImageUrl, dashboardImageUrl);
+        Console.log("Instagram Manual", handle, profileImageUrl, dashboardImageUrl);
 
         if (handle.length <= 1 || !profileImageUrl || !dashboardImageUrl) {
             Toaster.error('Please fill all the fields');

@@ -2,7 +2,7 @@ import Preferences from "@/components/basic-profile/preferences";
 import { Text, View } from "@/components/theme/Themed";
 import ScreenHeader from "@/components/ui/screen-header";
 import { useAuthContext } from "@/contexts";
-import { CrashLog } from "@/shared-libs/utils/firebase/crashlytics";
+import { Console } from "@/shared-libs/utils/console";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { User } from "@/types/User";
 import { useState } from "react";
@@ -31,7 +31,7 @@ const PreferencesScreen = () => {
     }).then(() => {
       Toaster.success('Saved changes successfully');
     }).catch((error) => {
-      CrashLog.error(error);
+      Console.error(error);
 
       Toaster.error('Error saving preferences');
     });

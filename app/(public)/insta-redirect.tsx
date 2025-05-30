@@ -3,7 +3,7 @@ import { ActivityIndicator } from "react-native";
 
 import { Text, View } from "@/components/theme/Themed";
 import Colors from "@/constants/Colors";
-import { CrashLog } from "@/shared-libs/utils/firebase/crashlytics";
+import { Console } from "@/shared-libs/utils/console";
 import { useURL } from "expo-linking";
 import { useEffect } from "react";
 
@@ -16,8 +16,8 @@ const Index = () => {
             const params = new URLSearchParams(url.split("?")[1])
             const code = params.get("code")
             if (code) {
-                CrashLog.log("Code: ", code);
-                CrashLog.log("Parent", window.parent);
+                Console.log("Code: ", code);
+                Console.log("Parent", window.parent);
 
                 // window.parent.postMessage({ code }, "*");
                 // window.opener.postMessage({ code }, "*");
