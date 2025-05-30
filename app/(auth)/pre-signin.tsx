@@ -10,7 +10,7 @@ import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import stylesFn from "@/styles/tab1.styles";
 import { imageUrl } from "@/utils/url";
 import { faApple, faFacebook, faGoogle, faInstagram } from "@fortawesome/free-brands-svg-icons";
-import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight, faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
 import * as WebBrowser from "expo-web-browser";
@@ -37,7 +37,6 @@ import { useBreakpoints } from "@/hooks";
 import { useAppleLogin } from "@/hooks/requests/use-apple-login";
 import { useGoogleLogin } from "@/hooks/requests/use-google-login";
 import { runOnJS, useSharedValue } from "react-native-reanimated";
-import Swiper from "react-native-swiper";
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -49,7 +48,6 @@ const PreSignIn = () => {
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const swiperRef = useRef<ICarouselInstance>(null);
-  const nativeRef = useRef<Swiper>(null);
   const progress = useSharedValue(0);
   const [termsCondition, setTermsCondition] = useState(false);
 
@@ -79,15 +77,10 @@ const PreSignIn = () => {
       (slide) => slide.key === "connect"
     );
     if (connectSlideIndex !== -1) {
-      // swiperRef.current?.scrollTo({ index: connectSlideIndex });
-      if (Platform.OS === "web") {
-        swiperRef.current?.scrollTo({
-          count: connectSlideIndex - progress.value,
-          animated: true,
-        });
-      } else {
-        nativeRef.current?.scrollTo(connectSlideIndex);
-      }
+      swiperRef.current?.scrollTo({
+        count: connectSlideIndex - progress.value,
+        animated: true,
+      });
     }
   };
 
@@ -128,13 +121,23 @@ const PreSignIn = () => {
                 //     icon={faEllipsis}
                 //     style={styles.skipButton}></FontAwesomeIcon>
                 // </Pressable>
-                <Button
-                  mode="outlined"
-                  style={styles.skipButton}
-                  onPress={() => setVisible(true)}
-                >
-                  Options
-                </Button>
+                <>
+                  {Platform.OS == "web" ?
+                    <Button
+                      mode="outlined"
+                      style={styles.skipButton}
+                      onPress={() => setVisible(true)}
+                    >
+                      Options
+                    </Button> :
+                    <Pressable style={[styles.skipButton, { padding: 20 }]} onPress={() => {
+                      setVisible(true)
+                    }}>
+                      <FontAwesomeIcon
+                        icon={faEllipsis}
+                        style={styles.skipIcon}></FontAwesomeIcon>
+                    </Pressable>}
+                </>
               }
               {item.key !== "connect" && (
                 <Button
