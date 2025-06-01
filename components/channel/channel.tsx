@@ -16,6 +16,7 @@ import { useTheme } from "@react-navigation/native";
 import { Avatar } from "react-native-paper";
 import ChatMessageTopbar from "./chat-message-topbar";
 
+import { Console } from "@/shared-libs/utils/console";
 import {
   AttachButton,
   AttachmentPickerSelectionBar,
@@ -79,7 +80,7 @@ const ChannelNative = () => {
         try {
           await Notifications.setBadgeCountAsync(0);
         } catch (error) {
-          console.error("Failed to reset badge count:", error);
+          Console.error(error);
         }
       }
     };

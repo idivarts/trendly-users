@@ -4,6 +4,7 @@ import { State, TapGestureHandler } from "react-native-gesture-handler";
 import Animated from "react-native-reanimated";
 
 import { View } from "@/components/theme/Themed";
+import { Console } from "@/shared-libs/utils/console";
 import { MediaItem } from "@/shared-uis/components/carousel/render-media-item";
 import { stylesFn } from "@/styles/InfluencerCard.styles";
 import { imageUrl } from "@/utils/url";
@@ -104,7 +105,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
       isLooping={false}
       shouldPlay={!!shouldPlay}
       useNativeControls={!!useNativeControls}
-      onError={(error) => console.error("Video Error:", error)}
+      onError={(error) => Console.error(error)}
       onLoadStart={() => setIsLoading(true)}
       onLoad={() => setIsLoading(false)}
     />

@@ -119,7 +119,7 @@ const AddInstagramManual = () => {
                 setBlockLoading(true);
             }
         }).catch((error) => {
-            console.error(error);
+            Console.error(error);
             Toaster.error('Error adding Instagram', error.message);
         }).finally(() => {
             setApiLoading(false);

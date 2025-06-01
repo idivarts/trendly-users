@@ -166,7 +166,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
 
       Toaster.success("Signed In Successfully!");
     } catch (error) {
-      console.error("Error signing in: ", error);
+      Console.error(error);
       Toaster.error("Error signing in. Please try again.");
     }
   };
@@ -194,7 +194,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
       resetAndNavigate("/no-social-connected");
       Toaster.success("Signed Up Successfully!");
     } catch (error) {
-      console.error("Error signing up: ", error);
+      Console.error(error);
       Toaster.error("Error signing up. Please try again.");
     }
   };
@@ -388,7 +388,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
       const user = AuthApp.currentUser;
 
       if (!user) {
-        console.error("No authenticated user.");
+        Console.error("No authenticated user.");
         return;
       }
 
@@ -417,7 +417,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
 
       await deleteUser(user);
     } catch (error) {
-      console.error("Error deleting account:", error);
+      Console.error(error);
     }
   };
 

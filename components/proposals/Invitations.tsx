@@ -7,6 +7,7 @@ import AppLayout from "@/layouts/app-layout";
 import { useScrollContext } from "@/shared-libs/contexts/scroll-context";
 import { Attachment } from "@/shared-libs/firestore/trendly-pro/constants/attachment";
 import { processRawAttachment } from "@/shared-libs/utils/attachments";
+import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import Carousel from "@/shared-uis/components/carousel/carousel";
 import Colors from "@/shared-uis/constants/Colors";
@@ -112,7 +113,7 @@ const Invitations = () => {
       setInvitations(validProposals);
       setNotPendingInvitations(totalNotPendingApplications);
     } catch (error) {
-      console.error("Error fetching proposals: ", error);
+      Console.error(error);
     } finally {
       setIsLoading(false);
     }

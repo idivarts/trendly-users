@@ -12,6 +12,7 @@ import { PromotionType } from "@/shared-libs/firestore/trendly-pro/constants/pro
 import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { IManagers } from "@/shared-libs/firestore/trendly-pro/models/managers";
 import { processRawAttachment } from "@/shared-libs/utils/attachments";
+import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import Carousel from "@/shared-uis/components/carousel/carousel";
 import ScrollMedia from "@/shared-uis/components/carousel/scroll-media";
@@ -220,7 +221,7 @@ const CollborationDetailsContent = (
       setCardType("collaboration");
       props.fetchCollaboration();
     } catch (e) {
-      console.error(e);
+      Console.error(e);
     }
   };
 

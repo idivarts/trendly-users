@@ -1,4 +1,5 @@
 import Button from "@/components/ui/button";
+import { Console } from "@/shared-libs/utils/console";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import Colors from "@/shared-uis/constants/Colors";
 import { stylesFn } from "@/styles/apply-now/gallery.styles";
@@ -61,7 +62,7 @@ const CameraInputModal: React.FC<IProps> = (props) => {
           props.fetchAssets();
           props.setIsCameraVisible(false);
         } catch (error) {
-          console.error("Failed to save photo:", error);
+          Console.error(error);
         }
       }
     }
@@ -121,7 +122,7 @@ const CameraInputModal: React.FC<IProps> = (props) => {
       try {
         await cameraRef.current.stopRecording();
       } catch (error) {
-        console.error("Error stopping recording:", error);
+        Console.error(error);
       } finally {
         setIsRecording(false);
         props.setIsCameraVisible(false);

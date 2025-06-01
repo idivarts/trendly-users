@@ -95,7 +95,7 @@ const useInstagramLogin = (
       }
     })
       .catch((error: Error) => {
-        console.error("Error signing in with Instagram: ", error);
+        Console.errorT("Error signing in with Instagram: ", error);
       })
       .finally(() => {
         setLoading(false);

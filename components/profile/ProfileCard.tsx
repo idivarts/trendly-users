@@ -1,6 +1,7 @@
 import { PLACEHOLDER_PERSON_IMAGE } from "@/constants/Placeholder";
 import { useAuthContext } from "@/contexts";
 import { useAWSContext } from "@/shared-libs/contexts/aws-context.provider";
+import { Console } from "@/shared-libs/utils/console";
 import ImageComponent from "@/shared-uis/components/image-component";
 import Colors from "@/shared-uis/constants/Colors";
 import stylesFn from "@/styles/profile/ProfileCard.styles";
@@ -45,7 +46,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ item, onPress }) => {
         uri: capturedImage,
         type: "image",
       });
-      imageUrl = uploadedImage.imageUrl;
+      imageUrl = uploadedImage.imageUrl || '';
     }
 
     await updateUser(item.id, {
@@ -93,7 +94,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ item, onPress }) => {
       //     : setImage(imageToShow.playUrl || "");
       // }
     } catch (error) {
-      console.error("Error fetching image or generating thumbnail:", error);
+      Console.error(error);
       setImage(PLACEHOLDER_PERSON_IMAGE);
     }
   };

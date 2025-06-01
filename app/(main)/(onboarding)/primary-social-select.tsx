@@ -1,6 +1,7 @@
 import { Text, View } from "@/components/theme/Themed";
 import { useAuthContext, useSocialContext } from "@/contexts";
 import AppLayout from "@/layouts/app-layout";
+import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
@@ -47,7 +48,7 @@ const PrimarySocialSelect = () => {
           Toaster.error("Error marking social as primary");
         });
     } catch (error) {
-      console.error("Error updating primary social:", error);
+      Console.error(error);
     }
   };
 

@@ -102,7 +102,7 @@ export const SocialContextProvider = ({ children }: PropsWithChildren<{}>) => {
 
       return unsubscribe;
     } catch (error) {
-      console.error("Error setting up socials snapshot:", error);
+      Console.errorT("Error setting up socials snapshot:", error);
     } finally {
       setIsFetchingSocials(false);
     }

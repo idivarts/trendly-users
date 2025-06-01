@@ -15,6 +15,7 @@ import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
 import {
   ICollaboration
 } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
+import { Console } from "@/shared-libs/utils/console";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { Invitation } from "@/types/Collaboration";
@@ -112,7 +113,7 @@ const CollaborationDetails: React.FC<CollaborationDetailsProps> = ({
           : [],
       });
     } catch (e) {
-      console.error(e);
+      Console.error(e);
     } finally {
       setLoading(false);
     }
@@ -136,7 +137,7 @@ const CollaborationDetails: React.FC<CollaborationDetailsProps> = ({
         ...invitationSnapshot.data(),
       } as Invitation);
     } catch (e) {
-      console.error(e);
+      Console.error(e);
     }
   };
 

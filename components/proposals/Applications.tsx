@@ -6,6 +6,7 @@ import { useBreakpoints } from "@/hooks";
 import AppLayout from "@/layouts/app-layout";
 import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { processRawAttachment } from "@/shared-libs/utils/attachments";
+import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import ScrollMedia from "@/shared-uis/components/carousel/scroll-media";
 import Colors from "@/shared-uis/constants/Colors";
@@ -131,7 +132,7 @@ const Applications = () => {
 
       setNotPendingProposals(totalNotPendingApplications);
     } catch (error) {
-      console.error("Error fetching proposals: ", error);
+      Console.error(error);
     } finally {
       setIsLoading(false);
     }

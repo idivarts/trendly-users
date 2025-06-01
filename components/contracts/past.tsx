@@ -8,6 +8,7 @@ import {
   ICollaboration,
 } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { IContracts } from "@/shared-libs/firestore/trendly-pro/models/contracts";
+import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import Colors from "@/shared-uis/constants/Colors";
 import { stylesFn } from "@/styles/Proposal.styles";
@@ -118,7 +119,7 @@ const PastContracts = () => {
       setProposals(contracts);
       setIsLoading(false);
     } catch (error) {
-      console.error("Error fetching proposals: ", error);
+      Console.error(error);
     } finally {
       setIsLoading(false);
     }

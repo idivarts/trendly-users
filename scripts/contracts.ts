@@ -33,7 +33,7 @@ export const populateContracts = async (
           `Application for collaboration ${collab.id} added successfully.`
         );
       } catch (error) {
-        console.error(
+        Console.errorT(
           `Failed to add application for collaboration ${collab.id}:`,
           error
         );

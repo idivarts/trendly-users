@@ -1,4 +1,5 @@
 import { useFacebookLogin } from "@/hooks/requests";
+import { Console } from "@/shared-libs/utils/console";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
@@ -56,7 +57,7 @@ const FacebookLoginButton: React.FC = () => {
       })
 
     } catch (error) {
-      console.error(error);
+      Console.error(error);
     } finally {
       setIsLoading(false);
     }
