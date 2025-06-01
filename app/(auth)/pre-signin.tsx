@@ -23,10 +23,7 @@ import Carousel, {
   Pagination,
 } from "react-native-reanimated-carousel";
 
-import AppleLogin from "@/components/auth/AppleLogin";
-import FacebookLogin from "@/components/auth/FacebookLogin";
-import GoogleLogin from "@/components/auth/GoogleLogin";
-import InstagramLogin from "@/components/auth/InstagramLogin";
+import CombinedLoginList from "@/components/auth/CombinedLoginList";
 import BottomSheetActions from "@/components/BottomSheetActions";
 import ProfileOnboardLoader from "@/components/ProfileOnboardLoader";
 import { IS_BETA_ENABLED } from "@/constants/App";
@@ -123,14 +120,7 @@ const PreSignIn = () => {
                 )}
               {item.key === "connect" && (
                 <View style={styles.socialContainer}>
-                  {Platform.OS != "ios" &&
-                    <GoogleLogin setLoading={setLoading} setError={setError} />}
-                  {(Platform.OS == "ios") &&
-                    <AppleLogin setLoading={setLoading} setError={setError} />}
-                  {IS_BETA_ENABLED &&
-                    <FacebookLogin setLoading={setLoading} setError={setError} />}
-                  {IS_BETA_ENABLED &&
-                    <InstagramLogin setLoading={setLoading} setError={setError} />}
+                  <CombinedLoginList setLoading={setLoading} setError={setError} />
                 </View>
               )}
               {item.key !== "connect" && (
@@ -176,13 +166,6 @@ const PreSignIn = () => {
                     >
                       Terms & Condition (EULA)
                     </Text>{" "}
-                    {/* and{" "}
-                    <Text
-                      style={{ color: Colors(theme).primary, textDecorationLine: "underline" }}
-                      onPress={() => setTermsCondition(true)}
-                    >
-                      Privacy Policy
-                    </Text>{" "} */}
                     of Trendly
                   </Text>
                 </View>

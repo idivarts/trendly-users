@@ -8,20 +8,16 @@ import { useEffect, useMemo, useState } from "react";
 import { useSharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { IS_BETA_ENABLED } from "@/constants/App";
 import { useAuthContext } from "@/contexts";
 import Colors from "@/shared-uis/constants/Colors";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import React from "react";
-import { Platform, Pressable, StyleSheet } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import { Portal } from "react-native-paper";
-import AppleLogin from "../auth/AppleLogin";
-import FacebookLogin from "../auth/FacebookLogin";
-import GoogleLogin from "../auth/GoogleLogin";
-import InstagramLogin from "../auth/InstagramLogin";
+import CombinedLoginList from "../auth/CombinedLoginList";
 import ProfileOnboardLoader from "../ProfileOnboardLoader";
-import { Text, View } from "../theme/Themed";
+import { Text } from "../theme/Themed";
 ;
 ;
 
@@ -114,93 +110,11 @@ const AuthModal: React.FC<AuthModalProps> = ({
             <View
               style={{
                 gap: 16,
-                // alignItems: "center",
                 flexDirection: "column",
                 justifyContent: "center",
                 flex: 1,
-              }}
-            >
-
-              {Platform.OS != "ios" &&
-                <GoogleLogin setLoading={setLoading} setError={setError} />}
-              {/* <SocialButton
-                  icon={faApple}
-                  iconColor={Colors(theme).white}
-                  customStyles={{
-                    backgroundColor: Colors(theme).primary,
-                    justifyContent: "center",
-
-                  }}
-                  label="Continue with Apple"
-                  labelStyles={{
-                    color: Colors(theme).white,
-                  }}
-                  onPress={appleLogin}
-                /> */}
-              {(Platform.OS == "ios") &&
-                <AppleLogin setLoading={setLoading} setError={setError} />}
-              {/* <SocialButton
-                  icon={faGoogle}
-                  iconColor={Colors(theme).white}
-                  customStyles={{
-                    backgroundColor: Colors(theme).primary,
-                    justifyContent: "center",
-
-                  }}
-                  label="Continue with Google"
-                  labelStyles={{
-                    color: Colors(theme).white,
-                  }}
-                  onPress={googleLogin}
-                /> */}
-              {IS_BETA_ENABLED &&
-                <FacebookLogin setLoading={setLoading} setError={setError} />}
-              {/* <SocialButton
-                  icon={faFacebook}
-                  iconColor={Colors(theme).white}
-                  customStyles={{
-                    backgroundColor: Colors(theme).primary,
-                    justifyContent: "center",
-
-                  }}
-                  label="Continue with Facebook"
-                  labelStyles={{
-                    color: Colors(theme).white,
-                  }}
-                  onPress={() => {
-                    if (Platform.OS === "web") {
-                      facebookLogin();
-                    } else {
-                      if (requestFacebook) {
-                        facebookLogin();
-                      }
-                    }
-                  }}
-                /> */}
-              {IS_BETA_ENABLED &&
-                <InstagramLogin setLoading={setLoading} setError={setError} />}
-              {/* <SocialButton
-                  icon={faInstagram}
-                  iconColor={Colors(theme).white}
-                  customStyles={{
-                    backgroundColor: Colors(theme).primary,
-                    justifyContent: "center",
-
-                  }}
-                  label="Continue with Instagram"
-                  labelStyles={{
-                    color: Colors(theme).white,
-                  }}
-                  onPress={() => {
-                    if (Platform.OS === "web") {
-                      instagramLogin();
-                    } else {
-                      if (requestInstagram) {
-                        instagramLogin();
-                      }
-                    }
-                  }}
-                /> */}
+              }}>
+              <CombinedLoginList setLoading={setLoading} setError={setError} />
             </View>
           </View>
         </BottomSheetScrollView>
