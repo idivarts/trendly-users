@@ -28,7 +28,6 @@ import { Linking } from "react-native";
 import { setJSExceptionHandler } from 'react-native-exception-handler';
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Provider } from "react-native-paper";
-import { CrashLog } from "@/shared-libs/utils/firebase/crashlytics";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -44,10 +43,8 @@ export const unstable_settings = {
 SplashScreen.preventAutoHideAsync();
 
 setJSExceptionHandler((error, isFatal) => {
-  if (!isFatal)
-    Console.error(error);
-  else
-    CrashLog.crash();
+  Console.log("Error Occured is Fatal", isFatal);
+  Console.error(error);
 });
 
 const RootLayout = () => {
