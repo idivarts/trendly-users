@@ -9,23 +9,19 @@ import { useSharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { IS_BETA_ENABLED } from "@/constants/App";
-import { useInitialUserData } from "@/constants/User";
 import { useAuthContext } from "@/contexts";
-import { useFacebookLogin, useInstagramLogin } from "@/hooks/requests";
-import { useAppleLogin } from "@/hooks/requests/use-apple-login";
-import { useGoogleLogin } from "@/hooks/requests/use-google-login";
-import { AuthApp } from "@/shared-libs/utils/firebase/auth";
-import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import Colors from "@/shared-uis/constants/Colors";
-import { faApple, faFacebook, faGoogle, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import React from "react";
 import { Platform, Pressable, StyleSheet } from "react-native";
 import { Portal } from "react-native-paper";
+import AppleLogin from "../auth/AppleLogin";
+import FacebookLogin from "../auth/FacebookLogin";
+import GoogleLogin from "../auth/GoogleLogin";
+import InstagramLogin from "../auth/InstagramLogin";
 import ProfileOnboardLoader from "../ProfileOnboardLoader";
 import { Text, View } from "../theme/Themed";
-import SocialButton from "../ui/button/social-button";
 ;
 ;
 
@@ -40,7 +36,6 @@ const AuthModal: React.FC<AuthModalProps> = ({
 }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const INITIAL_DATA = useInitialUserData();
 
   const snapPoints = useMemo(() => ["35%", "35%", "35%"], []);
 
@@ -55,37 +50,12 @@ const AuthModal: React.FC<AuthModalProps> = ({
     right: insets.right,
   });
 
-  const {
-    instagramLogin,
-    requestInstagram,
-  } = useInstagramLogin(
-    AuthApp,
-    FirestoreDB,
-    INITIAL_DATA,
-    setLoading,
-    setError,
-  );
-
-  const {
-    facebookLogin,
-    requestFacebook,
-  } = useFacebookLogin(
-    AuthApp,
-    FirestoreDB,
-    INITIAL_DATA,
-    setLoading,
-    setError,
-  );
-
   const { setCollaborationId } = useAuthContext()
 
   useEffect(() => {
     if (collaborationId && setCollaborationId)
       setCollaborationId(collaborationId)
   }, [collaborationId])
-
-  const { googleLogin } = useGoogleLogin(setLoading, setError);
-  const { appleLogin, isAppleAvailable } = useAppleLogin(setLoading, setError);
 
   const renderBackdrop = (props: any) => {
     return (
@@ -144,11 +114,16 @@ const AuthModal: React.FC<AuthModalProps> = ({
             <View
               style={{
                 gap: 16,
+                // alignItems: "center",
+                flexDirection: "column",
+                justifyContent: "center",
+                flex: 1,
               }}
             >
 
               {Platform.OS != "ios" &&
-                <SocialButton
+                <GoogleLogin setLoading={setLoading} setError={setError} />}
+              {/* <SocialButton
                   icon={faApple}
                   iconColor={Colors(theme).white}
                   customStyles={{
@@ -161,9 +136,10 @@ const AuthModal: React.FC<AuthModalProps> = ({
                     color: Colors(theme).white,
                   }}
                   onPress={appleLogin}
-                />}
-              {(Platform.OS == "ios" && isAppleAvailable) &&
-                <SocialButton
+                /> */}
+              {(Platform.OS == "ios") &&
+                <AppleLogin setLoading={setLoading} setError={setError} />}
+              {/* <SocialButton
                   icon={faGoogle}
                   iconColor={Colors(theme).white}
                   customStyles={{
@@ -176,9 +152,10 @@ const AuthModal: React.FC<AuthModalProps> = ({
                     color: Colors(theme).white,
                   }}
                   onPress={googleLogin}
-                />}
+                /> */}
               {IS_BETA_ENABLED &&
-                <SocialButton
+                <FacebookLogin setLoading={setLoading} setError={setError} />}
+              {/* <SocialButton
                   icon={faFacebook}
                   iconColor={Colors(theme).white}
                   customStyles={{
@@ -199,9 +176,10 @@ const AuthModal: React.FC<AuthModalProps> = ({
                       }
                     }
                   }}
-                />}
+                /> */}
               {IS_BETA_ENABLED &&
-                <SocialButton
+                <InstagramLogin setLoading={setLoading} setError={setError} />}
+              {/* <SocialButton
                   icon={faInstagram}
                   iconColor={Colors(theme).white}
                   customStyles={{
@@ -222,7 +200,7 @@ const AuthModal: React.FC<AuthModalProps> = ({
                       }
                     }
                   }}
-                />}
+                /> */}
             </View>
           </View>
         </BottomSheetScrollView>

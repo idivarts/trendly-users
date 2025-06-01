@@ -1,15 +1,9 @@
 import Button from "@/components/ui/button";
-import SocialButton from "@/components/ui/button/social-button";
 import { slides } from "@/constants/Slides";
-import { useInitialUserData } from "@/constants/User";
-import { useFacebookLogin, useInstagramLogin } from "@/hooks/requests";
 import AppLayout from "@/layouts/app-layout";
-import { AuthApp } from "@/shared-libs/utils/firebase/auth";
-import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import Colors from "@/shared-uis/constants/Colors";
 import stylesFn from "@/styles/tab1.styles";
 import { imageUrl } from "@/utils/url";
-import { faApple, faFacebook, faGoogle, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import { faArrowRight, faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
@@ -28,21 +22,21 @@ import Carousel, {
   ICarouselInstance,
   Pagination,
 } from "react-native-reanimated-carousel";
-;
 
+import AppleLogin from "@/components/auth/AppleLogin";
+import FacebookLogin from "@/components/auth/FacebookLogin";
+import GoogleLogin from "@/components/auth/GoogleLogin";
+import InstagramLogin from "@/components/auth/InstagramLogin";
 import BottomSheetActions from "@/components/BottomSheetActions";
 import ProfileOnboardLoader from "@/components/ProfileOnboardLoader";
 import { IS_BETA_ENABLED } from "@/constants/App";
 import { useBreakpoints } from "@/hooks";
-import { useAppleLogin } from "@/hooks/requests/use-apple-login";
-import { useGoogleLogin } from "@/hooks/requests/use-google-login";
 import { runOnJS, useSharedValue } from "react-native-reanimated";
 
 WebBrowser.maybeCompleteAuthSession();
 
 const PreSignIn = () => {
   const theme = useTheme();
-  const INITIAL_DATA = useInitialUserData();
   const styles = stylesFn(theme);
   const [error, setError] = useState<string | null>(null);
   const [visible, setVisible] = useState(false);
@@ -50,27 +44,6 @@ const PreSignIn = () => {
   const swiperRef = useRef<ICarouselInstance>(null);
   const progress = useSharedValue(0);
   const [termsCondition, setTermsCondition] = useState(false);
-
-  const { instagramLogin, requestInstagram } =
-    useInstagramLogin(
-      AuthApp,
-      FirestoreDB,
-      INITIAL_DATA,
-      setLoading,
-      setError
-    );
-
-  const { facebookLogin, requestFacebook } =
-    useFacebookLogin(
-      AuthApp,
-      FirestoreDB,
-      INITIAL_DATA,
-      setLoading,
-      setError
-    );
-
-  const { googleLogin } = useGoogleLogin(setLoading, setError);
-  const { appleLogin, isAppleAvailable } = useAppleLogin(setLoading, setError);
 
   const skipToConnect = () => {
     const connectSlideIndex = slides.findIndex(
@@ -151,29 +124,13 @@ const PreSignIn = () => {
               {item.key === "connect" && (
                 <View style={styles.socialContainer}>
                   {Platform.OS != "ios" &&
-                    <SocialButton
-                      icon={faGoogle}
-                      label="Continue with Google"
-                      onPress={googleLogin}
-                    />}
-                  {(Platform.OS == "ios" && isAppleAvailable) &&
-                    <SocialButton
-                      icon={faApple}
-                      label="Continue with Apple"
-                      onPress={appleLogin}
-                    />}
+                    <GoogleLogin setLoading={setLoading} setError={setError} />}
+                  {(Platform.OS == "ios") &&
+                    <AppleLogin setLoading={setLoading} setError={setError} />}
                   {IS_BETA_ENABLED &&
-                    <SocialButton
-                      icon={faFacebook}
-                      label="Login with Facebook"
-                      onPress={facebookLogin}
-                    />}
+                    <FacebookLogin setLoading={setLoading} setError={setError} />}
                   {IS_BETA_ENABLED &&
-                    <SocialButton
-                      icon={faInstagram}
-                      label="Login with Instagram"
-                      onPress={instagramLogin}
-                    />}
+                    <InstagramLogin setLoading={setLoading} setError={setError} />}
                 </View>
               )}
               {item.key !== "connect" && (

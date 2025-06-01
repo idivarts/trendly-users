@@ -112,10 +112,11 @@ const useInstagramLogin = (
   };
 
   useEffect(() => {
+    if (!responseInstagram) return;
     Console.log("Auth Result Response: ", responseInstagram);
     if (
-      responseInstagram?.type === "success" ||
-      responseInstagram?.type === "error"
+      responseInstagram.type === "success" ||
+      responseInstagram.type === "error"
     ) {
       const { code } = responseInstagram.params;
       if (code) {
