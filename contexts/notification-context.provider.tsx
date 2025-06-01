@@ -175,7 +175,7 @@ export const NotificationContextProvider: React.FC<PropsWithChildren> = ({
 
       await batch.commit();
     } catch (error) {
-      Console.errorT("Error updating notifications: ", error);
+      Console.error(error, "Error updating notifications: ");
     }
   }
 

@@ -191,7 +191,7 @@ export const GroupContextProvider: React.FC<PropsWithChildren> = ({ children }) 
 
       return groupData;
     } catch (error) {
-      Console.errorT("Error fetching group: ", error);
+      Console.error(error, "Error fetching group: ");
       return null;
     }
   };
@@ -214,7 +214,7 @@ export const GroupContextProvider: React.FC<PropsWithChildren> = ({ children }) 
         messages: messagesSnapshot.docs.map((doc) => doc.data() as IMessages),
       }
     } catch (error) {
-      Console.errorT("Error fetching messages: ", error);
+      Console.error(error, "Error fetching messages: ");
       return {
         hasNext: false,
         lastMessage: null,
@@ -251,7 +251,7 @@ export const GroupContextProvider: React.FC<PropsWithChildren> = ({ children }) 
         messages: messagesSnapshot.docs.map((doc) => doc.data() as IMessages),
       }
     } catch (error) {
-      Console.errorT("Error fetching messages: ", error);
+      Console.error(error, "Error fetching messages: ");
       return {
         firstMessage: null,
         hasNext: false,
@@ -266,7 +266,7 @@ export const GroupContextProvider: React.FC<PropsWithChildren> = ({ children }) 
       const groupDoc = doc(FirestoreDB, "groups", groupId);
       await updateDoc(groupDoc, group);
     } catch (error) {
-      Console.errorT("Error updating group: ", error);
+      Console.error(error, "Error updating group: ");
     }
   }
 
@@ -288,7 +288,7 @@ export const GroupContextProvider: React.FC<PropsWithChildren> = ({ children }) 
         },
       });
     } catch (error) {
-      Console.errorT("Error adding message: ", error);
+      Console.error(error, "Error adding message: ");
     }
   }
 

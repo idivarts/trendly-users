@@ -20,6 +20,6 @@ export const handleDeepLink = async (
       await Linking.openURL(storeUrl);
     }
   } catch (error) {
-    Console.errorT("Error handling deep link:", error);
+    Console.error(error, "Error handling deep link:");
   }
 };
