@@ -22,7 +22,6 @@ const SocialsProtectedScreen: React.FC<SocialsProtectedScreenProps> = ({
   // useEffect(() => {
   //   const timeout = setTimeout(() => {
   //     if (isUserLoading || isFetchingSocials) {
-  //       console.warn("Force signing out due to prolonged loading state.");
   //       signOutUser();
   //     }
   //   }, 10000); // wait 10 seconds before assuming something is wrong
