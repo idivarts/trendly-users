@@ -54,16 +54,6 @@ const EditProfile: React.FC<EditProfileProps> = ({
     setUnsavedChanges,
   });
 
-  // useEffect(() => {
-  //   EditProfileSubject.subscribe((data) => {
-  //     if (data.action == "profile") {
-  //       setAttachments(data.data)
-  //       setUnsavedChanges && setUnsavedChanges(true)
-  //       console.log("New Attachments here", data.data.length, data.data);
-  //     }
-  //   })
-  // }, [])
-
   useEffect(() => {
     const keyboardWillShowListener = Keyboard.addListener(
       Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',

@@ -200,8 +200,6 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
   };
 
   const firebaseSignIn = async (uid: string) => {
-    // console.log("Firebase Sign In", uid);
-
     setSession(uid);
     HttpWrapper.fetch("/api/v1/chat/auth", { method: "POST" });
 
@@ -227,8 +225,6 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
   };
 
   const firebaseSignUp = async (uid: string, hasSocials?: number) => {
-    // console.log("Firebase Sign Up", uid, hasSocials);
-
     setSession(uid);
     HttpWrapper.fetch("/api/v1/chat/auth", { method: "POST", });
 

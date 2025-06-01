@@ -48,7 +48,7 @@ export const useGoogleLogin = (setLoading: Function, setError: Function) => {
             //     await evalResult(firebaseResult);
             // } else {
             //     Toaster.error('Google sign-in cancelled or failed');
-            //     console.log("Google sign-in cancelled or failed", result);
+            //     Console.log("Google sign-in cancelled or failed", result);
             //     setError('cancelled');
             // }
         } catch (error: any) {

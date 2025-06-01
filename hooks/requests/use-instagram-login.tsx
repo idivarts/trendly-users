@@ -36,7 +36,6 @@ const useInstagramLogin = (
     native: `fb${FB_APP_ID}://authorize`,
     ...(Platform.OS == "web" ? { path: "insta-redirect" } : {})
   });
-  // console.log("Redirect Uri for Instagram: ", redirectUri);
 
   const authUrl = `${BACKEND_URL}/instagram?redirect_type=${Platform.OS === "web" ? (isLocalhost ? 1 : 2) : 3}&`;
 

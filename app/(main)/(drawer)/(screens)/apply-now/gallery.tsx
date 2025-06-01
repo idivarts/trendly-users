@@ -133,15 +133,11 @@ const GalleryScreen = () => {
     try {
       const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
       const paddingToBottom = 20; // Threshold before reaching the end
-      // console.log("Coming to Handle Scroll", layoutMeasurement.height + contentOffset.y,
-      //   contentSize.height - paddingToBottom, assets.length);
       if (layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom && assets.length > 0) {
         mutex.useOnce(() => {
           fetchAssets(assetAfter);
         }, assetAfter); // Allowed
       }
-
-      // mutex.useOnce(() => console.log("Trying again...")); // Error: Already used
     } catch (error: any) {
       Console.error(error);
     }
