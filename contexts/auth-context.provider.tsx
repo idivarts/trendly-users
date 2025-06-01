@@ -110,9 +110,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
           Console.log("User not found");
           setIsLoggedIn(false)
         }
-      }, (error) => {
-        Console.error(error, "Error fetching user data");
-        setIsLoggedIn(false)
+        setIsUserLoading(false);
       })
       if (userUnsubscribe) {
         userUnsubscribe();
@@ -120,22 +118,17 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
       userUnsubscribe = unsubscribe;
     } catch (error: any) {
       Console.error(error, "User Snapshot catch error");
-      setIsLoggedIn(false)
-    } finally {
       setIsUserLoading(false);
+      setIsLoggedIn(false)
     }
   };
   const cUser = AuthApp.currentUser
 
   useEffect(() => {
-    if (!isLoggedIn) {
+    if (!isLoggedIn && !isUserLoading) {
       const inMainGroup = segments[0] === "(main)";
       if (inMainGroup) {
-        const cancelAction = setTimeout(() => {
-          if (isUserLoading)
-            return
-          signOutUser()
-        }, 2000)
+        const cancelAction = setTimeout(() => { if (!isUserLoading) signOutUser() }, 2000)
         return () => {
           clearTimeout(cancelAction)
         }
