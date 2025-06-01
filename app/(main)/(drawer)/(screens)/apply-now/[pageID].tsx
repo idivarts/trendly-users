@@ -224,7 +224,7 @@ const ApplyScreen = () => {
         setQuestions(collabData.questionsToInfluencers);
       }
     } catch (error) {
-      Console.error("Error fetching questions:", error);
+      Console.error(error);
     }
   };
 
