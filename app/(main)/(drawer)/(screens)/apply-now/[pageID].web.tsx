@@ -125,7 +125,7 @@ const ApplyScreenWeb = () => {
         setQuestions(collabData.questionsToInfluencers);
       }
     } catch (error) {
-      console.error("Error fetching questions:", error);
+      Console.error(error);
     }
   };
 
@@ -157,7 +157,7 @@ const ApplyScreenWeb = () => {
         });
       }, 5000);
     } catch (error) {
-      console.error(error);
+      Console.error(error);
       setErrorMessage("Error uploading files");
       setLoading(false);
     }
@@ -183,7 +183,7 @@ const ApplyScreenWeb = () => {
         ]);
       }
     } catch (error) {
-      console.error("Error picking file:", error);
+      Console.error(error);
     }
   };
 

@@ -12,6 +12,7 @@ import {
   IApplications,
   ICollaboration,
 } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
+import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import ProgressLoader from "@/shared-uis/components/ProgressLoader";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
@@ -133,7 +134,7 @@ const ApplyScreenWeb = () => {
         setQuestions(collabData.questionsToInfluencers);
       }
     } catch (error) {
-      console.error("Error fetching questions:", error);
+      Console.error(error);
     }
   };
 
@@ -272,7 +273,7 @@ const ApplyScreenWeb = () => {
         router.push("/collaborations");
       }, 1000);
     } catch (error) {
-      console.error(error);
+      Console.error(error);
       setErrorMessage("Error uploading files");
       setLoading(false);
     }
@@ -298,7 +299,7 @@ const ApplyScreenWeb = () => {
         ]);
       }
     } catch (error) {
-      console.error("Error picking file:", error);
+      Console.error(error);
     }
   };
 

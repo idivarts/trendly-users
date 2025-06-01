@@ -2,6 +2,7 @@ import Button from "@/components/ui/button";
 import TextInput from "@/components/ui/text-input";
 import { IS_BETA_ENABLED } from "@/constants/App";
 import { useAuthContext } from "@/contexts";
+import { Console } from "@/shared-libs/utils/console";
 import Colors from "@/shared-uis/constants/Colors";
 import fnStyles from "@/styles/login.styles";
 import { useTheme } from "@react-navigation/native";
@@ -36,7 +37,7 @@ const LoginScreen = () => {
           Alert.alert('Error', 'No email app found on this device.');
         }
       })
-      .catch((err) => console.error('An error occurred', err));
+      .catch((err) => Console.error('An error occurred', err));
   };
 
   return (

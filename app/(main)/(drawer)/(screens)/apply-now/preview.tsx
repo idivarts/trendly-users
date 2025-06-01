@@ -57,7 +57,7 @@ const Preview = () => {
         setProcessedAttachments(processed);
       }
     } catch (error) {
-      console.error("Error processing attachments:", error);
+      Console.error(error);
       setErrorMessage("Error processing attachments");
     }
   }, [params.attachments]);
@@ -69,7 +69,7 @@ const Preview = () => {
         setFileAttachments(rawAttachments);
       }
     } catch (error) {
-      console.error("Error processing attachments:", error);
+      Console.error(error);
       setErrorMessage("Error processing attachments");
     }
   }, [params.fileAttachments]);
@@ -81,7 +81,7 @@ const Preview = () => {
       const timelineFromParams = JSON.parse(params.timeline as string);
       setTimeline(Number(timelineFromParams));
     } catch (error) {
-      console.error("Error processing attachments:", error);
+      Console.error(error);
       setErrorMessage("Error processing attachments");
     }
   }, [params.fileAttachments]);
@@ -97,7 +97,7 @@ const Preview = () => {
         setAnswers(answersArray);
       }
     } catch (error) {
-      console.error("Error processing attachments:", error);
+      Console.error(error);
       setErrorMessage("Error processing attachments");
     }
   }, [params.answers]);
@@ -123,7 +123,7 @@ const Preview = () => {
 
       if (!user) {
         setErrorMessage("User not found");
-        console.error("User not found");
+        Console.error("User not found");
         return;
       }
 
@@ -151,7 +151,7 @@ const Preview = () => {
       });
 
     } catch (e) {
-      console.error(e);
+      Console.error(e);
       setErrorMessage("Error submitting application");
     } finally {
       setLoading(false);

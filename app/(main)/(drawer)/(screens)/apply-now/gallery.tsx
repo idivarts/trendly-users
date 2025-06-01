@@ -197,7 +197,7 @@ const GalleryScreen = () => {
           },
         ]);
       } else {
-        console.warn("No matching original asset found!");
+        Console.log("No matching original asset found!");
       }
     }
   };
@@ -227,7 +227,7 @@ const GalleryScreen = () => {
         },
       });
     } catch (error) {
-      console.error(error);
+      Console.error(error);
     }
   };
 

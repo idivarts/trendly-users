@@ -7,6 +7,7 @@ import AppLayout from "@/layouts/app-layout";
 import { AWSProgressUpdateSubject, useAWSContext } from "@/shared-libs/contexts/aws-context.provider";
 import { Attachment } from "@/shared-libs/firestore/trendly-pro/constants/attachment";
 import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
+import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import ProgressLoader from "@/shared-uis/components/ProgressLoader";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
@@ -94,7 +95,7 @@ const ApplyScreen = () => {
         },
       });
     } catch (e) {
-      console.error(e);
+      Console.error(e);
       setErrorMessage("Error uploading file");
     }
   };
@@ -144,7 +145,7 @@ const ApplyScreen = () => {
         },
       });
     } catch (error) {
-      console.error(error);
+      Console.error(error);
     } finally {
       setLoading(false);
     }
@@ -210,7 +211,7 @@ const ApplyScreen = () => {
         ]);
       }
     } catch (error) {
-      console.error("Error picking file:", error);
+      Console.error(error);
     }
   };
 
@@ -223,7 +224,7 @@ const ApplyScreen = () => {
         setQuestions(collabData.questionsToInfluencers);
       }
     } catch (error) {
-      console.error("Error fetching questions:", error);
+      Console.error("Error fetching questions:", error);
     }
   };
 
