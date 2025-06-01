@@ -89,13 +89,12 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const INITIAL_DATA = useInitialUserData()
   const segments = useSegments();
-  const inMainGroup = segments[0] === "(main)";
 
   const fetchUser = async () => {
     if (isLoading || !session || !AuthApp.currentUser)
       return
 
-    // setIsUserLoading(true);
+    setIsUserLoading(true);
     try {
       const userDocRef = doc(FirestoreDB, "users", AuthApp.currentUser.uid);
 
@@ -109,15 +108,11 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
           setUser(userData);
         } else {
           Console.log("User not found");
-          if (inMainGroup) {
-            signOutUser();
-          }
+          setIsLoggedIn(false)
         }
       }, (error) => {
         Console.error(error, "Error fetching user data");
-        if (inMainGroup) {
-          signOutUser();
-        }
+        setIsLoggedIn(false)
       })
       if (userUnsubscribe) {
         userUnsubscribe();
@@ -125,9 +120,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
       userUnsubscribe = unsubscribe;
     } catch (error: any) {
       Console.error(error, "User Snapshot catch error");
-      if (inMainGroup) {
-        signOutUser();
-      }
+      setIsLoggedIn(false)
     } finally {
       setIsUserLoading(false);
     }
@@ -135,14 +128,28 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
   const cUser = AuthApp.currentUser
 
   useEffect(() => {
+    if (!isLoggedIn) {
+      const inMainGroup = segments[0] === "(main)";
+      if (inMainGroup) {
+        const cancelAction = setTimeout(() => {
+          if (isUserLoading)
+            return
+          signOutUser()
+        }, 2000)
+        return () => {
+          clearTimeout(cancelAction)
+        }
+      }
+    }
+  }, [isLoggedIn, isUserLoading, segments])
+
+  useEffect(() => {
     if (isLoading)
       return
     AuthApp.authStateReady().then(() => {
       if (!AuthApp.currentUser) {
         setIsUserLoading(false);
-        if (inMainGroup) {
-          signOutUser();
-        }
+        setIsLoggedIn(false);
       } else {
         fetchUser();
       }
@@ -302,7 +309,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
       }
 
       if (userUnsubscribe) {
-        userUnsubscribe();
+        await userUnsubscribe();
         userUnsubscribe = null;
       }
     } catch (e: any) {
@@ -334,7 +341,6 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
         ...(userSnap.data() as User),
         id: userSnap.id as string,
       };
-      setIsLoggedIn(true);
       setUser(userData);
       return userData;
     }
