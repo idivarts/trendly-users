@@ -77,6 +77,7 @@ const AuthContext = createContext<AuthContextProps>({
 });
 
 export const useAuthContext = () => useContext(AuthContext);
+let userUnsubscribe: any = null;
 
 export const AuthContextProvider: React.FC<PropsWithChildren> = ({
   children,
@@ -118,8 +119,10 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
           signOutUser();
         }
       })
-
-      return unsubscribe;
+      if (userUnsubscribe) {
+        userUnsubscribe();
+      }
+      userUnsubscribe = unsubscribe;
     } catch (error: any) {
       Console.error(error, "User Snapshot catch error");
       if (inMainGroup) {
@@ -297,10 +300,14 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
         //   });
         // }
       }
+
+      if (userUnsubscribe) {
+        userUnsubscribe();
+        userUnsubscribe = null;
+      }
     } catch (e: any) {
       Console.error(e, "Issues while removing tokens");
     }
-
     signOut(AuthApp)
       .then(() => {
         Console.analytics("signed_out", {
