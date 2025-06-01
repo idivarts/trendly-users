@@ -11,6 +11,7 @@
     "web": "expo start --web",
     "test": "jest --watchAll",
     "build": "expo export -p web",
+    "preview": "export $(cat .env.local | xargs) &&  eas build --platform ios --profile preview --local --output build/Trendly.tar.gz && tar -xzf build/Trendly.tar.gz -C build && xcrun simctl install booted build/Trendly.app",
     "simulator": "export $(cat .env.local | xargs) &&  eas build --platform ios --profile simulator --local --output build/Trendly.tar.gz && tar -xzf build/Trendly.tar.gz -C build && xcrun simctl install booted build/Trendly.app",
     "build-ios": "export $(cat .env.local | xargs) &&  eas build --platform ios --profile production --local --output build/Trendly.ipa",
     "submit-ios": "eas submit -p ios --path build/Trendly.ipa",
