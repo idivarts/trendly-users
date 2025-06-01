@@ -17,7 +17,7 @@ import {
   Text,
   View
 } from "react-native";
-import { Paragraph, Portal, Title } from "react-native-paper";
+import { Portal } from "react-native-paper";
 import Carousel, {
   ICarouselInstance,
   Pagination,
@@ -89,10 +89,10 @@ const PreSignIn = () => {
               <View style={styles.imageContainer}>
                 <Image source={imageUrl(item.image)} style={styles.image} />
               </View>
-              <Title style={[styles.title, { color: Colors(theme).primary }]}>
+              <Text style={[styles.title, { color: Colors(theme).primary }]}>
                 {item.title}
-              </Title>
-              <Paragraph style={styles.paragraph}>{item.text}</Paragraph>
+              </Text>
+              <Text style={styles.paragraph}>{item.text}</Text>
 
               {item.key === "connect" ?
                 <>
