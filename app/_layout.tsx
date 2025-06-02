@@ -8,6 +8,7 @@ import {
   AuthContextProvider,
   useAuthContext
 } from "@/contexts";
+import UpdateProvider from "@/shared-libs/contexts/update-provider";
 import { Console } from "@/shared-libs/utils/console";
 import { resetAndNavigate } from "@/utils/router";
 import { queryParams } from "@/utils/url";
@@ -23,7 +24,7 @@ import {
 import { useFonts } from "expo-font";
 import { Href, Stack, useGlobalSearchParams, usePathname, useRouter, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { Linking } from "react-native";
 import { setJSExceptionHandler } from 'react-native-exception-handler';
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -69,13 +70,15 @@ const RootLayout = () => {
   }
 
   return (
-    <AuthContextProvider>
-      <GestureHandlerRootView>
-        <BottomSheetModalProvider>
-          <RootLayoutStack />
-        </BottomSheetModalProvider>
-      </GestureHandlerRootView>
-    </AuthContextProvider>
+    <UpdateProvider force={true}>
+      <AuthContextProvider>
+        <GestureHandlerRootView>
+          <BottomSheetModalProvider>
+            <RootLayoutStack />
+          </BottomSheetModalProvider>
+        </GestureHandlerRootView>
+      </AuthContextProvider>
+    </UpdateProvider>
   );
 };
 
