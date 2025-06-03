@@ -64,6 +64,7 @@ const BottomSheetActions = ({
         throw new Error("User or collaboration is not defined");
       await updateUser(user.id, {
         moderations: {
+          ...(user?.moderations || {}),
           reportedCollaborations: [
             ...(user?.moderations?.reportedCollaborations || []),
             cardId,
