@@ -819,6 +819,7 @@ const CollborationDetailsContent = (
           setVisible={setConfirmationModalVisible}
           confirmText="Yes"
           cancelText="No"
+          title="Withdraw Application"
           description="Are you sure you want to withdraw your application?"
         />
         <AuthModal bottomSheetModalRef={authModalBottomSheetModalRef} collaborationId={props.pageID} />

@@ -103,6 +103,7 @@ const ProfileScreen = () => {
           cancelAction={() => setLogoutModalVisible(false)}
           confirmAction={handleSignOut}
           confirmText="Logout"
+          title="Logout"
           description="Are you sure you want to logout?"
           setVisible={setLogoutModalVisible}
           visible={logoutModalVisible}

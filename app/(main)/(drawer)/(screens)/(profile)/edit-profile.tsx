@@ -164,6 +164,7 @@ const EditProfileScreen: React.FC = () => {
         }}
         confirmText="Stay!"
         cancelText="Discard"
+        title="Discard Changes?"
         description="Going back would discard your changes. Are you sure?"
         setVisible={setClickBack}
         visible={clickBack}
@@ -175,6 +176,7 @@ const EditProfileScreen: React.FC = () => {
           setConfirmationModalVisible(false);
         }}
         confirmText="Continue"
+        title="Unsaved Changes"
         description="You have unsaved changes. Are you sure you want to continue?"
         setVisible={setConfirmationModalVisible}
         visible={confirmationModalVisible}
