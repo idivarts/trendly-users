@@ -138,6 +138,9 @@ const Collaboration = () => {
     if ((user?.moderations?.reportedCollaborations || []).includes(collab.documentId))
       return false; // Skip collaborations that have been reported by the user
 
+    if ((user?.moderations?.blockedBrands || []).includes(collab.brandId))
+      return false; // Skip collaborations that have been reported by the user
+
     return collab.name.toLowerCase().includes(searchQuery.toLowerCase())
       || collab.description?.toLowerCase().includes(searchQuery.toLowerCase())
     // Create a proper filter keys
