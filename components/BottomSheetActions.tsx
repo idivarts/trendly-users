@@ -200,45 +200,47 @@ const BottomSheetActions = ({
 
   return (
     <>
-      <Modal
-        visible={isVisible}
-        transparent
-        animationType="fade"
-        onRequestClose={handleClose} // Closes when Android back button is pressed
-      >
-        {/* Bottom Sheet */}
-        <View style={styles.bottomSheetContainer}>
-          <BottomSheet
-            ref={sheetRef}
-            index={0} // Snap to the first point when opened
-            snapPoints={snapPoints}
-            enablePanDownToClose
-            backdropComponent={() => {
-              // Dismiss when tapping outside
-              return <Pressable style={styles.overlay} onPress={handleClose} />;
-            }}
-            onClose={handleClose}
-            style={styles.bottomSheet} // Ensure it's on top of everything
-          >
-            <BottomSheetView>{renderContent()}</BottomSheetView>
-          </BottomSheet>
-        </View>
-      </Modal>
-      <ConfirmationModal
-        cancelAction={() => setConfirmationModal(null)}
-        confirmAction={() => { confirmationModal === "report" ? reportCollaboration() : blockBrands() }}
-        confirmText={
-          confirmationModal === "report" ? "Report" : "Block"
-        }
-        title={confirmationModal === "report" ? "Report Collaboration" : "Block Brand"}
-        description={
-          confirmationModal === "report" ?
-            "Are you sure you want to report this collaboration? This will notify the brand and may affect your future collaborations."
-            : "Are you sure you want to block this brand? You will not receive any further collaborations from them."
-        }
-        setVisible={(b) => setConfirmationModal(null)}
-        visible={confirmationModal !== null}
-      />
+      {isVisible &&
+        <Modal
+          visible={true}
+          transparent
+          animationType="fade"
+          onRequestClose={handleClose} // Closes when Android back button is pressed
+        >
+          {/* Bottom Sheet */}
+          <View style={styles.bottomSheetContainer}>
+            <BottomSheet
+              ref={sheetRef}
+              index={0} // Snap to the first point when opened
+              snapPoints={snapPoints}
+              enablePanDownToClose
+              backdropComponent={() => {
+                // Dismiss when tapping outside
+                return <Pressable style={styles.overlay} onPress={handleClose} />;
+              }}
+              onClose={handleClose}
+              style={styles.bottomSheet} // Ensure it's on top of everything
+            >
+              <BottomSheetView>{renderContent()}</BottomSheetView>
+            </BottomSheet>
+          </View>
+        </Modal>}
+      {confirmationModal !== null &&
+        <ConfirmationModal
+          cancelAction={() => setConfirmationModal(null)}
+          confirmAction={() => { confirmationModal === "report" ? reportCollaboration() : blockBrands() }}
+          confirmText={
+            confirmationModal === "report" ? "Report" : "Block"
+          }
+          title={confirmationModal === "report" ? "Report Collaboration" : "Block Brand"}
+          description={
+            confirmationModal === "report" ?
+              "Are you sure you want to report this collaboration? This will notify the brand and may affect your future collaborations."
+              : "Are you sure you want to block this brand? You will not receive any further collaborations from them."
+          }
+          setVisible={(b) => setConfirmationModal(null)}
+          visible={true}
+        />}
     </>
   );
 };
