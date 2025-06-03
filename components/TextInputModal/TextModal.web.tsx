@@ -1,5 +1,7 @@
+import Colors from "@/shared-uis/constants/Colors";
+import { Theme, useTheme } from "@react-navigation/native";
 import React, { FC, useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
 import { Modal, Portal, Text } from "react-native-paper";
 import Button from "../ui/button";
 import TextInput from "../ui/text-input";
@@ -16,6 +18,8 @@ interface TextModalProps {
 
 export const TextModal: FC<TextModalProps> = ({ ...props }) => {
   const [text, setText] = useState(props.value);
+  const theme = useTheme();
+  const styles = stylesFn(theme);
 
   const handleClose = () => {
     setText(props.value);
@@ -37,6 +41,7 @@ export const TextModal: FC<TextModalProps> = ({ ...props }) => {
       <Modal
         visible={props.isOpen}
         onDismiss={props.onClose}
+        style={styles.modal}
         contentContainerStyle={styles.modalContainer}
       >
         <View style={styles.modalContent}>
@@ -56,7 +61,7 @@ export const TextModal: FC<TextModalProps> = ({ ...props }) => {
             <Button mode="contained" onPress={handleSave} style={styles.button}>
               Save
             </Button>
-            <Button mode="text" onPress={handleClose} style={styles.button}>
+            <Button mode="outlined" onPress={handleClose} style={styles.button}>
               Cancel
             </Button>
           </View>
@@ -66,27 +71,34 @@ export const TextModal: FC<TextModalProps> = ({ ...props }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const stylesFn = (theme: Theme) => StyleSheet.create({
+  modal: {
+    backgroundColor: Colors(theme).backdrop, // Semi-transparent background
+    justifyContent: "center",
+    alignItems: "center",
+  },
   modalContainer: {
-    backgroundColor: "white",
+    backgroundColor: Colors(theme).modalBackground,
     borderRadius: 12,
     padding: 16,
-    // marginHorizontal: 8,
     alignSelf: "center",
     width: "95%",
+    ...(Platform.OS === "web" && {
+      maxWidth: 600, // Limit width on web
+    })
   },
   modalContent: {
-    flexDirection: "column",
+    flexDirection: "column"
   },
   modalTitle: {
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 20,
     textAlign: "left",
-    color: "#333",
+    color: Colors(theme).text,
   },
   textInput: {
-    backgroundColor: "#f9f9f9",
+    // backgroundColor: "#f9f9f9",
     // padding: 10,
     borderRadius: 8,
     fontSize: 16,
