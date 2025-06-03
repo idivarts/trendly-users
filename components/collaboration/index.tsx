@@ -321,16 +321,16 @@ const Collaboration = () => {
           )}
         </IOScrollView>
       </View>
-      {isVisible && (
-        <BottomSheetActions
-          cardId={selectedCollabId || ""} // Pass the selected collab id
-          cardType="collaboration"
-          snapPointsRange={["35%", "50%"]}
-          isVisible={isVisible}
-          onClose={closeBottomSheet}
-          key={selectedCollabId} // Ensure the BottomSheetActions re-renders with new id
-        />
-      )}
+
+      <BottomSheetActions
+        cardId={selectedCollabId || ""} // Pass the selected collab id
+        cardType="collaboration"
+        snapPointsRange={["35%", "50%"]}
+        isVisible={isVisible}
+        onClose={closeBottomSheet}
+        key={selectedCollabId} // Ensure the BottomSheetActions re-renders with new id
+      />
+
       {filterVisible && (
         <CollaborationFilter
           categories={getUniqueValues(collabs, "promotionType")}

@@ -1,4 +1,5 @@
 import { IS_BETA_ENABLED } from "@/constants/App";
+import { Console } from "@/shared-libs/utils/console";
 import { View } from "@/shared-uis/components/theme/Themed";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
@@ -51,10 +52,12 @@ const BottomSheetActions = ({
   const reportCollaboration = () => {
     // Logic to report the collaboration
     Toaster.success("Collaboration reported successfully");
+    setConfirmationModal(null);
   }
   const blockBrands = () => {
     // Logic to block the brand
     Toaster.success("Brand blocked successfully");
+    setConfirmationModal(null);
   }
   const handleEmailSignIn = () => {
     router.navigate("/login");
@@ -83,6 +86,7 @@ const BottomSheetActions = ({
               title="Report Collaboration"
               onPress={() => {
                 handleClose();
+                Console.log("report collaboration clicked");
                 setConfirmationModal("report")
               }}
             />
