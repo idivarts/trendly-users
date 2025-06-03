@@ -1,15 +1,14 @@
 import { IS_BETA_ENABLED } from "@/constants/App";
-import { DUMMY_PASSWORD, DUMMY_USER_CREDENTIALS } from "@/constants/User";
-import { useAuthContext } from "@/contexts";
 import { View } from "@/shared-uis/components/theme/Themed";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { setStringAsync } from "expo-clipboard";
 import { Href, useRouter } from "expo-router";
-import React from "react";
+import React, { useState } from "react";
 import { Modal, Pressable, StyleSheet } from "react-native";
 import { List } from "react-native-paper";
 import TermsAndCondition from "./bottomSheets/TermsAndCondition";
+import ConfirmationModal from "./ui/modal/ConfirmationModal";
 interface BottomSheetActionsProps {
   cardType:
   | "collaboration"
@@ -36,11 +35,11 @@ const BottomSheetActions = ({
   const router = useRouter();
   const sheetRef = React.useRef<BottomSheet>(null);
 
+  const [confirmationModal, setConfirmationModal] = useState<"report" | "block" | null>(null)
   // Adjust snap points for the bottom sheet height
-  const snapPoints = React.useMemo(
-    () => [snapPointsRange[0], snapPointsRange[1]],
-    []
-  );
+  const snapPoints = React.useMemo(() => [
+    snapPointsRange[0], snapPointsRange[1]
+  ], []);
 
   const handleClose = () => {
     if (sheetRef.current) {
@@ -49,17 +48,19 @@ const BottomSheetActions = ({
     onClose(); // Close the modal after the bottom sheet closes
   };
 
+  const reportCollaboration = () => {
+    // Logic to report the collaboration
+    Toaster.success("Collaboration reported successfully");
+  }
+  const blockBrands = () => {
+    // Logic to block the brand
+    Toaster.success("Brand blocked successfully");
+  }
+  const handleEmailSignIn = () => {
+    router.navigate("/login");
+  };
+
   const renderContent = () => {
-    const { signIn } = useAuthContext();
-
-    const handleEmailSignIn = () => {
-      router.navigate("/login");
-    };
-
-    const handleInstagramSignIn = () => {
-      signIn(DUMMY_USER_CREDENTIALS.email!, DUMMY_PASSWORD);
-    };
-
     switch (cardType) {
       case "collaboration":
         return (
@@ -76,6 +77,20 @@ const BottomSheetActions = ({
               onPress={() => {
                 router.push(`/apply-now/${cardId}`);
                 handleClose();
+              }}
+            />
+            <List.Item
+              title="Report Collaboration"
+              onPress={() => {
+                handleClose();
+                setConfirmationModal("report")
+              }}
+            />
+            <List.Item
+              title="Block Brand"
+              onPress={() => {
+                handleClose();
+                setConfirmationModal("block")
               }}
             />
           </List.Section>
@@ -109,13 +124,20 @@ const BottomSheetActions = ({
       case "details":
         return (
           <List.Section style={{ paddingBottom: 28 }}>
-            {/* <List.Item
-              title="Apply Now"
+            <List.Item
+              title="Report Collaboration"
               onPress={() => {
-                router.push(`/apply-now/${cardId}`);
                 handleClose();
+                setConfirmationModal("report")
               }}
-            /> */}
+            />
+            <List.Item
+              title="Block Brand"
+              onPress={() => {
+                handleClose();
+                setConfirmationModal("block")
+              }}
+            />
             <List.Item
               title="Copy Collaboration Link"
               onPress={() => {
@@ -173,30 +195,46 @@ const BottomSheetActions = ({
   };
 
   return (
-    <Modal
-      visible={isVisible}
-      transparent
-      animationType="fade"
-      onRequestClose={handleClose} // Closes when Android back button is pressed
-    >
-      {/* Bottom Sheet */}
-      <View style={styles.bottomSheetContainer}>
-        <BottomSheet
-          ref={sheetRef}
-          index={0} // Snap to the first point when opened
-          snapPoints={snapPoints}
-          enablePanDownToClose
-          backdropComponent={() => {
-            // Dismiss when tapping outside
-            return <Pressable style={styles.overlay} onPress={handleClose} />;
-          }}
-          onClose={handleClose}
-          style={styles.bottomSheet} // Ensure it's on top of everything
-        >
-          <BottomSheetView>{renderContent()}</BottomSheetView>
-        </BottomSheet>
-      </View>
-    </Modal>
+    <>
+      <Modal
+        visible={isVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={handleClose} // Closes when Android back button is pressed
+      >
+        {/* Bottom Sheet */}
+        <View style={styles.bottomSheetContainer}>
+          <BottomSheet
+            ref={sheetRef}
+            index={0} // Snap to the first point when opened
+            snapPoints={snapPoints}
+            enablePanDownToClose
+            backdropComponent={() => {
+              // Dismiss when tapping outside
+              return <Pressable style={styles.overlay} onPress={handleClose} />;
+            }}
+            onClose={handleClose}
+            style={styles.bottomSheet} // Ensure it's on top of everything
+          >
+            <BottomSheetView>{renderContent()}</BottomSheetView>
+          </BottomSheet>
+        </View>
+      </Modal>
+      <ConfirmationModal
+        cancelAction={() => setConfirmationModal(null)}
+        confirmAction={() => { confirmationModal === "report" ? reportCollaboration() : blockBrands() }}
+        confirmText={
+          confirmationModal === "report" ? "Report Collaboration" : "Block Brand"
+        }
+        description={
+          confirmationModal === "report" ?
+            "Are you sure you want to report this collaboration? This will notify the brand and may affect your future collaborations."
+            : "Are you sure you want to block this brand? You will not receive any further collaborations from them."
+        }
+        setVisible={(b) => setConfirmationModal(null)}
+        visible={confirmationModal !== null}
+      />
+    </>
   );
 };
 

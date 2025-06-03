@@ -50,7 +50,7 @@ const CollaborationDetailsScreen = () => {
         cardId={pageID as string}
         cardType="details"
         isVisible={isVisible}
-        snapPointsRange={["20%", "50%"]}
+        snapPointsRange={["30%", "50%"]}
         onClose={() => {
           setIsVisible(false);
         }}
