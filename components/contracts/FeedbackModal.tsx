@@ -16,9 +16,9 @@ import {
   Platform,
   Pressable,
   StyleSheet,
-  TextInput
 } from "react-native";
 import { Modal } from "react-native-paper";
+import TextInput from "../ui/text-input";
 ;
 
 interface FeedbackModalProps {
@@ -94,7 +94,7 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardAvoidingView}
       >
-        <Pressable style={styles.modal} onPress={() => Keyboard.dismiss()}>
+        <Pressable style={styles.modal} onPress={() => Platform.OS != "web" && Keyboard.dismiss()}>
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>Feedback</Text>
             <Pressable onPress={() => setVisibility(false)}>
@@ -131,9 +131,10 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
             {!feedbackGiven && (
               <TextInput
                 style={styles.textInput}
+                autoFocus
                 placeholder="Write your feedback here"
                 value={textFeedback}
-                onChangeText={(text) => setTextFeedback(text)}
+                onChangeText={setTextFeedback}
                 numberOfLines={5}
                 multiline
               />
