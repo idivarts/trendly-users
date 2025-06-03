@@ -12,6 +12,7 @@ interface ConfirmationModalProps {
   confirmText?: string;
   title?: string,
   description?: string;
+  loading?: boolean;
   setVisible: React.Dispatch<React.SetStateAction<boolean>>;
   visible: boolean;
 }
@@ -21,6 +22,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   cancelAction,
   cancelText = "Cancel",
   confirmAction,
+  loading = false,
   confirmText = "Confirm",
   title,
   description = "Are you sure?",
@@ -57,6 +59,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
               mode="contained"
               onPress={handleConfirm}
               style={styles.button}
+              loading={loading} // You can manage loading state if needed
             >
               {confirmText}
             </Button>

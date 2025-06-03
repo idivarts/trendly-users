@@ -36,6 +36,8 @@ const BottomSheetActions = ({
   const router = useRouter();
   const sheetRef = React.useRef<BottomSheet>(null);
 
+  const [loading, setLoading] = useState(false)
+
   const [confirmationModal, setConfirmationModal] = useState<"report" | "block" | null>(null)
   // Adjust snap points for the bottom sheet height
   const snapPoints = React.useMemo(() => [
@@ -49,16 +51,36 @@ const BottomSheetActions = ({
     onClose(); // Close the modal after the bottom sheet closes
   };
 
-  const reportCollaboration = () => {
-    // Logic to report the collaboration
-    Toaster.success("Collaboration reported successfully");
-    setConfirmationModal(null);
+  const reportCollaboration = async () => {
+    setLoading(true);
+    try {
+      // Logic to report the collaboration
+      Toaster.success("Collaboration reported successfully");
+    } catch (e) {
+      Console.error(e, "Error reporting collaboration");
+      Toaster.success("Couldmt report collaboration, please try again later");
+    }
+    finally {
+      setConfirmationModal(null);
+      setLoading(false);
+    }
   }
-  const blockBrands = () => {
-    // Logic to block the brand
-    Toaster.success("Brand blocked successfully");
-    setConfirmationModal(null);
+
+  const blockBrands = async () => {
+    setLoading(true);
+    try {
+      // Logic to block the brand
+      Toaster.success("Brand blocked successfully");
+    } catch (e) {
+      Console.error(e, "Error reporting collaboration");
+      Toaster.success("Couldmt report collaboration, please try again later");
+    }
+    finally {
+      setConfirmationModal(null);
+      setLoading(false);
+    }
   }
+
   const handleEmailSignIn = () => {
     router.navigate("/login");
   };
@@ -238,6 +260,7 @@ const BottomSheetActions = ({
               "Are you sure you want to report this collaboration? This will notify the brand and may affect your future collaborations."
               : "Are you sure you want to block this brand? You will not receive any further collaborations from them."
           }
+          loading={loading}
           setVisible={(b) => setConfirmationModal(null)}
           visible={true}
         />}
