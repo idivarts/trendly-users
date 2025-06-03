@@ -1,13 +1,13 @@
-import Colors from "@/constants/Colors";
 import { useChatContext } from "@/contexts";
 import { IContracts } from "@/shared-libs/firestore/trendly-pro/models/contracts";
 import { IManagers } from "@/shared-libs/firestore/trendly-pro/models/managers";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
-import { CrashLog } from "@/shared-libs/utils/firebase/crashlytics";
+import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import ImageComponent from "@/shared-uis/components/image-component";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
+import Colors from "@/shared-uis/constants/Colors";
 import {
   faCircleInfo,
   faStar,
@@ -114,7 +114,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
                       Toaster.error("Successfully went wrong!!");
                     })
                   } catch (e: any) {
-                    CrashLog.error(e);
+                    Console.error(e);
                   }
                 }}
               >
@@ -148,7 +148,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
                         Toaster.error("Something went wrong");
                       })
                     } catch (e: any) {
-                      CrashLog.log(e);
+                      Console.log(e);
                     }
                   }
                 }}

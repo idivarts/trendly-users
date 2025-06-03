@@ -5,7 +5,6 @@ import Button from "@/components/ui/button";
 import ListItem from "@/components/ui/list-item/ListItem";
 import ScreenHeader from "@/components/ui/screen-header";
 import TextInput from "@/components/ui/text-input";
-import Colors from "@/constants/Colors";
 import { useBreakpoints } from "@/hooks";
 import AppLayout from "@/layouts/app-layout";
 import { AWSProgressUpdateSubject, useAWSContext } from "@/shared-libs/contexts/aws-context.provider";
@@ -13,9 +12,11 @@ import {
   IApplications,
   ICollaboration,
 } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
+import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import ProgressLoader from "@/shared-uis/components/ProgressLoader";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
+import Colors from "@/shared-uis/constants/Colors";
 import { processRawAttachment } from "@/shared-uis/utils/attachments";
 import { stylesFn } from "@/styles/ApplyNow.styles";
 import { handleModalOrInputPage } from "@/utils/TextInput";
@@ -133,7 +134,7 @@ const ApplyScreenWeb = () => {
         setQuestions(collabData.questionsToInfluencers);
       }
     } catch (error) {
-      console.error("Error fetching questions:", error);
+      Console.error(error);
     }
   };
 
@@ -272,7 +273,7 @@ const ApplyScreenWeb = () => {
         router.push("/collaborations");
       }, 1000);
     } catch (error) {
-      console.error(error);
+      Console.error(error);
       setErrorMessage("Error uploading files");
       setLoading(false);
     }
@@ -298,7 +299,7 @@ const ApplyScreenWeb = () => {
         ]);
       }
     } catch (error) {
-      console.error("Error picking file:", error);
+      Console.error(error);
     }
   };
 

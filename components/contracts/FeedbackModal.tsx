@@ -1,10 +1,10 @@
 import { Text, View } from "@/components/theme/Themed";
-import Colors from "@/constants/Colors";
 import { IContracts } from "@/shared-libs/firestore/trendly-pro/models/contracts";
-import { CrashLog } from "@/shared-libs/utils/firebase/crashlytics";
+import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
+import Colors from "@/shared-uis/constants/Colors";
 import { faClose, faStar } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
@@ -16,9 +16,9 @@ import {
   Platform,
   Pressable,
   StyleSheet,
-  TextInput
 } from "react-native";
 import { Modal } from "react-native-paper";
+import TextInput from "../ui/text-input";
 ;
 
 interface FeedbackModalProps {
@@ -72,7 +72,7 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
       setVisibility(false);
       refreshData();
     } catch (e) {
-      CrashLog.error(e);
+      Console.error(e);
     }
   };
 
@@ -94,7 +94,7 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={styles.keyboardAvoidingView}
       >
-        <Pressable style={styles.modal} onPress={() => Keyboard.dismiss()}>
+        <Pressable style={styles.modal} onPress={() => Platform.OS != "web" && Keyboard.dismiss()}>
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>Feedback</Text>
             <Pressable onPress={() => setVisibility(false)}>
@@ -131,9 +131,10 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
             {!feedbackGiven && (
               <TextInput
                 style={styles.textInput}
+                autoFocus
                 placeholder="Write your feedback here"
                 value={textFeedback}
-                onChangeText={(text) => setTextFeedback(text)}
+                onChangeText={setTextFeedback}
                 numberOfLines={5}
                 multiline
               />

@@ -1,4 +1,4 @@
-import { CrashLog } from "@/shared-libs/utils/firebase/crashlytics";
+import { Console } from "@/shared-libs/utils/console";
 import { addDoc, collection, Firestore, getDocs } from "firebase/firestore";
 
 export const populateApplications = async (
@@ -33,11 +33,11 @@ export const populateApplications = async (
           timeStamp: application.timeStamp,
         });
 
-        CrashLog.log(
+        Console.log(
           `Application for collaboration ${collab.id} added successfully.`
         );
       } catch (error) {
-        CrashLog.error(
+        Console.error(
           error,
           `Failed to add application for collaboration ${collab.id}`
         );

@@ -5,7 +5,7 @@ import { ExternalLink } from './ExternalLink';
 import { MonoText } from './theme/StyledText';
 import { Text, View } from './theme/Themed';
 
-import Colors from '@/constants/Colors';
+import Colors from '@/shared-uis/constants/Colors';
 import { useTheme } from '@react-navigation/native';
 
 export default function EditScreenInfo({ path }: { path: string }) {

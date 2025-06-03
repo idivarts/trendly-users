@@ -7,7 +7,7 @@ import { Platform } from "react-native";
 import { FB_APP_ID } from "@/constants/Facebook";
 import { useAuthContext } from "@/contexts";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
-import { CrashLog } from "@/shared-libs/utils/firebase/crashlytics";
+import { Console } from "@/shared-libs/utils/console";
 import { BACKEND_URL, HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import * as WebBrowser from "expo-web-browser";
 ;
@@ -36,7 +36,6 @@ const useInstagramLogin = (
     native: `fb${FB_APP_ID}://authorize`,
     ...(Platform.OS == "web" ? { path: "insta-redirect" } : {})
   });
-  // console.log("Redirect Uri for Instagram: ", redirectUri);
 
   const authUrl = `${BACKEND_URL}/instagram?redirect_type=${Platform.OS === "web" ? (isLocalhost ? 1 : 2) : 3}&`;
 
@@ -96,7 +95,7 @@ const useInstagramLogin = (
       }
     })
       .catch((error: Error) => {
-        console.error("Error signing in with Instagram: ", error);
+        Console.error(error, "Error signing in with Instagram: ");
       })
       .finally(() => {
         setLoading(false);
@@ -105,23 +104,24 @@ const useInstagramLogin = (
 
   const receiveMessage = (event: StorageEvent) => {
     if (event.key === 'insta_code') {
-      CrashLog.log('Received update:', event.newValue);
+      Console.log('Received update:', event.newValue);
       handleInstagramSignIn("" + event.newValue);
       window.removeEventListener('storage', receiveMessage);
     }
   };
 
   useEffect(() => {
-    CrashLog.log("Auth Result Response: ", responseInstagram);
+    if (!responseInstagram) return;
+    Console.log("Auth Result Response: ", responseInstagram);
     if (
-      responseInstagram?.type === "success" ||
-      responseInstagram?.type === "error"
+      responseInstagram.type === "success" ||
+      responseInstagram.type === "error"
     ) {
       const { code } = responseInstagram.params;
       if (code) {
         handleInstagramSignIn(code);
       } else {
-        CrashLog.log("Instagram login failed. Please try again.");
+        Console.log("Instagram login failed. Please try again.");
       }
     }
   }, [responseInstagram]);

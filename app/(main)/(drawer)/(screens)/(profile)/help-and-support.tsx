@@ -1,7 +1,7 @@
 import { View } from "@/components/theme/Themed";
 import ScreenHeader from "@/components/ui/screen-header";
-import Colors from "@/constants/Colors";
 import AppLayout from "@/layouts/app-layout";
+import Colors from "@/shared-uis/constants/Colors";
 import { useTheme } from "@react-navigation/native";
 import React, { useState } from "react";
 import { ActivityIndicator, Platform } from "react-native";

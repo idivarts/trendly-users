@@ -5,8 +5,8 @@ import { IconButton } from "react-native-paper";
 import BottomSheetActions from "@/components/BottomSheetActions";
 import CollaborationDetails from "@/components/collaboration/collaboration-details";
 import ScreenHeader from "@/components/ui/screen-header";
-import Colors from "@/constants/Colors";
 import AppLayout from "@/layouts/app-layout";
+import Colors from "@/shared-uis/constants/Colors";
 import { resetAndNavigate } from "@/utils/router";
 import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -50,7 +50,7 @@ const CollaborationDetailsScreen = () => {
         cardId={pageID as string}
         cardType="details"
         isVisible={isVisible}
-        snapPointsRange={["20%", "50%"]}
+        snapPointsRange={["30%", "50%"]}
         onClose={() => {
           setIsVisible(false);
         }}

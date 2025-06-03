@@ -2,12 +2,12 @@ import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import React from 'react';
 
-import { Pressable } from 'react-native';
-import { DefaultStreamChatGenerics, MessageInputContextValue, Search, SendRight, useMessageInputContext, useTheme } from 'stream-chat-expo';
+import Colors from '@/shared-uis/constants/Colors';
 import {
   useTheme as useAppTheme,
 } from '@react-navigation/native';
-import Colors from '@/constants/Colors';
+import { Pressable } from 'react-native';
+import { DefaultStreamChatGenerics, MessageInputContextValue, Search, useMessageInputContext, useTheme } from 'stream-chat-expo';
 
 type SendButtonPropsWithContext<
   StreamChatGenerics extends DefaultStreamChatGenerics = DefaultStreamChatGenerics,

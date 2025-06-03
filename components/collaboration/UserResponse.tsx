@@ -1,9 +1,9 @@
-import Colors from "@/constants/Colors";
 import { MAX_WIDTH_WEB } from "@/constants/Container";
 import { useBreakpoints } from "@/hooks";
 import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { processRawAttachment } from "@/shared-libs/utils/attachments";
 import ScrollMedia from "@/shared-uis/components/carousel/scroll-media";
+import Colors from "@/shared-uis/constants/Colors";
 import { faPaperclip } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";

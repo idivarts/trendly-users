@@ -8,24 +8,16 @@ import { useEffect, useMemo, useState } from "react";
 import { useSharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { IS_BETA_ENABLED } from "@/constants/App";
-import Colors from "@/constants/Colors";
-import { useInitialUserData } from "@/constants/User";
 import { useAuthContext } from "@/contexts";
-import { useFacebookLogin, useInstagramLogin } from "@/hooks/requests";
-import { useAppleLogin } from "@/hooks/requests/use-apple-login";
-import { useGoogleLogin } from "@/hooks/requests/use-google-login";
-import { AuthApp } from "@/shared-libs/utils/firebase/auth";
-import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
-import { faApple, faFacebook, faGoogle, faInstagram } from "@fortawesome/free-brands-svg-icons";
+import Colors from "@/shared-uis/constants/Colors";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import React from "react";
-import { Platform, Pressable, StyleSheet } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import { Portal } from "react-native-paper";
+import CombinedLoginList from "../auth/CombinedLoginList";
 import ProfileOnboardLoader from "../ProfileOnboardLoader";
-import { Text, View } from "../theme/Themed";
-import SocialButton from "../ui/button/social-button";
+import { Text } from "../theme/Themed";
 ;
 ;
 
@@ -40,7 +32,6 @@ const AuthModal: React.FC<AuthModalProps> = ({
 }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const INITIAL_DATA = useInitialUserData();
 
   const snapPoints = useMemo(() => ["35%", "35%", "35%"], []);
 
@@ -55,37 +46,12 @@ const AuthModal: React.FC<AuthModalProps> = ({
     right: insets.right,
   });
 
-  const {
-    instagramLogin,
-    requestInstagram,
-  } = useInstagramLogin(
-    AuthApp,
-    FirestoreDB,
-    INITIAL_DATA,
-    setLoading,
-    setError,
-  );
-
-  const {
-    facebookLogin,
-    requestFacebook,
-  } = useFacebookLogin(
-    AuthApp,
-    FirestoreDB,
-    INITIAL_DATA,
-    setLoading,
-    setError,
-  );
-
   const { setCollaborationId } = useAuthContext()
 
   useEffect(() => {
     if (collaborationId && setCollaborationId)
       setCollaborationId(collaborationId)
   }, [collaborationId])
-
-  const { googleLogin } = useGoogleLogin(setLoading, setError);
-  const { appleLogin, isAppleAvailable } = useAppleLogin(setLoading, setError);
 
   const renderBackdrop = (props: any) => {
     return (
@@ -144,85 +110,11 @@ const AuthModal: React.FC<AuthModalProps> = ({
             <View
               style={{
                 gap: 16,
-              }}
-            >
-
-              {Platform.OS != "ios" &&
-                <SocialButton
-                  icon={faApple}
-                  iconColor={Colors(theme).white}
-                  customStyles={{
-                    backgroundColor: Colors(theme).primary,
-                    justifyContent: "center",
-
-                  }}
-                  label="Continue with Apple"
-                  labelStyles={{
-                    color: Colors(theme).white,
-                  }}
-                  onPress={appleLogin}
-                />}
-              {(Platform.OS == "ios" && isAppleAvailable) &&
-                <SocialButton
-                  icon={faGoogle}
-                  iconColor={Colors(theme).white}
-                  customStyles={{
-                    backgroundColor: Colors(theme).primary,
-                    justifyContent: "center",
-
-                  }}
-                  label="Continue with Google"
-                  labelStyles={{
-                    color: Colors(theme).white,
-                  }}
-                  onPress={googleLogin}
-                />}
-              {IS_BETA_ENABLED &&
-                <SocialButton
-                  icon={faFacebook}
-                  iconColor={Colors(theme).white}
-                  customStyles={{
-                    backgroundColor: Colors(theme).primary,
-                    justifyContent: "center",
-
-                  }}
-                  label="Continue with Facebook"
-                  labelStyles={{
-                    color: Colors(theme).white,
-                  }}
-                  onPress={() => {
-                    if (Platform.OS === "web") {
-                      facebookLogin();
-                    } else {
-                      if (requestFacebook) {
-                        facebookLogin();
-                      }
-                    }
-                  }}
-                />}
-              {IS_BETA_ENABLED &&
-                <SocialButton
-                  icon={faInstagram}
-                  iconColor={Colors(theme).white}
-                  customStyles={{
-                    backgroundColor: Colors(theme).primary,
-                    justifyContent: "center",
-
-                  }}
-                  label="Continue with Instagram"
-                  labelStyles={{
-                    color: Colors(theme).white,
-                  }}
-                  onPress={() => {
-                    if (Platform.OS === "web") {
-                      instagramLogin();
-                    } else {
-                      if (requestInstagram) {
-                        instagramLogin();
-                      }
-                    }
-                  }}
-                />}
+                flexDirection: "column",
+                justifyContent: "center",
+                flex: 1,
+              }}>
+              <CombinedLoginList setLoading={setLoading} setError={setError} />
             </View>
           </View>
         </BottomSheetScrollView>

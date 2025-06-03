@@ -1,6 +1,6 @@
-import { StyleSheet } from "react-native";
-import Colors from "@/constants/Colors";
+import Colors from "@/shared-uis/constants/Colors";
 import { Theme } from "@react-navigation/native";
+import { StyleSheet } from "react-native";
 
 const styles = (theme: Theme) => StyleSheet.create({
   container: {

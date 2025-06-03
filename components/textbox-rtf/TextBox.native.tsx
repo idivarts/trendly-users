@@ -1,16 +1,15 @@
-import React, { useEffect } from "react";
+import AppLayout from "@/layouts/app-layout";
+import Colors from "@/shared-uis/constants/Colors";
 import { useTheme } from "@react-navigation/native";
+import React, { useEffect } from "react";
 import {
-  View,
   KeyboardAvoidingView,
   Platform,
-  StyleSheet,
-  Keyboard,
   ScrollView,
+  StyleSheet,
+  View
 } from "react-native";
-import Colors from "@/constants/Colors";
 import { RichEditor, RichToolbar } from "react-native-pell-rich-editor";
-import AppLayout from "@/layouts/app-layout";
 
 interface EditTextAreaProps {
   value: string;

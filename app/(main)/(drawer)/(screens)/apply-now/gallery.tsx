@@ -1,11 +1,11 @@
 import RenderMediaItem from "@/components/collaboration/render-media-item";
 import Button from "@/components/ui/button";
 import ScreenHeader from "@/components/ui/screen-header";
-import Colors from "@/constants/Colors";
 import { useAuthContext } from "@/contexts";
 import { processRawAttachment } from "@/shared-libs/utils/attachments";
-import { CrashLog } from "@/shared-libs/utils/firebase/crashlytics";
+import { Console } from "@/shared-libs/utils/console";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
+import Colors from "@/shared-uis/constants/Colors";
 import { stylesFn } from "@/styles/apply-now/gallery.styles";
 import { AssetItem } from "@/types/Asset";
 import { faImage, faVideo } from "@fortawesome/free-solid-svg-icons";
@@ -105,7 +105,7 @@ const GalleryScreen = () => {
   const fetchAssets = async (after?: string): Promise<MediaLibrary.AssetInfo | undefined> => {
     if (reachedEnd)
       return undefined;
-    CrashLog.log("---------------> Fetching New Assets", after);
+    Console.log("---------------> Fetching New Assets", after);
 
     const album = await MediaLibrary.getAssetsAsync({
       mediaType: ["photo", "video"],
@@ -133,17 +133,13 @@ const GalleryScreen = () => {
     try {
       const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
       const paddingToBottom = 20; // Threshold before reaching the end
-      // console.log("Coming to Handle Scroll", layoutMeasurement.height + contentOffset.y,
-      //   contentSize.height - paddingToBottom, assets.length);
       if (layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom && assets.length > 0) {
         mutex.useOnce(() => {
           fetchAssets(assetAfter);
         }, assetAfter); // Allowed
       }
-
-      // mutex.useOnce(() => console.log("Trying again...")); // Error: Already used
     } catch (error: any) {
-      CrashLog.error(error);
+      Console.error(error);
     }
 
   };
@@ -201,7 +197,7 @@ const GalleryScreen = () => {
           },
         ]);
       } else {
-        console.warn("No matching original asset found!");
+        Console.log("No matching original asset found!");
       }
     }
   };
@@ -231,7 +227,7 @@ const GalleryScreen = () => {
         },
       });
     } catch (error) {
-      console.error(error);
+      Console.error(error);
     }
   };
 
@@ -285,7 +281,7 @@ const GalleryScreen = () => {
 
     // Handle the captured media
     if (!result.canceled && result.assets.length > 0) {
-      CrashLog.log("Captured:", result.assets[0].uri);
+      Console.log("Captured:", result.assets[0].uri);
       await MediaLibrary.saveToLibraryAsync(result.assets[0].uri);
       let mAsset = await fetchAssets();
       if (mAsset) {

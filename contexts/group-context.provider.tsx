@@ -1,4 +1,5 @@
 import { IMessages } from "@/shared-libs/firestore/trendly-pro/models/groups";
+import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { Groups } from "@/types/Groups";
 import {
@@ -190,7 +191,7 @@ export const GroupContextProvider: React.FC<PropsWithChildren> = ({ children }) 
 
       return groupData;
     } catch (error) {
-      console.error("Error fetching group: ", error);
+      Console.error(error, "Error fetching group: ");
       return null;
     }
   };
@@ -213,7 +214,7 @@ export const GroupContextProvider: React.FC<PropsWithChildren> = ({ children }) 
         messages: messagesSnapshot.docs.map((doc) => doc.data() as IMessages),
       }
     } catch (error) {
-      console.error("Error fetching messages: ", error);
+      Console.error(error, "Error fetching messages: ");
       return {
         hasNext: false,
         lastMessage: null,
@@ -250,7 +251,7 @@ export const GroupContextProvider: React.FC<PropsWithChildren> = ({ children }) 
         messages: messagesSnapshot.docs.map((doc) => doc.data() as IMessages),
       }
     } catch (error) {
-      console.error("Error fetching messages: ", error);
+      Console.error(error, "Error fetching messages: ");
       return {
         firstMessage: null,
         hasNext: false,
@@ -265,7 +266,7 @@ export const GroupContextProvider: React.FC<PropsWithChildren> = ({ children }) 
       const groupDoc = doc(FirestoreDB, "groups", groupId);
       await updateDoc(groupDoc, group);
     } catch (error) {
-      console.error("Error updating group: ", error);
+      Console.error(error, "Error updating group: ");
     }
   }
 
@@ -287,7 +288,7 @@ export const GroupContextProvider: React.FC<PropsWithChildren> = ({ children }) 
         },
       });
     } catch (error) {
-      console.error("Error adding message: ", error);
+      Console.error(error, "Error adding message: ");
     }
   }
 

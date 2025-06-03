@@ -2,7 +2,6 @@ import CreateCollaborationMap from "@/components/create-collaboration/CreateColl
 import AuthModal from "@/components/modals/AuthModal";
 import Button from "@/components/ui/button";
 import ConfirmationModal from "@/components/ui/modal/ConfirmationModal";
-import Colors from "@/constants/Colors";
 import {
   useAuthContext,
   useContractContext,
@@ -13,6 +12,7 @@ import { PromotionType } from "@/shared-libs/firestore/trendly-pro/constants/pro
 import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { IManagers } from "@/shared-libs/firestore/trendly-pro/models/managers";
 import { processRawAttachment } from "@/shared-libs/utils/attachments";
+import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import Carousel from "@/shared-uis/components/carousel/carousel";
 import ScrollMedia from "@/shared-uis/components/carousel/scroll-media";
@@ -20,6 +20,7 @@ import ImageComponent from "@/shared-uis/components/image-component";
 import RatingSection from "@/shared-uis/components/rating-section";
 import ReadMore from "@/shared-uis/components/ReadMore";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
+import Colors from "@/shared-uis/constants/Colors";
 import { stylesFn } from "@/styles/CollaborationDetails.styles";
 import { Invitation } from "@/types/Collaboration";
 import { Contract } from "@/types/Contract";
@@ -220,7 +221,7 @@ const CollborationDetailsContent = (
       setCardType("collaboration");
       props.fetchCollaboration();
     } catch (e) {
-      console.error(e);
+      Console.error(e);
     }
   };
 
@@ -818,6 +819,7 @@ const CollborationDetailsContent = (
           setVisible={setConfirmationModalVisible}
           confirmText="Yes"
           cancelText="No"
+          title="Withdraw Application"
           description="Are you sure you want to withdraw your application?"
         />
         <AuthModal bottomSheetModalRef={authModalBottomSheetModalRef} collaborationId={props.pageID} />

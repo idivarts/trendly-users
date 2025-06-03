@@ -3,7 +3,7 @@ import { FB_APP_ID as fbid } from "@/constants/Facebook";
 import { useInitialUserData } from "@/constants/User";
 import { useInstagramLogin } from "@/hooks/requests";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
-import { CrashLog } from "@/shared-libs/utils/firebase/crashlytics";
+import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import * as WebBrowser from "expo-web-browser";
@@ -45,7 +45,7 @@ const InstagramLoginButton: React.FC = () => {
       })
       setIsLoading(false);
     } catch (error) {
-      CrashLog.error(error, "Error adding Instagram account");
+      Console.error(error, "Error adding Instagram account");
       setIsLoading(false);
     }
   };

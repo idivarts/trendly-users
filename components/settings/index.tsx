@@ -1,5 +1,5 @@
-import Colors from "@/constants/Colors";
 import { AccountStatus } from "@/shared-libs/firestore/trendly-pro/models/users";
+import Colors from "@/shared-uis/constants/Colors";
 import stylesFn from "@/styles/settings/Settings.styles";
 import { User } from "@/types/User";
 import { faCalendarXmark, faThumbsUp } from "@fortawesome/free-regular-svg-icons";
@@ -202,6 +202,7 @@ const Settings: React.FC<SettingsProps> = ({
           });
         }}
         confirmText="Deactivate"
+        title="Deactivate Account"
         description="Are you sure you want to deactivate your account? You can anytime login to activate your account"
         setVisible={setDeactivationModalVisible}
         visible={deactivationModalVisible}
@@ -217,6 +218,7 @@ const Settings: React.FC<SettingsProps> = ({
           });
         }}
         confirmText="Delete"
+        title="Delete Account"
         description="Are you sure you want to delete your account? This action is irreversible."
         setVisible={setDeletionModalVisible}
         visible={deletionModalVisible}

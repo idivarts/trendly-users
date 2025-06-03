@@ -3,11 +3,11 @@ import Button from "@/components/ui/button";
 import Select from "@/components/ui/select";
 import SelectGroup from "@/components/ui/select/select-group";
 import TextInput from "@/components/ui/text-input";
-import Colors from "@/constants/Colors";
 import { useAuthContext } from "@/contexts";
 import { useBreakpoints } from "@/hooks";
 import useEditProfile from "@/hooks/use-edit-profile";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
+import Colors from "@/shared-uis/constants/Colors";
 import { stylesFn } from "@/styles/edit-profile/EditProfile.styles";
 import { useTheme } from "@react-navigation/native";
 import { useRouter } from "expo-router";
@@ -53,16 +53,6 @@ const EditProfile: React.FC<EditProfileProps> = ({
     unsavedChanges,
     setUnsavedChanges,
   });
-
-  // useEffect(() => {
-  //   EditProfileSubject.subscribe((data) => {
-  //     if (data.action == "profile") {
-  //       setAttachments(data.data)
-  //       setUnsavedChanges && setUnsavedChanges(true)
-  //       console.log("New Attachments here", data.data.length, data.data);
-  //     }
-  //   })
-  // }, [])
 
   useEffect(() => {
     const keyboardWillShowListener = Keyboard.addListener(

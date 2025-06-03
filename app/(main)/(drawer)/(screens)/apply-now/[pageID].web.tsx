@@ -5,14 +5,14 @@ import Button from "@/components/ui/button";
 import ListItem from "@/components/ui/list-item/ListItem";
 import ScreenHeader from "@/components/ui/screen-header";
 import TextInput from "@/components/ui/text-input";
-import Colors from "@/constants/Colors";
 import AppLayout from "@/layouts/app-layout";
 import { AWSProgressUpdateSubject, useAWSContext } from "@/shared-libs/contexts/aws-context.provider";
 import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
-import { CrashLog } from "@/shared-libs/utils/firebase/crashlytics";
+import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import ProgressLoader from "@/shared-uis/components/ProgressLoader";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
+import Colors from "@/shared-uis/constants/Colors";
 import { stylesFn } from "@/styles/ApplyNow.styles";
 import { handleModalOrInputPage } from "@/utils/TextInput";
 import { faCircleQuestion } from "@fortawesome/free-regular-svg-icons";
@@ -125,7 +125,7 @@ const ApplyScreenWeb = () => {
         setQuestions(collabData.questionsToInfluencers);
       }
     } catch (error) {
-      console.error("Error fetching questions:", error);
+      Console.error(error);
     }
   };
 
@@ -157,7 +157,7 @@ const ApplyScreenWeb = () => {
         });
       }, 5000);
     } catch (error) {
-      console.error(error);
+      Console.error(error);
       setErrorMessage("Error uploading files");
       setLoading(false);
     }
@@ -183,7 +183,7 @@ const ApplyScreenWeb = () => {
         ]);
       }
     } catch (error) {
-      console.error("Error picking file:", error);
+      Console.error(error);
     }
   };
 
@@ -329,7 +329,7 @@ const ApplyScreenWeb = () => {
                 try {
                   dateRef.current?.showPicker?.() || dateRef.current?.click()
                 } catch (e: any) {
-                  CrashLog.error(e);
+                  Console.error(e);
                 }
               }}
             />

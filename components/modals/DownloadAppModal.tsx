@@ -1,21 +1,21 @@
-import { useMemo } from "react";
-import { useSharedValue } from "react-native-reanimated";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Theme, useTheme } from "@react-navigation/native";
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
   BottomSheetScrollView,
 } from "@gorhom/bottom-sheet";
+import { Theme, useTheme } from "@react-navigation/native";
+import { useMemo } from "react";
+import { useSharedValue } from "react-native-reanimated";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { Text, View } from "../theme/Themed";
-import Colors from "@/constants/Colors";
-import { Pressable, StyleSheet } from "react-native";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faCircleDown, faClose } from "@fortawesome/free-solid-svg-icons";
-import Button from "../ui/button";
 import { useBreakpoints } from "@/hooks";
+import Colors from "@/shared-uis/constants/Colors";
 import { handleDeepLink } from "@/utils/deeplink";
+import { faCircleDown, faClose } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { Pressable, StyleSheet } from "react-native";
+import { Text, View } from "../theme/Themed";
+import Button from "../ui/button";
 
 interface DownloadAppModalProps {
   bottomSheetModalRef: React.RefObject<BottomSheetModal>;

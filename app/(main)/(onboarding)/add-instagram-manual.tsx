@@ -2,13 +2,13 @@ import { View } from '@/components/theme/Themed';
 import Button from '@/components/ui/button';
 import ScreenHeader from '@/components/ui/screen-header';
 import TextInput from '@/components/ui/text-input';
-import Colors from '@/constants/Colors';
 import { useSocialContext } from '@/contexts';
 import AppLayout from '@/layouts/app-layout';
 import { useAWSContext } from "@/shared-libs/contexts/aws-context.provider";
-import { CrashLog } from '@/shared-libs/utils/firebase/crashlytics';
+import { Console } from '@/shared-libs/utils/console';
 import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import Toaster from '@/shared-uis/components/toaster/Toaster';
+import Colors from '@/shared-uis/constants/Colors';
 import { resetAndNavigate } from '@/utils/router';
 import { Theme, useTheme } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
@@ -89,7 +89,7 @@ const AddInstagramManual = () => {
 
 
     const onClickContinue = async () => {
-        CrashLog.log("Instagram Manual", handle, profileImageUrl, dashboardImageUrl);
+        Console.log("Instagram Manual", handle, profileImageUrl, dashboardImageUrl);
 
         if (handle.length <= 1 || !profileImageUrl || !dashboardImageUrl) {
             Toaster.error('Please fill all the fields');
@@ -119,7 +119,7 @@ const AddInstagramManual = () => {
                 setBlockLoading(true);
             }
         }).catch((error) => {
-            console.error(error);
+            Console.error(error);
             Toaster.error('Error adding Instagram', error.message);
         }).finally(() => {
             setApiLoading(false);

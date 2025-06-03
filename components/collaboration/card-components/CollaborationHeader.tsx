@@ -1,6 +1,6 @@
 import { Text, View } from "@/components/theme/Themed";
-import Colors from "@/constants/Colors";
 import ImageComponent from "@/shared-uis/components/image-component";
+import Colors from "@/shared-uis/constants/Colors";
 import { formatTimeToNow } from "@/utils/date";
 import { imageUrl } from "@/utils/url";
 import { faCheckCircle, faEllipsisH } from "@fortawesome/free-solid-svg-icons";

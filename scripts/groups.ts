@@ -1,4 +1,4 @@
-import { CrashLog } from "@/shared-libs/utils/firebase/crashlytics";
+import { Console } from "@/shared-libs/utils/console";
 import { addDoc, collection, Firestore } from "firebase/firestore";
 
 export const populateGroups = async (db: Firestore, dummyGroups: any[]) => {
@@ -12,7 +12,7 @@ export const populateGroups = async (db: Firestore, dummyGroups: any[]) => {
       managerIds: group.managerIds,
     });
 
-    CrashLog.log(`Group ${group.name} added successfully.`);
+    Console.log(`Group ${group.name} added successfully.`);
 
     const messagesCollection = collection(groupRef, "messages");
 
@@ -28,6 +28,6 @@ export const populateGroups = async (db: Firestore, dummyGroups: any[]) => {
       }
     }
 
-    CrashLog.log(`Messages for group ${group.name} added successfully.`);
+    Console.log(`Messages for group ${group.name} added successfully.`);
   }
 };

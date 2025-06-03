@@ -8,7 +8,8 @@ import {
   AuthContextProvider,
   useAuthContext
 } from "@/contexts";
-import { CrashLog } from "@/shared-libs/utils/firebase/crashlytics";
+import UpdateProvider from "@/shared-libs/contexts/update-provider";
+import { Console } from "@/shared-libs/utils/console";
 import { resetAndNavigate } from "@/utils/router";
 import { queryParams } from "@/utils/url";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
@@ -23,7 +24,7 @@ import {
 import { useFonts } from "expo-font";
 import { Href, Stack, useGlobalSearchParams, usePathname, useRouter, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { Linking } from "react-native";
 import { setJSExceptionHandler } from 'react-native-exception-handler';
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -43,10 +44,8 @@ export const unstable_settings = {
 SplashScreen.preventAutoHideAsync();
 
 setJSExceptionHandler((error, isFatal) => {
-  if (!isFatal)
-    CrashLog.error(error);
-  else
-    CrashLog.crash();
+  Console.log("Error Occured is Fatal", isFatal);
+  Console.error(error);
 });
 
 const RootLayout = () => {
@@ -71,13 +70,15 @@ const RootLayout = () => {
   }
 
   return (
-    <AuthContextProvider>
-      <GestureHandlerRootView>
-        <BottomSheetModalProvider>
-          <RootLayoutStack />
-        </BottomSheetModalProvider>
-      </GestureHandlerRootView>
-    </AuthContextProvider>
+    <UpdateProvider force={true}>
+      <AuthContextProvider>
+        <GestureHandlerRootView>
+          <BottomSheetModalProvider>
+            <RootLayoutStack />
+          </BottomSheetModalProvider>
+        </GestureHandlerRootView>
+      </AuthContextProvider>
+    </UpdateProvider>
   );
 };
 
@@ -93,7 +94,7 @@ const RootLayoutStack = () => {
   const appTheme = user?.settings?.theme || colorScheme;
 
   const linkingWorkaround = () => {
-    CrashLog.log("Linking workaround initiated", "RootLayout");
+    Console.log("Linking workaround initiated", "RootLayout");
     const subscription = Linking.addEventListener("url", ({ url }) => {
       const match = url.match(new RegExp(`^${APP_SCHEME}://(.*)`));
       if (match) {
@@ -107,8 +108,7 @@ const RootLayoutStack = () => {
   }
 
   useEffect(() => {
-    // CrashLog.log("App started", "RootLayout");
-    // CrashLog.crash()
+    // Console.log("App started", "RootLayout");
     linkingWorkaround();
   }, []);
 

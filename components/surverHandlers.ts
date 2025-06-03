@@ -1,5 +1,5 @@
+import { Console } from "@/shared-libs/utils/console";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
-import { CrashLog } from "@/shared-libs/utils/firebase/crashlytics";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { SurveyAnswer } from "@/types/Survey";
 import { getFormattedPreferences } from "@/utils/profile";
@@ -11,7 +11,7 @@ export const submitSurvey = async (answers: SurveyAnswer) => {
   try {
     const user = AuthApp.currentUser;
     if (!user) {
-      console.error("User not signed in");
+      Console.error("User not signed in");
       return;
     }
     const userRef = doc(FirestoreDB, "users", user.uid);
@@ -24,13 +24,13 @@ export const submitSurvey = async (answers: SurveyAnswer) => {
         preferences: getFormattedPreferences(userData.preferences, answers),
       });
     } else {
-      CrashLog.log("User data does not exist");
+      Console.log("User data does not exist");
     }
   } catch (error) {
-    console.error("Error submitting survey:", error);
+    Console.error(error);
   }
 };
 
 export const handleSkipQuestion = () => {
-  CrashLog.log("Skipping question");
+  Console.log("Skipping question");
 };

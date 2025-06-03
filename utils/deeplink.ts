@@ -1,4 +1,5 @@
 import { APP_SCHEME, APP_STORE_URL, PLAY_STORE_URL } from "@/constants/App";
+import { Console } from "@/shared-libs/utils/console";
 import { Linking, Platform } from "react-native";
 
 export const handleDeepLink = async (
@@ -19,6 +20,6 @@ export const handleDeepLink = async (
       await Linking.openURL(storeUrl);
     }
   } catch (error) {
-    console.error("Error handling deep link:", error);
+    Console.error(error, "Error handling deep link:");
   }
 };

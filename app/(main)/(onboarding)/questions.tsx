@@ -1,10 +1,11 @@
 import { submitSurvey } from "@/components/surverHandlers";
 import { Text, View } from "@/components/theme/Themed";
 import Select from "@/components/ui/select";
-import Colors from "@/constants/Colors";
 import { SURVEY_DATA } from "@/constants/SurveyData";
 import { useAuthContext } from "@/contexts";
 import AppLayout from "@/layouts/app-layout";
+import { Console } from "@/shared-libs/utils/console";
+import Colors from "@/shared-uis/constants/Colors";
 import { stylesFn } from "@/styles/Questions.styles";
 import { SurveyAnswer } from "@/types/Survey";
 import { resetAndNavigate } from "@/utils/router";
@@ -64,7 +65,7 @@ const Questions = () => {
             resetAndNavigate("/profile");
         })
         .catch((error) => {
-          console.error("Error submitting survey:", error);
+          Console.error(error);
         });
     } else {
       if (currentQuestionIndex < SURVEY_DATA.length - 1) {

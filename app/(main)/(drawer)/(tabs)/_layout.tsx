@@ -4,10 +4,10 @@ import React from "react";
 import NotificationIcon from "@/components/notifications/notification-icon";
 import { View } from "@/components/theme/Themed";
 import { useClientOnlyValue } from "@/components/useClientOnlyValue";
-import Colors from "@/constants/Colors";
 import { COMPLETION_PERCENTAGE } from "@/constants/CompletionPercentage";
 import { useAuthContext } from "@/contexts";
 import { useBreakpoints } from "@/hooks";
+import Colors from "@/shared-uis/constants/Colors";
 import {
   faComment,
   faFileLines,

@@ -1,4 +1,4 @@
-import { CrashLog } from "@/shared-libs/utils/firebase/crashlytics";
+import { Console } from "@/shared-libs/utils/console";
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
@@ -40,10 +40,10 @@ const populateFirestore = async () => {
 
 populateFirestore()
   .then(() => {
-    CrashLog.log("All data added successfully.");
+    Console.log("All data added successfully.");
     process.exit(0);
   })
   .catch((error) => {
-    CrashLog.error(error, "Error populating Firestore");
+    Console.error(error, "Error populating Firestore");
     process.exit(1);
   });

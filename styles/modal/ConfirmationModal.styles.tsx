@@ -1,6 +1,6 @@
-import Colors from "@/constants/Colors";
+import Colors from "@/shared-uis/constants/Colors";
 import { Theme } from "@react-navigation/native";
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 
 const stylesFn = (theme: Theme) => StyleSheet.create({
   centeredView: {
@@ -12,9 +12,9 @@ const stylesFn = (theme: Theme) => StyleSheet.create({
   modalView: {
     margin: 20,
     backgroundColor: Colors(theme).background,
-    borderRadius: 4,
+    borderRadius: 16,
     padding: 25,
-    alignItems: "center",
+    // alignItems: "center",
     shadowColor: Colors(theme).backdrop,
     shadowOffset: {
       width: 0,
@@ -23,13 +23,22 @@ const stylesFn = (theme: Theme) => StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
+    ...(Platform.OS === "web" && { maxWidth: 500 })
+  },
+  modalTitle: {
+    marginBottom: 20,
+    fontSize: 18,
+    fontWeight: "bold",
+    textAlign: "left",
   },
   modalText: {
     marginBottom: 20,
-    textAlign: "center",
+    textAlign: "left",
+    lineHeight: 24,
   },
   buttonContainer: {
     flexDirection: "row",
+    alignSelf: "flex-end",
     gap: 10,
   },
   button: {

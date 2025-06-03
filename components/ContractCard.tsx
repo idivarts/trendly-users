@@ -1,12 +1,12 @@
-import React from "react";
-import { View, TouchableOpacity } from "react-native";
-import { Text, Card, Chip } from "react-native-paper";
-import { useRouter } from "expo-router";
-import { useTheme } from "@react-navigation/native";
+import Colors from "@/shared-uis/constants/Colors";
 import { stylesFn } from "@/styles/CollaborationCard.styles";
-import Colors from "@/constants/Colors";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { useTheme } from "@react-navigation/native";
+import { useRouter } from "expo-router";
+import React from "react";
+import { TouchableOpacity, View } from "react-native";
+import { Card, Chip, Text } from "react-native-paper";
 
 interface CollaborationAdCardProps {
   collaborationName: string;

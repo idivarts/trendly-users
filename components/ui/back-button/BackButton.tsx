@@ -1,9 +1,9 @@
-import { Pressable, View } from "react-native";
-import { useNavigation } from "expo-router";
-import Colors from "@/constants/Colors";
-import { useTheme } from "@react-navigation/native";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import Colors from "@/shared-uis/constants/Colors";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { useTheme } from "@react-navigation/native";
+import { useNavigation } from "expo-router";
+import { Pressable, View } from "react-native";
 
 interface BackButtonProps {
   color?: string;

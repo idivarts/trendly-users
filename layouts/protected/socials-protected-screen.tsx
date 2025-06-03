@@ -4,8 +4,8 @@ import { ActivityIndicator, Platform } from "react-native";
 
 import CollaborationsShimmer from "@/components/shimmers/collaborations-shimmer";
 import { View } from "@/components/theme/Themed";
-import Colors from "@/constants/Colors";
 import { useAuthContext, useSocialContext } from "@/contexts";
+import Colors from "@/shared-uis/constants/Colors";
 
 interface SocialsProtectedScreenProps extends PropsWithChildren { }
 
@@ -22,7 +22,6 @@ const SocialsProtectedScreen: React.FC<SocialsProtectedScreenProps> = ({
   // useEffect(() => {
   //   const timeout = setTimeout(() => {
   //     if (isUserLoading || isFetchingSocials) {
-  //       console.warn("Force signing out due to prolonged loading state.");
   //       signOutUser();
   //     }
   //   }, 10000); // wait 10 seconds before assuming something is wrong

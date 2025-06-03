@@ -1,6 +1,7 @@
-import Colors from "@/constants/Colors";
 import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
+import { Console } from "@/shared-libs/utils/console";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
+import Colors from "@/shared-uis/constants/Colors";
 import {
   faClockRotateLeft,
   faDollarSign,
@@ -59,7 +60,7 @@ const ReviseQuotationModal: FC<ReviseQuotationModalProps> = ({
       refreshData();
     } catch (error) {
       Toaster.error("Error updating quotation");
-      console.error("Error updating quotation", error);
+      Console.error(error);
     }
   };
 

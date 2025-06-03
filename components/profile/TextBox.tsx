@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { Text, View } from "../theme/Themed";
-import { Pressable, useWindowDimensions } from "react-native";
-import { Card } from "react-native-paper";
+import Colors from "@/shared-uis/constants/Colors";
 import stylesFn from "@/styles/profile/ProfileCard.styles";
-import { useTheme } from "@react-navigation/native";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
-import Colors from "@/constants/Colors";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { useTheme } from "@react-navigation/native";
 import { router, useLocalSearchParams } from "expo-router";
+import React, { useEffect, useState } from "react";
+import { Pressable, useWindowDimensions } from "react-native";
 import RenderHTML from "react-native-render-html";
+import { Text, View } from "../theme/Themed";
 
 interface TextBoxProfilePageProps {
   title: string;

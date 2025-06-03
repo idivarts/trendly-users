@@ -1,17 +1,17 @@
-import React, { useState, useRef, useMemo } from "react";
+import Colors from "@/shared-uis/constants/Colors";
+import { stylesFn } from "@/styles/FilterModal.styles";
+import { faCheckDouble, faClose } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import BottomSheet, {
+  BottomSheetBackdrop,
+  BottomSheetView,
+} from "@gorhom/bottom-sheet";
+import Slider from "@react-native-community/slider";
+import { useTheme } from "@react-navigation/native";
+import React, { useMemo, useRef, useState } from "react";
 import { Modal, TouchableOpacity } from "react-native";
 import { Chip } from "react-native-paper";
-import Slider from "@react-native-community/slider";
-import BottomSheet, {
-  BottomSheetView,
-  BottomSheetBackdrop,
-} from "@gorhom/bottom-sheet";
-import { stylesFn } from "@/styles/FilterModal.styles";
-import { useTheme } from "@react-navigation/native";
-import Colors from "@/constants/Colors";
 import { Text, View } from "./theme/Themed";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faCheckDouble, faClose } from "@fortawesome/free-solid-svg-icons";
 import Button from "./ui/button";
 
 interface CollaborationFilterProps {
@@ -110,12 +110,12 @@ const CollaborationFilter = ({
                 icon={
                   localSelectedCategory === category
                     ? () => (
-                        <FontAwesomeIcon
-                          icon={faCheckDouble}
-                          size={16}
-                          color={Colors(theme).white}
-                        />
-                      )
+                      <FontAwesomeIcon
+                        icon={faCheckDouble}
+                        size={16}
+                        color={Colors(theme).white}
+                      />
+                    )
                     : undefined
                 }
                 key={category}
@@ -172,12 +172,12 @@ const CollaborationFilter = ({
                 icon={
                   localSelectedJobType === jobType
                     ? () => (
-                        <FontAwesomeIcon
-                          icon={faCheckDouble}
-                          size={16}
-                          color={Colors(theme).white}
-                        />
-                      )
+                      <FontAwesomeIcon
+                        icon={faCheckDouble}
+                        size={16}
+                        color={Colors(theme).white}
+                      />
+                    )
                     : undefined
                 }
               >

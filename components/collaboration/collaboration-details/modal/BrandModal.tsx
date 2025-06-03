@@ -3,8 +3,8 @@ import { Linking } from "react-native";
 
 import { Text, View } from "@/components/theme/Themed";
 import Button from "@/components/ui/button";
-import Colors from "@/constants/Colors";
 import ImageComponent from "@/shared-uis/components/image-component";
+import Colors from "@/shared-uis/constants/Colors";
 import stylesFn from "@/styles/modal/UploadModal.styles";
 import {
   faCheck,

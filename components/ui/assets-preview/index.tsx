@@ -1,5 +1,6 @@
 import { Text, View } from "@/components/theme/Themed";
-import Colors from "@/constants/Colors";
+import { Console } from "@/shared-libs/utils/console";
+import Colors from "@/shared-uis/constants/Colors";
 import stylesFn from "@/styles/assets-preview/AssetsPreview.styles";
 import { imageUrl } from "@/utils/url";
 import { faAdd, faTrash } from "@fortawesome/free-solid-svg-icons";
@@ -29,9 +30,6 @@ const AssetsPreview: React.FC<AssetsPreviewProps> = ({
   const theme = useTheme();
   const styles = stylesFn(theme);
 
-  // useEffect(() => {
-  //   console.log("Files:", files)
-  // }, [files])
   return (
     <View style={styles.container}>
       <ScrollView
@@ -50,8 +48,8 @@ const AssetsPreview: React.FC<AssetsPreviewProps> = ({
                 style={styles.video}
                 resizeMode={ResizeMode.COVER}
                 useNativeControls={false}
-                onLoad={(status) => console.log("Video Loaded:", status)}
-                onError={(error) => console.error("Video Error:", error)}
+                onLoad={(status) => Console.log("Video Loaded:", status)}
+                onError={(error) => Console.error("Video Error:", error)}
                 onReadyForDisplay={(videoData) => {
                   if (Platform.OS === "web") {
                     // @ts-ignore

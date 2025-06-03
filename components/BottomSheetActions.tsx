@@ -1,15 +1,19 @@
 import { IS_BETA_ENABLED } from "@/constants/App";
-import { DUMMY_PASSWORD, DUMMY_USER_CREDENTIALS } from "@/constants/User";
 import { useAuthContext } from "@/contexts";
+import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
+import { Console } from "@/shared-libs/utils/console";
+import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { View } from "@/shared-uis/components/theme/Themed";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { setStringAsync } from "expo-clipboard";
 import { Href, useRouter } from "expo-router";
-import React from "react";
+import { doc, getDoc } from "firebase/firestore";
+import React, { useState } from "react";
 import { Modal, Pressable, StyleSheet } from "react-native";
 import { List } from "react-native-paper";
 import TermsAndCondition from "./bottomSheets/TermsAndCondition";
+import ConfirmationModal from "./ui/modal/ConfirmationModal";
 interface BottomSheetActionsProps {
   cardType:
   | "collaboration"
@@ -36,11 +40,15 @@ const BottomSheetActions = ({
   const router = useRouter();
   const sheetRef = React.useRef<BottomSheet>(null);
 
+  const [loading, setLoading] = useState(false)
+
+  const [confirmationModal, setConfirmationModal] = useState<"report" | "block" | null>(null)
   // Adjust snap points for the bottom sheet height
-  const snapPoints = React.useMemo(
-    () => [snapPointsRange[0], snapPointsRange[1]],
-    []
-  );
+  const snapPoints = React.useMemo(() => [
+    snapPointsRange[0], snapPointsRange[1]
+  ], []);
+
+  const { user, updateUser } = useAuthContext()
 
   const handleClose = () => {
     if (sheetRef.current) {
@@ -49,17 +57,66 @@ const BottomSheetActions = ({
     onClose(); // Close the modal after the bottom sheet closes
   };
 
+  const reportCollaboration = async () => {
+    setLoading(true);
+    try {
+      if (!user || !cardId)
+        throw new Error("User or collaboration is not defined");
+      await updateUser(user.id, {
+        moderations: {
+          ...(user?.moderations || {}),
+          reportedCollaborations: [
+            ...(user?.moderations?.reportedCollaborations || []),
+            cardId,
+          ],
+        },
+      })
+      Toaster.success("Collaboration reported successfully");
+    } catch (e) {
+      Console.error(e, "Error reporting collaboration");
+      Toaster.success("Couldmt report collaboration, please try again later");
+    }
+    finally {
+      setConfirmationModal(null);
+      setLoading(false);
+    }
+  }
+
+  const blockBrands = async () => {
+    setLoading(true);
+    try {
+      if (!user || !cardId)
+        throw new Error("User or collaboration is not defined");
+      const collaboration = await getDoc(doc(FirestoreDB, "collaborations", cardId));
+      if (!collaboration.exists())
+        throw new Error("Collaboration does not exist");
+
+      const cData = collaboration.data() as ICollaboration;
+      await updateUser(user.id, {
+        moderations: {
+          ...(user?.moderations || {}),
+          blockedBrands: [
+            ...(user?.moderations?.blockedBrands || []),
+            cData.brandId,
+          ],
+        },
+      })
+      Toaster.success("Brand blocked successfully");
+    } catch (e) {
+      Console.error(e, "Error reporting collaboration");
+      Toaster.success("Couldmt report collaboration, please try again later");
+    }
+    finally {
+      setConfirmationModal(null);
+      setLoading(false);
+    }
+  }
+
+  const handleEmailSignIn = () => {
+    router.navigate("/login");
+  };
+
   const renderContent = () => {
-    const { signIn } = useAuthContext();
-
-    const handleEmailSignIn = () => {
-      router.navigate("/login");
-    };
-
-    const handleInstagramSignIn = () => {
-      signIn(DUMMY_USER_CREDENTIALS.email!, DUMMY_PASSWORD);
-    };
-
     switch (cardType) {
       case "collaboration":
         return (
@@ -76,6 +133,21 @@ const BottomSheetActions = ({
               onPress={() => {
                 router.push(`/apply-now/${cardId}`);
                 handleClose();
+              }}
+            />
+            <List.Item
+              title="Report Collaboration"
+              onPress={() => {
+                handleClose();
+                Console.log("report collaboration clicked");
+                setConfirmationModal("report")
+              }}
+            />
+            <List.Item
+              title="Block Brand"
+              onPress={() => {
+                handleClose();
+                setConfirmationModal("block")
               }}
             />
           </List.Section>
@@ -109,13 +181,20 @@ const BottomSheetActions = ({
       case "details":
         return (
           <List.Section style={{ paddingBottom: 28 }}>
-            {/* <List.Item
-              title="Apply Now"
+            <List.Item
+              title="Report Collaboration"
               onPress={() => {
-                router.push(`/apply-now/${cardId}`);
                 handleClose();
+                setConfirmationModal("report")
               }}
-            /> */}
+            />
+            <List.Item
+              title="Block Brand"
+              onPress={() => {
+                handleClose();
+                setConfirmationModal("block")
+              }}
+            />
             <List.Item
               title="Copy Collaboration Link"
               onPress={() => {
@@ -173,30 +252,50 @@ const BottomSheetActions = ({
   };
 
   return (
-    <Modal
-      visible={isVisible}
-      transparent
-      animationType="fade"
-      onRequestClose={handleClose} // Closes when Android back button is pressed
-    >
-      {/* Bottom Sheet */}
-      <View style={styles.bottomSheetContainer}>
-        <BottomSheet
-          ref={sheetRef}
-          index={0} // Snap to the first point when opened
-          snapPoints={snapPoints}
-          enablePanDownToClose
-          backdropComponent={() => {
-            // Dismiss when tapping outside
-            return <Pressable style={styles.overlay} onPress={handleClose} />;
-          }}
-          onClose={handleClose}
-          style={styles.bottomSheet} // Ensure it's on top of everything
+    <>
+      {isVisible &&
+        <Modal
+          visible={true}
+          transparent
+          animationType="fade"
+          onRequestClose={handleClose} // Closes when Android back button is pressed
         >
-          <BottomSheetView>{renderContent()}</BottomSheetView>
-        </BottomSheet>
-      </View>
-    </Modal>
+          {/* Bottom Sheet */}
+          <View style={styles.bottomSheetContainer}>
+            <BottomSheet
+              ref={sheetRef}
+              index={0} // Snap to the first point when opened
+              snapPoints={snapPoints}
+              enablePanDownToClose
+              backdropComponent={() => {
+                // Dismiss when tapping outside
+                return <Pressable style={styles.overlay} onPress={handleClose} />;
+              }}
+              onClose={handleClose}
+              style={styles.bottomSheet} // Ensure it's on top of everything
+            >
+              <BottomSheetView>{renderContent()}</BottomSheetView>
+            </BottomSheet>
+          </View>
+        </Modal>}
+      {confirmationModal !== null &&
+        <ConfirmationModal
+          cancelAction={() => setConfirmationModal(null)}
+          confirmAction={() => { confirmationModal === "report" ? reportCollaboration() : blockBrands() }}
+          confirmText={
+            confirmationModal === "report" ? "Report" : "Block"
+          }
+          title={confirmationModal === "report" ? "Report Collaboration" : "Block Brand"}
+          description={
+            confirmationModal === "report" ?
+              "Are you sure you want to report this collaboration? Your report will be reviewed by our team. You wont be able to see this collaboration again."
+              : "Are you sure you want to block this brand? You will not receive any further collaborations from them."
+          }
+          loading={loading}
+          setVisible={(b) => setConfirmationModal(null)}
+          visible={true}
+        />}
+    </>
   );
 };
 
@@ -213,6 +312,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "flex-end",
     zIndex: 2,
+    backgroundColor: "transparent",
   },
   bottomSheet: {
     zIndex: 9999,

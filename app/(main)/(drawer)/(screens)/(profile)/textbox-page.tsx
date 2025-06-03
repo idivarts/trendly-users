@@ -1,9 +1,10 @@
 import Component from "@/components/textbox-rtf/TextBox";
 import { Text, View } from "@/components/theme/Themed";
-import Colors from "@/constants/Colors";
+import ScreenHeader from "@/components/ui/screen-header";
 import { useAuthContext } from "@/contexts";
 import AppLayout from "@/layouts/app-layout";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
+import Colors from "@/shared-uis/constants/Colors";
 import { Profile } from "@/types/Profile";
 import { User } from "@/types/User";
 import { calculateProfileCompletion } from "@/utils/profile";
@@ -11,9 +12,8 @@ import { useTheme } from "@react-navigation/native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useRef, useState } from "react";
 import { Pressable } from "react-native";
-import { ActivityIndicator, Appbar } from "react-native-paper";
+import { ActivityIndicator } from "react-native-paper";
 import { RichEditor } from "react-native-pell-rich-editor";
-import Toast from "react-native-toast-message";
 
 const EditTextArea: React.FC = () => {
   const theme = useTheme();
@@ -107,7 +107,20 @@ const EditTextArea: React.FC = () => {
 
   return (
     <AppLayout>
-      <Appbar.Header
+      <ScreenHeader title={title as string} action={handleGoBack} rightAction={true} rightActionButton={<>
+        {loading ? <ActivityIndicator size={"small"} style={{ paddingRight: 20 }} /> :
+          <Pressable
+            onPress={handleSubmit}
+            style={{
+              paddingRight: 20,
+            }}
+          >
+            <Text style={{ color: Colors(theme).primary, fontSize: 16 }}>
+              Done
+            </Text>
+          </Pressable>}
+      </>} />
+      {/* <Appbar.Header
         style={{ backgroundColor: Colors(theme).background }}
         statusBarHeight={0}
       >
@@ -124,8 +137,8 @@ const EditTextArea: React.FC = () => {
               Done
             </Text>
           </Pressable>}
-      </Appbar.Header>
-      <Toast />
+      </Appbar.Header> */}
+      {/* <Toast /> */}
       <View
         style={{
           padding: 20,

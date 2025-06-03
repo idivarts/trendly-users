@@ -1,9 +1,9 @@
 import { Text, View } from "@/components/theme/Themed";
-import Colors from "@/constants/Colors";
+import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
+import Colors from "@/shared-uis/constants/Colors";
+import { truncateText } from "@/utils/profile";
 import { useTheme } from "@react-navigation/native";
 import { FC } from "react";
-import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
-import { truncateText } from "@/utils/profile";
 
 interface ContractDetailsProps {
   application: IApplications;

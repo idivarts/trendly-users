@@ -1,9 +1,8 @@
 import { useInitialUserData } from "@/constants/User";
 import { useStorageState } from "@/hooks";
 import { AccountStatus } from "@/shared-libs/firestore/trendly-pro/models/users";
-import { analyticsLogEvent } from "@/shared-libs/utils/firebase/analytics";
+import { Console } from "@/shared-libs/utils/console";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
-import { CrashLog } from "@/shared-libs/utils/firebase/crashlytics";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
@@ -78,6 +77,7 @@ const AuthContext = createContext<AuthContextProps>({
 });
 
 export const useAuthContext = () => useContext(AuthContext);
+let userUnsubscribe: any = null;
 
 export const AuthContextProvider: React.FC<PropsWithChildren> = ({
   children,
@@ -89,13 +89,12 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const INITIAL_DATA = useInitialUserData()
   const segments = useSegments();
-  const inMainGroup = segments[0] === "(main)";
 
   const fetchUser = async () => {
     if (isLoading || !session || !AuthApp.currentUser)
       return
 
-    // setIsUserLoading(true);
+    setIsUserLoading(true);
     try {
       const userDocRef = doc(FirestoreDB, "users", AuthApp.currentUser.uid);
 
@@ -108,29 +107,34 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
           setIsLoggedIn(true);
           setUser(userData);
         } else {
-          CrashLog.log("User not found");
-          if (inMainGroup) {
-            signOutUser();
-          }
+          Console.log("User not found");
+          setIsLoggedIn(false)
         }
-      }, (error) => {
-        CrashLog.error(error, "Error fetching user data");
-        if (inMainGroup) {
-          signOutUser();
-        }
+        setIsUserLoading(false);
       })
-
-      return unsubscribe;
-    } catch (error: any) {
-      CrashLog.error(error, "User Snapshot catch error");
-      if (inMainGroup) {
-        signOutUser();
+      if (userUnsubscribe) {
+        userUnsubscribe();
       }
-    } finally {
+      userUnsubscribe = unsubscribe;
+    } catch (error: any) {
+      Console.error(error, "User Snapshot catch error");
       setIsUserLoading(false);
+      setIsLoggedIn(false)
     }
   };
   const cUser = AuthApp.currentUser
+
+  useEffect(() => {
+    if (!isLoggedIn && !isUserLoading) {
+      const inMainGroup = segments[0] === "(main)";
+      if (inMainGroup) {
+        const cancelAction = setTimeout(() => { if (!isUserLoading) signOutUser() }, 2000)
+        return () => {
+          clearTimeout(cancelAction)
+        }
+      }
+    }
+  }, [isLoggedIn, isUserLoading, segments])
 
   useEffect(() => {
     if (isLoading)
@@ -138,9 +142,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
     AuthApp.authStateReady().then(() => {
       if (!AuthApp.currentUser) {
         setIsUserLoading(false);
-        if (inMainGroup) {
-          signOutUser();
-        }
+        setIsLoggedIn(false);
       } else {
         fetchUser();
       }
@@ -159,7 +161,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
 
       HttpWrapper.fetch("/api/v1/chat/auth", { method: "POST", });
 
-      await analyticsLogEvent("signed_in", {
+      await Console.analytics("signed_in", {
         id: userCredential.user.uid,
         name: userCredential.user.displayName,
         email: userCredential.user.email,
@@ -167,7 +169,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
 
       Toaster.success("Signed In Successfully!");
     } catch (error) {
-      console.error("Error signing in: ", error);
+      Console.error(error);
       Toaster.error("Error signing in. Please try again.");
     }
   };
@@ -195,14 +197,12 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
       resetAndNavigate("/no-social-connected");
       Toaster.success("Signed Up Successfully!");
     } catch (error) {
-      console.error("Error signing up: ", error);
+      Console.error(error);
       Toaster.error("Error signing up. Please try again.");
     }
   };
 
   const firebaseSignIn = async (uid: string) => {
-    // console.log("Firebase Sign In", uid);
-
     setSession(uid);
     HttpWrapper.fetch("/api/v1/chat/auth", { method: "POST" });
 
@@ -228,8 +228,6 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
   };
 
   const firebaseSignUp = async (uid: string, hasSocials?: number) => {
-    // console.log("Firebase Sign Up", uid, hasSocials);
-
     setSession(uid);
     HttpWrapper.fetch("/api/v1/chat/auth", { method: "POST", });
 
@@ -290,7 +288,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
   };
 
   const signOutUser = async () => {
-    CrashLog.log("Signing out user", "AuthContextProvider");
+    Console.log("Signing out user", "AuthContextProvider");
     try {
       if (Platform.OS !== "web") {
         // Remove push notification token from the database
@@ -302,19 +300,23 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
         //   });
         // }
       }
-    } catch (e: any) {
-      CrashLog.error(e, "Issues while removing tokens");
-    }
 
+      if (userUnsubscribe) {
+        await userUnsubscribe();
+        userUnsubscribe = null;
+      }
+    } catch (e: any) {
+      Console.error(e, "Issues while removing tokens");
+    }
     signOut(AuthApp)
       .then(() => {
-        analyticsLogEvent("signed_out", {
+        Console.analytics("signed_out", {
           id: user?.id,
           email: user?.email,
         });
         Toaster.success("Signed Out Successfully!");
       }).catch((error) => {
-        CrashLog.error(error, "Error signing out");
+        Console.error(error, "Error signing out");
       }).finally(() => {
         setSession("");
         setIsLoggedIn(false);
@@ -332,7 +334,6 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
         ...(userSnap.data() as User),
         id: userSnap.id as string,
       };
-      setIsLoggedIn(true);
       setUser(userData);
       return userData;
     }
@@ -393,7 +394,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
       const user = AuthApp.currentUser;
 
       if (!user) {
-        console.error("No authenticated user.");
+        Console.error("No authenticated user.");
         return;
       }
 
@@ -422,7 +423,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
 
       await deleteUser(user);
     } catch (error) {
-      console.error("Error deleting account:", error);
+      Console.error(error);
     }
   };
 

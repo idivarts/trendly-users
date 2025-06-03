@@ -1,5 +1,4 @@
 import { View } from "@/components/theme/Themed";
-import Colors from "@/constants/Colors";
 import { useAuthContext } from "@/contexts";
 import { useBreakpoints } from "@/hooks";
 import AppLayout from "@/layouts/app-layout";
@@ -9,7 +8,9 @@ import {
   ICollaboration,
 } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { IContracts } from "@/shared-libs/firestore/trendly-pro/models/contracts";
+import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
+import Colors from "@/shared-uis/constants/Colors";
 import { stylesFn } from "@/styles/Proposal.styles";
 import { useTheme } from "@react-navigation/native";
 import { router } from "expo-router";
@@ -118,7 +119,7 @@ const PastContracts = () => {
       setProposals(contracts);
       setIsLoading(false);
     } catch (error) {
-      console.error("Error fetching proposals: ", error);
+      Console.error(error);
     } finally {
       setIsLoading(false);
     }

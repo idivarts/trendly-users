@@ -1,16 +1,10 @@
 import Button from "@/components/ui/button";
-import SocialButton from "@/components/ui/button/social-button";
-import Colors from "@/constants/Colors";
 import { slides } from "@/constants/Slides";
-import { useInitialUserData } from "@/constants/User";
-import { useFacebookLogin, useInstagramLogin } from "@/hooks/requests";
 import AppLayout from "@/layouts/app-layout";
-import { AuthApp } from "@/shared-libs/utils/firebase/auth";
-import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
+import Colors from "@/shared-uis/constants/Colors";
 import stylesFn from "@/styles/tab1.styles";
 import { imageUrl } from "@/utils/url";
-import { faApple, faFacebook, faGoogle, faInstagram } from "@fortawesome/free-brands-svg-icons";
-import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRight, faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
 import * as WebBrowser from "expo-web-browser";
@@ -23,71 +17,40 @@ import {
   Text,
   View
 } from "react-native";
-import { Paragraph, Portal, Title } from "react-native-paper";
+import { Portal } from "react-native-paper";
 import Carousel, {
   ICarouselInstance,
   Pagination,
 } from "react-native-reanimated-carousel";
-;
 
+import CombinedLoginList from "@/components/auth/CombinedLoginList";
 import BottomSheetActions from "@/components/BottomSheetActions";
 import ProfileOnboardLoader from "@/components/ProfileOnboardLoader";
 import { IS_BETA_ENABLED } from "@/constants/App";
 import { useBreakpoints } from "@/hooks";
-import { useAppleLogin } from "@/hooks/requests/use-apple-login";
-import { useGoogleLogin } from "@/hooks/requests/use-google-login";
 import { runOnJS, useSharedValue } from "react-native-reanimated";
-import Swiper from "react-native-swiper";
 
 WebBrowser.maybeCompleteAuthSession();
 
 const PreSignIn = () => {
   const theme = useTheme();
-  const INITIAL_DATA = useInitialUserData();
   const styles = stylesFn(theme);
   const [error, setError] = useState<string | null>(null);
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const swiperRef = useRef<ICarouselInstance>(null);
-  const nativeRef = useRef<Swiper>(null);
   const progress = useSharedValue(0);
   const [termsCondition, setTermsCondition] = useState(false);
-
-  const { instagramLogin, requestInstagram } =
-    useInstagramLogin(
-      AuthApp,
-      FirestoreDB,
-      INITIAL_DATA,
-      setLoading,
-      setError
-    );
-
-  const { facebookLogin, requestFacebook } =
-    useFacebookLogin(
-      AuthApp,
-      FirestoreDB,
-      INITIAL_DATA,
-      setLoading,
-      setError
-    );
-
-  const { googleLogin } = useGoogleLogin(setLoading, setError);
-  const { appleLogin, isAppleAvailable } = useAppleLogin(setLoading, setError);
 
   const skipToConnect = () => {
     const connectSlideIndex = slides.findIndex(
       (slide) => slide.key === "connect"
     );
     if (connectSlideIndex !== -1) {
-      // swiperRef.current?.scrollTo({ index: connectSlideIndex });
-      if (Platform.OS === "web") {
-        swiperRef.current?.scrollTo({
-          count: connectSlideIndex - progress.value,
-          animated: true,
-        });
-      } else {
-        nativeRef.current?.scrollTo(connectSlideIndex);
-      }
+      swiperRef.current?.scrollTo({
+        count: connectSlideIndex - progress.value,
+        animated: true,
+      });
     }
   };
 
@@ -105,7 +68,7 @@ const PreSignIn = () => {
         <Carousel
           data={slides}
           width={xl ? Dimensions.get("window").width - 120 * 4 : Dimensions.get("window").width}
-          height={Dimensions.get("window").height - 60}
+          height={Dimensions.get("window").height - 36 * Dimensions.get("window").scale}
           pagingEnabled
           ref={swiperRef}
           loop={false}
@@ -120,65 +83,44 @@ const PreSignIn = () => {
           }}
           renderItem={({ item }) => (
             <View style={styles.slide}>
-              {item.key === "connect" &&
-                // <Pressable style={styles.skipButton} onPress={() => {
-                //   setVisible(true)
-                // }}>
-                //   <FontAwesomeIcon
-                //     icon={faEllipsis}
-                //     style={styles.skipButton}></FontAwesomeIcon>
-                // </Pressable>
-                <Button
-                  mode="outlined"
-                  style={styles.skipButton}
-                  onPress={() => setVisible(true)}
-                >
-                  Options
-                </Button>
-              }
-              {item.key !== "connect" && (
-                <Button
-                  mode="outlined"
-                  style={styles.skipButton}
-                  onPress={skipToConnect}
-                >
-                  Skip
-                </Button>
-              )}
               <View style={styles.imageContainer}>
                 <Image source={imageUrl(item.image)} style={styles.image} />
               </View>
-              <Title style={[styles.title, { color: Colors(theme).primary }]}>
+              <Text style={[styles.title, { color: Colors(theme).primary }]}>
                 {item.title}
-              </Title>
-              <Paragraph style={styles.paragraph}>{item.text}</Paragraph>
+              </Text>
+              <Text style={styles.paragraph}>{item.text}</Text>
 
+              {item.key === "connect" ?
+                <>
+                  {Platform.OS == "web" ?
+                    <Button
+                      mode="outlined"
+                      style={styles.skipButton}
+                      onPress={() => setVisible(true)}
+                    >
+                      Options
+                    </Button> :
+                    <Pressable style={[styles.skipButton, { padding: 20, flex: 1 }]} onPress={() => {
+                      setVisible(true)
+                    }}>
+                      <FontAwesomeIcon
+                        icon={faEllipsis}
+                        size={24}
+                        style={styles.skipIcon} />
+                    </Pressable>}
+                </> : (
+                  <Button
+                    mode="outlined"
+                    style={styles.skipButton}
+                    onPress={skipToConnect}
+                  >
+                    Skip
+                  </Button>
+                )}
               {item.key === "connect" && (
                 <View style={styles.socialContainer}>
-                  {Platform.OS != "ios" &&
-                    <SocialButton
-                      icon={faGoogle}
-                      label="Continue with Google"
-                      onPress={googleLogin}
-                    />}
-                  {(Platform.OS == "ios" && isAppleAvailable) &&
-                    <SocialButton
-                      icon={faApple}
-                      label="Continue with Apple"
-                      onPress={appleLogin}
-                    />}
-                  {IS_BETA_ENABLED &&
-                    <SocialButton
-                      icon={faFacebook}
-                      label="Login with Facebook"
-                      onPress={facebookLogin}
-                    />}
-                  {IS_BETA_ENABLED &&
-                    <SocialButton
-                      icon={faInstagram}
-                      label="Login with Instagram"
-                      onPress={instagramLogin}
-                    />}
+                  <CombinedLoginList setLoading={setLoading} setError={setError} />
                 </View>
               )}
               {item.key !== "connect" && (
@@ -224,13 +166,6 @@ const PreSignIn = () => {
                     >
                       Terms & Condition (EULA)
                     </Text>{" "}
-                    {/* and{" "}
-                    <Text
-                      style={{ color: Colors(theme).primary, textDecorationLine: "underline" }}
-                      onPress={() => setTermsCondition(true)}
-                    >
-                      Privacy Policy
-                    </Text>{" "} */}
                     of Trendly
                   </Text>
                 </View>
@@ -271,7 +206,7 @@ const PreSignIn = () => {
         isVisible={visible}
         cardType="pre-signin"
         onClose={() => setVisible(false)}
-        snapPointsRange={["25%", "40%"]}
+        snapPointsRange={IS_BETA_ENABLED ? ["25%", "25%"] : ["20%", "20%"]}
       />
       <BottomSheetActions
         isVisible={termsCondition}

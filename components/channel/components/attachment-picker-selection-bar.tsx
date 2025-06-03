@@ -1,11 +1,11 @@
-import Colors from '@/constants/Colors';
+import Colors from '@/shared-uis/constants/Colors';
+import { faFolderOpen } from '@fortawesome/free-regular-svg-icons';
 import { faCameraRetro, faImages, faSquarePollVertical } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { useTheme as useAppTheme } from '@react-navigation/native';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useAttachmentPickerContext, useChannelContext, useMessageInputContext, useMessagesContext, useOwnCapabilitiesContext, useTheme } from 'stream-chat-expo';
-import { useTheme as useAppTheme } from '@react-navigation/native';
-import { faFolderOpen } from '@fortawesome/free-regular-svg-icons';
 
 const styles = StyleSheet.create({
   container: {

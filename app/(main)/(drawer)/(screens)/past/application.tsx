@@ -3,14 +3,15 @@ import CollaborationDetails from "@/components/collaboration/card-components/Col
 import CollaborationHeader from "@/components/collaboration/card-components/CollaborationHeader";
 import { MediaItem } from "@/components/collaboration/render-media-item";
 import ScreenHeader from "@/components/ui/screen-header";
-import Colors from "@/constants/Colors";
 import { MAX_WIDTH_WEB } from "@/constants/Container";
 import { useAuthContext } from "@/contexts";
 import { useBreakpoints } from "@/hooks";
 import AppLayout from "@/layouts/app-layout";
 import { processRawAttachment } from "@/shared-libs/utils/attachments";
+import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import ScrollMedia from "@/shared-uis/components/carousel/scroll-media";
+import Colors from "@/shared-uis/constants/Colors";
 import { useTheme } from "@react-navigation/native";
 import { router } from "expo-router";
 import {
@@ -110,7 +111,7 @@ const PastApplicationPage = (props: any) => {
 
       setProposals(validProposals);
     } catch (error) {
-      console.error("Error fetching proposals: ", error);
+      Console.error(error);
     } finally {
       setIsLoading(false);
     }

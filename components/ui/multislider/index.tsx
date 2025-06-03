@@ -1,8 +1,8 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import Colors from '@/shared-uis/constants/Colors';
 import MultiSlider, { MultiSliderProps } from '@ptomasroos/react-native-multi-slider';
 import { Theme, useTheme } from '@react-navigation/native';
-import Colors from '@/constants/Colors';
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
 
 interface MultiRangeSliderProps extends MultiSliderProps {
   maxValue: number;

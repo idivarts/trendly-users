@@ -7,15 +7,16 @@ import { ActivityIndicator, Platform, Pressable } from "react-native";
 import { Channel as ChannelType } from "stream-chat";
 import { Channel, MessageInput, MessageList, useChatContext } from "stream-chat-expo";
 
-import Colors from "@/constants/Colors";
 import { useBrandContext, useContractContext } from "@/contexts";
 import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
 import { IContracts } from "@/shared-libs/firestore/trendly-pro/models/contracts";
+import Colors from "@/shared-uis/constants/Colors";
 import { imageUrl } from "@/utils/url";
 import { useTheme } from "@react-navigation/native";
 import { Avatar } from "react-native-paper";
 import ChatMessageTopbar from "./chat-message-topbar";
 
+import { Console } from "@/shared-libs/utils/console";
 import {
   AttachButton,
   AttachmentPickerSelectionBar,
@@ -79,7 +80,7 @@ const ChannelNative = () => {
         try {
           await Notifications.setBadgeCountAsync(0);
         } catch (error) {
-          console.error("Failed to reset badge count:", error);
+          Console.error(error);
         }
       }
     };

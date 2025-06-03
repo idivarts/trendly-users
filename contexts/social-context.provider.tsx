@@ -1,5 +1,5 @@
 import { ISocials } from "@/shared-libs/firestore/trendly-pro/models/socials";
-import { CrashLog } from "@/shared-libs/utils/firebase/crashlytics";
+import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { resetAndNavigate } from "@/utils/router";
 import { usePathname, useRouter } from "expo-router";
@@ -71,7 +71,7 @@ export const SocialContextProvider = ({ children }: PropsWithChildren<{}>) => {
 
         setSocials(socialData);
 
-        CrashLog.log("Pathname", pathname);
+        Console.log("Pathname", pathname);
 
         if (socialData.length === 0) {
           if (!allowedPaths.includes(pathname))
@@ -102,7 +102,7 @@ export const SocialContextProvider = ({ children }: PropsWithChildren<{}>) => {
 
       return unsubscribe;
     } catch (error) {
-      console.error("Error setting up socials snapshot:", error);
+      Console.error(error, "Error setting up socials snapshot:");
     } finally {
       setIsFetchingSocials(false);
     }

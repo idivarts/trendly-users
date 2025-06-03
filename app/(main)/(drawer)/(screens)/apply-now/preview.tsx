@@ -2,15 +2,15 @@ import { CardFooter } from "@/components/collaboration/card-components/secondary
 import { useApplication } from "@/components/proposals/useApplication";
 import Button from "@/components/ui/button";
 import ScreenHeader from "@/components/ui/screen-header";
-import Colors from "@/constants/Colors";
 import { MAX_WIDTH_WEB } from "@/constants/Container";
 import { useAuthContext } from "@/contexts";
 import { useBreakpoints } from "@/hooks";
 import AppLayout from "@/layouts/app-layout";
 import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { processRawAttachment } from "@/shared-libs/utils/attachments";
-import { CrashLog } from "@/shared-libs/utils/firebase/crashlytics";
+import { Console } from "@/shared-libs/utils/console";
 import InfluencerCard from "@/shared-uis/components/InfluencerCard";
+import Colors from "@/shared-uis/constants/Colors";
 import { convertToKUnits } from "@/utils/conversion";
 import { useTheme } from "@react-navigation/native";
 import { router, useLocalSearchParams } from "expo-router";
@@ -57,7 +57,7 @@ const Preview = () => {
         setProcessedAttachments(processed);
       }
     } catch (error) {
-      console.error("Error processing attachments:", error);
+      Console.error(error);
       setErrorMessage("Error processing attachments");
     }
   }, [params.attachments]);
@@ -69,7 +69,7 @@ const Preview = () => {
         setFileAttachments(rawAttachments);
       }
     } catch (error) {
-      console.error("Error processing attachments:", error);
+      Console.error(error);
       setErrorMessage("Error processing attachments");
     }
   }, [params.fileAttachments]);
@@ -81,7 +81,7 @@ const Preview = () => {
       const timelineFromParams = JSON.parse(params.timeline as string);
       setTimeline(Number(timelineFromParams));
     } catch (error) {
-      console.error("Error processing attachments:", error);
+      Console.error(error);
       setErrorMessage("Error processing attachments");
     }
   }, [params.fileAttachments]);
@@ -97,7 +97,7 @@ const Preview = () => {
         setAnswers(answersArray);
       }
     } catch (error) {
-      console.error("Error processing attachments:", error);
+      Console.error(error);
       setErrorMessage("Error processing attachments");
     }
   }, [params.answers]);
@@ -123,7 +123,7 @@ const Preview = () => {
 
       if (!user) {
         setErrorMessage("User not found");
-        console.error("User not found");
+        Console.error("User not found");
         return;
       }
 
@@ -151,7 +151,7 @@ const Preview = () => {
       });
 
     } catch (e) {
-      console.error(e);
+      Console.error(e);
       setErrorMessage("Error submitting application");
     } finally {
       setLoading(false);
@@ -159,7 +159,7 @@ const Preview = () => {
   };
 
   // const { user } = useAuthContext()
-  CrashLog.log("Raw attachments", rawAttachments);
+  Console.log("Raw attachments", rawAttachments);
 
   return (
     <AppLayout withWebPadding={true}>

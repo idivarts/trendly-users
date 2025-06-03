@@ -1,6 +1,6 @@
 import { Text, View } from "@/components/theme/Themed";
-import Colors from "@/constants/Colors";
 import { PromotionType } from "@/shared-libs/firestore/trendly-pro/constants/promotion-type";
+import Colors from "@/shared-uis/constants/Colors";
 import { truncateText } from "@/utils/profile";
 import {
   faFacebook,
