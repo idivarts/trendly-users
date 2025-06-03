@@ -1,10 +1,14 @@
 import { IS_BETA_ENABLED } from "@/constants/App";
+import { useAuthContext } from "@/contexts";
+import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { Console } from "@/shared-libs/utils/console";
+import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { View } from "@/shared-uis/components/theme/Themed";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { setStringAsync } from "expo-clipboard";
 import { Href, useRouter } from "expo-router";
+import { doc, getDoc } from "firebase/firestore";
 import React, { useState } from "react";
 import { Modal, Pressable, StyleSheet } from "react-native";
 import { List } from "react-native-paper";
@@ -44,6 +48,8 @@ const BottomSheetActions = ({
     snapPointsRange[0], snapPointsRange[1]
   ], []);
 
+  const { user, updateUser } = useAuthContext()
+
   const handleClose = () => {
     if (sheetRef.current) {
       sheetRef.current.close();
@@ -54,7 +60,16 @@ const BottomSheetActions = ({
   const reportCollaboration = async () => {
     setLoading(true);
     try {
-      // Logic to report the collaboration
+      if (!user || !cardId)
+        throw new Error("User or collaboration is not defined");
+      await updateUser(user.id, {
+        moderations: {
+          reportedCollaborations: [
+            ...(user?.moderations?.reportedCollaborations || []),
+            cardId,
+          ],
+        },
+      })
       Toaster.success("Collaboration reported successfully");
     } catch (e) {
       Console.error(e, "Error reporting collaboration");
@@ -69,7 +84,21 @@ const BottomSheetActions = ({
   const blockBrands = async () => {
     setLoading(true);
     try {
-      // Logic to block the brand
+      if (!user || !cardId)
+        throw new Error("User or collaboration is not defined");
+      const collaboration = await getDoc(doc(FirestoreDB, "collaborations", cardId));
+      if (!collaboration.exists())
+        throw new Error("Collaboration does not exist");
+
+      const cData = collaboration.data() as ICollaboration;
+      await updateUser(user.id, {
+        moderations: {
+          blockedBrands: [
+            ...(user?.moderations?.blockedBrands || []),
+            cData.brandId,
+          ],
+        },
+      })
       Toaster.success("Brand blocked successfully");
     } catch (e) {
       Console.error(e, "Error reporting collaboration");
