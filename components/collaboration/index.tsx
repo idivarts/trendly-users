@@ -1,6 +1,7 @@
 import CollaborationFilter from "@/components/FilterModal";
 import SearchComponent from "@/components/SearchComponent";
 import { MAX_WIDTH_WEB } from "@/constants/Container";
+import { useAuthContext } from "@/contexts";
 import { useBreakpoints } from "@/hooks";
 import AppLayout from "@/layouts/app-layout";
 import { useScrollContext } from "@/shared-libs/contexts/scroll-context";
@@ -47,6 +48,7 @@ const Collaboration = () => {
   const getUniqueValues = (array: any[], key: string) => {
     return ["All", ...new Set(array.map((item) => item[key]))];
   };
+  const { user } = useAuthContext()
   const [filterVisible, setFilterVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -68,7 +70,14 @@ const Collaboration = () => {
   const { xl } = useBreakpoints();
 
   const collabRef = collection(FirestoreDB, "collaborations");
-  const collabQuery = query(collabRef, where("status", "==", "active"), orderBy("timeStamp", "desc"));
+
+  const whereArray = []
+  if (user?.moderations?.blockedBrands)
+    whereArray.push(where("brandId", "not-in", user.moderations.blockedBrands))
+  const collabQuery = query(collabRef,
+    where("status", "==", "active"),
+    ...whereArray,
+    orderBy("timeStamp", "desc"));
   const { onScrollEvent, data: collabs, loading } = useInfiniteScroll<ICollaborationAddCardProps>(collabQuery)
 
   const [brandMap, setBrandMap] = useState<{
@@ -126,6 +135,9 @@ const Collaboration = () => {
   };
 
   const filteredList = collabs.filter((collab) => {
+    if ((user?.moderations?.reportedCollaborations || []).includes(collab.documentId))
+      return false; // Skip collaborations that have been reported by the user
+
     return collab.name.toLowerCase().includes(searchQuery.toLowerCase())
       || collab.description?.toLowerCase().includes(searchQuery.toLowerCase())
     // Create a proper filter keys

@@ -93,6 +93,7 @@ const BottomSheetActions = ({
       const cData = collaboration.data() as ICollaboration;
       await updateUser(user.id, {
         moderations: {
+          ...(user?.moderations || {}),
           blockedBrands: [
             ...(user?.moderations?.blockedBrands || []),
             cData.brandId,
