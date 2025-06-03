@@ -287,7 +287,7 @@ const BottomSheetActions = ({
           title={confirmationModal === "report" ? "Report Collaboration" : "Block Brand"}
           description={
             confirmationModal === "report" ?
-              "Are you sure you want to report this collaboration? This will notify the brand and may affect your future collaborations."
+              "Are you sure you want to report this collaboration? Your report will be reviewed by our team. You wont be able to see this collaboration again."
               : "Are you sure you want to block this brand? You will not receive any further collaborations from them."
           }
           loading={loading}
