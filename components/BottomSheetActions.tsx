@@ -224,8 +224,9 @@ const BottomSheetActions = ({
         cancelAction={() => setConfirmationModal(null)}
         confirmAction={() => { confirmationModal === "report" ? reportCollaboration() : blockBrands() }}
         confirmText={
-          confirmationModal === "report" ? "Report Collaboration" : "Block Brand"
+          confirmationModal === "report" ? "Report" : "Block"
         }
+        title={confirmationModal === "report" ? "Report Collaboration" : "Block Brand"}
         description={
           confirmationModal === "report" ?
             "Are you sure you want to report this collaboration? This will notify the brand and may affect your future collaborations."

@@ -12,9 +12,9 @@ const stylesFn = (theme: Theme) => StyleSheet.create({
   modalView: {
     margin: 20,
     backgroundColor: Colors(theme).background,
-    borderRadius: 4,
+    borderRadius: 16,
     padding: 25,
-    alignItems: "center",
+    // alignItems: "center",
     shadowColor: Colors(theme).backdrop,
     shadowOffset: {
       width: 0,
@@ -24,12 +24,19 @@ const stylesFn = (theme: Theme) => StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
+  modalTitle: {
+    marginBottom: 20,
+    fontSize: 18,
+    fontWeight: "bold",
+    textAlign: "left",
+  },
   modalText: {
     marginBottom: 20,
-    textAlign: "center",
+    textAlign: "left",
   },
   buttonContainer: {
     flexDirection: "row",
+    alignSelf: "flex-end",
     gap: 10,
   },
   button: {

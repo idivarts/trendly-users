@@ -10,6 +10,7 @@ interface ConfirmationModalProps {
   cancelText?: string;
   confirmAction: () => void;
   confirmText?: string;
+  title?: string,
   description?: string;
   setVisible: React.Dispatch<React.SetStateAction<boolean>>;
   visible: boolean;
@@ -21,6 +22,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   cancelText = "Cancel",
   confirmAction,
   confirmText = "Confirm",
+  title,
   description = "Are you sure?",
   setVisible,
   visible,
@@ -47,6 +49,8 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
     >
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
+          {!!title &&
+            <Text style={styles.modalTitle}>{title}</Text>}
           <Text style={styles.modalText}>{description}</Text>
           <View style={styles.buttonContainer}>
             <Button
