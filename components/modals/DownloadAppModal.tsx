@@ -9,17 +9,17 @@ import { useSharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useBreakpoints } from "@/hooks";
-import Colors from "@/shared-uis/constants/Colors";
+import Colors, { ColorsStatic } from "@/shared-uis/constants/Colors";
 import { handleDeepLink } from "@/utils/deeplink";
-import { faCircleDown, faClose } from "@fortawesome/free-solid-svg-icons";
+import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { Pressable, StyleSheet } from "react-native";
+import { Image, Pressable, StyleSheet } from "react-native";
 import { Text, View } from "../theme/Themed";
 import Button from "../ui/button";
 
 interface DownloadAppModalProps {
   bottomSheetModalRef: React.RefObject<BottomSheetModal>;
-  collaborationId: string;
+  collaborationId?: string;
 }
 
 const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
@@ -47,6 +47,9 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
     return (
       <BottomSheetBackdrop
         {...props}
+        // style={{ backgroundColor: ColorsStatic.transparent }}
+        onPress={() => { handleClose() }}
+        onMagicTap={() => { handleClose() }}
         disappearsOnIndex={-1}
         appearsOnIndex={0}
       />
@@ -62,7 +65,7 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
       backdropComponent={renderBackdrop}
       containerOffset={containerOffset}
       enablePanDownToClose={true}
-      index={1}
+      // index={1}
       ref={bottomSheetModalRef}
       snapPoints={snapPoints}
       topInset={insets.top}
@@ -76,16 +79,16 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
           <View
             style={styles.header}
           >
-            <FontAwesomeIcon
-              color={Colors(theme).primary}
-              icon={faCircleDown}
-              size={24}
-            />
-            <Text
-              style={styles.headerText}
-            >
-              Download the app now to get the best experience with Trendly
-            </Text>
+            <Image source={require('@/assets/images/icon.png')} style={{ width: 80, height: 80, borderColor: ColorsStatic.primary, borderWidth: 2, borderRadius: 20 }} />
+            <View style={{ flex: 1, alignItems: "flex-start", marginLeft: 16, gap: 8 }}>
+              <Text style={styles.headerTitle}>
+                Available on AppStore
+              </Text>
+              <Text style={styles.headerText}>
+                Donwload the app now for best user experience
+              </Text>
+            </View>
+
             <Pressable
               onPress={handleClose}
               style={{
@@ -100,20 +103,26 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
             </Pressable>
           </View>
           <Button
+            style={{
+              marginTop: 12
+            }}
             theme={{
               colors: {
                 primary: Colors(theme).primary,
               },
             }}
             onPress={() => {
-              handleDeepLink(`collaboration/${collaborationId}`, lg);
+              if (collaborationId)
+                handleDeepLink(`collaboration/${collaborationId}`, lg);
+              else
+                handleDeepLink(undefined, lg);
             }}
           >
-            Download App
+            Download App Now
           </Button>
         </View>
       </BottomSheetScrollView>
-    </BottomSheetModal>
+    </BottomSheetModal >
   );
 };
 
@@ -135,9 +144,15 @@ const stylesFn = (theme: Theme) => StyleSheet.create({
     backgroundColor: Colors(theme).transparent,
     flexDirection: "row",
   },
+  headerTitle: {
+    fontSize: 18,
+    color: Colors(theme).text,
+    fontWeight: "600",
+    textAlign: "left",
+  },
   headerText: {
-    flex: 1,
     fontSize: 16,
-    textAlign: "center",
+    color: Colors(theme).text,
+    textAlign: "left",
   },
 });

@@ -3,10 +3,14 @@ import { Console } from "@/shared-libs/utils/console";
 import { Linking, Platform } from "react-native";
 
 export const handleDeepLink = async (
-  redirectUrl: string,
-  screenSize: boolean
+  redirectUrl?: string,
+  screenSize?: boolean
 ) => {
   if (screenSize) return;
+
+  if (Platform.OS === "web" && !screenSize) {
+    await Linking.openURL(APP_STORE_URL);
+  }
 
   const url = `${APP_SCHEME}://${redirectUrl}`;
 
