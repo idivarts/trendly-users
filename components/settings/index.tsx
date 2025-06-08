@@ -8,10 +8,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import { ScrollView } from "react-native";
+import ConfirmationModal from "../../shared-uis/components/ConfirmationModal";
 import { View } from "../theme/Themed";
 import Button from "../ui/button";
 import ContentWrapper from "../ui/content-wrapper";
-import ConfirmationModal from "../ui/modal/ConfirmationModal";
 import SelectGroup from "../ui/select/select-group";
 import { Selector } from "../ui/select/selector";
 

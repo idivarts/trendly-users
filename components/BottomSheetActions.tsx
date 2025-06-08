@@ -12,8 +12,8 @@ import { doc, getDoc } from "firebase/firestore";
 import React, { useState } from "react";
 import { Modal, Pressable, StyleSheet } from "react-native";
 import { List } from "react-native-paper";
+import ConfirmationModal from "../shared-uis/components/ConfirmationModal";
 import TermsAndCondition from "./bottomSheets/TermsAndCondition";
-import ConfirmationModal from "./ui/modal/ConfirmationModal";
 interface BottomSheetActionsProps {
   cardType:
   | "collaboration"

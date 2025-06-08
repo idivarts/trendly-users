@@ -1,7 +1,6 @@
 import CreateCollaborationMap from "@/components/create-collaboration/CreateCollaborationMap";
 import AuthModal from "@/components/modals/AuthModal";
 import Button from "@/components/ui/button";
-import ConfirmationModal from "@/components/ui/modal/ConfirmationModal";
 import {
   useAuthContext,
   useContractContext,
@@ -16,6 +15,7 @@ import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import Carousel from "@/shared-uis/components/carousel/carousel";
 import ScrollMedia from "@/shared-uis/components/carousel/scroll-media";
+import ConfirmationModal from "@/shared-uis/components/ConfirmationModal";
 import ImageComponent from "@/shared-uis/components/image-component";
 import RatingSection from "@/shared-uis/components/rating-section";
 import ReadMore from "@/shared-uis/components/ReadMore";

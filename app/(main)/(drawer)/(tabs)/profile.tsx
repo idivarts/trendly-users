@@ -3,11 +3,11 @@ import { Platform, ScrollView, StyleSheet, Text } from "react-native";
 import ProfileCard from "@/components/profile/ProfileCard";
 import ProfileItemCard from "@/components/profile/ProfileItemCard";
 import { View } from "@/components/theme/Themed";
-import ConfirmationModal from "@/components/ui/modal/ConfirmationModal";
 import { COMPLETION_PERCENTAGE } from "@/constants/CompletionPercentage";
 import { PROFILE_ITEMS } from "@/constants/Profile";
 import { useAuthContext } from "@/contexts";
 import AppLayout from "@/layouts/app-layout";
+import ConfirmationModal from "@/shared-uis/components/ConfirmationModal";
 import Colors from "@/shared-uis/constants/Colors";
 import {
   faRightFromBracket,
