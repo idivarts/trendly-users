@@ -1,6 +1,8 @@
 import { useCloudMessagingContext } from "@/shared-libs/contexts/cloud-messaging.provider";
 import { Console } from "@/shared-libs/utils/console";
 import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
+import Toaster from "@/shared-uis/components/toaster/Toaster";
+import { router } from "expo-router";
 import {
   createContext,
   useContext,
@@ -65,42 +67,34 @@ export const ChatContextProvider: React.FC<PropsWithChildren> = ({
     const uCount = await streamClient.getUnreadCount()
     setUnreadCount(uCount.total_unread_count);
 
-    streamClient.on("notification.message_new", async () => {
+    const updateReadCount = async () => {
       const unreadCounts = await streamClient.getUnreadCount();
       setUnreadCount(unreadCounts.total_unread_count);
-    });
+    }
 
-    streamClient.on("connection.recovered", async () => {
-      const unreadCounts = await streamClient.getUnreadCount();
-      setUnreadCount(unreadCounts.total_unread_count);
-    });
-    setInterval(async () => {
-      const unreadCounts = await streamClient.getUnreadCount();
-      setUnreadCount(unreadCounts.total_unread_count);
-    }, 10000);
-
-    streamClient.on("message.new", async (event) => {
+    streamClient.on("notification.message_new", async (event) => {
       const channel = event.channel;
       const message = event.message;
 
-      Console.log("New message received:", message);
+      Toaster.notification(channel?.name || "New message received", message?.text || "You have a new message", () => {
+        if (channel) {
+          router.push(`/channel/${channel.cid}`);
+        }
+      });
+      updateReadCount()
+    });
 
-      // Optional: You can show a local in-app notification here
-      // showInAppNotification(message.text || "New Message");
-
-      try {
-        const watchedChannel = streamClient.channel("messaging", channel?.id);
-        await watchedChannel.watch();
-        const unreadCount = watchedChannel.countUnread();
-        Console.log(`Unread messages in channel ${channel?.id}:`, unreadCount);
-
-        // Optionally trigger UI update or badge update using a state/store
-      } catch (err) {
-        Console.log("Error watching channel for unread count", err);
-      }
-
-      const uCount = await streamClient.getUnreadCount()
-      setUnreadCount(uCount.total_unread_count);
+    streamClient.on("notification.mark_read", async () => {
+      updateReadCount();
+    });
+    streamClient.on("notification.mark_all_read", async () => {
+      updateReadCount();
+    });
+    streamClient.on("message.new", async (event) => {
+      updateReadCount();
+    });
+    streamClient.on("connection.recovered", async () => {
+      updateReadCount();
     });
   }
 
