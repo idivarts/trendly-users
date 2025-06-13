@@ -129,19 +129,16 @@ const GalleryScreen = () => {
     }
     return undefined
   };
-  const handleScroll = ({ nativeEvent }: any) => {
+  // Handle loading more assets for pagination
+  const handleLoadMore = () => {
     try {
-      const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
-      const paddingToBottom = 20; // Threshold before reaching the end
-      if (layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom && assets.length > 0) {
-        mutex.useOnce(() => {
-          fetchAssets(assetAfter);
-        }, assetAfter); // Allowed
-      }
+      Console.log("---------------> Loading More Assets", assetAfter);
+      // mutex.useOnce(() => {
+      fetchAssets(assetAfter);
+      // }, assetAfter);
     } catch (error: any) {
       Console.error(error);
     }
-
   };
 
   const handleSelectItem = (item: MediaLibrary.AssetInfo) => {
@@ -491,7 +488,6 @@ const GalleryScreen = () => {
         contentContainerStyle={{
           flexGrow: 1,
         }}
-        onScroll={handleScroll}
         removeClippedSubviews={true}
       >
         {attachmentFiltered && attachmentFiltered.length > 0 && (
@@ -533,10 +529,12 @@ const GalleryScreen = () => {
               Media from your gallery
             </Text>
           }
-          // initialNumToRender={9} // Only render first 5 images
-          // maxToRenderPerBatch={12} // Render max 5 images per batch
-          // windowSize={3} // Keep only 3 screen’s worth of content in memory
-          removeClippedSubviews={true} // Unmount images not in view
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.05}
+          initialNumToRender={15}
+          maxToRenderPerBatch={10}
+          windowSize={5}
+          removeClippedSubviews={true}
         />
       </ScrollView>
 
