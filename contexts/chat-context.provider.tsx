@@ -74,6 +74,10 @@ export const ChatContextProvider: React.FC<PropsWithChildren> = ({
       const unreadCounts = await streamClient.getUnreadCount();
       setUnreadCount(unreadCounts.total_unread_count);
     });
+    setInterval(async () => {
+      const unreadCounts = await streamClient.getUnreadCount();
+      setUnreadCount(unreadCounts.total_unread_count);
+    }, 10000);
 
     streamClient.on("message.new", async (event) => {
       const channel = event.channel;
