@@ -21,9 +21,6 @@ import {
   writeBatch
 } from "firebase/firestore";
 import { useAuthContext } from "./auth-context.provider";
-;
-;
-;
 
 interface NotificationContextProps {
   markAllNotificationsAsRead: (userId: string) => Promise<void>;
@@ -38,13 +35,15 @@ interface NotificationContextProps {
 
 const NotificationContext = createContext<NotificationContextProps>(null!);
 
+export const NotficationTypesToHandle = ["revise-quotation", "application", "contract-started", "contract-ended", "invitation"]
+
 export const useNotificationContext = () => useContext(NotificationContext);
 
 export const NotificationContextProvider: React.FC<PropsWithChildren> = ({
   children,
 }) => {
   const [unreadNotifications, setUnreadNotifications] = useState<number>(0);
-  const [userNotifications, setUserNotifications] = useState<Notification[]>([]);
+  const [userNotifications, setUserNotifications] = useState<(Notification)[]>([]);
 
   const {
     user,

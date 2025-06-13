@@ -1,13 +1,12 @@
-import React from "react";
-import { View } from "react-native";
-import { Text, Card, Avatar } from "react-native-paper";
-import { stylesFn } from "@/styles/NotificationCard.styles";
-import { useTheme } from "@react-navigation/native";
+import Colors from "@/shared-uis/constants/Colors";
+import { Theme, useTheme } from "@react-navigation/native";
 import { Href, useRouter } from "expo-router";
-import Button from "./ui/button";
+import React from "react";
+import { Pressable, StyleSheet, View } from "react-native";
+import { Card, Text } from "react-native-paper";
 
 interface NotificationCardProps {
-  avatar: string;
+  avatar?: string;
   data: {
     collaborationId?: string;
     groupId?: string;
@@ -42,9 +41,12 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({
   }
 
   return (
-    <Card style={styles.card}>
-      <View style={styles.row}>
-        <Avatar.Image size={50} source={{ uri: avatar }} />
+    <Card style={[styles.card, isRead && styles.cardRead]}>
+      <Pressable style={styles.row} onPress={action ? () => {
+        onMarkAsRead();
+        router.push(action as Href);
+      } : undefined}>
+        {/* <Avatar.Image size={50} source={{ uri: avatar }} /> */}
         <View style={styles.content}>
           <Text style={styles.title}>
             {title}
@@ -75,28 +77,56 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({
             }
           </Text>
         </View>
-      </View>
-      <View style={styles.actions}>
-        {action && (
-          <Button
-            mode="contained"
-            onPress={action ? () => {
-              onMarkAsRead();
-              router.push(action as Href);
-            } : undefined}
-          >
-            Open
-          </Button>
-        )}
-        {!isRead && (
-          <Button
-            mode="outlined"
-            onPress={onMarkAsRead}
-          >
-            Mark as Read
-          </Button>
-        )}
-      </View>
+      </Pressable>
     </Card>
   );
 };
+
+export const stylesFn = (theme: Theme) => StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 16,
+    backgroundColor: Colors(theme).background,
+  },
+  contentContainer: {
+    gap: 16,
+    paddingBottom: 24,
+  },
+  card: {
+    padding: 16,
+    borderRadius: 10,
+    backgroundColor: Colors(theme).card,
+    shadowColor: Colors(theme).transparent,
+  },
+  cardRead: {
+    backgroundColor: Colors(theme).background,
+    borderWidth: 1,
+    borderColor: Colors(theme).border,
+    opacity: 0.7,
+  },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  content: {
+    marginLeft: 16,
+    flex: 1,
+    color: Colors(theme).text,
+  },
+  title: {
+    fontWeight: "bold",
+    color: Colors(theme).text,
+  },
+  time: {
+    color: Colors(theme).text,
+    marginTop: 5,
+  },
+  actions: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    flexWrap: "wrap",
+    rowGap: 10,
+    columnGap: 10,
+    marginTop: 10,
+  },
+});
