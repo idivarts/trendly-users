@@ -1,3 +1,4 @@
+import { useChatContext } from "@/contexts";
 import { NotficationTypesToHandle } from "@/contexts/notification-context.provider";
 import Colors from "@/shared-uis/constants/Colors";
 import { Theme, useTheme } from "@react-navigation/native";
@@ -34,15 +35,18 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({
   const styles = stylesFn(theme);
   const router = useRouter();
 
-  const action = () => {
+  const { connectUser } = useChatContext();
+
+  const action = async () => {
 
     if (NotficationTypesToHandle.includes(type)) {
       let redirectUrl: Href;
 
       if (type === "revise-quotation") {
         redirectUrl = `/contract-details/${data.groupId}`;
-      } else if (type === "application") {
-        redirectUrl = `/collaboration-details/${data.groupId}`; // TODO: Save the groupId or cid in the database
+      } else if (type === "application-accepted") {
+        await connectUser()
+        redirectUrl = `/channel/messaging:${data.groupId}`; // TODO: Save the groupId or cid in the database
       } else if (type === "contract-started") {
         redirectUrl = `/contract-details/${data.groupId}`;
       } else if (type === "contract-ended") {
