@@ -3,9 +3,9 @@ import { NotficationTypesToHandle } from "@/contexts/notification-context.provid
 import Colors from "@/shared-uis/constants/Colors";
 import { Theme, useTheme } from "@react-navigation/native";
 import { Href, useRouter } from "expo-router";
-import React from "react";
+import React, { useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
-import { Card, Text } from "react-native-paper";
+import { ActivityIndicator, Card, Text } from "react-native-paper";
 
 interface NotificationCardProps {
   avatar?: string;
@@ -34,28 +34,33 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({
   const theme = useTheme();
   const styles = stylesFn(theme);
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
   const { connectUser } = useChatContext();
 
   const action = async () => {
+    try {
+      setLoading(true);
+      if (NotficationTypesToHandle.includes(type)) {
+        let redirectUrl: Href;
 
-    if (NotficationTypesToHandle.includes(type)) {
-      let redirectUrl: Href;
-
-      if (type === "revise-quotation") {
-        redirectUrl = `/contract-details/${data.groupId}`;
-      } else if (type === "application-accepted") {
-        await connectUser()
-        redirectUrl = `/channel/messaging:${data.groupId}`; // TODO: Save the groupId or cid in the database
-      } else if (type === "contract-started") {
-        redirectUrl = `/contract-details/${data.groupId}`;
-      } else if (type === "contract-ended") {
-        redirectUrl = `/contract-details/${data.groupId}`;
-      } else if (type === "invitation") {
-        redirectUrl = `/collaboration-details/${data.collaborationId}`;
-      } else
-        return;
-      router.push(redirectUrl);
+        if (type === "revise-quotation") {
+          redirectUrl = `/contract-details/${data.groupId}`;
+        } else if (type === "application-accepted") {
+          await connectUser()
+          redirectUrl = `/channel/messaging:${data.groupId}`; // TODO: Save the groupId or cid in the database
+        } else if (type === "contract-started") {
+          redirectUrl = `/contract-details/${data.groupId}`;
+        } else if (type === "contract-ended") {
+          redirectUrl = `/contract-details/${data.groupId}`;
+        } else if (type === "invitation") {
+          redirectUrl = `/collaboration-details/${data.collaborationId}`;
+        } else
+          return;
+        router.push(redirectUrl);
+      }
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -97,6 +102,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({
             }
           </Text>
         </View>
+        {loading && <ActivityIndicator size="small" color={Colors(theme).primary} style={{ paddingHorizontal: 8 }} />}
       </Pressable>
     </Card>
   );
