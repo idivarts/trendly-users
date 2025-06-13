@@ -5,7 +5,6 @@ import { useAuthContext } from "@/contexts";
 import AppLayout from "@/layouts/app-layout";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import Colors from "@/shared-uis/constants/Colors";
-import { Profile } from "@/types/Profile";
 import { User } from "@/types/User";
 import { calculateProfileCompletion } from "@/utils/profile";
 import { useTheme } from "@react-navigation/native";
@@ -45,12 +44,14 @@ const EditTextArea: React.FC = () => {
       };
 
       const percentage = calculateProfileCompletion({
-        name: user.name,
-        emailVerified: user.emailVerified,
-        phoneVerified: user.phoneVerified,
-        category: user.profile?.category || [],
-        content: content as Profile["content"],
-        attachments: user.profile?.attachments as Profile["attachments"],
+        ...user,
+        profile: {
+          ...(user?.profile || {}),
+          content: {
+            ...(user?.profile?.content || {}),
+            [key as string]: value,
+          },
+        }
       });
 
       const updatedContent: Partial<User> = {

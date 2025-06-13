@@ -139,12 +139,15 @@ const useEditProfile = ({
     setProcessPercentage(20);
 
     const completionPercentage = calculateProfileCompletion({
+      ...user,
       name,
-      emailVerified: user.emailVerified,
-      phoneVerified: user.phoneVerified,
-      category: niches.map((niche) => niche.value),
-      content,
-      attachments: user.profile?.attachments || [],
+      email,
+      phoneNumber,
+      profile: {
+        ...user.profile,
+        category: niches.map((niche) => niche.value),
+        timeCommitment: timeCommitment.value,
+      },
     });
 
     setProcessMessage("Saving profile...");

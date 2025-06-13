@@ -1,34 +1,34 @@
-import { IPreferences } from "@/shared-libs/firestore/trendly-pro/models/users";
-import { Profile } from "@/types/Profile";
+import { IPreferences, IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { SurveyAnswer } from "@/types/Survey";
 
-export const calculateProfileCompletion = (profile: Profile) => {
-  const totalFields = 10;
+export const calculateProfileCompletion = (user: Partial<IUsers>) => {
+  const totalFields = 16;
   let completedFields = 0;
 
-  if (profile?.name) {
+  if (user?.name) {
+    completedFields++;
+  }
+  if (user?.profileImage) {
+    completedFields++;
+  }
+  if (user?.phoneNumber) {
+    completedFields++;
+  }
+  if ((user?.profile?.category?.length || 0) > 0) {
     completedFields++;
   }
 
-  if (profile?.emailVerified) {
-    completedFields++;
-  }
-
-  if (profile?.phoneVerified) {
-    completedFields++;
-  }
-
-  if (profile?.category?.length > 0) {
-    completedFields++;
-  }
-
-  Object.values(profile?.content).forEach((value) => {
+  Object.values(user?.profile?.content || {}).forEach((value) => {
     if (value) {
       completedFields++;
     }
   });
 
-  if (profile?.attachments?.length > 0) {
+  if ((user?.profile?.attachments?.length || 0) > 0) {
+    completedFields += (user?.profile?.attachments?.length || 0);
+  }
+
+  if (user?.preferences) {
     completedFields++;
   }
 
