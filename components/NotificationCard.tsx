@@ -1,3 +1,4 @@
+import { NotficationTypesToHandle } from "@/contexts/notification-context.provider";
 import Colors from "@/shared-uis/constants/Colors";
 import { Theme, useTheme } from "@react-navigation/native";
 import { Href, useRouter } from "expo-router";
@@ -12,6 +13,7 @@ interface NotificationCardProps {
     groupId?: string;
     userId?: string;
   };
+  type: string,
   description: string;
   isRead: boolean;
   onMarkAsRead: () => void;
@@ -20,8 +22,8 @@ interface NotificationCardProps {
 }
 
 export const NotificationCard: React.FC<NotificationCardProps> = ({
-  avatar,
   data,
+  type,
   description,
   isRead,
   onMarkAsRead,
@@ -32,20 +34,34 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({
   const styles = stylesFn(theme);
   const router = useRouter();
 
-  let action: string | undefined;
+  const action = () => {
 
-  if (data.collaborationId) {
-    action = `/collaboration-details/${data.collaborationId}`;
-  } else if (data.groupId) {
-    action = `/channel/${data.groupId}`; // TODO: Save the groupId or cid in the database
+    if (NotficationTypesToHandle.includes(type)) {
+      let redirectUrl: Href;
+
+      if (type === "revise-quotation") {
+        redirectUrl = `/contract-details/${data.groupId}`;
+      } else if (type === "application") {
+        redirectUrl = `/collaboration-details/${data.groupId}`; // TODO: Save the groupId or cid in the database
+      } else if (type === "contract-started") {
+        redirectUrl = `/contract-details/${data.groupId}`;
+      } else if (type === "contract-ended") {
+        redirectUrl = `/contract-details/${data.groupId}`;
+      } else if (type === "invitation") {
+        redirectUrl = `/collaboration-details/${data.collaborationId}`;
+      } else
+        return;
+      router.push(redirectUrl);
+    }
   }
+
 
   return (
     <Card style={[styles.card, isRead && styles.cardRead]}>
-      <Pressable style={styles.row} onPress={action ? () => {
+      <Pressable style={styles.row} onPress={() => {
         onMarkAsRead();
-        router.push(action as Href);
-      } : undefined}>
+        action();
+      }}>
         {/* <Avatar.Image size={50} source={{ uri: avatar }} /> */}
         <View style={styles.content}>
           <Text style={styles.title}>
@@ -100,9 +116,9 @@ export const stylesFn = (theme: Theme) => StyleSheet.create({
   },
   cardRead: {
     backgroundColor: Colors(theme).background,
-    borderWidth: 1,
+    borderWidth: 0,
     borderColor: Colors(theme).border,
-    opacity: 0.7,
+    opacity: 0.6,
   },
   row: {
     flexDirection: "row",

@@ -48,6 +48,7 @@ const Notifications: React.FC<NotificationsProps> = ({
                   groupId: item.data?.groupId,
                   userId: item.data?.userId,
                 }}
+                type={item.type}
                 description={item.description}
                 isRead={item.isRead}
                 onMarkAsRead={() => onMarkAsRead(item.id)}
