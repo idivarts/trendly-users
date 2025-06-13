@@ -1,9 +1,8 @@
 import { View } from "@/components/theme/Themed";
 import ScreenHeader from "@/components/ui/screen-header";
-import * as Notifications from "expo-notifications";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Platform, Pressable } from "react-native";
+import { ActivityIndicator, Pressable } from "react-native";
 import { Channel as ChannelType } from "stream-chat";
 import { Channel, MessageInput, MessageList, useChatContext } from "stream-chat-expo";
 
@@ -16,7 +15,6 @@ import { useTheme } from "@react-navigation/native";
 import { Avatar } from "react-native-paper";
 import ChatMessageTopbar from "./chat-message-topbar";
 
-import { Console } from "@/shared-libs/utils/console";
 import {
   AttachButton,
   AttachmentPickerSelectionBar,
@@ -73,20 +71,6 @@ const ChannelNative = () => {
       fetchBrand(contract?.brandId as string);
     }
   }, [contract]);
-
-  useEffect(() => {
-    const resetBadgeCount = async () => {
-      if (Platform.OS === "ios" || Platform.OS === "android") {
-        try {
-          await Notifications.setBadgeCountAsync(0);
-        } catch (error) {
-          Console.error(error);
-        }
-      }
-    };
-
-    resetBadgeCount();
-  }, []);
 
   if (!channel) {
     return (

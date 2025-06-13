@@ -2,6 +2,7 @@ import { useCloudMessagingContext } from "@/shared-libs/contexts/cloud-messaging
 import { Console } from "@/shared-libs/utils/console";
 import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
+import * as Notification from "expo-notifications";
 import { router } from "expo-router";
 import {
   createContext,
@@ -10,6 +11,7 @@ import {
   useState,
   type PropsWithChildren,
 } from "react";
+import { Platform } from "react-native";
 import { DefaultGenerics, StreamChat } from "stream-chat";
 import { useAuthContext } from "./auth-context.provider";
 import StreamWrapper from "./stream-wrapper";
@@ -41,7 +43,13 @@ export const ChatContextProvider: React.FC<PropsWithChildren> = ({
   const [hasError, setHasError] = useState(false)
 
   const [client, setClient] = useState<StreamChat<DefaultGenerics> | null>(null);
-  const [unreadCount, setUnreadCount] = useState(0)
+  const [unreadCount, setUnreadCountMain] = useState(0)
+
+  const setUnreadCount = (x: number) => {
+    setUnreadCountMain(x);
+    if (Platform.OS !== "web")
+      Notification.setBadgeCountAsync(x);
+  }
 
   const { getToken, registerPushTokenWithStream } = useCloudMessagingContext()
 
@@ -73,14 +81,17 @@ export const ChatContextProvider: React.FC<PropsWithChildren> = ({
     }
 
     streamClient.on("notification.message_new", async (event) => {
-      const channel = event.channel;
-      const message = event.message;
+      if (Platform.OS === "web") {
+        const channel = event.channel;
+        const message = event.message;
 
-      Toaster.notification(channel?.name || "New message received", message?.text || "You have a new message", () => {
-        if (channel) {
-          router.push(`/channel/${channel.cid}`);
-        }
-      });
+        console.log("Event received:", event);
+        Toaster.notification(channel?.name || "New message received", message?.text || "You have a new message", () => {
+          if (channel) {
+            router.push(`/channel/${channel.cid}`);
+          }
+        });
+      }
       updateReadCount()
     });
 
