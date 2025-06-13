@@ -95,6 +95,11 @@ const AddInstagramManual = () => {
             Toaster.error('Please fill all the fields');
             return;
         }
+        const handleRegex = /^@[a-zA-Z0-9._]{1,30}$/;
+        if (!handleRegex.test(handle)) {
+            Toaster.error('Invalid Instagram handle', 'Ensure it starts with @ and contains only letters, numbers, periods, or underscores.');
+            return;
+        }
 
         setApiLoading(true);
         await HttpWrapper.fetch('/api/v1/socials/instagram/manual', {
