@@ -17,17 +17,17 @@ export { streamClient };
 interface ChatContextProps {
   connectUser: () => Promise<string>;
   fetchMembers: (channel: string) => Promise<any>;
-  // sendSystemMessage: (channel: string, message: string) => void;
   fetchChannelCid: (channelId: string) => Promise<string>;
   hasError?: boolean;
+  unreadCount: number;
 }
 
 const ChatContext = createContext<ChatContextProps>({
   connectUser: async () => "",
   fetchMembers: async () => { },
-  // sendSystemMessage: async () => { },
   fetchChannelCid: async () => "",
   hasError: false,
+  unreadCount: 0
 });
 
 export const useChatContext = () => useContext(ChatContext);
@@ -39,6 +39,7 @@ export const ChatContextProvider: React.FC<PropsWithChildren> = ({
   const [hasError, setHasError] = useState(false)
 
   const [client, setClient] = useState<StreamChat<DefaultGenerics> | null>(null);
+  const [unreadCount, setUnreadCount] = useState(0)
 
   const { getToken, registerPushTokenWithStream } = useCloudMessagingContext()
 
@@ -54,8 +55,40 @@ export const ChatContextProvider: React.FC<PropsWithChildren> = ({
       setToken(streamToken);
       setHasError(false);
       registerPushTokenWithStream(await getToken())
+      listenToNewMessages();
     });
   };
+
+  const listenToNewMessages = async () => {
+    if (!streamClient) return;
+
+    const uCount = await streamClient.getUnreadCount()
+    setUnreadCount(uCount.total_unread_count);
+
+    streamClient.on("message.new", async (event) => {
+      const channel = event.channel;
+      const message = event.message;
+
+      Console.log("New message received:", message);
+
+      // Optional: You can show a local in-app notification here
+      // showInAppNotification(message.text || "New Message");
+
+      try {
+        const watchedChannel = streamClient.channel("messaging", channel?.id);
+        await watchedChannel.watch();
+        const unreadCount = watchedChannel.countUnread();
+        Console.log(`Unread messages in channel ${channel?.id}:`, unreadCount);
+
+        // Optionally trigger UI update or badge update using a state/store
+      } catch (err) {
+        Console.log("Error watching channel for unread count", err);
+      }
+
+      const uCount = await streamClient.getUnreadCount()
+      setUnreadCount(uCount.total_unread_count);
+    });
+  }
 
   const connectUser = async () => {
     if (token) {
@@ -109,19 +142,6 @@ export const ChatContextProvider: React.FC<PropsWithChildren> = ({
     return membersList;
   };
 
-  // const sendSystemMessage = async (channel: string, message: string) => {
-  //   const channelToWatch = streamClient.channel("messaging", channel);
-  //   const messageToSend = {
-  //     text: message,
-  //     user: {
-  //       id: "system",
-  //       name: "system",
-  //     },
-  //     type: "system",
-  //   };
-  //   channelToWatch.sendMessage(messageToSend);
-  // };
-
   const fetchChannelCid = async (channelId: string) => {
     const channel = streamClient.channel("messaging", channelId);
     await channel.watch();
@@ -133,9 +153,9 @@ export const ChatContextProvider: React.FC<PropsWithChildren> = ({
       value={{
         connectUser,
         fetchMembers,
-        // sendSystemMessage,
         fetchChannelCid,
         hasError,
+        unreadCount
       }}
     >
       <StreamWrapper>
