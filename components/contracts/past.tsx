@@ -190,7 +190,7 @@ const PastContracts = () => {
                     //@ts-ignore
                     collabId: item.collaborationData.id,
                     collabName: item.collaborationData.name,
-                    timePosted: item.collaborationData.timeStamp,
+                    timePosted: item.contractTimestamp.startedOn,
                   }}
                   onOpenBottomSheet={() => { }}
                 />
