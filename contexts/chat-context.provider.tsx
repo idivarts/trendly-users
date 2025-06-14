@@ -1,6 +1,9 @@
 import { useCloudMessagingContext } from "@/shared-libs/contexts/cloud-messaging.provider";
 import { Console } from "@/shared-libs/utils/console";
 import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
+import Toaster from "@/shared-uis/components/toaster/Toaster";
+import * as Notification from "expo-notifications";
+import { router } from "expo-router";
 import {
   createContext,
   useContext,
@@ -8,6 +11,7 @@ import {
   useState,
   type PropsWithChildren,
 } from "react";
+import { Platform } from "react-native";
 import { DefaultGenerics, StreamChat } from "stream-chat";
 import { useAuthContext } from "./auth-context.provider";
 import StreamWrapper from "./stream-wrapper";
@@ -17,17 +21,19 @@ export { streamClient };
 interface ChatContextProps {
   connectUser: () => Promise<string>;
   fetchMembers: (channel: string) => Promise<any>;
-  // sendSystemMessage: (channel: string, message: string) => void;
   fetchChannelCid: (channelId: string) => Promise<string>;
   hasError?: boolean;
+  unreadCount: number;
+  isChatConnected?: boolean;
 }
 
 const ChatContext = createContext<ChatContextProps>({
   connectUser: async () => "",
   fetchMembers: async () => { },
-  // sendSystemMessage: async () => { },
   fetchChannelCid: async () => "",
   hasError: false,
+  unreadCount: 0,
+  isChatConnected: false
 });
 
 export const useChatContext = () => useContext(ChatContext);
@@ -39,6 +45,13 @@ export const ChatContextProvider: React.FC<PropsWithChildren> = ({
   const [hasError, setHasError] = useState(false)
 
   const [client, setClient] = useState<StreamChat<DefaultGenerics> | null>(null);
+  const [unreadCount, setUnreadCountMain] = useState(0)
+
+  const setUnreadCount = (x: number) => {
+    setUnreadCountMain(x);
+    if (Platform.OS !== "web")
+      Notification.setBadgeCountAsync(x);
+  }
 
   const { getToken, registerPushTokenWithStream } = useCloudMessagingContext()
 
@@ -54,8 +67,49 @@ export const ChatContextProvider: React.FC<PropsWithChildren> = ({
       setToken(streamToken);
       setHasError(false);
       registerPushTokenWithStream(await getToken())
+      listenToNewMessages();
     });
   };
+
+  const listenToNewMessages = async () => {
+    if (!streamClient) return;
+
+    const uCount = await streamClient.getUnreadCount()
+    setUnreadCount(uCount.total_unread_count);
+
+    const updateReadCount = async () => {
+      const unreadCounts = await streamClient.getUnreadCount();
+      setUnreadCount(unreadCounts.total_unread_count);
+    }
+
+    streamClient.on("notification.message_new", async (event) => {
+      if (Platform.OS === "web") {
+        const channel = event.channel;
+        const message = event.message;
+
+        console.log("Event received:", event);
+        Toaster.notification(channel?.name || "New message received", message?.text || "You have a new message", () => {
+          if (channel) {
+            router.push(`/channel/${channel.cid}`);
+          }
+        });
+      }
+      updateReadCount()
+    });
+
+    streamClient.on("notification.mark_read", async () => {
+      updateReadCount();
+    });
+    streamClient.on("notification.mark_all_read", async () => {
+      updateReadCount();
+    });
+    streamClient.on("message.new", async (event) => {
+      updateReadCount();
+    });
+    streamClient.on("connection.recovered", async () => {
+      updateReadCount();
+    });
+  }
 
   const connectUser = async () => {
     if (token) {
@@ -109,19 +163,6 @@ export const ChatContextProvider: React.FC<PropsWithChildren> = ({
     return membersList;
   };
 
-  // const sendSystemMessage = async (channel: string, message: string) => {
-  //   const channelToWatch = streamClient.channel("messaging", channel);
-  //   const messageToSend = {
-  //     text: message,
-  //     user: {
-  //       id: "system",
-  //       name: "system",
-  //     },
-  //     type: "system",
-  //   };
-  //   channelToWatch.sendMessage(messageToSend);
-  // };
-
   const fetchChannelCid = async (channelId: string) => {
     const channel = streamClient.channel("messaging", channelId);
     await channel.watch();
@@ -133,9 +174,10 @@ export const ChatContextProvider: React.FC<PropsWithChildren> = ({
       value={{
         connectUser,
         fetchMembers,
-        // sendSystemMessage,
         fetchChannelCid,
         hasError,
+        unreadCount,
+        isChatConnected: !!token
       }}
     >
       <StreamWrapper>

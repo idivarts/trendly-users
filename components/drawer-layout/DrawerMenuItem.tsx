@@ -4,7 +4,9 @@ import { useTheme } from "@react-navigation/native";
 import { usePathname, useRouter } from "expo-router";
 import { Pressable, StyleSheet } from "react-native";
 
+import { useChatContext } from "@/contexts";
 import Colors from "@/shared-uis/constants/Colors";
+import { Badge } from "react-native-paper";
 import { Text, View } from "../theme/Themed";
 
 export interface IconPropFn {
@@ -15,6 +17,7 @@ type Tab = {
   href: string;
   icon: IconProp | ((props: IconPropFn) => IconProp);
   label: string;
+  showMessageCount?: boolean;
 };
 
 type DrawerMenuItemProps = {
@@ -25,6 +28,7 @@ const DrawerMenuItem: React.FC<DrawerMenuItemProps> = ({ tab }) => {
   const router = useRouter();
   const pathname = usePathname();
   const theme = useTheme();
+  const { unreadCount } = useChatContext();
 
   return (
     //@ts-ignore
@@ -68,6 +72,17 @@ const DrawerMenuItem: React.FC<DrawerMenuItemProps> = ({ tab }) => {
         >
           {tab.label}
         </Text>
+        {tab.showMessageCount && unreadCount > 0 && (
+          <Badge
+            visible={true}
+            size={24}
+            selectionColor={Colors(theme).red}
+            style={{
+              backgroundColor: Colors(theme).red,
+            }}
+          >
+            {unreadCount}
+          </Badge>)}
       </View>
     </Pressable>
   );

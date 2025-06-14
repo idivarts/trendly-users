@@ -1,6 +1,4 @@
-import { DrawerContentScrollView } from "@react-navigation/drawer";
 import { APP_NAME } from "@/constants/App";
-import { Text, View } from "../theme/Themed";
 import {
   faComment,
   faFileLines,
@@ -15,6 +13,8 @@ import {
   faStar as faStarSolid,
   faUser as faUserSolid,
 } from "@fortawesome/free-solid-svg-icons";
+import { DrawerContentScrollView } from "@react-navigation/drawer";
+import { Text, View } from "../theme/Themed";
 import DrawerMenuItem, { IconPropFn } from "./DrawerMenuItem";
 
 interface DrawerMenuContentProps { }
@@ -33,6 +33,7 @@ const DRAWER_MENU_CONTENT_ITEMS = [
       focused,
     }: IconPropFn) => focused ? faCommentSolid : faComment,
     label: "Messages",
+    showMessageCount: true,
   },
   {
     href: "/contracts",

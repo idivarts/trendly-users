@@ -19,6 +19,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  orderBy,
   query,
   where
 } from "firebase/firestore";
@@ -62,7 +63,7 @@ const ActiveContracts = () => {
       }
 
       const contractsCol = collection(FirestoreDB, "contracts");
-      const querySnap = query(contractsCol, where("userId", "==", user.id));
+      const querySnap = query(contractsCol, where("userId", "==", user.id), orderBy("contractTimestamp.startedOn", "desc"));
       const contractsSnapshot = await getDocs(querySnap);
 
       const contracts = await Promise.all(

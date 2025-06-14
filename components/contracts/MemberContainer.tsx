@@ -21,7 +21,7 @@ const MemberContainer: FC<MemberContainerProps> = ({
   setMembersFromBrand,
 }) => {
   const theme = useTheme();
-  const { fetchMembers } = useChatContext();
+  const { fetchMembers, isChatConnected } = useChatContext();
   const { user } = useAuthContext();
   const [members, setMembers] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState<boolean>(false);
@@ -60,8 +60,9 @@ const MemberContainer: FC<MemberContainerProps> = ({
   };
 
   useEffect(() => {
-    fetchMembersFromClient();
-  }, [user?.id]);
+    if (isChatConnected)
+      fetchMembersFromClient();
+  }, [user?.id, isChatConnected]);
 
   return (
     <View

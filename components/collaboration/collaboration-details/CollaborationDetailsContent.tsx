@@ -1,11 +1,9 @@
 import CreateCollaborationMap from "@/components/create-collaboration/CreateCollaborationMap";
 import AuthModal from "@/components/modals/AuthModal";
 import Button from "@/components/ui/button";
-import ConfirmationModal from "@/components/ui/modal/ConfirmationModal";
 import {
   useAuthContext,
-  useContractContext,
-  useNotificationContext,
+  useContractContext
 } from "@/contexts";
 import { useBreakpoints } from "@/hooks";
 import { PromotionType } from "@/shared-libs/firestore/trendly-pro/constants/promotion-type";
@@ -16,6 +14,7 @@ import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import Carousel from "@/shared-uis/components/carousel/carousel";
 import ScrollMedia from "@/shared-uis/components/carousel/scroll-media";
+import ConfirmationModal from "@/shared-uis/components/ConfirmationModal";
 import ImageComponent from "@/shared-uis/components/image-component";
 import RatingSection from "@/shared-uis/components/rating-section";
 import ReadMore from "@/shared-uis/components/ReadMore";
@@ -87,10 +86,6 @@ const CollborationDetailsContent = (
   const [contracts, setContracts] = useState<Contract[]>([]);
 
   const authModalBottomSheetModalRef = useRef<BottomSheetModal>(null);
-  const {
-    createNotification,
-    sendNotification,
-  } = useNotificationContext();
   const { user } = useAuthContext();
   const { getContractsByCollaborationId } = useContractContext();
 
@@ -147,38 +142,9 @@ const CollborationDetailsContent = (
     }).then(() => {
       if (!user?.id) return;
 
-      createNotification(
-        props?.invitationData?.managerId || "",
-        {
-          data: {
-            userId: user?.id,
-            collaborationId: props.invitationData?.collaborationId,
-          },
-          description: `${user?.name} with email id ${user?.email} accepted invitation to collaborate for ${props.collaborationDetail.name}`,
-          isRead: false,
-          timeStamp: Date.now(),
-          title: "Invitation Accepted",
-          type: "invitation-accepted",
-        },
-        "managers"
-      ).then(() => {
-        setStatus("accepted");
-        Toaster.success("Invitation accepted successfully");
-
-        sendNotification(
-          {
-            managers: [props?.invitationData?.managerId || ""],
-          },
-          {
-            notification: {
-              title: "Invitation Accepted",
-              description: `${user?.name} with email id ${user?.email} accepted invitation to collaborate for ${props.collaborationDetail.name}`,
-            },
-          },
-        );
-
-        router.navigate(`/apply-now/${props?.invitationData?.collaborationId}`);
-      });
+      setStatus("accepted");
+      Toaster.success("Invitation accepted successfully");
+      router.navigate(`/apply-now/${props?.invitationData?.collaborationId}`);
     });
   };
 

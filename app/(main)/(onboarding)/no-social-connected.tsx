@@ -1,7 +1,7 @@
 import FacebookLoginButton from "@/components/profile/ConnectWithFacebook";
 import InstagramLoginButton from "@/components/profile/ConnectWithInstagramManual";
 import Button from "@/components/ui/button";
-import { useAuthContext } from "@/contexts";
+import { useAuthContext, useCloudMessagingContext } from "@/contexts";
 import AppLayout from "@/layouts/app-layout";
 import Colors from "@/shared-uis/constants/Colors";
 import { imageUrl } from "@/utils/url";
@@ -12,15 +12,15 @@ import { Text } from "react-native-paper";
 
 const TrendlyScreen = () => {
   const { signOutUser } = useAuthContext();
+  const { updatedTokens } = useCloudMessagingContext();
+
   // const { socials } = useSocialContext();
   const theme = useTheme();
 
-  // useEffect(() => {
-  //   if (socials.length > 0) {
-  //     // Redirect to the main screen
-  //     router.replace("/(main)/collaborations");
-  //   }
-  // }, [socials]);
+  const logout = async () => {
+    await updatedTokens?.()
+    await signOutUser();
+  }
 
   return (
     <AppLayout withWebPadding={true}>
@@ -41,7 +41,7 @@ const TrendlyScreen = () => {
               color: Colors(theme).primary,
               fontSize: 16,
             }}
-            onPress={signOutUser}
+            onPress={logout}
           >
             Logout
           </Button>

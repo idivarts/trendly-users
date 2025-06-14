@@ -1,10 +1,13 @@
-import { stylesFn } from "@/styles/NotificationCard.styles";
-import { useTheme } from "@react-navigation/native";
-import { ScrollView } from "react-native";
-import { NotificationCard } from "../NotificationCard";
+import Colors from "@/shared-uis/constants/Colors";
 import { Notification } from "@/types/Notification";
-import EmptyState from "../ui/empty-state";
+import { Theme, useTheme } from "@react-navigation/native";
+import React from "react";
+import { FlatList, StyleSheet } from "react-native";
+import { NotificationCard } from "../NotificationCard";
 import { View } from "../theme/Themed";
+import EmptyState from "../ui/empty-state";
+
+
 
 interface NotificationsProps {
   notifications: Notification[];
@@ -17,6 +20,7 @@ const Notifications: React.FC<NotificationsProps> = ({
 }) => {
   const theme = useTheme();
   const styles = stylesFn(theme);
+  // NotficationTypesToHandle
 
   return (
     <>
@@ -31,29 +35,31 @@ const Notifications: React.FC<NotificationsProps> = ({
             />
           </View>
         ) : (
-          <ScrollView
+          <FlatList
             style={styles.container}
             contentContainerStyle={styles.contentContainer}
-          >
-            {
-              notifications.map((item) => (
-                <NotificationCard
-                  avatar="https://cdn.iconscout.com/icon/free/png-256/avatar-370-456322.png"
-                  data={{
-                    collaborationId: item.data?.collaborationId,
-                    groupId: item.data?.groupId,
-                    userId: item.data?.userId,
-                  }}
-                  description={item.description}
-                  isRead={item.isRead}
-                  key={item.id}
-                  onMarkAsRead={() => onMarkAsRead(item.id)}
-                  time={item.timeStamp}
-                  title={item.title}
-                />
-              ))
-            }
-          </ScrollView>
+            data={notifications}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <NotificationCard
+                // avatar="https://cdn.iconscout.com/icon/free/png-256/avatar-370-456322.png"
+                data={{
+                  collaborationId: item.data?.collaborationId,
+                  groupId: item.data?.groupId,
+                  userId: item.data?.userId,
+                }}
+                type={item.type}
+                description={item.description}
+                isRead={item.isRead}
+                onMarkAsRead={() => onMarkAsRead(item.id)}
+                time={item.timeStamp}
+                title={item.title}
+              />
+            )}
+            initialNumToRender={10}
+            maxToRenderPerBatch={10}
+            windowSize={5}
+          />
         )
       }
     </>
@@ -61,3 +67,15 @@ const Notifications: React.FC<NotificationsProps> = ({
 };
 
 export default Notifications;
+
+export const stylesFn = (theme: Theme) => StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 16,
+    backgroundColor: Colors(theme).background,
+  },
+  contentContainer: {
+    gap: 16,
+    paddingBottom: 24,
+  },
+});

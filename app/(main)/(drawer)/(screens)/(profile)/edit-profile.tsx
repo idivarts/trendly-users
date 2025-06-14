@@ -1,12 +1,12 @@
 import EditProfile from "@/components/basic-profile/edit-profile";
 import { Text, View } from "@/components/theme/Themed";
-import ConfirmationModal from "@/components/ui/modal/ConfirmationModal";
 import ScreenHeader from "@/components/ui/screen-header";
 import { useAuthContext } from "@/contexts";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
+import ConfirmationModal from "@/shared-uis/components/ConfirmationModal";
 import ProfileBottomSheet from "@/shared-uis/components/ProfileModal/Profile-Modal";
 import { resetAndNavigate } from "@/utils/router";
 import {

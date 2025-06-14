@@ -299,7 +299,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
             contract.status === 0 ||
               contract.status === 1 ||
               contract.status === 2
-              ? Colors(theme).gold
+              ? Colors(theme).yellow
               : Colors(theme).green,
           padding: 16,
           borderRadius: 5,
