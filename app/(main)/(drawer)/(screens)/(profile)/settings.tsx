@@ -1,7 +1,7 @@
 import Settings from "@/components/settings";
 import { Text, View } from "@/components/theme/Themed";
 import ScreenHeader from "@/components/ui/screen-header";
-import { useAuthContext } from "@/contexts";
+import { useAuthContext, useCloudMessagingContext } from "@/contexts";
 import AppLayout from "@/layouts/app-layout";
 import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
@@ -13,11 +13,11 @@ import Toast from "react-native-toast-message";
 
 const SettingsScreen = () => {
   const {
-    deleteUserAccount,
     user,
     updateUser,
     signOutUser: logout,
   } = useAuthContext();
+  const { updatedTokens } = useCloudMessagingContext();
 
   if (!user) {
     return null;
@@ -33,8 +33,9 @@ const SettingsScreen = () => {
 
   const handleDeactivate = async () => {
     setIsDeactivating(true);
-    await HttpWrapper.fetch("/api/v1/users/deactivate", { method: "DELETE" }).then(r => {
+    await HttpWrapper.fetch("/api/v1/users/deactivate", { method: "DELETE" }).then(async r => {
       Toaster.success('Account deactivated successfully');
+      await updatedTokens?.();
       logout().catch(e => {
         resetAndNavigate("/pre-signin")
       })
@@ -47,8 +48,9 @@ const SettingsScreen = () => {
 
   const handleDelete = async () => {
     setIsDeleting(true);
-    await HttpWrapper.fetch("/api/v1/users/delete", { method: "DELETE" }).then(r => {
+    await HttpWrapper.fetch("/api/v1/users/delete", { method: "DELETE" }).then(async r => {
       Toaster.success('Account deleted successfully');
+      await updatedTokens?.();
       logout().catch(e => {
         resetAndNavigate("/pre-signin")
       })

@@ -5,7 +5,7 @@ import ProfileItemCard from "@/components/profile/ProfileItemCard";
 import { View } from "@/components/theme/Themed";
 import { COMPLETION_PERCENTAGE } from "@/constants/CompletionPercentage";
 import { PROFILE_ITEMS } from "@/constants/Profile";
-import { useAuthContext } from "@/contexts";
+import { useAuthContext, useCloudMessagingContext } from "@/contexts";
 import AppLayout from "@/layouts/app-layout";
 import ConfirmationModal from "@/shared-uis/components/ConfirmationModal";
 import Colors from "@/shared-uis/constants/Colors";
@@ -22,11 +22,14 @@ const ProfileScreen = () => {
   const router = useRouter();
   const [logoutModalVisible, setLogoutModalVisible] = useState(false);
   const { signOutUser, user } = useAuthContext();
+  const { updatedTokens } = useCloudMessagingContext();
+
   const theme = useTheme();
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
     setLogoutModalVisible(false);
-    signOutUser();
+    await updatedTokens?.();
+    await signOutUser();
   };
 
   return (
