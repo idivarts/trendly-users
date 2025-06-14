@@ -1,14 +1,8 @@
-import {
-  BottomSheetBackdrop,
-  BottomSheetModal,
-  BottomSheetScrollView,
-} from "@gorhom/bottom-sheet";
 import { Theme, useTheme } from "@react-navigation/native";
-import { useMemo } from "react";
-import { useSharedValue } from "react-native-reanimated";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useMemo, useState } from "react";
 
 import { useBreakpoints } from "@/hooks";
+import BottomSheetContainer from "@/shared-uis/components/bottom-sheet";
 import Colors, { ColorsStatic } from "@/shared-uis/constants/Colors";
 import { handleDeepLink } from "@/utils/deeplink";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
@@ -18,111 +12,80 @@ import { Text, View } from "../theme/Themed";
 import Button from "../ui/button";
 
 interface DownloadAppModalProps {
-  bottomSheetModalRef: React.RefObject<BottomSheetModal>;
   collaborationId?: string;
 }
 
 const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
-  bottomSheetModalRef,
   collaborationId,
 }) => {
-  const snapPoints = useMemo(() => ["25%", "25%", "25%"], []);
+  const snapPoints = useMemo(() => ["25%", "25%"], []);
 
   const theme = useTheme();
   const styles = stylesFn(theme);
+  const [isVisible, setIsVisible] = useState(true);
 
   const {
     lg,
   } = useBreakpoints();
 
-  const insets = useSafeAreaInsets();
-  const containerOffset = useSharedValue({
-    top: insets.top,
-    bottom: insets.bottom,
-    left: insets.left,
-    right: insets.right,
-  });
-
-  const renderBackdrop = (props: any) => {
-    return (
-      <BottomSheetBackdrop
-        {...props}
-        // style={{ backgroundColor: ColorsStatic.transparent }}
-        onPress={() => { handleClose() }}
-        onMagicTap={() => { handleClose() }}
-        disappearsOnIndex={-1}
-        appearsOnIndex={0}
-      />
-    );
-  };
-
   const handleClose = () => {
-    bottomSheetModalRef.current?.dismiss();
+    setIsVisible(false)
   }
 
   return (
-    <BottomSheetModal
-      backdropComponent={renderBackdrop}
-      containerOffset={containerOffset}
-      enablePanDownToClose={true}
-      // index={1}
-      ref={bottomSheetModalRef}
+    <BottomSheetContainer
       snapPoints={snapPoints}
-      topInset={insets.top}
-    >
-      <BottomSheetScrollView
-        contentContainerStyle={styles.bottomSheetScrollViewContentContainer}
+      isVisible={isVisible}
+      onClose={handleClose}>
+      <View
+        style={styles.container}
       >
         <View
-          style={styles.container}
+          style={styles.header}
         >
-          <View
-            style={styles.header}
-          >
-            <Image source={require('@/assets/images/icon.png')} style={{ width: 80, height: 80, borderColor: ColorsStatic.primary, borderWidth: 2, borderRadius: 20 }} />
-            <View style={{ flex: 1, alignItems: "flex-start", marginLeft: 16, gap: 8 }}>
-              <Text style={styles.headerTitle}>
-                Available on AppStore
-              </Text>
-              <Text style={styles.headerText}>
-                Donwload the app now for best user experience
-              </Text>
-            </View>
-
-            <Pressable
-              onPress={handleClose}
-              style={{
-                zIndex: 10,
-              }}
-            >
-              <FontAwesomeIcon
-                color={Colors(theme).primary}
-                icon={faClose}
-                size={24}
-              />
-            </Pressable>
+          <Image source={require('@/assets/images/icon.png')} style={{ width: 80, height: 80, borderColor: ColorsStatic.primary, borderWidth: 2, borderRadius: 20 }} />
+          <View style={{ flex: 1, alignItems: "flex-start", marginLeft: 16, gap: 8 }}>
+            <Text style={styles.headerTitle}>
+              Available on AppStore
+            </Text>
+            <Text style={styles.headerText}>
+              Donwload the app now for best user experience
+            </Text>
           </View>
-          <Button
+
+          <Pressable
+            onPress={handleClose}
             style={{
-              marginTop: 12
-            }}
-            theme={{
-              colors: {
-                primary: Colors(theme).primary,
-              },
-            }}
-            onPress={() => {
-              if (collaborationId)
-                handleDeepLink(`collaboration/${collaborationId}`, lg);
-              else
-                handleDeepLink(undefined, lg);
+              zIndex: 10,
             }}
           >
-            Download App Now
-          </Button>
+            <FontAwesomeIcon
+              color={Colors(theme).primary}
+              icon={faClose}
+              size={24}
+            />
+          </Pressable>
         </View>
-      </BottomSheetScrollView>
-    </BottomSheetModal >
+        <Button
+          style={{
+            marginTop: 12
+          }}
+          theme={{
+            colors: {
+              primary: Colors(theme).primary,
+            },
+          }}
+          onPress={() => {
+            if (collaborationId)
+              handleDeepLink(`collaboration/${collaborationId}`, lg);
+            else
+              handleDeepLink(undefined, lg);
+          }}
+        >
+          Download App Now
+        </Button>
+      </View>
+    </BottomSheetContainer>
   );
 };
 

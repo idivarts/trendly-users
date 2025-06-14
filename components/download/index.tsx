@@ -1,20 +1,7 @@
+import DownloadAppModal from "../modals/DownloadAppModal";
 
 const DownloadApp = () => {
-    return null
-    // const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-
-    // const { lg } = useBreakpoints()
-    // useEffect(() => {
-    //     if (!bottomSheetModalRef.current)
-    //         return;
-    //     if (!lg) {
-    //         bottomSheetModalRef.current?.present();
-    //     }
-    // }, [lg, bottomSheetModalRef.current])
-
-    // return <DownloadAppModal
-    //     bottomSheetModalRef={bottomSheetModalRef}
-    // />
+    return <DownloadAppModal />
 }
 
 export default DownloadApp 
