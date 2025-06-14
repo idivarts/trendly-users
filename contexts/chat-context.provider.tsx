@@ -24,6 +24,7 @@ interface ChatContextProps {
   fetchChannelCid: (channelId: string) => Promise<string>;
   hasError?: boolean;
   unreadCount: number;
+  isChatConnected?: boolean;
 }
 
 const ChatContext = createContext<ChatContextProps>({
@@ -31,7 +32,8 @@ const ChatContext = createContext<ChatContextProps>({
   fetchMembers: async () => { },
   fetchChannelCid: async () => "",
   hasError: false,
-  unreadCount: 0
+  unreadCount: 0,
+  isChatConnected: false
 });
 
 export const useChatContext = () => useContext(ChatContext);
@@ -174,7 +176,8 @@ export const ChatContextProvider: React.FC<PropsWithChildren> = ({
         fetchMembers,
         fetchChannelCid,
         hasError,
-        unreadCount
+        unreadCount,
+        isChatConnected: !!token
       }}
     >
       <StreamWrapper>
