@@ -96,50 +96,40 @@ const GalleryScreen = () => {
       const { status } = await MediaLibrary.requestPermissionsAsync();
       setPermissionGranted(status === "granted");
 
-      if (status === "granted") {
-        fetchAssets();
-      }
+      // if (status === "granted") {
+      //   fetchAssets();
+      // }
     })();
   }, []);
 
-  const fetchAssets = async (after?: string): Promise<MediaLibrary.AssetInfo | undefined> => {
+  const fetchLatestAsset = async (): Promise<MediaLibrary.AssetInfo | undefined> => {
     if (reachedEnd)
       return undefined;
-    Console.log("---------------> Fetching New Assets", after);
-
     const album = await MediaLibrary.getAssetsAsync({
       mediaType: ["photo", "video"],
       sortBy: ["creationTime"],
-      first: 20,
-      after
+      first: 1,
     });
 
-    if (after) {
-      setAssets([...assets, ...album.assets])
-    } else {
-      setAssets(album.assets);
-      mutex.currentAfter = undefined
+    if (album.assets.length > 0) {
+      setAssets((prev) => ([album.assets[0], ...prev]));
+      return album.assets[0]
     }
 
-    if (album.assets.length > 0) {
-      setAssetAfter(album.assets[album.assets.length - 1].id)
-      return album.assets[0]
-    } else {
-      setReachedEnd(true)
-    }
     return undefined
   };
+
   // Handle loading more assets for pagination
-  const handleLoadMore = () => {
-    try {
-      Console.log("---------------> Loading More Assets", assetAfter);
-      // mutex.useOnce(() => {
-      fetchAssets(assetAfter);
-      // }, assetAfter);
-    } catch (error: any) {
-      Console.error(error);
-    }
-  };
+  // const handleLoadMore = () => {
+  //   try {
+  //     Console.log("---------------> Loading More Assets", assetAfter);
+  //     // mutex.useOnce(() => {
+  //     fetchAssets(assetAfter);
+  //     // }, assetAfter);
+  //   } catch (error: any) {
+  //     Console.error(error);
+  //   }
+  // };
 
   const handleSelectItem = (item: MediaLibrary.AssetInfo) => {
     const itemExists = selectedItems.find((i) => i.id === item.id);
@@ -228,18 +218,42 @@ const GalleryScreen = () => {
     }
   };
 
-  // const openCamera = async () => {
-  //   if (cameraPermission?.granted) {
-  //     setIsCameraVisible(true);
-  //   } else {
-  //     const status = await Camera.requestCameraPermissionsAsync();
-  //     if (status.granted) {
-  //       setIsCameraVisible(true);
-  //     } else {
-  //       alert("Camera permission is required to take photos");
-  //     }
-  //   }
-  // };
+  const openMediaPicker = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== "granted") {
+      Alert.alert("Permission Denied", "You need to enable media permissions.");
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsMultipleSelection: true,
+      quality: 1,
+    });
+
+    if (!result.canceled && result.assets.length > 0) {
+      const newAssets = await Promise.all(result.assets.map(async (asset, idx) => {
+        return await MediaLibrary.getAssetInfoAsync(asset.assetId || "")
+      }));
+      for (let i = 0; i < newAssets.length; i++) {
+        const mAsset = newAssets[i];
+        const newItem: AssetItem[] = []
+        if (mAsset) {
+          newItem.push({
+            id: mAsset.id,
+            localUri: mAsset.uri,
+            type:
+              mAsset.mediaType === MediaLibrary.MediaType.video
+                ? "video"
+                : "image",
+            uri: mAsset.uri,
+          })
+        }
+        setSelectedItems((prev) => [...prev, ...newItem]);
+      }
+      setAssets((prev) => [...newAssets, ...prev]);
+    }
+  };
 
   useEffect(() => {
     if (selectedFiles) {
@@ -280,7 +294,7 @@ const GalleryScreen = () => {
     if (!result.canceled && result.assets.length > 0) {
       Console.log("Captured:", result.assets[0].uri);
       await MediaLibrary.saveToLibraryAsync(result.assets[0].uri);
-      let mAsset = await fetchAssets();
+      let mAsset = await fetchLatestAsset();
       if (mAsset) {
         const newItem: AssetItem = {
           id: mAsset.id,
@@ -501,6 +515,7 @@ const GalleryScreen = () => {
                 style={{
                   fontSize: 16,
                   fontWeight: "bold",
+                  color: Colors(theme).text,
                   marginVertical: 16,
                   marginHorizontal: 16,
                 }}
@@ -522,6 +537,7 @@ const GalleryScreen = () => {
               style={{
                 fontSize: 16,
                 fontWeight: "bold",
+                color: Colors(theme).text,
                 marginBottom: 16,
                 marginHorizontal: 16,
               }}
@@ -529,12 +545,49 @@ const GalleryScreen = () => {
               Media from your gallery
             </Text>
           }
-          onEndReached={handleLoadMore}
-          onEndReachedThreshold={0.05}
-          initialNumToRender={15}
-          maxToRenderPerBatch={10}
-          windowSize={5}
-          removeClippedSubviews={true}
+          ListFooterComponent={() => {
+            return (
+              <Surface
+                style={{
+                  marginHorizontal: 16,
+                  marginBottom: 24,
+                  padding: 20,
+                  borderRadius: 12,
+                  backgroundColor: Colors(theme).card,
+                  elevation: 3,
+                  shadowOpacity: 0.1,
+                  shadowRadius: 6,
+                  shadowOffset: { width: 0, height: 2 },
+                  marginTop: 16,
+                }}
+              >
+                <Pressable onPress={openMediaPicker} style={{ alignItems: "center" }}>
+                  <FontAwesomeIcon icon={faImage} size={24} color={Colors(theme).primary} />
+                  <Text
+                    style={{
+                      marginTop: 12,
+                      fontSize: 16,
+                      fontWeight: "500",
+                      color: Colors(theme).primary,
+                      textAlign: "center",
+                    }}
+                  >
+                    Tap to select media from your device
+                  </Text>
+                  <Text
+                    style={{
+                      marginTop: 6,
+                      fontSize: 13,
+                      color: Colors(theme).text,
+                      textAlign: "center",
+                    }}
+                  >
+                    Choose photos or videos to include in your application
+                  </Text>
+                </Pressable>
+              </Surface>
+            );
+          }}
         />
       </ScrollView>
 
