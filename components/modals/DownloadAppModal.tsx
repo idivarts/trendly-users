@@ -1,5 +1,5 @@
 import { Theme, useTheme } from "@react-navigation/native";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { useBreakpoints } from "@/hooks";
 import BottomSheetContainer from "@/shared-uis/components/bottom-sheet";
@@ -22,7 +22,13 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
 
   const theme = useTheme();
   const styles = stylesFn(theme);
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setIsVisible(true);
+    }, 5000);
+  }, [])
 
   const {
     lg,
