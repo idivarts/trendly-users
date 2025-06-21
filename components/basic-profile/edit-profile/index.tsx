@@ -1,14 +1,18 @@
 import { Text, View } from "@/components/theme/Themed";
 import Button from "@/components/ui/button";
+import ContentWrapper from "@/components/ui/content-wrapper";
 import Select from "@/components/ui/select";
 import SelectGroup from "@/components/ui/select/select-group";
 import TextInput from "@/components/ui/text-input";
 import { useAuthContext } from "@/contexts";
 import { useBreakpoints } from "@/hooks";
 import useEditProfile from "@/hooks/use-edit-profile";
+import { BRAND_INDUSTRIES, INITIAL_BRAND_INDUSTRIES } from "@/shared-constants/ItemsList";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
+import { MultiSelectExtendable } from "@/shared-uis/components/multiselect-extendable";
 import Colors from "@/shared-uis/constants/Colors";
 import { stylesFn } from "@/styles/edit-profile/EditProfile.styles";
+import { includeSelectedItems } from "@/utils/items-list";
 import { useTheme } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
@@ -271,6 +275,29 @@ const EditProfile: React.FC<EditProfileProps> = ({
               This would help us understand what type of content you create and also better match with brands
             </Text>
           </View>
+          <ContentWrapper
+            title="Location"
+            description="This would help us show localized content collaboration"
+          >
+            <MultiSelectExtendable
+              buttonLabel="View All Locations"
+              initialItemsList={includeSelectedItems(
+                BRAND_INDUSTRIES,
+                []
+              )}
+              initialMultiselectItemsList={includeSelectedItems(
+                INITIAL_BRAND_INDUSTRIES,
+                []
+              )}
+              onSelectedItemsChange={(value) => {
+                // setPreferences({
+                //   preferredBrandIndustries: value.map((value) => value),
+                // });
+              }}
+              selectedItems={[]}
+              theme={theme}
+            />
+          </ContentWrapper>
           <View
             style={{
               gap: 32,
