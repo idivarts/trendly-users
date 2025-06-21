@@ -4,8 +4,6 @@ import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { SurveyAnswer } from "@/types/Survey";
 import { getFormattedPreferences } from "@/utils/profile";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
-;
-;
 
 export const submitSurvey = async (answers: SurveyAnswer) => {
   try {
