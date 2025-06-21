@@ -147,7 +147,7 @@ const AddInstagramManual = () => {
 
     return (
         <AppLayout withWebPadding={true}>
-            <ScreenHeader title={socialId ? 'Update Metrics' : 'Add Instagram'} />
+            <ScreenHeader title={socialId ? 'Update your Instagram Metrics' : 'Add Instagram'} />
 
             <ScrollView contentContainerStyle={[styles.container, { backgroundColor: Colors(theme).background }]}>
 
@@ -178,7 +178,10 @@ const AddInstagramManual = () => {
                                 </>
                             ) : (
                                 <>
-                                    <Text style={[styles.uploadText, { color: Colors(theme).textSecondary }]}>Upload Profile</Text>
+                                    <View style={{ alignItems: 'center', paddingHorizontal: 12 }}>
+                                        <Text style={[styles.uploadText, { color: Colors(theme).textSecondary }]}>Upload Profile Screenshot</Text>
+                                        <Text style={[styles.uploadHint, { color: Colors(theme).textSecondary }]}>Take a screenshot of your profile showing username and followers</Text>
+                                    </View>
                                     {Platform.OS === 'web' && <input type='file' ref={pRef} accept='image/*' hidden
                                         onChange={(e) => pickFile(e, setProfileImage, setProfileImageUrl)} />}
                                 </>
@@ -193,7 +196,10 @@ const AddInstagramManual = () => {
                                 </>
                             ) : (
                                 <>
-                                    <Text style={[styles.uploadText, { color: Colors(theme).textSecondary }]}>Upload Dashboard</Text>
+                                    <View style={{ alignItems: 'center', paddingHorizontal: 12 }}>
+                                        <Text style={[styles.uploadText, { color: Colors(theme).textSecondary }]}>Upload Dashboard Screenshot</Text>
+                                        <Text style={[styles.uploadHint, { color: Colors(theme).textSecondary }]}>From Instagram → Insights → Last 30 days summary</Text>
+                                    </View>
                                     {Platform.OS === 'web' && <input type='file' ref={dRef} accept='image/*' hidden
                                         onChange={(e) => pickFile(e, setDashboardImage, setDashboardImageUrl)} />}
                                 </>
@@ -253,41 +259,63 @@ const AddInstagramManual = () => {
 
                 <View style={[styles.noteContainer, { backgroundColor: Colors(theme).card, borderColor: Colors(theme).border }]}>
                     <Text style={[styles.notesHeading, { color: Colors(theme).text }]}>Before You Continue</Text>
-                    <View style={styles.bulletPoint}>
-                        <Text style={[styles.bulletSymbol, { color: Colors(theme).text }]}>{'\u2022'}</Text>
-                        <Text style={[styles.bulletText, { color: Colors(theme).text }]}>Please ensure your Instagram account is set to <Text style={{ fontWeight: '600' }}>Professional</Text> and its visibility is <Text style={{ fontWeight: '600' }}>Public</Text>.</Text>
-                    </View>
-                    <View style={styles.bulletPoint}>
-                        <Text style={[styles.bulletSymbol, { color: Colors(theme).text }]}>{'\u2022'}</Text>
-                        <Text style={[styles.bulletText, { color: Colors(theme).text }]}>Upload <Text style={{ fontWeight: '600' }}>clear screenshots</Text> displaying your username, follower count, and other relevant details.</Text>
-                    </View>
-                    <View style={styles.bulletPoint}>
-                        <Text style={[styles.bulletSymbol, { color: Colors(theme).text }]}>{'\u2022'}</Text>
-                        <Text style={[styles.bulletText, { color: Colors(theme).text }]}>All uploads are <Text style={{ fontWeight: '600' }}>manually verified</Text>. We’ll reach out if any clarification is needed.</Text>
-                    </View>
+                    {!socialId && <>
+                        <View style={styles.bulletPoint}>
+                            <Text style={[styles.bulletSymbol, { color: Colors(theme).text }]}>{'\u2022'}</Text>
+                            <Text style={[styles.bulletText, { color: Colors(theme).text }]}>Please ensure your Instagram account is set to <Text style={{ fontWeight: '600' }}>Professional</Text> and its visibility is <Text style={{ fontWeight: '600' }}>Public</Text>.</Text>
+                        </View>
+                        <View style={styles.bulletPoint}>
+                            <Text style={[styles.bulletSymbol, { color: Colors(theme).text }]}>{'\u2022'}</Text>
+                            <Text style={[styles.bulletText, { color: Colors(theme).text }]}>Upload <Text style={{ fontWeight: '600' }}>clear screenshots</Text> displaying your username, follower count, and other relevant details.</Text>
+                        </View>
+                        <View style={styles.bulletPoint}>
+                            <Text style={[styles.bulletSymbol, { color: Colors(theme).text }]}>{'\u2022'}</Text>
+                            <Text style={[styles.bulletText, { color: Colors(theme).text }]}>All uploads are <Text style={{ fontWeight: '600' }}>manually verified</Text>. We’ll reach out if any clarification is needed.</Text>
+                        </View>
+                    </>}
                     <View style={styles.bulletPoint}>
                         <Text style={[styles.bulletSymbol, { color: Colors(theme).text }]}>{'\u2022'}</Text>
                         <Text style={[styles.bulletText, { color: Colors(theme).text }]}>
                             Metrics entered above should <Text style={{ fontWeight: '600' }}>match the uploaded screenshots</Text>. Any significant deviation may lead to <Text style={{ fontWeight: '600' }}>account deactivation</Text>.
                         </Text>
                     </View>
-
-                    <Text style={[styles.notesHeading, { marginTop: 30, color: Colors(theme).text }]}>Example Screenshots</Text>
-                    <View style={styles.exampleRow}>
-                        <Pressable onPress={() => {
-                            setActiveImage(require('@/assets/images/example-profile.jpg'));
-                            setModalVisible(true);
-                        }}>
-                            <Image source={require('@/assets/images/example-profile.jpg')} style={styles.exampleImageSmall} />
-                        </Pressable>
-
-                        <Pressable onPress={() => {
-                            setActiveImage(require('@/assets/images/example-dashboard.png'));
-                            setModalVisible(true);
-                        }}>
-                            <Image source={require('@/assets/images/example-dashboard.png')} style={styles.exampleImageSmall} />
-                        </Pressable>
+                    <View style={styles.bulletPoint}>
+                        <Text style={[styles.bulletSymbol, { color: Colors(theme).text }]}>{'\u2022'}</Text>
+                        <Text style={[styles.bulletText, { color: Colors(theme).text }]}>
+                            <Text style={{ fontWeight: '600' }}>Follower Range:</Text> This should match your visible follower count as seen on your profile screenshot. Avoid rounding up to the next tier.
+                        </Text>
                     </View>
+                    <View style={styles.bulletPoint}>
+                        <Text style={[styles.bulletSymbol, { color: Colors(theme).text }]}>{'\u2022'}</Text>
+                        <Text style={[styles.bulletText, { color: Colors(theme).text }]}>
+                            <Text style={{ fontWeight: '600' }}>Monthly View Count:</Text> Total views your content receives in the last 30 days. This can be found in your Instagram Insights.
+                        </Text>
+                    </View>
+                    <View style={styles.bulletPoint}>
+                        <Text style={[styles.bulletSymbol, { color: Colors(theme).text }]}>{'\u2022'}</Text>
+                        <Text style={[styles.bulletText, { color: Colors(theme).text }]}>
+                            <Text style={{ fontWeight: '600' }}>Monthly Interaction Count:</Text> Includes likes, comments, shares, and saves in the last 30 days. Check this from the post/activity insights section.
+                        </Text>
+                    </View>
+
+                    {!socialId && <>
+                        <Text style={[styles.notesHeading, { marginTop: 30, color: Colors(theme).text }]}>Example Screenshots</Text>
+                        <View style={styles.exampleRow}>
+                            <Pressable onPress={() => {
+                                setActiveImage(require('@/assets/images/example-profile.jpg'));
+                                setModalVisible(true);
+                            }}>
+                                <Image source={require('@/assets/images/example-profile.jpg')} style={styles.exampleImageSmall} />
+                            </Pressable>
+
+                            <Pressable onPress={() => {
+                                setActiveImage(require('@/assets/images/example-dashboard.png'));
+                                setModalVisible(true);
+                            }}>
+                                <Image source={require('@/assets/images/example-dashboard.png')} style={styles.exampleImageSmall} />
+                            </Pressable>
+                        </View>
+                    </>}
                 </View>
 
                 {/* Fullscreen Modal */}
@@ -361,6 +389,13 @@ const stylesFn = (theme: Theme) => StyleSheet.create({
     },
     uploadText: {
         fontSize: 16,
+        textAlign: 'center',
+        marginBottom: 12
+    },
+    uploadHint: {
+        fontSize: 12,
+        textAlign: 'center',
+        marginTop: 4,
     },
     button: {
         paddingVertical: 8,
