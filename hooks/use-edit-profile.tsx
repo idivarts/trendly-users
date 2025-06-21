@@ -44,7 +44,7 @@ const useEditProfile = ({
     value: "Full Time",
   });
   const [niches, setNiches] = useState<SelectItem[]>([]);
-  const [location, setLocation] = useState("")
+  const [location, setLocation] = useState(user?.location || "");
 
   const contents: {
     content: string;

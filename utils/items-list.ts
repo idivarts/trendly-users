@@ -9,9 +9,9 @@ export const includeSelectedItems = (
 
 export const includeSingleSelectedItem = (
   itemsList: string[],
-  selectedItems?: string
+  selectedItem?: string
 ) => {
-  if (!selectedItems || itemsList.includes(selectedItems))
+  if (!selectedItem || itemsList.includes(selectedItem))
     return itemsList;
-  return [...itemsList, selectedItems];
+  return [...itemsList, selectedItem];
 };

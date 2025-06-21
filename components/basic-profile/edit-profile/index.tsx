@@ -285,7 +285,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
                 CITIES,
                 location
               )}
-              initialMultiselectItemsList={includeSingleSelectedItem(
+              initialSelectItemsList={includeSingleSelectedItem(
                 POPULAR_CITIES,
                 location
               )}
