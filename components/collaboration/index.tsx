@@ -3,7 +3,7 @@ import { MAX_WIDTH_WEB } from "@/constants/Container";
 import { useAuthContext } from "@/contexts";
 import { useBreakpoints } from "@/hooks";
 import AppLayout from "@/layouts/app-layout";
-import { useScrollContext } from "@/shared-libs/contexts/scroll-context";
+import { IOScroll } from "@/shared-libs/contexts/scroll-context";
 import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
 import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { processRawAttachment } from "@/shared-libs/utils/attachments";
@@ -22,8 +22,7 @@ import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Dimensions,
-  Pressable,
-  ScrollView
+  Pressable
 } from "react-native";
 import BottomSheetActions from "../BottomSheetActions";
 import { View } from "../theme/Themed";
@@ -154,7 +153,6 @@ const Collaboration = () => {
   }));
 
   // const [scHeight, setScHeight] = useState(0)
-  const { scrollRef, setScrollHeight } = useScrollContext()
   const styles = stylesFn(theme);
 
   if (loading && collabs.length == 0) {
@@ -237,7 +235,7 @@ const Collaboration = () => {
                   width={xl ? MAX_WIDTH_WEB : Dimensions.get("window").width}
                   objectKey="id"
                   renderItem={({ item }) => (
-                    <ScrollView
+                    <IOScroll
                       key={item.id}
                       horizontal={false}
                       contentContainerStyle={{
@@ -315,7 +313,7 @@ const Collaboration = () => {
                           brandHireRate={item.brandHireRate || ""}
                         />
                       </Pressable>
-                    </ScrollView>
+                    </IOScroll>
                   )}
                   vertical={false}
                   onLoadMore={() => { loadMore() }}

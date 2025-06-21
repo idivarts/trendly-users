@@ -4,7 +4,7 @@ import CollaborationHeader from "@/components/collaboration/card-components/Coll
 import ScreenHeader from "@/components/ui/screen-header";
 import { useAuthContext } from "@/contexts";
 import AppLayout from "@/layouts/app-layout";
-import { useScrollContext } from "@/shared-libs/contexts/scroll-context";
+import { IOScroll } from "@/shared-libs/contexts/scroll-context";
 import { processRawAttachment } from "@/shared-libs/utils/attachments";
 import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
@@ -22,7 +22,6 @@ import {
 } from "firebase/firestore";
 import React, { useEffect } from "react";
 import { FlatList, View } from "react-native";
-import { IOScrollView } from "react-native-intersection-observer";
 ;
 
 const PastApplicationPage = (props: any) => {
@@ -106,13 +105,10 @@ const PastApplicationPage = (props: any) => {
   useEffect(() => {
     fetchInvitations();
   }, []);
-  const { scrollRef, setScrollHeight } = useScrollContext()
   return (
     <AppLayout withWebPadding>
       <ScreenHeader title="Past Invitations" />
-      <IOScrollView ref={scrollRef} onScroll={(e) => {
-        setScrollHeight?.(e.nativeEvent.contentOffset?.y || 0)
-      }}>
+      <IOScroll>
         <View
           style={{
             flex: 1,
@@ -175,7 +171,7 @@ const PastApplicationPage = (props: any) => {
             keyExtractor={(item) => item.id}
           />
         </View>
-      </IOScrollView>
+      </IOScroll>
       {isVisible && (
         <BottomSheetActions
           cardId={selectedCollabId || ""}
