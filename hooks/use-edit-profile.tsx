@@ -44,6 +44,7 @@ const useEditProfile = ({
     value: "Full Time",
   });
   const [niches, setNiches] = useState<SelectItem[]>([]);
+  const [location, setLocation] = useState("")
 
   const contents: {
     content: string;
@@ -103,6 +104,7 @@ const useEditProfile = ({
 
       // @ts-ignore
       setContent(user.profile?.content);
+      setLocation(user.location || "");
 
       // setAttachments(user.profile?.attachments || [])
 
@@ -143,6 +145,7 @@ const useEditProfile = ({
       name,
       email,
       phoneNumber,
+      location,
       profile: {
         ...user.profile,
         category: niches.map((niche) => niche.value),
@@ -156,6 +159,7 @@ const useEditProfile = ({
       name,
       email,
       phoneNumber,
+      location,
       profile: {
         ...user.profile,
         category: niches.map((niche) => niche.value),
@@ -201,6 +205,8 @@ const useEditProfile = ({
     timeCommitment,
     user,
     verifyEmail,
+    location,
+    setLocation,
     // setAttachments
   };
 };

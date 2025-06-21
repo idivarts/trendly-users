@@ -7,12 +7,12 @@ import TextInput from "@/components/ui/text-input";
 import { useAuthContext } from "@/contexts";
 import { useBreakpoints } from "@/hooks";
 import useEditProfile from "@/hooks/use-edit-profile";
-import { BRAND_INDUSTRIES, INITIAL_BRAND_INDUSTRIES } from "@/shared-constants/ItemsList";
+import { CITIES, POPULAR_CITIES } from "@/shared-constants/locations";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
-import { MultiSelectExtendable } from "@/shared-uis/components/multiselect-extendable";
+import { SingleSelectExtendable } from "@/shared-uis/components/singleselect-extendable";
 import Colors from "@/shared-uis/constants/Colors";
 import { stylesFn } from "@/styles/edit-profile/EditProfile.styles";
-import { includeSelectedItems } from "@/utils/items-list";
+import { includeSingleSelectedItem } from "@/utils/items-list";
 import { useTheme } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
@@ -52,7 +52,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
   const {
     contents, email, isProcessing, name, niches, phoneNumber, timeCommitment, user,
     handleNicheSelect, handleSave, setEmail, setName, setPhoneNumber, setTimeCommitment,
-    verifyEmail
+    location, setLocation
   } = useEditProfile({
     unsavedChanges,
     setUnsavedChanges,
@@ -276,25 +276,25 @@ const EditProfile: React.FC<EditProfileProps> = ({
             </Text>
           </View>
           <ContentWrapper
-            title="Location"
-            description="This would help us show localized content collaboration"
+            title="Your Location"
+            description="This would help us match you with brands that are looking for influencers in your area."
           >
-            <MultiSelectExtendable
+            <SingleSelectExtendable
               buttonLabel="View All Locations"
-              initialItemsList={includeSelectedItems(
-                BRAND_INDUSTRIES,
-                []
+              initialItemsList={includeSingleSelectedItem(
+                CITIES,
+                location
               )}
-              initialMultiselectItemsList={includeSelectedItems(
-                INITIAL_BRAND_INDUSTRIES,
-                []
+              initialMultiselectItemsList={includeSingleSelectedItem(
+                POPULAR_CITIES,
+                location
               )}
               onSelectedItemsChange={(value) => {
-                // setPreferences({
-                //   preferredBrandIndustries: value.map((value) => value),
-                // });
+                setUnsavedChanges && setUnsavedChanges(true);
+                if (!value) return;
+                setLocation(value);
               }}
-              selectedItems={[]}
+              selectedItem={user?.location || ""}
               theme={theme}
             />
           </ContentWrapper>
