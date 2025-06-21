@@ -3,7 +3,6 @@ import { MAX_WIDTH_WEB } from "@/constants/Container";
 import { useAuthContext } from "@/contexts";
 import { useBreakpoints } from "@/hooks";
 import AppLayout from "@/layouts/app-layout";
-import { IOScroll } from "@/shared-libs/contexts/scroll-context";
 import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
 import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { processRawAttachment } from "@/shared-libs/utils/attachments";
@@ -235,10 +234,9 @@ const Collaboration = () => {
                   width={xl ? MAX_WIDTH_WEB : Dimensions.get("window").width}
                   objectKey="id"
                   renderItem={({ item }) => (
-                    <IOScroll
+                    <View
                       key={item.id}
-                      horizontal={false}
-                      contentContainerStyle={{
+                      style={{
                         width: "100%",
                         borderWidth: 0.3,
                         borderColor: Colors(theme).gray300,
@@ -313,7 +311,7 @@ const Collaboration = () => {
                           brandHireRate={item.brandHireRate || ""}
                         />
                       </Pressable>
-                    </IOScroll>
+                    </View>
                   )}
                   vertical={false}
                   onLoadMore={() => { loadMore() }}
