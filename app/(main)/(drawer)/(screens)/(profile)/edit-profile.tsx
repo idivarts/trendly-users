@@ -19,10 +19,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Pressable } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-;
-;
-;
-;
 
 const EditProfileScreen: React.FC = () => {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);

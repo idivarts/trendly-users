@@ -3,7 +3,7 @@ import Colors from "@/shared-uis/constants/Colors";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
-import { Pressable, StyleProp, ViewStyle } from "react-native";
+import { FlatList, Pressable, StyleProp, ViewStyle } from "react-native";
 
 export type SelectItem = {
   label: string;
@@ -68,14 +68,14 @@ const Select: React.FC<SelectProps> = ({
       ]
       }
     >
-      {
-        items.map((item) => (
-          <Pressable
-            key={item.value}
-            onPress={() => handleSelect(item)}
-          >
+      <FlatList
+        data={items}
+        keyExtractor={(item) => item.value}
+        horizontal={direction === "row"}
+        numColumns={direction === "column" ? items.length : 1}
+        renderItem={({ item }) => (
+          <Pressable onPress={() => handleSelect(item)}>
             <View
-              key={item.value}
               style={[
                 {
                   backgroundColor: value.find(
@@ -89,6 +89,8 @@ const Select: React.FC<SelectProps> = ({
                   paddingHorizontal: 16,
                   paddingVertical: 12,
                   gap: 12,
+                  marginRight: direction === "row" ? 8 : 0,
+                  marginBottom: direction === "column" ? 8 : 0,
                 },
                 selectItemStyle,
               ]}
@@ -116,8 +118,8 @@ const Select: React.FC<SelectProps> = ({
               }
             </View>
           </Pressable>
-        ))
-      }
+        )}
+      />
     </View>
   );
 };
