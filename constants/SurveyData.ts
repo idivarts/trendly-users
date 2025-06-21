@@ -1,3 +1,5 @@
+import { POPULAR_CITIES } from "@/shared-constants/locations";
+
 export const SURVEY_DATA = [
   {
     id: 1,
@@ -28,15 +30,8 @@ export const SURVEY_DATA = [
   },
   {
     id: 3,
-    question:
-      "Which content format are you willing to post on your social media account for promotions?",
-    options: ["Post", "Reels", "Stories", "Videos", "Live"],
-    multiselect: true,
-  },
-  {
-    id: 4,
-    question: "Which language do you create your content in?",
-    options: ["English", "Hindi", "Bengali", "Others"],
-    multiselect: true,
+    question: "Where are you located?",
+    options: [...POPULAR_CITIES, "Others"],
+    multiselect: false,
   },
 ];

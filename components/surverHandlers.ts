@@ -4,8 +4,6 @@ import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { SurveyAnswer } from "@/types/Survey";
 import { getFormattedPreferences } from "@/utils/profile";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
-;
-;
 
 export const submitSurvey = async (answers: SurveyAnswer) => {
   try {
@@ -22,6 +20,7 @@ export const submitSurvey = async (answers: SurveyAnswer) => {
 
       await updateDoc(userRef, {
         preferences: getFormattedPreferences(userData.preferences, answers),
+        location: answers.question3?.[0] || "",
       });
     } else {
       Console.log("User data does not exist");

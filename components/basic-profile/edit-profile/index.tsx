@@ -1,14 +1,18 @@
 import { Text, View } from "@/components/theme/Themed";
 import Button from "@/components/ui/button";
+import ContentWrapper from "@/components/ui/content-wrapper";
 import Select from "@/components/ui/select";
 import SelectGroup from "@/components/ui/select/select-group";
 import TextInput from "@/components/ui/text-input";
 import { useAuthContext } from "@/contexts";
 import { useBreakpoints } from "@/hooks";
 import useEditProfile from "@/hooks/use-edit-profile";
+import { CITIES, POPULAR_CITIES } from "@/shared-constants/locations";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
+import { SingleSelectExtendable } from "@/shared-uis/components/singleselect-extendable";
 import Colors from "@/shared-uis/constants/Colors";
 import { stylesFn } from "@/styles/edit-profile/EditProfile.styles";
+import { includeSingleSelectedItem } from "@/utils/items-list";
 import { useTheme } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
@@ -48,7 +52,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
   const {
     contents, email, isProcessing, name, niches, phoneNumber, timeCommitment, user,
     handleNicheSelect, handleSave, setEmail, setName, setPhoneNumber, setTimeCommitment,
-    verifyEmail
+    location, setLocation
   } = useEditProfile({
     unsavedChanges,
     setUnsavedChanges,
@@ -271,6 +275,29 @@ const EditProfile: React.FC<EditProfileProps> = ({
               This would help us understand what type of content you create and also better match with brands
             </Text>
           </View>
+          <ContentWrapper
+            title="Your Location"
+            description="This would help us match you with brands that are looking for influencers in your area."
+          >
+            <SingleSelectExtendable
+              buttonLabel="View All Locations"
+              initialItemsList={includeSingleSelectedItem(
+                CITIES,
+                location
+              )}
+              initialSelectItemsList={includeSingleSelectedItem(
+                POPULAR_CITIES,
+                location
+              )}
+              onSelectedItemsChange={(value) => {
+                setUnsavedChanges && setUnsavedChanges(true);
+                if (!value) return;
+                setLocation(value);
+              }}
+              selectedItem={user?.location || ""}
+              theme={theme}
+            />
+          </ContentWrapper>
           <View
             style={{
               gap: 32,

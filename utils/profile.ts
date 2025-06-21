@@ -2,7 +2,7 @@ import { IPreferences, IUsers } from "@/shared-libs/firestore/trendly-pro/models
 import { SurveyAnswer } from "@/types/Survey";
 
 export const calculateProfileCompletion = (user: Partial<IUsers>) => {
-  const totalFields = 16;
+  const totalFields = 17;
   let completedFields = 0;
 
   if (user?.name) {
@@ -15,6 +15,9 @@ export const calculateProfileCompletion = (user: Partial<IUsers>) => {
     completedFields++;
   }
   if ((user?.profile?.category?.length || 0) > 0) {
+    completedFields++;
+  }
+  if (user?.location) {
     completedFields++;
   }
 
@@ -47,7 +50,7 @@ export const getFormattedPreferences = (
     ...preferences,
     preferredBrandIndustries: answers.question1,
     contentCategory: answers.question2,
-    contentWillingToPost: answers.question3,
-    preferredLanguages: answers.question4,
+    // contentWillingToPost: answers.question3,
+    // preferredLanguages: answers.question4,
   };
 };

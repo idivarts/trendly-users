@@ -1,19 +1,24 @@
 import { View } from '@/components/theme/Themed';
 import Button from '@/components/ui/button';
 import ScreenHeader from '@/components/ui/screen-header';
+import Select, { SelectItem } from '@/components/ui/select';
 import TextInput from '@/components/ui/text-input';
 import { useSocialContext } from '@/contexts';
 import AppLayout from '@/layouts/app-layout';
 import { useAWSContext } from "@/shared-libs/contexts/aws-context.provider";
+import { ISocials } from '@/shared-libs/firestore/trendly-pro/models/socials';
 import { Console } from '@/shared-libs/utils/console';
+import { AuthApp } from '@/shared-libs/utils/firebase/auth';
+import { FirestoreDB } from '@/shared-libs/utils/firebase/firestore';
 import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import Toaster from '@/shared-uis/components/toaster/Toaster';
 import Colors from '@/shared-uis/constants/Colors';
 import { resetAndNavigate } from '@/utils/router';
 import { Theme, useTheme } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
-import { useRouter } from 'expo-router';
-import React, { useRef, useState } from 'react';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { doc, getDoc } from 'firebase/firestore';
+import React, { useEffect, useRef, useState } from 'react';
 import {
     Dimensions,
     Image,
@@ -44,11 +49,42 @@ const AddInstagramManual = () => {
     const dRef = useRef<any>()
     const { primarySocial } = useSocialContext()
     const router = useRouter();
+    const { socialId } = useLocalSearchParams()
 
     const styles = stylesFn(theme);
 
     const [apiLoading, setApiLoading] = useState(false)
     const [blockLoading, setBlockLoading] = useState(false)
+
+    // Metrics states
+    const [followerRange, setFollowerRange] = useState<SelectItem[]>([]);
+    const [monthlyViews, setMonthlyViews] = useState<SelectItem[]>([]);
+    const [monthlyInteractions, setMonthlyInteractions] = useState<SelectItem[]>([]);
+
+    const [social, setSocial] = useState<ISocials | undefined>(undefined)
+
+
+    const getSocial = async (id: string) => {
+        if (!AuthApp.currentUser)
+            return;
+        try {
+            const docRef = doc(FirestoreDB, 'users', AuthApp.currentUser?.uid, 'socials', id);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                const soc = (await docSnap.data()) as ISocials;
+                setSocial(soc);
+            } else {
+                Console.error("No such document!");
+                return null;
+            }
+        } catch (error) {
+            Console.error(error, "Error getting Social document");
+            return null;
+        }
+    }
+    useEffect(() => {
+        getSocial(socialId as string)
+    }, [socialId])
 
     const pickImage = async (setter: Function, urlSetter: Function) => {
         urlSetter(null);
@@ -91,14 +127,16 @@ const AddInstagramManual = () => {
     const onClickContinue = async () => {
         Console.log("Instagram Manual", handle, profileImageUrl, dashboardImageUrl);
 
-        if (handle.length <= 1 || !profileImageUrl || !dashboardImageUrl) {
-            Toaster.error('Please fill all the fields');
-            return;
-        }
-        const handleRegex = /^@[a-zA-Z0-9._]{1,30}$/;
-        if (!handleRegex.test(handle)) {
-            Toaster.error('Invalid Instagram handle', 'Ensure it starts with @ and contains only letters, numbers, periods, or underscores.');
-            return;
+        if (!socialId) {
+            if (handle.length <= 1 || !profileImageUrl || !dashboardImageUrl) {
+                Toaster.error('Please fill all the fields');
+                return;
+            }
+            const handleRegex = /^@[a-zA-Z0-9._]{1,30}$/;
+            if (!handleRegex.test(handle)) {
+                Toaster.error('Invalid Instagram handle', 'Ensure it starts with @ and contains only letters, numbers, periods, or underscores.');
+                return;
+            }
         }
 
         setApiLoading(true);
@@ -108,15 +146,28 @@ const AddInstagramManual = () => {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                handle: handle.substring(1),
-                profileImage: profileImageUrl,
-                dashboardImage: dashboardImageUrl,
+                ...((socialId && social) ? {
+                    handle: social.instaProfile?.username,
+                    profileImage: social.socialScreenShots?.[0],
+                    dashboardImage: social.socialScreenShots?.[1]
+                } : {
+                    handle: handle.substring(1),
+                    profileImage: profileImageUrl,
+                    dashboardImage: dashboardImageUrl
+                }),
+
+                socialId: socialId || undefined,
+                followerRange: followerRange[0].value,
+                monthlyViews: monthlyViews[0].value,
+                monthlyInteractions: monthlyInteractions[0].value,
             }),
         }).then(response => {
             Toaster.success('Instagram added successfully');
             if (primarySocial) {
                 if (router.canGoBack()) {
                     router.back();
+                } else if (socialId) {
+                    resetAndNavigate('/collaborations');
                 } else {
                     resetAndNavigate('/connected-socials');
                 }
@@ -133,93 +184,175 @@ const AddInstagramManual = () => {
 
     return (
         <AppLayout withWebPadding={true}>
-            <ScreenHeader title='Add Instagram' />
+            <ScreenHeader title={socialId ? 'Update your Instagram Metrics' : 'Add Instagram'} />
 
             <ScrollView contentContainerStyle={[styles.container, { backgroundColor: Colors(theme).background }]}>
 
-                <Text style={[styles.label, { color: Colors(theme).text }]}>Add your Instagram handle</Text>
-                <TextInput
-                    label="Instagram Handle (@...)"
-                    value={handle}
-                    style={{ width: '100%', marginTop: 8, marginBottom: 16 }}
-                    placeholderTextColor={Colors(theme).textSecondary}
-                    placeholder='@trendly'
-                    onChangeText={(name) => {
-                        if (!name.startsWith('@') && name.length > 0) {
-                            setHandle("@" + name);
-                        } else {
-                            setHandle(name);
-                        }
-                    }} />
+                {!socialId && <>
+                    <Text style={[styles.label, { color: Colors(theme).text }]}>Add your Instagram handle</Text>
+                    <TextInput
+                        label="Instagram Handle (@...)"
+                        value={handle}
+                        style={{ width: '100%', marginTop: 8, marginBottom: 16 }}
+                        placeholderTextColor={Colors(theme).textSecondary}
+                        placeholder='@trendly'
+                        onChangeText={(name) => {
+                            if (!name.startsWith('@') && name.length > 0) {
+                                setHandle("@" + name);
+                            } else {
+                                setHandle(name);
+                            }
+                        }} />
 
-                <Text style={[styles.label, { color: Colors(theme).text }]}>Upload Profile and Dashboard Screenshot</Text>
-                <View style={{ display: "flex", flexDirection: "row", width: "100%", gap: 10, marginTop: 8 }}>
-                    <TouchableOpacity style={[styles.uploadBox, { backgroundColor: Colors(theme).card, borderColor: Colors(theme).border }]} onPress={() =>
-                        Platform.OS === 'web' ? pRef.current.click() : pickImage(setProfileImage, setProfileImageUrl)}>
-                        {profileImage ? (
-                            <>
-                                <Image source={{ uri: profileImage }} style={styles.uploadedImage} />
-                                {!profileImageUrl && <ActivityIndicator style={{ position: "absolute", zIndex: 100 }} size={"large"} />}
-                            </>
-                        ) : (
-                            <>
-                                <Text style={[styles.uploadText, { color: Colors(theme).textSecondary }]}>Upload Profile</Text>
-                                {Platform.OS === 'web' && <input type='file' ref={pRef} accept='image/*' hidden
-                                    onChange={(e) => pickFile(e, setProfileImage, setProfileImageUrl)} />}
-                            </>
-                        )}
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[styles.uploadBox, { backgroundColor: Colors(theme).card, borderColor: Colors(theme).border }]} onPress={() =>
-                        Platform.OS === 'web' ? dRef.current.click() : pickImage(setDashboardImage, setDashboardImageUrl)}>
-                        {dashboardImage ? (
-                            <>
-                                <Image source={{ uri: dashboardImage }} style={styles.uploadedImage} />
-                                {!dashboardImageUrl && <ActivityIndicator style={{ position: "absolute", zIndex: 100 }} size={"large"} />}
-                            </>
-                        ) : (
-                            <>
-                                <Text style={[styles.uploadText, { color: Colors(theme).textSecondary }]}>Upload Dashboard</Text>
-                                {Platform.OS === 'web' && <input type='file' ref={dRef} accept='image/*' hidden
-                                    onChange={(e) => pickFile(e, setDashboardImage, setDashboardImageUrl)} />}
-                            </>
-                        )}
-                    </TouchableOpacity>
+                    <Text style={[styles.label, { color: Colors(theme).text }]}>Upload Profile and Dashboard Screenshot</Text>
+                    <View style={{ display: "flex", flexDirection: "row", width: "100%", gap: 10, marginTop: 8 }}>
+                        <TouchableOpacity style={[styles.uploadBox, { backgroundColor: Colors(theme).card, borderColor: Colors(theme).border }]} onPress={() =>
+                            Platform.OS === 'web' ? pRef.current.click() : pickImage(setProfileImage, setProfileImageUrl)}>
+                            {profileImage ? (
+                                <>
+                                    <Image source={{ uri: profileImage }} style={styles.uploadedImage} />
+                                    {!profileImageUrl && <ActivityIndicator style={{ position: "absolute", zIndex: 100 }} size={"large"} />}
+                                </>
+                            ) : (
+                                <>
+                                    <View style={{ alignItems: 'center', paddingHorizontal: 12 }}>
+                                        <Text style={[styles.uploadText, { color: Colors(theme).textSecondary }]}>Upload Profile Screenshot</Text>
+                                        <Text style={[styles.uploadHint, { color: Colors(theme).textSecondary }]}>Take a screenshot of your profile showing username and followers</Text>
+                                    </View>
+                                    {Platform.OS === 'web' && <input type='file' ref={pRef} accept='image/*' hidden
+                                        onChange={(e) => pickFile(e, setProfileImage, setProfileImageUrl)} />}
+                                </>
+                            )}
+                        </TouchableOpacity>
+                        <TouchableOpacity style={[styles.uploadBox, { backgroundColor: Colors(theme).card, borderColor: Colors(theme).border }]} onPress={() =>
+                            Platform.OS === 'web' ? dRef.current.click() : pickImage(setDashboardImage, setDashboardImageUrl)}>
+                            {dashboardImage ? (
+                                <>
+                                    <Image source={{ uri: dashboardImage }} style={styles.uploadedImage} />
+                                    {!dashboardImageUrl && <ActivityIndicator style={{ position: "absolute", zIndex: 100 }} size={"large"} />}
+                                </>
+                            ) : (
+                                <>
+                                    <View style={{ alignItems: 'center', paddingHorizontal: 12 }}>
+                                        <Text style={[styles.uploadText, { color: Colors(theme).textSecondary }]}>Upload Dashboard Screenshot</Text>
+                                        <Text style={[styles.uploadHint, { color: Colors(theme).textSecondary }]}>From Instagram → Insights → Last 30 days summary</Text>
+                                    </View>
+                                    {Platform.OS === 'web' && <input type='file' ref={dRef} accept='image/*' hidden
+                                        onChange={(e) => pickFile(e, setDashboardImage, setDashboardImageUrl)} />}
+                                </>
+                            )}
+                        </TouchableOpacity>
+                    </View>
+                </>}
 
-                </View>
 
                 {/* <Text style={styles.label}>Upload Dashboard Screenshot</Text> */}
 
+                {/* Add Your Metrics Section */}
+                <Text style={[styles.label, { color: Colors(theme).text, fontWeight: 600 }]}>Add Your Metrics</Text>
+                <View style={{ width: '100%', marginTop: 8 }}>
+                    <Text style={[styles.label, { color: Colors(theme).text }]}>Follower Counts</Text>
+                    <Select
+                        items={[
+                            { label: 'Less than 1,000', value: '<1K' },
+                            { label: '1,000 - 5,000', value: '1K-5K' },
+                            { label: '5,000 - 10,000', value: '5K-10K' },
+                            { label: '10,000 - 50,000', value: '10K-50K' },
+                            { label: '50,000 - 100,000', value: '50K-100K' },
+                            { label: '100,000+', value: '100K+' },
+                        ]}
+                        selectItemIcon={true}
+                        value={followerRange}
+                        onSelect={(val) => setFollowerRange(val)}
+                    />
+                    <Text style={[styles.label, { color: Colors(theme).text }]}>Monthly View Count</Text>
+                    <Select
+                        items={[
+                            { label: 'Less than 5,000', value: '<5K' },
+                            { label: '5,000 - 20,000', value: '5K-20K' },
+                            { label: '20,000 - 50,000', value: '20K-50K' },
+                            { label: '50,000 - 100,000', value: '50K-100K' },
+                            { label: '100,000 - 1M', value: '100K-1M' },
+                            { label: '1M+', value: '1M+' },
+                        ]}
+                        selectItemIcon={true}
+                        value={monthlyViews}
+                        onSelect={(val) => setMonthlyViews(val)}
+                    />
+                    <Text style={[styles.label, { color: Colors(theme).text }]}>Monthly Interaction Count</Text>
+                    <Select
+                        items={[
+                            { label: 'Less than 1,000', value: '<1K' },
+                            { label: '1,000 - 5,000', value: '1K-5K' },
+                            { label: '5,000 - 15,000', value: '5K-15K' },
+                            { label: '15,000 - 50,000', value: '15K-50K' },
+                            { label: '50,000+', value: '50K+' },
+                        ]}
+                        selectItemIcon={true}
+                        value={monthlyInteractions}
+                        onSelect={(val) => setMonthlyInteractions(val)}
+                    />
+                </View>
+
                 <View style={[styles.noteContainer, { backgroundColor: Colors(theme).card, borderColor: Colors(theme).border }]}>
                     <Text style={[styles.notesHeading, { color: Colors(theme).text }]}>Before You Continue</Text>
+                    {!socialId && <>
+                        <View style={styles.bulletPoint}>
+                            <Text style={[styles.bulletSymbol, { color: Colors(theme).text }]}>{'\u2022'}</Text>
+                            <Text style={[styles.bulletText, { color: Colors(theme).text }]}>Please ensure your Instagram account is set to <Text style={{ fontWeight: '600' }}>Professional</Text> and its visibility is <Text style={{ fontWeight: '600' }}>Public</Text>.</Text>
+                        </View>
+                        <View style={styles.bulletPoint}>
+                            <Text style={[styles.bulletSymbol, { color: Colors(theme).text }]}>{'\u2022'}</Text>
+                            <Text style={[styles.bulletText, { color: Colors(theme).text }]}>Upload <Text style={{ fontWeight: '600' }}>clear screenshots</Text> displaying your username, follower count, and other relevant details.</Text>
+                        </View>
+                        <View style={styles.bulletPoint}>
+                            <Text style={[styles.bulletSymbol, { color: Colors(theme).text }]}>{'\u2022'}</Text>
+                            <Text style={[styles.bulletText, { color: Colors(theme).text }]}>All uploads are <Text style={{ fontWeight: '600' }}>manually verified</Text>. We’ll reach out if any clarification is needed.</Text>
+                        </View>
+                    </>}
                     <View style={styles.bulletPoint}>
                         <Text style={[styles.bulletSymbol, { color: Colors(theme).text }]}>{'\u2022'}</Text>
-                        <Text style={[styles.bulletText, { color: Colors(theme).text }]}>Please ensure your Instagram account is set to <Text style={{ fontWeight: '600' }}>Professional</Text> and its visibility is <Text style={{ fontWeight: '600' }}>Public</Text>.</Text>
+                        <Text style={[styles.bulletText, { color: Colors(theme).text }]}>
+                            Metrics entered above should <Text style={{ fontWeight: '600' }}>match the uploaded screenshots</Text>. Any significant deviation may lead to <Text style={{ fontWeight: '600' }}>account deactivation</Text>.
+                        </Text>
                     </View>
                     <View style={styles.bulletPoint}>
                         <Text style={[styles.bulletSymbol, { color: Colors(theme).text }]}>{'\u2022'}</Text>
-                        <Text style={[styles.bulletText, { color: Colors(theme).text }]}>Upload <Text style={{ fontWeight: '600' }}>clear screenshots</Text> displaying your username, follower count, and other relevant details.</Text>
+                        <Text style={[styles.bulletText, { color: Colors(theme).text }]}>
+                            <Text style={{ fontWeight: '600' }}>Follower Range:</Text> This should match your visible follower count as seen on your profile screenshot. Avoid rounding up to the next tier.
+                        </Text>
                     </View>
                     <View style={styles.bulletPoint}>
                         <Text style={[styles.bulletSymbol, { color: Colors(theme).text }]}>{'\u2022'}</Text>
-                        <Text style={[styles.bulletText, { color: Colors(theme).text }]}>All uploads are <Text style={{ fontWeight: '600' }}>manually verified</Text>. We’ll reach out if any clarification is needed.</Text>
+                        <Text style={[styles.bulletText, { color: Colors(theme).text }]}>
+                            <Text style={{ fontWeight: '600' }}>Monthly View Count:</Text> Total views your content receives in the last 30 days. This can be found in your Instagram Insights.
+                        </Text>
+                    </View>
+                    <View style={styles.bulletPoint}>
+                        <Text style={[styles.bulletSymbol, { color: Colors(theme).text }]}>{'\u2022'}</Text>
+                        <Text style={[styles.bulletText, { color: Colors(theme).text }]}>
+                            <Text style={{ fontWeight: '600' }}>Monthly Interaction Count:</Text> Includes likes, comments, shares, and saves in the last 30 days. Check this from the post/activity insights section.
+                        </Text>
                     </View>
 
-                    <Text style={[styles.notesHeading, { marginTop: 30, color: Colors(theme).text }]}>Example Screenshots</Text>
-                    <View style={styles.exampleRow}>
-                        <Pressable onPress={() => {
-                            setActiveImage(require('@/assets/images/example-profile.jpg'));
-                            setModalVisible(true);
-                        }}>
-                            <Image source={require('@/assets/images/example-profile.jpg')} style={styles.exampleImageSmall} />
-                        </Pressable>
+                    {!socialId && <>
+                        <Text style={[styles.notesHeading, { marginTop: 30, color: Colors(theme).text }]}>Example Screenshots</Text>
+                        <View style={styles.exampleRow}>
+                            <Pressable onPress={() => {
+                                setActiveImage(require('@/assets/images/example-profile.jpg'));
+                                setModalVisible(true);
+                            }}>
+                                <Image source={require('@/assets/images/example-profile.jpg')} style={styles.exampleImageSmall} />
+                            </Pressable>
 
-                        <Pressable onPress={() => {
-                            setActiveImage(require('@/assets/images/example-dashboard.png'));
-                            setModalVisible(true);
-                        }}>
-                            <Image source={require('@/assets/images/example-dashboard.png')} style={styles.exampleImageSmall} />
-                        </Pressable>
-                    </View>
+                            <Pressable onPress={() => {
+                                setActiveImage(require('@/assets/images/example-dashboard.png'));
+                                setModalVisible(true);
+                            }}>
+                                <Image source={require('@/assets/images/example-dashboard.png')} style={styles.exampleImageSmall} />
+                            </Pressable>
+                        </View>
+                    </>}
                 </View>
 
                 {/* Fullscreen Modal */}
@@ -235,7 +368,7 @@ const AddInstagramManual = () => {
                     style={styles.button}
                     onPress={onClickContinue}
                     loading={apiLoading}
-                    disabled={handle.length < 1 || !profileImageUrl || !dashboardImageUrl}>
+                    disabled={((handle.length < 1 || !profileImageUrl || !dashboardImageUrl) && !socialId) || followerRange.length == 0 || monthlyViews.length == 0 || monthlyInteractions.length == 0}>
                     Continue
                 </Button>
             </View>
@@ -293,6 +426,13 @@ const stylesFn = (theme: Theme) => StyleSheet.create({
     },
     uploadText: {
         fontSize: 16,
+        textAlign: 'center',
+        marginBottom: 12
+    },
+    uploadHint: {
+        fontSize: 12,
+        textAlign: 'center',
+        marginTop: 4,
     },
     button: {
         paddingVertical: 8,

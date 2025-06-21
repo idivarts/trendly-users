@@ -60,13 +60,10 @@ export const SocialContextProvider = ({ children }: PropsWithChildren<{}>) => {
       const unsubscribe = onSnapshot(socialProfileRef, (snapshot) => {
         const socialData = snapshot.docs.map((doc) => {
           const data = doc.data();
-          return {
-            id: doc.id,
-            ...data,
-            ...(data.isInstagram
-              ? { instaProfile: data.instaProfile }
-              : { fbProfile: data.fbProfile }),
+          const social: ISocials = {
+            ...data as ISocials,
           };
+          return social;
         });
 
         setSocials(socialData);
@@ -89,6 +86,9 @@ export const SocialContextProvider = ({ children }: PropsWithChildren<{}>) => {
         if (!primary) {
           setPrimarySocial(null);
           resetAndNavigate("/primary-social-select");
+        } else if (primary.isInstagram && !primary.instaProfile?.approxMetrics) {
+          // If primary social is Instagram and it doesn't have approxMetrics, take user to Instagram onboarding
+          resetAndNavigate(`/add-instagram-manual?socialId=${primary.id}`);
         } else {
           // @ts-ignore
           setPrimarySocial(primary);

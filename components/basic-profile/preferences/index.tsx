@@ -1,22 +1,22 @@
-import { useEffect, useState } from "react";
-import { Platform, ScrollView, useWindowDimensions } from "react-native";
+import ContentWrapper from "@/components/ui/content-wrapper";
+import { MultiRangeSlider } from "@/components/ui/multislider";
 import Select from "@/components/ui/select";
 import SelectGroup from "@/components/ui/select/select-group";
-import { MultiRangeSlider } from "@/components/ui/multislider";
 import { Selector } from "@/components/ui/select/selector";
-import { faGift, faHandHoldingDollar } from "@fortawesome/free-solid-svg-icons";
-import { useTheme } from "@react-navigation/native";
 import {
   BRAND_INDUSTRIES,
   INITIAL_BRAND_INDUSTRIES,
   INITIAL_LANGUAGES,
   LANGUAGES,
-} from "@/constants/ItemsList";
-import { includeSelectedItems } from "@/utils/items-list";
-import { User } from "@/types/User";
-import ContentWrapper from "@/components/ui/content-wrapper";
+} from "@/shared-constants/ItemsList";
 import { IPreferences } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { MultiSelectExtendable } from "@/shared-uis/components/multiselect-extendable";
+import { User } from "@/types/User";
+import { includeSelectedItems } from "@/utils/items-list";
+import { faGift, faHandHoldingDollar } from "@fortawesome/free-solid-svg-icons";
+import { useTheme } from "@react-navigation/native";
+import { useEffect, useState } from "react";
+import { Platform, ScrollView, useWindowDimensions } from "react-native";
 
 interface PreferencesProps {
   user: User;
@@ -170,9 +170,8 @@ const Preferences: React.FC<PreferencesProps> = ({ user, onSave }) => {
       <ContentWrapper
         title="Maximum Monthly Collabs"
         description="Limit your monthly collab to have a good balance between your own content to campaign contents."
-        rightText={`${preferences.maximumMonthlyCollabs?.[0] || 0}-${
-          preferences.maximumMonthlyCollabs?.[1] || 100
-        }`}
+        rightText={`${preferences.maximumMonthlyCollabs?.[0] || 0}-${preferences.maximumMonthlyCollabs?.[1] || 100
+          }`}
       >
         <MultiRangeSlider
           containerStyle={{
