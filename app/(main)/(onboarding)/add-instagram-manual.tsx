@@ -6,7 +6,10 @@ import TextInput from '@/components/ui/text-input';
 import { useSocialContext } from '@/contexts';
 import AppLayout from '@/layouts/app-layout';
 import { useAWSContext } from "@/shared-libs/contexts/aws-context.provider";
+import { ISocials } from '@/shared-libs/firestore/trendly-pro/models/socials';
 import { Console } from '@/shared-libs/utils/console';
+import { AuthApp } from '@/shared-libs/utils/firebase/auth';
+import { FirestoreDB } from '@/shared-libs/utils/firebase/firestore';
 import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import Toaster from '@/shared-uis/components/toaster/Toaster';
 import Colors from '@/shared-uis/constants/Colors';
@@ -14,7 +17,8 @@ import { resetAndNavigate } from '@/utils/router';
 import { Theme, useTheme } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import React, { useRef, useState } from 'react';
+import { doc, getDoc } from 'firebase/firestore';
+import React, { useEffect, useRef, useState } from 'react';
 import {
     Dimensions,
     Image,
@@ -57,6 +61,31 @@ const AddInstagramManual = () => {
     const [monthlyViews, setMonthlyViews] = useState<SelectItem[]>([]);
     const [monthlyInteractions, setMonthlyInteractions] = useState<SelectItem[]>([]);
 
+    const [social, setSocial] = useState<ISocials | undefined>(undefined)
+
+
+    const getSocial = async (id: string) => {
+        if (!AuthApp.currentUser)
+            return;
+        try {
+            const docRef = doc(FirestoreDB, 'users', AuthApp.currentUser?.uid, 'socials', id);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                const soc = (await docSnap.data()) as ISocials;
+                setSocial(soc);
+            } else {
+                Console.error("No such document!");
+                return null;
+            }
+        } catch (error) {
+            Console.error(error, "Error getting Social document");
+            return null;
+        }
+    }
+    useEffect(() => {
+        getSocial(socialId as string)
+    }, [socialId])
+
     const pickImage = async (setter: Function, urlSetter: Function) => {
         urlSetter(null);
         const result = await ImagePicker.launchImageLibraryAsync({
@@ -98,14 +127,16 @@ const AddInstagramManual = () => {
     const onClickContinue = async () => {
         Console.log("Instagram Manual", handle, profileImageUrl, dashboardImageUrl);
 
-        if (handle.length <= 1 || !profileImageUrl || !dashboardImageUrl) {
-            Toaster.error('Please fill all the fields');
-            return;
-        }
-        const handleRegex = /^@[a-zA-Z0-9._]{1,30}$/;
-        if (!handleRegex.test(handle)) {
-            Toaster.error('Invalid Instagram handle', 'Ensure it starts with @ and contains only letters, numbers, periods, or underscores.');
-            return;
+        if (!socialId) {
+            if (handle.length <= 1 || !profileImageUrl || !dashboardImageUrl) {
+                Toaster.error('Please fill all the fields');
+                return;
+            }
+            const handleRegex = /^@[a-zA-Z0-9._]{1,30}$/;
+            if (!handleRegex.test(handle)) {
+                Toaster.error('Invalid Instagram handle', 'Ensure it starts with @ and contains only letters, numbers, periods, or underscores.');
+                return;
+            }
         }
 
         setApiLoading(true);
@@ -115,9 +146,15 @@ const AddInstagramManual = () => {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                handle: handle.substring(1),
-                profileImage: profileImageUrl,
-                dashboardImage: dashboardImageUrl,
+                ...((socialId && social) ? {
+                    handle: social.instaProfile?.username,
+                    profileImage: social.socialScreenShots?.[0],
+                    dashboardImage: social.socialScreenShots?.[1]
+                } : {
+                    handle: handle.substring(1),
+                    profileImage: profileImageUrl,
+                    dashboardImage: dashboardImageUrl
+                }),
 
                 socialId: socialId || undefined,
                 followerRange: followerRange[0].value,
@@ -331,7 +368,7 @@ const AddInstagramManual = () => {
                     style={styles.button}
                     onPress={onClickContinue}
                     loading={apiLoading}
-                    disabled={handle.length < 1 || !profileImageUrl || !dashboardImageUrl || followerRange.length == 0 || monthlyViews.length == 0 || monthlyInteractions.length == 0}>
+                    disabled={((handle.length < 1 || !profileImageUrl || !dashboardImageUrl) && !socialId) || followerRange.length == 0 || monthlyViews.length == 0 || monthlyInteractions.length == 0}>
                     Continue
                 </Button>
             </View>
