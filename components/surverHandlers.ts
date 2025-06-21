@@ -20,7 +20,7 @@ export const submitSurvey = async (answers: SurveyAnswer) => {
 
       await updateDoc(userRef, {
         preferences: getFormattedPreferences(userData.preferences, answers),
-        location: answers.question3,
+        location: answers.question3?.[0] || "",
       });
     } else {
       Console.log("User data does not exist");
