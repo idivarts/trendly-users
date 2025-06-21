@@ -1,7 +1,7 @@
 import { View } from '@/components/theme/Themed';
 import Button from '@/components/ui/button';
 import ScreenHeader from '@/components/ui/screen-header';
-import Select from '@/components/ui/select';
+import Select, { SelectItem } from '@/components/ui/select';
 import TextInput from '@/components/ui/text-input';
 import { useSocialContext } from '@/contexts';
 import AppLayout from '@/layouts/app-layout';
@@ -53,9 +53,9 @@ const AddInstagramManual = () => {
     const [blockLoading, setBlockLoading] = useState(false)
 
     // Metrics states
-    const [followerRange, setFollowerRange] = useState<any[]>([]);
-    const [monthlyViews, setMonthlyViews] = useState<any[]>([]);
-    const [monthlyInteractions, setMonthlyInteractions] = useState<any[]>([]);
+    const [followerRange, setFollowerRange] = useState<SelectItem[]>([]);
+    const [monthlyViews, setMonthlyViews] = useState<SelectItem[]>([]);
+    const [monthlyInteractions, setMonthlyInteractions] = useState<SelectItem[]>([]);
 
     const pickImage = async (setter: Function, urlSetter: Function) => {
         urlSetter(null);
@@ -120,9 +120,9 @@ const AddInstagramManual = () => {
                 dashboardImage: dashboardImageUrl,
 
                 socialId: socialId || undefined,
-                followerRange: followerRange[0],
-                monthlyViews: monthlyViews[0],
-                monthlyInteractions: monthlyInteractions[0],
+                followerRange: followerRange[0].value,
+                monthlyViews: monthlyViews[0].value,
+                monthlyInteractions: monthlyInteractions[0].value,
             }),
         }).then(response => {
             Toaster.success('Instagram added successfully');
