@@ -10,7 +10,7 @@ import {
 
 import { View } from "@/components/theme/Themed";
 import { useAuthContext } from "@/contexts";
-import { useScrollContext } from "@/shared-libs/contexts/scroll-context";
+import { IOScroll } from "@/shared-libs/contexts/scroll-context";
 import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
 import {
   ICollaboration
@@ -20,7 +20,6 @@ import { AuthApp } from "@/shared-libs/utils/firebase/auth";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { Invitation } from "@/types/Collaboration";
 import { useIsFocused } from "@react-navigation/native";
-import { IOScrollView } from "react-native-intersection-observer";
 import CollaborationDetailsContent from "./CollaborationDetailsContent";
 ;
 ;
@@ -151,8 +150,6 @@ const CollaborationDetails: React.FC<CollaborationDetailsProps> = ({
     }
   }, [cardType, pageID, cardId]);
 
-  const { scrollRef, setScrollHeight } = useScrollContext()
-
   if (loading) {
     return (
       <View
@@ -170,9 +167,7 @@ const CollaborationDetails: React.FC<CollaborationDetailsProps> = ({
   if (!collaboration) return null;
 
   return (
-    <IOScrollView ref={scrollRef} onScroll={(e) => {
-      setScrollHeight?.(e.nativeEvent.contentOffset?.y || 0)
-    }}>
+    <IOScroll>
       <CollaborationDetailsContent
         cardType={cardTypeDetails}
         applicationData={application}
@@ -182,7 +177,7 @@ const CollaborationDetails: React.FC<CollaborationDetailsProps> = ({
         fetchCollaboration={fetchCollaboration}
         pageID={pageID}
       />
-    </IOScrollView>
+    </IOScroll>
   );
 };
 

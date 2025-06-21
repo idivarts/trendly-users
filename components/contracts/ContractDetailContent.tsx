@@ -1,6 +1,6 @@
 import UserResponse from "@/components/contract-card/UserResponse";
 import { useBreakpoints } from "@/hooks";
-import { useScrollContext } from "@/shared-libs/contexts/scroll-context";
+import { IOScroll } from "@/shared-libs/contexts/scroll-context";
 import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
 import {
   IApplications,
@@ -24,7 +24,6 @@ import { useLocalSearchParams } from "expo-router";
 import { doc, getDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { View } from "react-native";
-import { IOScrollView } from "react-native-intersection-observer";
 import { Card, Portal, Text } from "react-native-paper";
 import ActionContainer from "./ActionContainer";
 import FeedbackModal from "./FeedbackModal";
@@ -83,16 +82,11 @@ const ContractDetailsContent = (props: CollaborationDetailsContentProps) => {
   }, []);
 
   const { xl } = useBreakpoints();
-  const { scrollRef, setScrollHeight } = useScrollContext()
 
   return (
-    <IOScrollView
+    <IOScroll
       contentContainerStyle={styles.scrollContainer}
       showsVerticalScrollIndicator={false}
-      ref={scrollRef}
-      onScroll={(e) => {
-        setScrollHeight?.(e.nativeEvent.contentOffset?.y || 0)
-      }}
     >
       {/* Collaboration Details */}
       <View style={styles.profileCard}>
@@ -272,7 +266,7 @@ const ContractDetailsContent = (props: CollaborationDetailsContentProps) => {
           />
         </Portal>
       )}
-    </IOScrollView>
+    </IOScroll>
   );
 };
 

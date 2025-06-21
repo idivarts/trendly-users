@@ -4,7 +4,7 @@ import { MAX_WIDTH_WEB } from "@/constants/Container";
 import { useAuthContext } from "@/contexts";
 import { useBreakpoints } from "@/hooks";
 import AppLayout from "@/layouts/app-layout";
-import { useScrollContext } from "@/shared-libs/contexts/scroll-context";
+import { IOScroll } from "@/shared-libs/contexts/scroll-context";
 import { Attachment } from "@/shared-libs/firestore/trendly-pro/constants/attachment";
 import { processRawAttachment } from "@/shared-libs/utils/attachments";
 import { Console } from "@/shared-libs/utils/console";
@@ -30,7 +30,6 @@ import {
   Pressable,
   RefreshControl,
 } from "react-native";
-import { IOScrollView } from "react-native-intersection-observer";
 import CollaborationDetails from "../collaboration/card-components/CollaborationDetails";
 import CollaborationHeader from "../collaboration/card-components/CollaborationHeader";
 import EmptyState from "../ui/empty-state";
@@ -146,7 +145,6 @@ const Invitations = () => {
       </AppLayout>
     );
   }
-  const { scrollRef, setScrollHeight } = useScrollContext()
   return (
     <View
       style={{
@@ -163,9 +161,7 @@ const Invitations = () => {
           title="No Invitations yet"
         />
       ) : (
-        <IOScrollView ref={scrollRef} onScroll={(e) => {
-          setScrollHeight?.(e.nativeEvent.contentOffset?.y || 0)
-        }}>
+        <IOScroll>
           {pendingInvitations.length !== 0 &&
             <FlatList
               data={pendingInvitations}
@@ -323,7 +319,7 @@ const Invitations = () => {
               )}
             </View>
           )}
-        </IOScrollView>
+        </IOScroll>
       )}
       {isVisible && (
         <BottomSheetActions
