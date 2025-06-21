@@ -1,4 +1,3 @@
-import CollaborationFilter from "@/components/FilterModal";
 import SearchComponent from "@/components/SearchComponent";
 import { MAX_WIDTH_WEB } from "@/constants/Container";
 import { useAuthContext } from "@/contexts";
@@ -347,7 +346,7 @@ const Collaboration = () => {
         key={selectedCollabId} // Ensure the BottomSheetActions re-renders with new id
       />
 
-      {filterVisible && (
+      {/* {filterVisible && (
         <CollaborationFilter
           categories={getUniqueValues(collabs, "promotionType")}
           jobTypes={getUniqueValues(collabs, "collaborationType")}
@@ -360,7 +359,7 @@ const Collaboration = () => {
           setSalaryRange={setSalaryRange}
           onClose={toggleFilterModal}
         />
-      )}
+      )} */}
     </AppLayout>
   );
 };
