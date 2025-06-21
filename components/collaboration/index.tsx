@@ -23,7 +23,8 @@ import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Dimensions,
-  Pressable
+  Pressable,
+  ScrollView
 } from "react-native";
 import BottomSheetActions from "../BottomSheetActions";
 import { View } from "../theme/Themed";
@@ -237,9 +238,10 @@ const Collaboration = () => {
                   width={xl ? MAX_WIDTH_WEB : Dimensions.get("window").width}
                   objectKey="id"
                   renderItem={({ item }) => (
-                    <View
+                    <ScrollView
                       key={item.id}
-                      style={{
+                      horizontal={false}
+                      contentContainerStyle={{
                         width: "100%",
                         borderWidth: 0.3,
                         borderColor: Colors(theme).gray300,
@@ -314,7 +316,7 @@ const Collaboration = () => {
                           brandHireRate={item.brandHireRate || ""}
                         />
                       </Pressable>
-                    </View>
+                    </ScrollView>
                   )}
                   vertical={false}
                   onLoadMore={() => { loadMore() }}
