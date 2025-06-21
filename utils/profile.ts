@@ -50,7 +50,7 @@ export const getFormattedPreferences = (
     ...preferences,
     preferredBrandIndustries: answers.question1,
     contentCategory: answers.question2,
-    contentWillingToPost: answers.question3,
-    preferredLanguages: answers.question4,
+    // contentWillingToPost: answers.question3,
+    // preferredLanguages: answers.question4,
   };
 };
