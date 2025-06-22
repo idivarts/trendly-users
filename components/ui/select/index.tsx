@@ -4,6 +4,7 @@ import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
 import { Pressable, StyleProp, ViewStyle } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 
 export type SelectItem = {
   label: string;
@@ -52,8 +53,9 @@ const Select: React.FC<SelectProps> = ({
   };
 
   return (
-    <View
-      style={[
+    <ScrollView
+      style={{ width: "100%", height: "100%", flex: 1 }}
+      contentContainerStyle={[
         {
           gap: 8,
         },
@@ -118,7 +120,7 @@ const Select: React.FC<SelectProps> = ({
           </Pressable>
         ))
       }
-    </View>
+    </ScrollView>
   );
 };
 
