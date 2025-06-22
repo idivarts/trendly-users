@@ -324,7 +324,7 @@ const Invitations = () => {
       {isVisible && (
         <BottomSheetActions
           cardId={selectedCollabId || ""}
-          cardType="proposal"
+          cardType="invitation"
           invitationId={invitationID}
           isVisible={isVisible}
           onClose={closeBottomSheet}

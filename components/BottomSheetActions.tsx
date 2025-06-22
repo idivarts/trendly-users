@@ -152,7 +152,7 @@ const BottomSheetActions = ({
             />
           </List.Section>
         );
-      case "proposal":
+      case "invitation":
         return (
           <List.Section style={{ paddingBottom: 28 }}>
             <List.Item
@@ -205,7 +205,7 @@ const BottomSheetActions = ({
             />
           </List.Section>
         );
-      case "invitation":
+      case "proposal":
         return (
           <List.Section style={{ paddingBottom: 28 }}>
             <List.Item
@@ -218,7 +218,8 @@ const BottomSheetActions = ({
             <List.Item
               title="Change Terms"
               onPress={() => {
-                router.push("/change-terms" as Href);
+                router.push(`/edit-application/${cardId}?collaborationId=${cardId}` as Href);
+                // http://localhost:8081/edit-application/jEZf51INayY4ZcJs2ck0XWR8Ptj2?collaborationId=fP8GkGwcYgQgNIXExB78
                 handleClose();
               }}
             />

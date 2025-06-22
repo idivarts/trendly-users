@@ -40,17 +40,20 @@ export const useAppleLogin = (setLoading: Function, setError: Function) => {
         return capitalized.join(' ');
     };
     const evalResult = async (result: void | UserCredential, appleCredential: AppleAuthentication.AppleAuthenticationCredential) => {
+        if (!AuthApp.currentUser) throw new Error("User not authenticated");
         if (!result) throw new Error("No result returned from signInWithCredential");
         if (!result.user) throw new Error("No user found in the result");
         if (!result.user.uid) throw new Error("No user ID found in the user object");
-        if (!result.user.email) throw new Error("No email found in the user object");
+        // if (!result.user.email) throw new Error("No email found in the user object");
         if (!appleCredential) throw new Error("No Apple credential returned");
 
         setLoading(true);
-        const userRef = doc(FirestoreDB, "users", result.user.uid);
+        Console.log("Authenticated", result.user.uid, AuthApp.currentUser.uid);
+
+        const userRef = doc(FirestoreDB, "users", AuthApp.currentUser.uid);
         const findUser = await getDoc(userRef);
         const isExistingUser = findUser.exists();
-
+        Console.log("Fetched User", isExistingUser)
         if (!isExistingUser) {
             const userData = {
                 ...INITIAL_DATA,
@@ -60,9 +63,10 @@ export const useAppleLogin = (setLoading: Function, setError: Function) => {
                 profileImage: "",
                 creationTime: Date.now(),
             };
+            Console.log("Creating User", userData);
             await setDoc(userRef, userData);
         }
-
+        Console.log("Now ready");
         if (isExistingUser) {
             firebaseSignIn(result.user.uid);
         } else {
@@ -93,6 +97,7 @@ export const useAppleLogin = (setLoading: Function, setError: Function) => {
                 Console.log(error, "signInWithCredential Error");
                 throw new Error("Failed to sign in with Apple -" + error.message);
             })
+            Console.log("Logged in successfully")
             await evalResult(result, appleCredential);
         } catch (error: any) {
             Console.error(error, "Apple Signin Error");

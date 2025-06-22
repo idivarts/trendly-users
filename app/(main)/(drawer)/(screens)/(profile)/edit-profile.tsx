@@ -6,41 +6,30 @@ import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
+import BottomSheetScrollContainer from "@/shared-uis/components/bottom-sheet/scroll-view";
 import ConfirmationModal from "@/shared-uis/components/ConfirmationModal";
 import ProfileBottomSheet from "@/shared-uis/components/ProfileModal/Profile-Modal";
 import { resetAndNavigate } from "@/utils/router";
 import {
-  BottomSheetBackdrop,
-  BottomSheetModal
+  BottomSheetBackdrop
 } from "@gorhom/bottom-sheet";
 import { useTheme } from "@react-navigation/native";
 import { useNavigation } from "expo-router";
-import { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Pressable } from "react-native";
-import { useSharedValue } from "react-native-reanimated";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const EditProfileScreen: React.FC = () => {
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const [unsavedChanges, setUnsavedChanges] = useState(false);
   const [confirmationModalVisible, setConfirmationModalVisible] =
     useState(false);
   const [clickBack, setClickBack] = useState(false)
+  const [openBottomSheet, setOpenBottomSheet] = useState(false)
 
   const theme = useTheme();
 
-  const snapPoints = useMemo(() => ["25%", "50%", "90%"], []);
-  const insets = useSafeAreaInsets();
-  const containerOffset = useSharedValue({
-    top: insets.top,
-    bottom: insets.bottom,
-    left: insets.left,
-    right: insets.right,
-  });
   const navigation = useNavigation()
-  const handleSheetChanges = (index: number) => { };
   const closeProfileModal = () => {
-    bottomSheetModalRef.current?.close();
+    setOpenBottomSheet(false)
   }
 
   const [loadingPosts, setLoadingPosts] = useState(false);
@@ -109,8 +98,7 @@ const EditProfileScreen: React.FC = () => {
                 setConfirmationModalVisible(true);
                 return;
               }
-
-              bottomSheetModalRef.current?.present();
+              setOpenBottomSheet(true)
             }}
             style={{ padding: 10 }}
           >
@@ -124,15 +112,10 @@ const EditProfileScreen: React.FC = () => {
         setUnsavedChanges={setUnsavedChanges}
       />
 
-      <BottomSheetModal
-        ref={bottomSheetModalRef}
-        index={2}
-        snapPoints={snapPoints}
-        onChange={handleSheetChanges}
-        backdropComponent={renderBackdrop}
-        enablePanDownToClose={false}
-        containerOffset={containerOffset}
-        topInset={insets.top}
+      <BottomSheetScrollContainer
+        isVisible={openBottomSheet}
+        snapPointsRange={["90%", "90%"]}
+        onClose={() => { setOpenBottomSheet(false) }}
       >
         <ProfileBottomSheet
           influencer={user as IUsers}
@@ -144,7 +127,7 @@ const EditProfileScreen: React.FC = () => {
           posts={posts}
           isInstagram={isInstagram}
         />
-      </BottomSheetModal>
+      </BottomSheetScrollContainer>
 
       <ConfirmationModal
         cancelAction={() => {
@@ -168,7 +151,7 @@ const EditProfileScreen: React.FC = () => {
       <ConfirmationModal
         cancelAction={() => setConfirmationModalVisible(false)}
         confirmAction={() => {
-          bottomSheetModalRef.current?.present();
+          setOpenBottomSheet(true)
           setConfirmationModalVisible(false);
         }}
         confirmText="Continue"
