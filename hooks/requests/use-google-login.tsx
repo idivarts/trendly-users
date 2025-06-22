@@ -13,9 +13,15 @@ export const useGoogleLogin = (setLoading: Function, setError: Function) => {
     const { firebaseSignIn, firebaseSignUp } = useAuthContext();
     const INTIAL_DATA = useInitialUserData()
 
+    // const redirectUri = makeRedirectUri({
+    //     native: 'trendly-creators',
+    // });
+
     const [request, response, promptAsync] = Google.useAuthRequest({
         iosClientId: '799278694891-6cubib0gjb4kp81vq5bi8ulu4q7amduv.apps.googleusercontent.com',
-        androidClientId: '799278694891-17c36gmmh1m3o9fmu0u8k7jkb7s86ll7.apps.googleusercontent.com',
+        androidClientId: '799278694891-4boqousbd7vfevm9p8s24n1h5gc9u49o.apps.googleusercontent.com',
+        // webClientId: "799278694891-mqote8c8hpb4952l2hg9hchkni8js2k5.apps.googleusercontent.com",
+        // redirectUri
     });
 
     const evalResult = async (result: void | UserCredential) => {
