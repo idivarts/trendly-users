@@ -95,7 +95,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
     </View>
   }
   const { updateUser } = useAuthContext()
-  const canEditEmail = AuthApp.currentUser?.providerData[0].providerId == "google.com" || AuthApp.currentUser?.providerData[0].providerId == "apple.com";
+  const canEditEmail = AuthApp.currentUser?.providerData[0].providerId == "google.com" || (AuthApp.currentUser?.providerData[0].providerId == "apple.com" && !!user?.email);
 
   return (
     <View
