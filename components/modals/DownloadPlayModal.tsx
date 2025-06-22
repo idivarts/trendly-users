@@ -43,7 +43,7 @@ const DownloadPlayModal: React.FC<DownloadPlayModalProps> = ({ }) => {
           <Image source={require('@/assets/images/icon.png')} style={{ width: 40, height: 40, borderColor: ColorsStatic.primary, borderWidth: 2, borderRadius: 20 }} />
           <View style={{ flex: 1, alignItems: "flex-start", marginLeft: 16, gap: 8 }}>
             <Text style={styles.headerTitle}>
-              Android App Available
+              Unofficial Android App!
             </Text>
             <Text style={styles.headerText}>
               Download the app for the best experience. This is an APK file and not from the Play Store.
