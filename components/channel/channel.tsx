@@ -4,9 +4,9 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Pressable } from "react-native";
 import { Channel as ChannelType } from "stream-chat";
-import { Channel, MessageInput, MessageList, useChatContext } from "stream-chat-expo";
+import { Channel, MessageInput, MessageList } from "stream-chat-expo";
 
-import { useBrandContext, useContractContext } from "@/contexts";
+import { useBrandContext, useChatContext, useContractContext } from "@/contexts";
 import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
 import { IContracts } from "@/shared-libs/firestore/trendly-pro/models/contracts";
 import Colors from "@/shared-uis/constants/Colors";
@@ -15,6 +15,7 @@ import { useTheme } from "@react-navigation/native";
 import { Avatar } from "react-native-paper";
 import ChatMessageTopbar from "./chat-message-topbar";
 
+import { streamClient } from "@/contexts/streamClient";
 import {
   AttachButton,
   AttachmentPickerSelectionBar,
@@ -29,10 +30,12 @@ const ChannelNative = () => {
   const [brand, setBrand] = useState<IBrands | null>(null);
   const { cid } = useLocalSearchParams<{ cid: string }>();
 
-  const { client } = useChatContext();
+  const { connectUser } = useChatContext()
+
   const { getContractById } = useContractContext();
   const { getBrandById } = useBrandContext();
 
+  const client = streamClient
   const router = useRouter();
   const theme = useTheme();
 
@@ -55,6 +58,7 @@ const ChannelNative = () => {
 
   useEffect(() => {
     const fetchChannel = async () => {
+      await connectUser()
       const channels = await client.queryChannels({ cid });
       setChannel(channels[0]);
 
