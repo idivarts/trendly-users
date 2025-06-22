@@ -38,11 +38,20 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#ffffff"
       },
       "googleServicesFile": "./google-services.json",
       "package": "pro.trendly.creators",
+      "permissions": [
+        "NOTIFICATIONS",
+        "CAMERA",
+        "RECORD_AUDIO",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ],
+      "versionCode": 3,
+      "googlePlayServicesVersion": "21.0.1",
       "intentFilters": [
         {
           "action": "VIEW",
@@ -88,6 +97,7 @@
       "@react-native-firebase/app",
       "@react-native-firebase/crashlytics",
       "@react-native-firebase/messaging",
+      "@react-native-google-signin/google-signin",
       [
         "expo-av",
         {
