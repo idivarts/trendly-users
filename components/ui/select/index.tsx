@@ -54,10 +54,13 @@ const Select: React.FC<SelectProps> = ({
 
   return (
     <ScrollView
+      contentContainerStyle={{ flexGrow: 1 }}
       style={{ width: "100%", height: "100%", flex: 1 }}
-      contentContainerStyle={[
+    >
+      <View style={[
         {
           gap: 8,
+          flex: 1,
         },
         direction === "row" ? {
           flexDirection: "row",
@@ -67,59 +70,58 @@ const Select: React.FC<SelectProps> = ({
           justifyContent: "center",
         },
         style,
-      ]
-      }
-    >
-      {
-        items.map((item) => (
-          <Pressable
-            key={item.value}
-            onPress={() => handleSelect(item)}
-          >
-            <View
+      ]}>
+        {
+          items.map((item) => (
+            <Pressable
               key={item.value}
-              style={[
-                {
-                  backgroundColor: value.find(
-                    (selectedItem) => selectedItem.value === item.value,
-                  )
-                    ? Colors(theme).primary
-                    : Colors(theme).tag,
-                  borderRadius: 10,
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  paddingHorizontal: 16,
-                  paddingVertical: 12,
-                  gap: 12,
-                },
-                selectItemStyle,
-              ]}
+              onPress={() => handleSelect(item)}
             >
-              <Text
-                style={{
-                  color: value.find(
-                    (selectedItem) => selectedItem.value === item.value,
-                  )
-                    ? Colors(theme).white
-                    : Colors(theme).text,
-                }}
+              <View
+                key={item.value}
+                style={[
+                  {
+                    backgroundColor: value.find(
+                      (selectedItem) => selectedItem.value === item.value,
+                    )
+                      ? Colors(theme).primary
+                      : Colors(theme).tag,
+                    borderRadius: 10,
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    paddingHorizontal: 16,
+                    paddingVertical: 12,
+                    gap: 12,
+                  },
+                  selectItemStyle,
+                ]}
               >
-                {item.label}
-              </Text>
-              {
-                selectItemIcon && value.find(
-                  (selectedItem) => selectedItem.value === item.value,
-                ) && (
-                  <FontAwesomeIcon
-                    icon={faCheck}
-                    color={Colors(theme).white}
-                  />
-                )
-              }
-            </View>
-          </Pressable>
-        ))
-      }
+                <Text
+                  style={{
+                    color: value.find(
+                      (selectedItem) => selectedItem.value === item.value,
+                    )
+                      ? Colors(theme).white
+                      : Colors(theme).text,
+                  }}
+                >
+                  {item.label}
+                </Text>
+                {
+                  selectItemIcon && value.find(
+                    (selectedItem) => selectedItem.value === item.value,
+                  ) && (
+                    <FontAwesomeIcon
+                      icon={faCheck}
+                      color={Colors(theme).white}
+                    />
+                  )
+                }
+              </View>
+            </Pressable>
+          ))
+        }
+      </View>
     </ScrollView>
   );
 };
