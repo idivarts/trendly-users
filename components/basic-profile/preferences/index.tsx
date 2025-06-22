@@ -28,7 +28,7 @@ const Preferences: React.FC<PreferencesProps> = ({ user, onSave }) => {
   const dimensions = useWindowDimensions();
 
   const [preferences, setPreferences] = useState<IPreferences>({
-    budgetForPaidCollabs: user.preferences?.budgetForPaidCollabs || [0, 100],
+    budgetForPaidCollabs: user.preferences?.budgetForPaidCollabs || [0, 5000],
     contentCategory: user.preferences?.contentCategory || [],
     contentWillingToPost: user.preferences?.contentWillingToPost || ["Post"],
     goal: user.preferences?.goal || "Long Term",
@@ -134,15 +134,16 @@ const Preferences: React.FC<PreferencesProps> = ({ user, onSave }) => {
             paddingHorizontal: 8,
           }}
           sliderLength={Platform.OS === "web" ? dimensions.width - 48 : 352}
-          maxValue={100}
+          maxValue={50000}
           minValue={0}
+          step={1000}
           onValuesChange={(values) => {
             setPreferences({
               ...preferences,
               budgetForPaidCollabs: values,
             });
           }}
-          values={preferences.budgetForPaidCollabs || [0, 100]}
+          values={preferences.budgetForPaidCollabs || [0, 5000]}
         />
       </ContentWrapper>
       <ContentWrapper
