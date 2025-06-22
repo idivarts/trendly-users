@@ -13,7 +13,9 @@
     "build": "expo export -p web",
     "preview": "export $(cat .env.local | xargs) &&  eas build --platform ios --profile preview --local --output build/Trendly.tar.gz && tar -xzf build/Trendly.tar.gz -C build && xcrun simctl install booted build/Trendly.app",
     "simulator": "export $(cat .env.local | xargs) &&  eas build --platform ios --profile simulator --local --output build/Trendly.tar.gz && tar -xzf build/Trendly.tar.gz -C build && xcrun simctl install booted build/Trendly.app",
+    "emulator": "export $(cat .env.local | xargs) &&  eas build --platform android --profile simulator --local --output build/Trendly.apk && adb install build/Trendly.apk",
     "build-ios": "export $(cat .env.local | xargs) &&  eas build --platform ios --profile production --local --output build/Trendly.ipa",
+    "build-android": "export $(cat .env.local | xargs) &&  eas build --platform android --profile production --local --output build/Trendly.aab",
     "submit-ios": "eas submit -p ios --path build/Trendly.ipa",
     "postinstall": "npm install --prefix shared-libs && npm install --prefix shared-uis && npm install --prefix shared-constants && node react-native-web-fix.js",
     "populate": "ts-node scripts/populate.ts"

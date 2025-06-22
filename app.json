@@ -43,6 +43,15 @@
       },
       "googleServicesFile": "./google-services.json",
       "package": "pro.trendly.creators",
+      "permissions": [
+        "NOTIFICATIONS",
+        "CAMERA",
+        "RECORD_AUDIO",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ],
+      "versionCode": 3,
+      "googlePlayServicesVersion": "21.0.1",
       "intentFilters": [
         {
           "action": "VIEW",
