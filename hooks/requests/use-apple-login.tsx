@@ -48,10 +48,12 @@ export const useAppleLogin = (setLoading: Function, setError: Function) => {
         if (!appleCredential) throw new Error("No Apple credential returned");
 
         setLoading(true);
+        Console.log("Authenticated", result.user.uid, AuthApp.currentUser.uid);
+
         const userRef = doc(FirestoreDB, "users", AuthApp.currentUser.uid);
         const findUser = await getDoc(userRef);
         const isExistingUser = findUser.exists();
-
+        Console.log("Fetched User", isExistingUser)
         if (!isExistingUser) {
             const userData = {
                 ...INITIAL_DATA,
@@ -61,9 +63,10 @@ export const useAppleLogin = (setLoading: Function, setError: Function) => {
                 profileImage: "",
                 creationTime: Date.now(),
             };
+            Console.log("Creating User", userData);
             await setDoc(userRef, userData);
         }
-
+        Console.log("Now ready");
         if (isExistingUser) {
             firebaseSignIn(result.user.uid);
         } else {
