@@ -15,7 +15,7 @@ export const useGoogleLogin = (setLoading: Function, setError: Function) => {
 
     const [request, response, promptAsync] = Google.useAuthRequest({
         iosClientId: '799278694891-6cubib0gjb4kp81vq5bi8ulu4q7amduv.apps.googleusercontent.com',
-        androidClientId: '799278694891-n7ab0u2o9cfqol8b07mr51imdham6ioe.apps.googleusercontent.com',
+        androidClientId: '799278694891-17c36gmmh1m3o9fmu0u8k7jkb7s86ll7.apps.googleusercontent.com',
     });
 
     const evalResult = async (result: void | UserCredential) => {
