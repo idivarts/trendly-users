@@ -1,31 +1,18 @@
+import { INITIAL_BRAND_INDUSTRIES } from "@/shared-constants/ItemsList";
+import { CONTENT_NICHE } from "@/shared-constants/preferences/content-niche";
 import { POPULAR_CITIES } from "@/shared-constants/preferences/locations";
 
 export const SURVEY_DATA = [
   {
     id: 1,
     question: "What are your brand industry preference?",
-    options: [
-      "Fashion",
-      "Beauty",
-      "Restaurant / Cafes",
-      "Holidays / Stays",
-      "Beauty / Spa",
-      "Others",
-    ],
+    options: INITIAL_BRAND_INDUSTRIES,
     multiselect: true,
   },
   {
     id: 2,
     question: "What is your content category?",
-    options: [
-      "Fun",
-      "Lifestyle Vlogs",
-      "Roast",
-      "Meme",
-      "Fashion / Beauty",
-      "Tech",
-      "Others",
-    ],
+    options: CONTENT_NICHE,
     multiselect: true,
   },
   {

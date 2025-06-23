@@ -9,13 +9,16 @@ import {
   INITIAL_LANGUAGES,
   LANGUAGES,
 } from "@/shared-constants/ItemsList";
+import { COLLAB_TYPES } from "@/shared-constants/preferences/collab-type";
+import { COLLAB_GOALS } from "@/shared-constants/preferences/goal";
+import { POST_TYPES } from "@/shared-constants/preferences/post-types";
+import { VIDEO_TYPE } from "@/shared-constants/preferences/video-type";
 import { IPreferences } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { MultiSelectExtendable } from "@/shared-uis/components/multiselect-extendable";
 import { User } from "@/types/User";
 import { includeSelectedItems } from "@/utils/items-list";
-import { faGift, faHandHoldingDollar } from "@fortawesome/free-solid-svg-icons";
 import { useTheme } from "@react-navigation/native";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Platform, ScrollView, useWindowDimensions } from "react-native";
 
 interface PreferencesProps {
@@ -79,18 +82,7 @@ const Preferences: React.FC<PreferencesProps> = ({ user, onSave }) => {
         description="Recommended to select Barter and Paid collabs both if you don't want to miss on interesting collabs to grow your reach."
       >
         <Selector
-          options={[
-            {
-              icon: faGift,
-              label: "Barter & Paid Both",
-              value: "Barter & Paid Both",
-            },
-            {
-              icon: faHandHoldingDollar,
-              label: "Just Paid Collabs",
-              value: "Just Paid Collabs",
-            },
-          ]}
+          options={COLLAB_TYPES}
           onSelect={(value) => {
             setPreferences({
               ...preferences,
@@ -151,11 +143,7 @@ const Preferences: React.FC<PreferencesProps> = ({ user, onSave }) => {
         description="What kind of relation you are looking for with the brands."
       >
         <SelectGroup
-          items={[
-            { label: "Long Term", value: "Long Term" },
-            { label: "Short Term", value: "Short Term" },
-            { label: "One Time", value: "One Time" },
-          ]}
+          items={COLLAB_GOALS.map(v => ({ label: v, value: v }))}
           selectedItem={{
             label: preferences.goal || "Long Term",
             value: preferences.goal || "Long Term",
@@ -195,13 +183,7 @@ const Preferences: React.FC<PreferencesProps> = ({ user, onSave }) => {
         description="Which content format are you willing to post on your social media account for promotions."
       >
         <Select
-          items={[
-            { label: "Post", value: "Post" },
-            { label: "Reels", value: "Reels" },
-            { label: "Stories", value: "Stories" },
-            { label: "Videos", value: "Videos" },
-            { label: "Live", value: "Live" },
-          ]}
+          items={POST_TYPES.map(v => ({ label: v, value: v }))}
           selectItemIcon={true}
           value={
             preferences?.contentWillingToPost?.map((item) => ({
@@ -223,10 +205,7 @@ const Preferences: React.FC<PreferencesProps> = ({ user, onSave }) => {
         description={`What is your preferred type of video creations.${"\n"}Integrated Video - Means your video will be focusing on your content with just a short note about campaign${"\n"}Dedicated Video - Videos like beauty product reviews or GRWM of an cloth or accessories`}
       >
         <SelectGroup
-          items={[
-            { label: "Integrated Video", value: "Integrated Video" },
-            { label: "Dedicated Video", value: "Dedicated Video" },
-          ]}
+          items={VIDEO_TYPE.map(v => ({ label: v, value: v }))}
           selectedItem={{
             label: preferences.preferredVideoType || "Integrated Video",
             value: preferences.preferredVideoType || "Integrated Video",
