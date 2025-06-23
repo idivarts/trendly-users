@@ -1,6 +1,7 @@
 import { Theme, useTheme } from "@react-navigation/native";
 import { useEffect, useMemo, useState } from "react";
 
+import { useAuthContext } from "@/contexts";
 import { useBreakpoints } from "@/hooks";
 import { CREATORS_PLAYSTORE_URL } from "@/shared-constants/app";
 import BottomSheetContainer from "@/shared-uis/components/bottom-sheet";
@@ -16,12 +17,18 @@ const DownloadPlayModal: React.FC<DownloadPlayModalProps> = ({ }) => {
   const theme = useTheme();
   const styles = stylesFn(theme);
   const [isVisible, setIsVisible] = useState(false);
+  const { user } = useAuthContext()
+  const [displayedOnce, setDisplayedOnce] = useState(false)
 
   useEffect(() => {
+    if (!user || !user.primarySocial || displayedOnce)
+      return
+
+    setDisplayedOnce(true)
     setTimeout(() => {
       setIsVisible(true);
     }, 5000);
-  }, [])
+  }, [user])
 
   const {
     lg,
