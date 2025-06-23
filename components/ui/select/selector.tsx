@@ -13,7 +13,7 @@ interface OptionType {
 
 interface SelectorProps {
   onSelect: (value: string) => void;
-  options: [OptionType, OptionType];
+  options: OptionType[];
   selectedValue?: string;
 }
 

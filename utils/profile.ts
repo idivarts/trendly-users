@@ -49,7 +49,7 @@ export const getFormattedPreferences = (
   return {
     ...preferences,
     preferredBrandIndustries: answers.question1,
-    contentCategory: answers.question2,
+    // contentCategory: answers.question2,
     // contentWillingToPost: answers.question3,
     // preferredLanguages: answers.question4,
   };

@@ -7,7 +7,9 @@ import TextInput from "@/components/ui/text-input";
 import { useAuthContext } from "@/contexts";
 import { useBreakpoints } from "@/hooks";
 import useEditProfile from "@/hooks/use-edit-profile";
-import { CITIES, POPULAR_CITIES } from "@/shared-constants/locations";
+import { CONTENT_NICHE } from "@/shared-constants/preferences/content-niche";
+import { CITIES, POPULAR_CITIES } from "@/shared-constants/preferences/locations";
+import { TIME_COMMITMENTS } from "@/shared-constants/preferences/time-commitment";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
 import { SingleSelectExtendable } from "@/shared-uis/components/singleselect-extendable";
 import Colors from "@/shared-uis/constants/Colors";
@@ -217,11 +219,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
               Time Commitment
             </Text>
             <SelectGroup
-              items={[
-                { label: 'Full Time', value: 'Full Time' },
-                { label: 'Part Time', value: 'Part Time' },
-                { label: 'Hobby', value: 'Hobby' },
-              ]}
+              items={TIME_COMMITMENTS.map(v => ({ label: v, value: v }))}
               selectedItem={timeCommitment}
               onValueChange={(value) => {
                 setTimeCommitment(value);
@@ -254,13 +252,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
               Content Niche / Category
             </Text>
             <Select
-              items={[
-                { label: 'Fashion', value: 'Fashion' },
-                { label: 'Lifestyle', value: 'Lifestyle' },
-                { label: 'Food', value: 'Food' },
-                { label: 'Travel', value: 'Travel' },
-                { label: 'Health', value: 'Health' },
-              ]}
+              items={CONTENT_NICHE.map(v => ({ label: v, value: v }))}
               selectItemIcon={true}
               value={niches}
               multiselect
