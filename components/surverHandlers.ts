@@ -1,3 +1,4 @@
+import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { Console } from "@/shared-libs/utils/console";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
@@ -16,12 +17,16 @@ export const submitSurvey = async (answers: SurveyAnswer) => {
     const userSnap = await getDoc(userRef);
 
     if (userSnap.exists()) {
-      const userData = userSnap.data();
-
-      await updateDoc(userRef, {
-        preferences: getFormattedPreferences(userData.preferences, answers),
+      const userData = userSnap.data() as IUsers;
+      const user: Partial<IUsers> = {
+        preferences: getFormattedPreferences(userData.preferences || {}, answers),
         location: answers.question3?.[0] || "",
-      });
+        profile: {
+          ...userData?.profile,
+          category: answers.question2
+        }
+      }
+      await updateDoc(userRef, user);
     } else {
       Console.log("User data does not exist");
     }

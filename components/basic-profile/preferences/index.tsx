@@ -32,7 +32,7 @@ const Preferences: React.FC<PreferencesProps> = ({ user, onSave }) => {
 
   const [preferences, setPreferences] = useState<IPreferences>({
     budgetForPaidCollabs: user.preferences?.budgetForPaidCollabs || [0, 5000],
-    contentCategory: user.preferences?.contentCategory || [],
+    // contentCategory: user.preferences?.contentCategory || [],
     contentWillingToPost: user.preferences?.contentWillingToPost || ["Post"],
     goal: user.preferences?.goal || "Long Term",
     maximumMonthlyCollabs: user.preferences?.maximumMonthlyCollabs || [0, 100],
