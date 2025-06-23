@@ -1,4 +1,4 @@
-import { POPULAR_CITIES } from "@/shared-constants/locations";
+import { POPULAR_CITIES } from "@/shared-constants/preferences/locations";
 
 export const SURVEY_DATA = [
   {

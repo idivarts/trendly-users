@@ -7,7 +7,7 @@ import TextInput from "@/components/ui/text-input";
 import { useAuthContext } from "@/contexts";
 import { useBreakpoints } from "@/hooks";
 import useEditProfile from "@/hooks/use-edit-profile";
-import { CITIES, POPULAR_CITIES } from "@/shared-constants/locations";
+import { CITIES, POPULAR_CITIES } from "@/shared-constants/preferences/locations";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
 import { SingleSelectExtendable } from "@/shared-uis/components/singleselect-extendable";
 import Colors from "@/shared-uis/constants/Colors";
