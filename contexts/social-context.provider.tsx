@@ -1,7 +1,7 @@
 import { ISocials } from "@/shared-libs/firestore/trendly-pro/models/socials";
 import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
-import { resetAndNavigate } from "@/utils/router";
+import { resetAndNavigate } from "@/shared-libs/utils/router";
 import { usePathname, useRouter } from "expo-router";
 import { collection, onSnapshot } from "firebase/firestore";
 import {

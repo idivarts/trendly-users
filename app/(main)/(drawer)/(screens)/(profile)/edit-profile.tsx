@@ -6,10 +6,10 @@ import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
+import { resetAndNavigate } from "@/shared-libs/utils/router";
 import BottomSheetScrollContainer from "@/shared-uis/components/bottom-sheet/scroll-view";
 import ConfirmationModal from "@/shared-uis/components/ConfirmationModal";
 import ProfileBottomSheet from "@/shared-uis/components/ProfileModal/Profile-Modal";
-import { resetAndNavigate } from "@/utils/router";
 import {
   BottomSheetBackdrop
 } from "@gorhom/bottom-sheet";

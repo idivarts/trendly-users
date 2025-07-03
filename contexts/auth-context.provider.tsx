@@ -5,9 +5,9 @@ import { Console } from "@/shared-libs/utils/console";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
+import { resetAndNavigate } from "@/shared-libs/utils/router";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { User } from "@/types/User";
-import { resetAndNavigate } from "@/utils/router";
 import { useSegments } from "expo-router";
 import {
   createUserWithEmailAndPassword,
