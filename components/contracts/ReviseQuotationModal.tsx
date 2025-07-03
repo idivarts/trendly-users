@@ -1,5 +1,6 @@
 import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { Console } from "@/shared-libs/utils/console";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import Colors from "@/shared-uis/constants/Colors";
 import {
@@ -8,7 +9,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useTheme } from "@react-navigation/native";
-import { router, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import React, { FC, useEffect, useState } from "react";
 import {
   Modal,
@@ -46,6 +47,7 @@ const ReviseQuotationModal: FC<ReviseQuotationModalProps> = ({
   const [timeline, setTimeline] = useState<Date | null>();
   const [quotation, setQuotation] = useState("");
   const params = useLocalSearchParams();
+  const router = useMyNavigation()
   const { updateApplication } = useApplication()
   const updateMyApplication = async () => {
     try {

@@ -1,10 +1,11 @@
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
-import { usePathname, useRouter } from "expo-router";
+import { usePathname } from "expo-router";
 import { Pressable, StyleSheet } from "react-native";
 
 import { useChatContext } from "@/contexts";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import Colors from "@/shared-uis/constants/Colors";
 import { Badge } from "react-native-paper";
 import { Text, View } from "../theme/Themed";
@@ -25,7 +26,7 @@ type DrawerMenuItemProps = {
 };
 
 const DrawerMenuItem: React.FC<DrawerMenuItemProps> = ({ tab }) => {
-  const router = useRouter();
+  const router = useMyNavigation();
   const pathname = usePathname();
   const theme = useTheme();
   const { unreadCount } = useChatContext();

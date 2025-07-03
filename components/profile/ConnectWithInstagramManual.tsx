@@ -1,4 +1,4 @@
-import { router } from "expo-router";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import * as WebBrowser from "expo-web-browser";
 import React from "react";
 import { View } from "react-native";
@@ -7,6 +7,8 @@ import Button from "../ui/button";
 WebBrowser.maybeCompleteAuthSession();
 
 const InstagramLoginButton: React.FC = () => {
+  const router = useMyNavigation()
+
   const handleAddAccount = async () => {
     router.push("/add-instagram-manual");
   };

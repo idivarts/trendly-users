@@ -1,4 +1,5 @@
 import { Text, View } from "@/components/theme/Themed";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import ImageComponent from "@/shared-uis/components/image-component";
 import Colors from "@/shared-uis/constants/Colors";
 import { formatTimeToNow } from "@/utils/date";
@@ -6,7 +7,6 @@ import { imageUrl } from "@/utils/url";
 import { faCheckCircle, faEllipsisH } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
-import { router } from "expo-router";
 import { FC } from "react";
 import { Pressable } from "react-native";
 
@@ -36,6 +36,7 @@ const CollaborationHeader: FC<CollaborationHeaderProps> = ({
   onOpenBottomSheet,
 }) => {
   const theme = useTheme();
+  const router = useMyNavigation()
 
   return (
     <Pressable

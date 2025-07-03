@@ -9,17 +9,19 @@ import AppLayout from "@/layouts/app-layout";
 import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { processRawAttachment } from "@/shared-libs/utils/attachments";
 import { Console } from "@/shared-libs/utils/console";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import InfluencerCard from "@/shared-uis/components/InfluencerCard";
 import Colors from "@/shared-uis/constants/Colors";
 import { convertToKUnits } from "@/utils/conversion";
 import { useTheme } from "@react-navigation/native";
-import { router, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Platform, ScrollView, Text, View } from "react-native";
 
 const Preview = () => {
   const params = useLocalSearchParams();
   const theme = useTheme();
+  const router = useMyNavigation()
   const pageID = Array.isArray(params.pageID)
     ? params.pageID[0]
     : params.pageID;
@@ -144,7 +146,7 @@ const Preview = () => {
       await insertApplication(pageID, applicantData).then(() => {
         setErrorMessage("Application submitted successfully");
         setTimeout(() => {
-          router.navigate("/collaborations");
+          router.push("/collaborations");
         }, 1000); // Give user time to see success message
       }).catch((e) => {
         setErrorMessage("Failed to submit application");

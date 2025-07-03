@@ -1,9 +1,9 @@
 import { useCloudMessagingContext } from "@/shared-libs/contexts/cloud-messaging.provider";
 import { Console } from "@/shared-libs/utils/console";
 import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import * as Notification from "expo-notifications";
-import { router } from "expo-router";
 import {
   createContext,
   useContext,
@@ -43,6 +43,7 @@ export const ChatContextProvider: React.FC<PropsWithChildren> = ({
 }) => {
   const [token, setToken] = useState("");
   const [hasError, setHasError] = useState(false)
+  const router = useMyNavigation()
 
   const [client, setClient] = useState<StreamChat<DefaultGenerics> | null>(null);
   const [unreadCount, setUnreadCountMain] = useState(0)

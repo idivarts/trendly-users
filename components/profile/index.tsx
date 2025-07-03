@@ -1,7 +1,7 @@
-import { useRouter } from "expo-router";
+import { useMyNavigation } from "@/shared-libs/utils/router";
+import { FlatList } from "react-native";
 import { View } from "../theme/Themed";
 import ProfileItemCard from "./ProfileItemCard";
-import { FlatList } from "react-native";
 
 interface ProfileProps {
   items: any[];
@@ -10,7 +10,7 @@ interface ProfileProps {
 const Profile: React.FC<ProfileProps> = ({
   items,
 }) => {
-  const router = useRouter();
+  const router = useMyNavigation();
 
   return (
     <View>

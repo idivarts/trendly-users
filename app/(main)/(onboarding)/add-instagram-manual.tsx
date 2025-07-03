@@ -16,7 +16,7 @@ import Toaster from '@/shared-uis/components/toaster/Toaster';
 import Colors from '@/shared-uis/constants/Colors';
 import { Theme, useTheme } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
-import { router, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { doc, getDoc } from 'firebase/firestore';
 import React, { useEffect, useRef, useState } from 'react';
 import {

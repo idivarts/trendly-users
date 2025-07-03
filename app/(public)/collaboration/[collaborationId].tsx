@@ -1,17 +1,16 @@
 import { useTheme } from "@react-navigation/native";
-import { useLocalSearchParams, usePathname, useRouter } from "expo-router";
+import { useLocalSearchParams, usePathname } from "expo-router";
 import { ActivityIndicator, Appbar } from "react-native-paper";
 
 import CollaborationDetails from "@/components/collaboration/collaboration-details";
 import AuthModal from "@/components/modals/AuthModal";
-import DownloadAppModal from "@/components/modals/DownloadAppModal";
 import { Text } from "@/components/theme/Themed";
 import Button from "@/components/ui/button";
-import { IS_BETA_ENABLED } from "@/constants/App";
 import { useAuthContext } from "@/contexts";
 import { useBreakpoints } from "@/hooks";
 import AppLayout from "@/layouts/app-layout";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import Colors from "@/shared-uis/constants/Colors";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { signInAnonymously } from "firebase/auth";
@@ -29,7 +28,7 @@ const CollaborationDetailsScreen = () => {
   const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const authModalBottomSheetModalRef = useRef<BottomSheetModal>(null);
 
-  const router = useRouter();
+  const router = useMyNavigation();
   const {
     lg,
   } = useBreakpoints();
@@ -97,11 +96,6 @@ const CollaborationDetailsScreen = () => {
         cardType="public-collaboration"
       /> : <ActivityIndicator size="small" color={Colors(theme).primary} />}
 
-      {IS_BETA_ENABLED &&
-        <DownloadAppModal
-          bottomSheetModalRef={bottomSheetModalRef}
-          collaborationId={collaborationId as string}
-        />}
       <AuthModal
         bottomSheetModalRef={authModalBottomSheetModalRef}
       />

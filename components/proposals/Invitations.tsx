@@ -9,11 +9,12 @@ import { Attachment } from "@/shared-libs/firestore/trendly-pro/constants/attach
 import { processRawAttachment } from "@/shared-libs/utils/attachments";
 import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import Carousel from "@/shared-uis/components/carousel/carousel";
 import Colors from "@/shared-uis/constants/Colors";
 import { stylesFn } from "@/styles/Proposal.styles";
 import { useTheme } from "@react-navigation/native";
-import { Link, router } from "expo-router";
+import { Link } from "expo-router";
 import {
   collection,
   collectionGroup,
@@ -43,6 +44,7 @@ const Invitations = () => {
   const [notPendingInvitations, setNotPendingInvitations] = useState<number>();
   const [refreshing, setRefreshing] = useState(false);
   const { user } = useAuthContext();
+  const router = useMyNavigation()
 
   const openBottomSheet = (id: string, invitation: string) => {
     setIsVisible(true);
