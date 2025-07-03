@@ -4,7 +4,7 @@ import ScreenHeader from "@/components/ui/screen-header";
 import { useAuthContext, useCloudMessagingContext } from "@/contexts";
 import AppLayout from "@/layouts/app-layout";
 import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
-import { resetAndNavigate } from "@/shared-libs/utils/router";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { User } from "@/types/User";
 import { useState } from "react";
@@ -18,6 +18,7 @@ const SettingsScreen = () => {
     signOutUser: logout,
   } = useAuthContext();
   const { updatedTokens } = useCloudMessagingContext();
+  const { resetAndNavigate } = useMyNavigation()
 
   if (!user) {
     return null;

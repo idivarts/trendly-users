@@ -11,12 +11,12 @@ import { Console } from '@/shared-libs/utils/console';
 import { AuthApp } from '@/shared-libs/utils/firebase/auth';
 import { FirestoreDB } from '@/shared-libs/utils/firebase/firestore';
 import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
-import { resetAndNavigate, useMyNavigation } from '@/shared-libs/utils/router';
+import { useMyNavigation } from '@/shared-libs/utils/router';
 import Toaster from '@/shared-uis/components/toaster/Toaster';
 import Colors from '@/shared-uis/constants/Colors';
 import { Theme, useTheme } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { doc, getDoc } from 'firebase/firestore';
 import React, { useEffect, useRef, useState } from 'react';
 import {
@@ -167,9 +167,9 @@ const AddInstagramManual = () => {
                 if (router.canGoBack()) {
                     router.back();
                 } else if (socialId) {
-                    resetAndNavigate('/collaborations');
+                    router.resetAndNavigate('/collaborations');
                 } else {
-                    resetAndNavigate('/connected-socials');
+                    router.resetAndNavigate('/connected-socials');
                 }
             } else {
                 setBlockLoading(true);

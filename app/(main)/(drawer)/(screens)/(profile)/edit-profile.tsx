@@ -6,7 +6,7 @@ import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
-import { resetAndNavigate, useMyNavigation } from "@/shared-libs/utils/router";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import BottomSheetScrollContainer from "@/shared-uis/components/bottom-sheet/scroll-view";
 import ConfirmationModal from "@/shared-uis/components/ConfirmationModal";
 import ProfileBottomSheet from "@/shared-uis/components/ProfileModal/Profile-Modal";
@@ -86,7 +86,7 @@ const EditProfileScreen: React.FC = () => {
           if (navigation.canGoBack()) {
             navigation.back();
           } else {
-            resetAndNavigate("/collaborations");
+            navigation.resetAndNavigate("/collaborations");
           }
         }}
         rightAction
@@ -134,7 +134,7 @@ const EditProfileScreen: React.FC = () => {
           if (navigation.canGoBack()) {
             navigation.back();
           } else {
-            resetAndNavigate("/collaborations");
+            navigation.resetAndNavigate("/collaborations");
           }
         }}
         confirmAction={() => {

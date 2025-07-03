@@ -10,7 +10,7 @@ import {
 } from "@/contexts";
 import UpdateProvider from "@/shared-libs/contexts/update-provider";
 import { Console } from "@/shared-libs/utils/console";
-import { resetAndNavigate } from "@/shared-libs/utils/router";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import { queryParams } from "@/utils/url";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
@@ -84,6 +84,7 @@ const RootLayout = () => {
 
 const RootLayoutStack = () => {
   const colorScheme = useColorScheme();
+  const { resetAndNavigate } = useMyNavigation()
   const theme = useTheme();
   const router = useRouter();
   const pathname = usePathname();

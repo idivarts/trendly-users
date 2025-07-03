@@ -1,6 +1,6 @@
 import { Text, View } from "@/components/theme/Themed";
 import { useAuthContext } from "@/contexts";
-import { resetAndNavigate, useMyNavigation } from "@/shared-libs/utils/router";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import Colors from "@/shared-uis/constants/Colors";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -31,9 +31,9 @@ const ScreenHeader: React.FC<ScreenHeaderProps> = ({
     } else if (router.canGoBack()) {
       router.back()
     } else if ((user?.profile?.completionPercentage || 0) < 60) {
-      resetAndNavigate("/profile");
+      router.resetAndNavigate("/profile");
     } else {
-      resetAndNavigate("/collaborations");
+      router.resetAndNavigate("/collaborations");
     }
   };
 

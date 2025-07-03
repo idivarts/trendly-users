@@ -6,7 +6,7 @@ import BottomSheetActions from "@/components/BottomSheetActions";
 import CollaborationDetails from "@/components/collaboration/collaboration-details";
 import ScreenHeader from "@/components/ui/screen-header";
 import AppLayout from "@/layouts/app-layout";
-import { resetAndNavigate } from "@/shared-libs/utils/router";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import Colors from "@/shared-uis/constants/Colors";
 import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -15,6 +15,7 @@ import { useTheme } from "@react-navigation/native";
 const CollaborationDetailsScreen = () => {
   const theme = useTheme();
   const [isVisible, setIsVisible] = useState(false);
+  const { resetAndNavigate } = useMyNavigation()
 
   const { cardId, cardType, collaborationID, pageID } = useLocalSearchParams();
   if (pageID === undefined || pageID === "undefined") {

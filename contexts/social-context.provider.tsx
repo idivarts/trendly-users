@@ -1,8 +1,8 @@
 import { ISocials } from "@/shared-libs/firestore/trendly-pro/models/socials";
 import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
-import { resetAndNavigate } from "@/shared-libs/utils/router";
-import { usePathname, useRouter } from "expo-router";
+import { useMyNavigation } from "@/shared-libs/utils/router";
+import { usePathname } from "expo-router";
 import { collection, onSnapshot } from "firebase/firestore";
 import {
   createContext,
@@ -33,8 +33,7 @@ export const SocialContextProvider = ({ children }: PropsWithChildren<{}>) => {
   const [socials, setSocials] = useState<any[]>([]);
   const [primarySocial, setPrimarySocial] = useState<ISocials | null>(null);
   const [isFetchingSocials, setIsFetchingSocials] = useState(true);
-
-  const { replace } = useRouter();
+  const { replace, resetAndNavigate } = useMyNavigation()
 
   const pathname = usePathname();
   const allowedPaths = [

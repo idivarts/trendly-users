@@ -4,7 +4,7 @@ import AppLayout from "@/layouts/app-layout";
 import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
-import { resetAndNavigate } from "@/shared-libs/utils/router";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import Colors from "@/shared-uis/constants/Colors";
 import { stylesFn } from "@/styles/Questions.styles";
@@ -25,6 +25,7 @@ import { Pressable } from "react-native";
 const PrimarySocialSelect = () => {
   const { user } = useAuthContext();
   const { socials } = useSocialContext();
+  const { resetAndNavigate } = useMyNavigation()
   const theme = useTheme();
   const styles = stylesFn(theme);
 
