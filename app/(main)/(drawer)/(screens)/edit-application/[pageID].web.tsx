@@ -519,10 +519,17 @@ const ApplyScreenWeb = () => {
                 Toaster.error("Please add a note");
                 return;
               }
-
               if (files.length === 0 && originalAttachments.length === 0) {
                 Toaster.error("Please upload a asset");
                 return;
+              }
+              if (quotation == "") {
+                Toaster.error("Please fill out your quotation", "If its Barter, type quotation as 0")
+                return
+              }
+              if (!timelineData) {
+                Toaster.error("Please fill out the timeline")
+                return
               }
 
               await handleUploadFiles();
