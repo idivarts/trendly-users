@@ -1,11 +1,10 @@
 import { Text, View } from "@/components/theme/Themed";
 import { useAuthContext } from "@/contexts";
-import { resetAndNavigate } from "@/shared-libs/utils/router";
+import { resetAndNavigate, useMyNavigation } from "@/shared-libs/utils/router";
 import Colors from "@/shared-uis/constants/Colors";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
-import { router } from "expo-router";
 import { Platform, Pressable } from "react-native";
 import { Appbar } from "react-native-paper";
 
@@ -24,6 +23,7 @@ const ScreenHeader: React.FC<ScreenHeaderProps> = ({
 }) => {
   const theme = useTheme();
   const { user } = useAuthContext();
+  const router = useMyNavigation()
 
   const handleAction = () => {
     if (action) {

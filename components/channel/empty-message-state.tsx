@@ -1,10 +1,10 @@
-import { useRouter } from "expo-router";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import { EmptyStateProps } from "stream-chat-expo";
 import { View } from "../theme/Themed";
 import EmptyState from "../ui/empty-state";
 
 const EmptyMessageState: React.FC<EmptyStateProps> = ({ listType }) => {
-  const router = useRouter();
+  const router = useMyNavigation();
   // if(listType =="channel"){
 
   // }

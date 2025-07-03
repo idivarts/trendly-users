@@ -3,11 +3,12 @@ import { useAuthContext } from "@/contexts";
 import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import { View } from "@/shared-uis/components/theme/Themed";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { setStringAsync } from "expo-clipboard";
-import { Href, useRouter } from "expo-router";
+import { Href } from "expo-router";
 import { doc, getDoc } from "firebase/firestore";
 import React, { useState } from "react";
 import { Modal, Pressable, StyleSheet } from "react-native";
@@ -37,7 +38,7 @@ const BottomSheetActions = ({
   snapPointsRange,
   onClose,
 }: BottomSheetActionsProps) => {
-  const router = useRouter();
+  const router = useMyNavigation();
   const sheetRef = React.useRef<BottomSheet>(null);
 
   const [loading, setLoading] = useState(false)
@@ -113,7 +114,7 @@ const BottomSheetActions = ({
   }
 
   const handleEmailSignIn = () => {
-    router.navigate("/login");
+    router.push("/login");
   };
 
   const renderContent = () => {

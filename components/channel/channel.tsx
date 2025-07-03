@@ -1,6 +1,6 @@
 import { View } from "@/components/theme/Themed";
 import ScreenHeader from "@/components/ui/screen-header";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Pressable } from "react-native";
 import { Channel as ChannelType } from "stream-chat";
@@ -16,6 +16,7 @@ import { Avatar } from "react-native-paper";
 import ChatMessageTopbar from "./chat-message-topbar";
 
 import { streamClient } from "@/contexts/streamClient";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import {
   AttachButton,
   AttachmentPickerSelectionBar,
@@ -36,7 +37,7 @@ const ChannelNative = () => {
   const { getBrandById } = useBrandContext();
 
   const client = streamClient
-  const router = useRouter();
+  const router = useMyNavigation();
   const theme = useTheme();
 
   const fetchBrand = async (

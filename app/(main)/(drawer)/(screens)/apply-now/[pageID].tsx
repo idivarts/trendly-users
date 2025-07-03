@@ -9,6 +9,7 @@ import { Attachment } from "@/shared-libs/firestore/trendly-pro/constants/attach
 import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import ProgressLoader from "@/shared-uis/components/ProgressLoader";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import Colors from "@/shared-uis/constants/Colors";
@@ -26,7 +27,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { useTheme } from "@react-navigation/native";
 import * as DocumentPicker from "expo-document-picker";
 import * as MediaLibrary from "expo-media-library";
-import { router, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import { doc, getDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { Platform, ScrollView, View } from "react-native";
@@ -65,6 +66,7 @@ const ApplyScreen = () => {
   const [answers, setAnswers] = useState<{ [key: string]: string }>(
     params.answers ? JSON.parse(params.answers as string) : {}
   );
+  const router = useMyNavigation()
 
   const theme = useTheme();
   const styles = stylesFn(theme);

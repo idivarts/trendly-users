@@ -11,12 +11,12 @@ import { CONTENT_NICHE } from "@/shared-constants/preferences/content-niche";
 import { CITIES, POPULAR_CITIES } from "@/shared-constants/preferences/locations";
 import { TIME_COMMITMENTS } from "@/shared-constants/preferences/time-commitment";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import { SingleSelectExtendable } from "@/shared-uis/components/singleselect-extendable";
 import Colors from "@/shared-uis/constants/Colors";
 import { stylesFn } from "@/styles/edit-profile/EditProfile.styles";
 import { includeSingleSelectedItem } from "@/utils/items-list";
 import { useTheme } from "@react-navigation/native";
-import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Animated, Keyboard, Platform, Pressable } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
@@ -45,7 +45,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
   const theme = useTheme();
   const styles = stylesFn(theme);
 
-  const router = useRouter();
+  const router = useMyNavigation();
 
   const {
     xl,

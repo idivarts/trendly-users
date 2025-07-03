@@ -7,6 +7,7 @@ import { COMPLETION_PERCENTAGE } from "@/constants/CompletionPercentage";
 import { PROFILE_ITEMS } from "@/constants/Profile";
 import { useAuthContext, useCloudMessagingContext } from "@/contexts";
 import AppLayout from "@/layouts/app-layout";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import ConfirmationModal from "@/shared-uis/components/ConfirmationModal";
 import Colors from "@/shared-uis/constants/Colors";
 import {
@@ -15,11 +16,11 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
-import { Href, useRouter } from "expo-router";
+import { Href } from "expo-router";
 import { useState } from "react";
 
 const ProfileScreen = () => {
-  const router = useRouter();
+  const router = useMyNavigation();
   const [logoutModalVisible, setLogoutModalVisible] = useState(false);
   const { signOutUser, user } = useAuthContext();
   const { updatedTokens } = useCloudMessagingContext();

@@ -6,7 +6,7 @@ import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
-import { resetAndNavigate } from "@/shared-libs/utils/router";
+import { resetAndNavigate, useMyNavigation } from "@/shared-libs/utils/router";
 import BottomSheetScrollContainer from "@/shared-uis/components/bottom-sheet/scroll-view";
 import ConfirmationModal from "@/shared-uis/components/ConfirmationModal";
 import ProfileBottomSheet from "@/shared-uis/components/ProfileModal/Profile-Modal";
@@ -14,7 +14,6 @@ import {
   BottomSheetBackdrop
 } from "@gorhom/bottom-sheet";
 import { useTheme } from "@react-navigation/native";
-import { useNavigation } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Pressable } from "react-native";
 
@@ -27,7 +26,7 @@ const EditProfileScreen: React.FC = () => {
 
   const theme = useTheme();
 
-  const navigation = useNavigation()
+  const navigation = useMyNavigation()
   const closeProfileModal = () => {
     setOpenBottomSheet(false)
   }
@@ -85,7 +84,7 @@ const EditProfileScreen: React.FC = () => {
             return;
           }
           if (navigation.canGoBack()) {
-            navigation.goBack();
+            navigation.back();
           } else {
             resetAndNavigate("/collaborations");
           }
@@ -133,7 +132,7 @@ const EditProfileScreen: React.FC = () => {
         cancelAction={() => {
           setClickBack(false);
           if (navigation.canGoBack()) {
-            navigation.goBack();
+            navigation.back();
           } else {
             resetAndNavigate("/collaborations");
           }

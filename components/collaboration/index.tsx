@@ -8,6 +8,7 @@ import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/colla
 import { processRawAttachment } from "@/shared-libs/utils/attachments";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { useInfiniteScroll } from "@/shared-libs/utils/infinite-scroll";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import Carousel from "@/shared-uis/components/carousel/carousel";
 import { APPROX_CARD_HEIGHT } from "@/shared-uis/components/carousel/carousel-util";
 import { CarouselInViewProvider } from "@/shared-uis/components/scroller/CarouselInViewContext";
@@ -15,7 +16,6 @@ import CarouselScroller from "@/shared-uis/components/scroller/CarouselScroller"
 import Colors from "@/shared-uis/constants/Colors";
 import { stylesFn } from "@/styles/Collections.styles";
 import { useTheme } from "@react-navigation/native";
-import { router } from "expo-router";
 import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import {
@@ -47,6 +47,7 @@ const Collaboration = () => {
     return ["All", ...new Set(array.map((item) => item[key]))];
   };
   const { user } = useAuthContext()
+  const router = useMyNavigation()
   const [filterVisible, setFilterVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");

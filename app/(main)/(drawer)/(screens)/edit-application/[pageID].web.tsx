@@ -14,6 +14,7 @@ import {
 } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import ProgressLoader from "@/shared-uis/components/ProgressLoader";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import Colors from "@/shared-uis/constants/Colors";
@@ -31,7 +32,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useTheme } from "@react-navigation/native";
 import * as DocumentPicker from "expo-document-picker";
-import { router, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import { doc, getDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { Platform, ScrollView, View } from "react-native";
@@ -49,6 +50,7 @@ const ApplyScreenWeb = () => {
     ? params.pageID[0]
     : params.pageID;
   const [note, setNote] = useState<string>("");
+  const router = useMyNavigation()
 
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);

@@ -1,12 +1,13 @@
 import { View } from '@/components/theme/Themed'
 import EmptyState from '@/components/ui/empty-state'
 import { useAuthContext } from '@/contexts'
-import { Stack, useRouter } from 'expo-router'
+import { useMyNavigation } from '@/shared-libs/utils/router'
+import { Stack } from 'expo-router'
 import React from 'react'
 
 const _layout = () => {
     const { user } = useAuthContext()
-    const router = useRouter()
+    const router = useMyNavigation()
 
     if ((user?.profile?.completionPercentage || 0) < 60) {
         return <View

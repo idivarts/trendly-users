@@ -1,8 +1,8 @@
 import { Text, View } from "@/components/theme/Themed";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import stylesFn from "@/styles/empty-state/EmptyState.styles";
 import { imageUrl } from "@/utils/url";
 import { useTheme } from "@react-navigation/native";
-import { useNavigation } from "expo-router";
 import { Image } from "react-native";
 import Button from "../button";
 
@@ -29,13 +29,13 @@ const EmptyState: React.FC<EmptyStateProps> = ({
 }) => {
   const theme = useTheme();
   const styles = stylesFn(theme);
-  const navigation = useNavigation();
+  const navigation = useMyNavigation();
 
   const handleAction = () => {
     if (action) {
       action();
     } else {
-      navigation.goBack();
+      navigation.back();
     }
   };
 
