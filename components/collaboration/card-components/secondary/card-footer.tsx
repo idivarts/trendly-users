@@ -11,8 +11,8 @@ export const CardFooter = ({ quote }: CardFooterProps) => {
     <View style={styles.container}>
       <View style={styles.footer}>
         <Text style={styles.footerText}>
-          <Text style={{ fontWeight: 600 }}>Quote:</Text> {"Rs. "}
-          {quote}
+          <Text style={{ fontWeight: 600 }}>Quote:</Text>
+          {quote || "Free"}
         </Text>
         {/* <Text style={styles.footerText}>Timeline: {timeline}</Text> */}
       </View>

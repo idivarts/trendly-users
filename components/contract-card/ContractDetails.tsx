@@ -55,7 +55,7 @@ const ContractDetails: FC<ContractDetailsProps> = ({
             color: Colors(theme).text,
           }}
         >
-          Quote: Rs {application.quotation}
+          Quote: {application?.quotation || "Free"}
         </Text>
         {/* <Text
           style={{

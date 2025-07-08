@@ -73,7 +73,7 @@ const UserResponse: FC<UserResponseProps> = ({
           }}
         >
           <Text style={{ fontSize: 16 }}>
-            Quote: Rs. {application?.quotation || "N/A"}
+            Quote: {application?.quotation || "Free"}
           </Text>
           {/* {application?.timeline && (
             <Text style={{ fontSize: 16 }}>
