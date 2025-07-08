@@ -282,6 +282,9 @@ const ApplyScreen = () => {
         answers={answers}
         attachmentLength={files.length}
 
+        errorMessage={errorMessage}
+        loading={loading}
+
         FileRenderComponent={<AssetsPreview
           files={files.map((file) => ({
             id: file.id,

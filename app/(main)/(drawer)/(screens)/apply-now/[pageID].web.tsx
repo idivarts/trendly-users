@@ -196,6 +196,9 @@ const ApplyScreenWeb = () => {
         attachmentLength={files.length}
         setNote={setNote}
 
+        errorMessage={errorMessage}
+        loading={loading}
+
         handleAssetUpload={() => inputRef.current?.click()}
         FileRenderComponent={<AssetsPreview
           files={previewUrls.map((file) => ({
