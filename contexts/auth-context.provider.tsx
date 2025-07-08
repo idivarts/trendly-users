@@ -5,6 +5,7 @@ import { Console } from "@/shared-libs/utils/console";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
+import { PersistentStorage } from "@/shared-libs/utils/persistent-storage";
 import { useMyNavigation } from "@/shared-libs/utils/router";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { User } from "@/types/User";
@@ -144,6 +145,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
       if (!AuthApp.currentUser) {
         setIsUserLoading(false);
         setIsLoggedIn(false);
+        PersistentStorage.clear("streamToken")
       } else {
         fetchUser();
       }
@@ -301,6 +303,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
         //   });
         // }
       }
+      PersistentStorage.clear("streamToken")
 
       if (userUnsubscribe) {
         await userUnsubscribe();
