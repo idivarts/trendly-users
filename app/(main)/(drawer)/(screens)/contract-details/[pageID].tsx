@@ -1,4 +1,4 @@
-import { router, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { IconButton } from "react-native-paper";
 
@@ -16,6 +16,7 @@ import { IContracts } from "@/shared-libs/firestore/trendly-pro/models/contracts
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import Colors from "@/shared-uis/constants/Colors";
 import { faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -26,7 +27,6 @@ import {
   getDoc
 } from "firebase/firestore";
 import { ActivityIndicator } from "react-native";
-;
 
 interface ICollaborationCard extends IContracts {
   userData: IUsers;
@@ -39,6 +39,7 @@ const ContractDetailsScreen = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  const router = useMyNavigation()
   const { pageID } = useLocalSearchParams();
   const [contract, setContract] = useState<ICollaborationCard>();
   const { user } = useAuthContext();
@@ -120,7 +121,7 @@ const ContractDetailsScreen = () => {
           if (router.canGoBack()) {
             router.back();
           } else {
-            router.navigate("/(tabs)/contracts");
+            router.push("/(tabs)/contracts");
           }
         }}
         rightActionButton={

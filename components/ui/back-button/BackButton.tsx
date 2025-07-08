@@ -1,8 +1,8 @@
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import Colors from "@/shared-uis/constants/Colors";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
-import { useNavigation } from "expo-router";
 import { Pressable, View } from "react-native";
 
 interface BackButtonProps {
@@ -12,13 +12,13 @@ interface BackButtonProps {
 const BackButton: React.FC<BackButtonProps> = ({
   color,
 }) => {
-  const navigation = useNavigation();
+  const navigation = useMyNavigation();
   const theme = useTheme();
 
   return (
     <Pressable
       key={0}
-      onPress={() => navigation.goBack()}
+      onPress={() => navigation.back()}
     >
       <View
         style={{
@@ -29,7 +29,7 @@ const BackButton: React.FC<BackButtonProps> = ({
         }}
       >
         <Pressable
-          onPress={() => navigation.goBack()}
+          onPress={() => navigation.back()}
         >
           {({ pressed }) => (
             <FontAwesomeIcon

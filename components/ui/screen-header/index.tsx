@@ -1,11 +1,10 @@
 import { Text, View } from "@/components/theme/Themed";
 import { useAuthContext } from "@/contexts";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import Colors from "@/shared-uis/constants/Colors";
-import { resetAndNavigate } from "@/utils/router";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
-import { useNavigation } from "expo-router";
 import { Platform, Pressable } from "react-native";
 import { Appbar } from "react-native-paper";
 
@@ -23,18 +22,18 @@ const ScreenHeader: React.FC<ScreenHeaderProps> = ({
   rightAction = false,
 }) => {
   const theme = useTheme();
-  const navigation = useNavigation();
   const { user } = useAuthContext();
+  const router = useMyNavigation()
 
   const handleAction = () => {
     if (action) {
       action();
-    } else if (navigation.canGoBack()) {
-      navigation.goBack();
+    } else if (router.canGoBack()) {
+      router.back()
     } else if ((user?.profile?.completionPercentage || 0) < 60) {
-      resetAndNavigate("/profile");
+      router.resetAndNavigate("/profile");
     } else {
-      resetAndNavigate("/collaborations");
+      router.resetAndNavigate("/collaborations");
     }
   };
 

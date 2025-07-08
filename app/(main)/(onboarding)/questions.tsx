@@ -5,10 +5,10 @@ import { SURVEY_DATA } from "@/constants/SurveyData";
 import { useAuthContext } from "@/contexts";
 import AppLayout from "@/layouts/app-layout";
 import { Console } from "@/shared-libs/utils/console";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import Colors from "@/shared-uis/constants/Colors";
 import { stylesFn } from "@/styles/Questions.styles";
 import { SurveyAnswer } from "@/types/Survey";
-import { resetAndNavigate } from "@/utils/router";
 import {
   faArrowRight,
   faChevronLeft,
@@ -28,6 +28,7 @@ const Questions = () => {
   });
   const theme = useTheme();
   const styles = stylesFn(theme);
+  const { resetAndNavigate } = useMyNavigation()
 
   const currentQuestion = SURVEY_DATA[currentQuestionIndex];
 

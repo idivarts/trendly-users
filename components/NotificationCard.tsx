@@ -1,8 +1,9 @@
 import { useChatContext } from "@/contexts";
 import { NotficationTypesToHandle } from "@/contexts/notification-context.provider";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import Colors from "@/shared-uis/constants/Colors";
 import { Theme, useTheme } from "@react-navigation/native";
-import { Href, useRouter } from "expo-router";
+import { Href } from "expo-router";
 import React, { useState } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import { ActivityIndicator, Card, Text } from "react-native-paper";
@@ -33,7 +34,7 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({
 }) => {
   const theme = useTheme();
   const styles = stylesFn(theme);
-  const router = useRouter();
+  const router = useMyNavigation();
   const [loading, setLoading] = useState(false);
 
   const { connectUser } = useChatContext();

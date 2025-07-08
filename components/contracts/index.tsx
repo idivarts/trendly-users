@@ -1,11 +1,11 @@
 import AppLayout from "@/layouts/app-layout";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import { Text, View } from "../theme/Themed";
 import EmptyState from "../ui/empty-state";
-import { useRouter } from "expo-router";
 
 const Contracts = () => {
   const contracts = [];
-  const router = useRouter();
+  const router = useMyNavigation();
 
   return (
     <AppLayout>

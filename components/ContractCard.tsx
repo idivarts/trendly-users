@@ -1,9 +1,9 @@
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import Colors from "@/shared-uis/constants/Colors";
 import { stylesFn } from "@/styles/CollaborationCard.styles";
 import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
-import { useRouter } from "expo-router";
 import React from "react";
 import { TouchableOpacity, View } from "react-native";
 import { Card, Chip, Text } from "react-native-paper";
@@ -26,7 +26,7 @@ interface CollaborationAdCardProps {
 }
 
 const ContractCard = (props: CollaborationAdCardProps) => {
-  const router = useRouter();
+  const router = useMyNavigation();
   const theme = useTheme();
   const styles = stylesFn(theme);
 

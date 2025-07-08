@@ -12,6 +12,7 @@ import { IManagers } from "@/shared-libs/firestore/trendly-pro/models/managers";
 import { processRawAttachment } from "@/shared-libs/utils/attachments";
 import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import Carousel from "@/shared-uis/components/carousel/carousel";
 import ScrollMedia from "@/shared-uis/components/carousel/scroll-media";
 import ConfirmationModal from "@/shared-uis/components/ConfirmationModal";
@@ -44,7 +45,6 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useTheme } from "@react-navigation/native";
-import { router } from "expo-router";
 import { deleteDoc, doc, getDoc, updateDoc } from "firebase/firestore";
 import React, { useEffect, useRef, useState } from "react";
 import { Linking, Platform, Pressable, ScrollView, View } from "react-native";
@@ -75,6 +75,7 @@ const CollborationDetailsContent = (
   props: CollaborationDetailsContentProps
 ) => {
   const theme = useTheme();
+  const router = useMyNavigation()
   const styles = stylesFn(theme);
   const [status, setStatus] = React.useState("pending");
   const [managerDetails, setManagerDetails] = React.useState<any>();
@@ -144,7 +145,7 @@ const CollborationDetailsContent = (
 
       setStatus("accepted");
       Toaster.success("Invitation accepted successfully");
-      router.navigate(`/apply-now/${props?.invitationData?.collaborationId}`);
+      router.push(`/apply-now/${props?.invitationData?.collaborationId}`);
     });
   };
 

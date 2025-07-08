@@ -63,6 +63,8 @@ const EditTextAreaComponent: React.FC<EditTextAreaProps> = ({
               ]}
               editorStyle={{
                 backgroundColor: Colors(theme).background,
+                color: Colors(theme).text,
+                placeholderColor: Colors(theme).textSecondary,
               }}
               initialFocus={true}
             />

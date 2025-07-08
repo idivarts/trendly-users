@@ -1,9 +1,10 @@
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import Colors from "@/shared-uis/constants/Colors";
 import stylesFn from "@/styles/profile/ProfileCard.styles";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
-import { router, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { Pressable, useWindowDimensions } from "react-native";
 import RenderHTML from "react-native-render-html";
@@ -25,6 +26,7 @@ const TextBoxProfilePage: React.FC<TextBoxProfilePageProps> = ({
   const theme = useTheme();
   const styles = stylesFn(theme);
   const { width } = useWindowDimensions();
+  const router = useMyNavigation()
 
   const [content, setContent] = useState(
     initialContent === "" ? defaultTextToShowIfEmpty : initialContent

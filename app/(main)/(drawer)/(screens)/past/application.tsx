@@ -10,10 +10,10 @@ import AppLayout from "@/layouts/app-layout";
 import { processRawAttachment } from "@/shared-libs/utils/attachments";
 import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import ScrollMedia from "@/shared-uis/components/carousel/scroll-media";
 import Colors from "@/shared-uis/constants/Colors";
 import { useTheme } from "@react-navigation/native";
-import { router } from "expo-router";
 import {
   collection,
   collectionGroup,
@@ -35,6 +35,7 @@ const PastApplicationPage = (props: any) => {
     null
   );
   const theme = useTheme();
+  const router = useMyNavigation()
   const openBottomSheet = (id: string) => {
     setIsVisible(true);
     setSelectedCollabId(id);

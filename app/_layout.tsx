@@ -10,7 +10,7 @@ import {
 } from "@/contexts";
 import UpdateProvider from "@/shared-libs/contexts/update-provider";
 import { Console } from "@/shared-libs/utils/console";
-import { resetAndNavigate } from "@/utils/router";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import { queryParams } from "@/utils/url";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
@@ -22,7 +22,7 @@ import {
   useTheme,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Href, Stack, useGlobalSearchParams, usePathname, useRouter, useSegments } from "expo-router";
+import { Href, Stack, useGlobalSearchParams, usePathname, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import React, { useEffect } from "react";
 import { Linking } from "react-native";
@@ -84,8 +84,9 @@ const RootLayout = () => {
 
 const RootLayoutStack = () => {
   const colorScheme = useColorScheme();
+  const { resetAndNavigate } = useMyNavigation()
   const theme = useTheme();
-  const router = useRouter();
+  const router = useMyNavigation();
   const pathname = usePathname();
   const segments = useSegments();
   const searchParams = useGlobalSearchParams();
@@ -98,7 +99,7 @@ const RootLayoutStack = () => {
     const subscription = Linking.addEventListener("url", ({ url }) => {
       const match = url.match(new RegExp(`^${APP_SCHEME}://(.*)`));
       if (match) {
-        router.navigate(`/${match[1]}` as Href);
+        router.push(`/${match[1]}` as Href);
       }
     });
 

@@ -1,10 +1,11 @@
 import { Text, View } from "@/components/theme/Themed";
 import TextInput from "@/components/ui/text-input";
 import AppLayout from "@/layouts/app-layout";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import Colors from "@/shared-uis/constants/Colors";
 import { useTheme } from "@react-navigation/native";
-import { router, useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
 import { Pressable } from "react-native";
 import { Appbar } from "react-native-paper";
@@ -12,7 +13,6 @@ import Toast from "react-native-toast-message";
 
 const Quotation: React.FC = () => {
   const theme = useTheme();
-  const navigation = useRouter();
 
   const {
     title,
@@ -28,6 +28,7 @@ const Quotation: React.FC = () => {
     collaborationId,
     answers,
   } = useLocalSearchParams();
+  const router = useMyNavigation()
 
   const [value, setValue] = useState(initialValue || "");
 

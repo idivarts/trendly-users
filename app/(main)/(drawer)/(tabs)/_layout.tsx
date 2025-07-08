@@ -1,4 +1,4 @@
-import { router, Tabs } from "expo-router";
+import { Tabs } from "expo-router";
 import React from "react";
 
 import NotificationIcon from "@/components/notifications/notification-icon";
@@ -7,6 +7,7 @@ import { useClientOnlyValue } from "@/components/useClientOnlyValue";
 import { COMPLETION_PERCENTAGE } from "@/constants/CompletionPercentage";
 import { useAuthContext, useChatContext } from "@/contexts";
 import { useBreakpoints } from "@/hooks";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import Colors from "@/shared-uis/constants/Colors";
 import {
   faComment,
@@ -33,6 +34,7 @@ const TabLayout = () => {
   const theme = useTheme();
   const { user } = useAuthContext();
   const { unreadCount } = useChatContext();
+  const router = useMyNavigation()
   return (
     <Tabs
       screenOptions={{

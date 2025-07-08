@@ -1,10 +1,10 @@
 import Button from "@/components/ui/button";
 import TextInput from "@/components/ui/text-input";
 import { useAuthContext } from "@/contexts";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import Colors from "@/shared-uis/constants/Colors";
 import fnStyles from "@/styles/signup.styles";
 import { useTheme } from "@react-navigation/native";
-import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
   Dimensions,
@@ -21,7 +21,7 @@ const SignUpScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const router = useRouter();
+  const router = useMyNavigation();
   const theme = useTheme();
   const styles = fnStyles(theme);
   const { signUp } = useAuthContext();

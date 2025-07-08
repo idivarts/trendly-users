@@ -1,21 +1,20 @@
+import { Text, View } from "@/components/theme/Themed";
 import React from "react";
 import { StyleSheet } from "react-native";
-import { Text, View } from "@/components/theme/Themed";
 
 type CardFooterProps = {
   quote: string;
-  timeline: string;
 };
 
-export const CardFooter = ({ quote, timeline }: CardFooterProps) => {
+export const CardFooter = ({ quote }: CardFooterProps) => {
   return (
     <View style={styles.container}>
       <View style={styles.footer}>
         <Text style={styles.footerText}>
-          Quote: {"Rs. "}
-          {quote}
+          <Text style={{ fontWeight: 600 }}>Quote:</Text>
+          {quote || "Free"}
         </Text>
-        <Text style={styles.footerText}>Timeline: {timeline}</Text>
+        {/* <Text style={styles.footerText}>Timeline: {timeline}</Text> */}
       </View>
     </View>
   );

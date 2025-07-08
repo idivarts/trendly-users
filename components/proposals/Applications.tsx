@@ -8,11 +8,12 @@ import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collab
 import { processRawAttachment } from "@/shared-libs/utils/attachments";
 import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import ScrollMedia from "@/shared-uis/components/carousel/scroll-media";
 import Colors from "@/shared-uis/constants/Colors";
 import { stylesFn } from "@/styles/Proposal.styles";
 import { useTheme } from "@react-navigation/native";
-import { Link, router } from "expo-router";
+import { Link } from "expo-router";
 import {
   collection,
   collectionGroup,
@@ -41,6 +42,7 @@ const Applications = () => {
   const [selectedCollabId, setSelectedCollabId] = useState<string | null>(null);
   const [notPendingProposals, setNotPendingProposals] = useState<number>();
   const { user } = useAuthContext();
+  const router = useMyNavigation()
 
   const openBottomSheet = (id: string) => {
     setIsVisible(true);

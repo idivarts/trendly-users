@@ -1,43 +1,24 @@
+import ApplyNowContent from "@/components/collaboration/apply-now/ApplyNowContent";
 import AssetsPreview from "@/components/ui/assets-preview";
 import Button from "@/components/ui/button";
-import ListItem from "@/components/ui/list-item/ListItem";
 import ScreenHeader from "@/components/ui/screen-header";
-import TextInput from "@/components/ui/text-input";
 import AppLayout from "@/layouts/app-layout";
-import { AWSProgressUpdateSubject, useAWSContext } from "@/shared-libs/contexts/aws-context.provider";
+import { useAWSContext } from "@/shared-libs/contexts/aws-context.provider";
 import { Attachment } from "@/shared-libs/firestore/trendly-pro/constants/attachment";
 import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
-import ProgressLoader from "@/shared-uis/components/ProgressLoader";
-import Toaster from "@/shared-uis/components/toaster/Toaster";
-import Colors from "@/shared-uis/constants/Colors";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import { stylesFn } from "@/styles/ApplyNow.styles";
 import { AssetItem } from "@/types/Asset";
-import { faCircleQuestion } from "@fortawesome/free-regular-svg-icons";
-import {
-  faClapperboard,
-  faClockRotateLeft,
-  faDollarSign,
-  faPaperclip
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useTheme } from "@react-navigation/native";
 import * as DocumentPicker from "expo-document-picker";
 import * as MediaLibrary from "expo-media-library";
-import { router, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import { doc, getDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
-import { Platform, ScrollView, View } from "react-native";
-import { FlatList } from "react-native-gesture-handler";
-import {
-  Card,
-  HelperText,
-  IconButton,
-  List,
-  Paragraph
-} from "react-native-paper";
+import { Platform, View } from "react-native";
 ;
 
 const ApplyScreen = () => {
@@ -51,7 +32,7 @@ const ApplyScreen = () => {
 
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [quotation, setQuotation] = useState("");
+  const [quotation, setQuotation] = useState<number | undefined>(undefined);
   const [files, setFiles] = useState<AssetItem[]>([]);
   const [profileAttachments, setProfileAttachments] = useState<Attachment[]>(
     []
@@ -65,6 +46,7 @@ const ApplyScreen = () => {
   const [answers, setAnswers] = useState<{ [key: string]: string }>(
     params.answers ? JSON.parse(params.answers as string) : {}
   );
+  const router = useMyNavigation()
 
   const theme = useTheme();
   const styles = stylesFn(theme);
@@ -139,8 +121,8 @@ const ApplyScreen = () => {
           note,
           attachments: JSON.stringify(finalFiles),
           quotation: quotation,
-          timeline: timelineTimestamp,
-          fileAttachments: JSON.stringify(uploadedFiles),
+          // timeline: timelineTimestamp,
+          // fileAttachments: JSON.stringify(uploadedFiles),
           answers: JSON.stringify(answers),
         },
       });
@@ -247,7 +229,7 @@ const ApplyScreen = () => {
       }
     }
     if (params.quotation) {
-      setQuotation(params.quotation as string);
+      setQuotation(params.quotation ? parseInt(params.quotation as string) : undefined);
     }
 
     if (params.timelineData) {
@@ -280,7 +262,7 @@ const ApplyScreen = () => {
       }
     } else {
       if (!params.quotation) {
-        setQuotation("");
+        setQuotation(undefined);
       }
     }
   }, [params.value]);
@@ -292,206 +274,72 @@ const ApplyScreen = () => {
   return (
     <AppLayout>
       <ScreenHeader title="Apply Now" />
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.contentContainerStyle}
-        nestedScrollEnabled={true}
-      >
-        {files.length === 0 && (
-          <Card style={styles.card} onPress={handleAssetUpload}>
-            <Card.Content style={styles.cardContent}>
-              <IconButton
-                icon={() => (
-                  <FontAwesomeIcon
-                    color={
-                      theme.dark ? Colors(theme).text : Colors(theme).primary
-                    }
-                    icon={faClapperboard}
-                    size={36}
-                  />
-                )}
-                size={40}
-                style={styles.uploadIcon}
-              />
-              <Paragraph style={styles.cardParagraph}>
-                Record a video or add a photo carousel that best describes you
-              </Paragraph>
-            </Card.Content>
-          </Card>
-        )}
 
-        {files.length > 0 && (
-          <>
-            <AssetsPreview
-              files={files.map((file) => ({
-                id: file.id,
-                type: (file.type.includes("video") && file.localUri) ? "image" : file.type,
-                url: file.uri,
-              }))}
-              handleAssetUpload={handleAssetUpload}
-              onRemove={(id) => {
-                setFiles((prevFiles) =>
-                  prevFiles.filter((file) => file.id !== id)
-                );
-              }}
-            />
-          </>
-        )}
+      <ApplyNowContent
+        note={note}
+        quotation={quotation}
+        questions={questions}
+        answers={answers}
+        attachmentLength={files.length}
 
-        <View>
-          <TextInput
-            style={{
-              backgroundColor: Colors(theme).background,
-            }}
-            activeOutlineColor={Colors(theme).primary}
-            label="Add a short note"
-            mode="outlined"
-            multiline
-            onChangeText={(text) => setNote(text)}
-            placeholderTextColor={Colors(theme).text}
-            textColor={Colors(theme).text}
-            value={note}
-          />
-          <HelperText type="info" style={styles.helperText}>
-            Write a short note to the brand about why you are interested in this
-          </HelperText>
+        errorMessage={errorMessage}
+        loading={loading}
 
-          <List.Section
-            style={{
-              width: "100%",
-            }}
-          >
-            <ListItem
-              title="Your Quote"
-              small={true}
-              leftIcon={faDollarSign}
-              content={quotation === "" ? "" : "Rs. " + quotation}
-              rightContent={true}
-              onAction={() => {
-                router.push({
-                  pathname: "/apply-now/quotation",
-                  params: {
-                    title: "Quotation",
-                    value: quotation === "" ? "" : quotation,
-                    path: `/apply-now/${pageID}`,
-                    selectedFiles: params.selectedFiles,
-                    profileAttachments: params.profileAttachments,
-                    placeholder: "Add your quotation",
-                    //@ts-ignore
-                    timelineData: timelineData,
-                    fileAttachments: JSON.stringify(fileAttachments),
-                    answers: JSON.stringify(answers),
-                    note: note,
-                  },
-                });
-              }}
-            />
-            <ListItem
-              title="Timeline"
-              small={true}
-              leftIcon={faClockRotateLeft}
-              rightContent={true}
-              content={timelineData ? timelineData.toLocaleDateString() : ""}
-              onAction={() => setShowDatePicker(true)}
-            />
-            <ListItem
-              title="Attachments"
-              small={true}
-              leftIcon={faPaperclip}
-              content=""
-              attachments={fileAttachments}
-              onAction={handlePickAttachment}
-              onRemove={(id) => {
-                setFileAttachments((prevAttachments) =>
-                  prevAttachments.filter((attachment) => attachment.id !== id)
-                );
-              }}
-            />
-            <FlatList
-              data={questions}
-              nestedScrollEnabled
-              renderItem={({ item: question, index }) => (
-                <ListItem
-                  key={index}
-                  title={question}
-                  small={true}
-                  leftIcon={faCircleQuestion}
-                  content={answers[index]}
-                  onAction={() => {
-                    router.push({
-                      pathname: "/apply-now/question",
-                      params: {
-                        title: "Question " + (index + 1),
-                        value: answers[index] || "",
-                        path: `/apply-now/${pageID}`,
-                        selectedFiles: params.selectedFiles,
-                        actualQuestion: question,
-                        profileAttachments: params.profileAttachments,
-                        placeholder: "",
-                        //@ts-ignore
-                        timelineData: timelineData,
-                        fileAttachments: JSON.stringify(fileAttachments),
-                        answers: JSON.stringify(answers),
-                        quotation: quotation,
-                        note: note,
-                      },
-                    });
-                  }}
-                />
-              )}
-            ></FlatList>
-            {/* {questions.map((question, index) => (
-              
-            ))} */}
-          </List.Section>
-        </View>
-      </ScrollView>
-      <View style={{ paddingHorizontal: 16, paddingBottom: 8 }}>
-        {errorMessage ? (
-          <HelperText type="error" style={styles.errorText}>
-            {errorMessage}
-          </HelperText>
-        ) : null}
-
-        {/* {processMessage && (
-          <HelperText type="info" style={styles.processText}>
-            {processMessage} - {processPercentage}% done
-          </HelperText>
-        )}
-        <ProgressBar
-          progress={processPercentage / 100}
-          color={Colors(theme).primary}
-          style={styles.progressBar}
-        /> */}
-        {loading && <ProgressLoader isProcessing={loading} progress={0} subject={AWSProgressUpdateSubject} />}
-
-        <Button
-          mode="contained"
-          onPress={async () => {
-            if (!note || note.length === 0) {
-              Toaster.error("Please add a note");
-              return;
-            }
-            if (files.length === 0) {
-              Toaster.error("Please upload photos/videos on your application");
-              return;
-            }
-            if (quotation == "") {
-              Toaster.error("Please fill out your quotation", "If its Barter, type quotation as 0")
-              return
-            }
-            if (!timelineData) {
-              Toaster.error("Please fill out the timeline")
-              return
-            }
-
-            await handleUploadFiles();
+        FileRenderComponent={<AssetsPreview
+          files={files.map((file) => ({
+            id: file.id,
+            type: (file.type.includes("video") && file.localUri) ? "image" : file.type,
+            url: file.uri,
+          }))}
+          handleAssetUpload={handleAssetUpload}
+          onRemove={(id) => {
+            setFiles((prevFiles) =>
+              prevFiles.filter((file) => file.id !== id)
+            );
           }}
-          loading={loading}
-        >
-          {loading ? "Uploading Assets" : "Preview Application"}
-        </Button>
-      </View>
+        />}
+
+        handleAssetUpload={handleAssetUpload}
+        setNote={setNote}
+        setQuotation={() => {
+          router.push({
+            pathname: "/apply-now/quotation",
+            params: {
+              title: "Quotation",
+              value: quotation === undefined ? undefined : quotation,
+              path: `/apply-now/${pageID}`,
+              selectedFiles: params.selectedFiles,
+              profileAttachments: params.profileAttachments,
+              placeholder: "Add your quotation",
+              //@ts-ignore
+              timelineData: timelineData,
+              fileAttachments: JSON.stringify(fileAttachments),
+              answers: JSON.stringify(answers),
+              note: note,
+            },
+          });
+        }}
+        setAnswers={(question: string, index: number) => {
+          router.push({
+            pathname: "/apply-now/question",
+            params: {
+              title: "Question " + (index + 1),
+              value: answers[index] || "",
+              path: `/apply-now/${pageID}`,
+              selectedFiles: params.selectedFiles,
+              actualQuestion: question,
+              profileAttachments: params.profileAttachments,
+              placeholder: "",
+              //@ts-ignore
+              timelineData: timelineData,
+              fileAttachments: JSON.stringify(fileAttachments),
+              answers: JSON.stringify(answers),
+              quotation: quotation,
+              note: note,
+            },
+          });
+        }}
+        handleSubmit={handleUploadFiles} />
       {showDatePicker && (
         <View
           style={{

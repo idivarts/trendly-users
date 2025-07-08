@@ -3,12 +3,13 @@ import { Text, View } from "@/components/theme/Themed";
 import ScreenHeader from "@/components/ui/screen-header";
 import { useAuthContext } from "@/contexts";
 import AppLayout from "@/layouts/app-layout";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import Colors from "@/shared-uis/constants/Colors";
 import { User } from "@/types/User";
 import { calculateProfileCompletion } from "@/utils/profile";
 import { useTheme } from "@react-navigation/native";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import React, { useRef, useState } from "react";
 import { Pressable } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
@@ -16,7 +17,7 @@ import { RichEditor } from "react-native-pell-rich-editor";
 
 const EditTextArea: React.FC = () => {
   const theme = useTheme();
-  const navigation = useRouter();
+  const navigation = useMyNavigation();
   const richText = useRef<RichEditor>(null);
   const [loading, setLoading] = useState(false)
 
@@ -67,7 +68,7 @@ const EditTextArea: React.FC = () => {
       };
 
       await updateUser(user.id, updatedContent).then(() => {
-        navigation.navigate("/edit-profile");
+        navigation.push("/edit-profile");
         Toaster.success(`${title ? title : "Profile"} updated successfully`);
       });
     } finally {
@@ -93,7 +94,7 @@ const EditTextArea: React.FC = () => {
       },
     };
 
-    navigation.navigate({
+    navigation.push({
       //@ts-ignore
       pathname: path as string,
       params: {

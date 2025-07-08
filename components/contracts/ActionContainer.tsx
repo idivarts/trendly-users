@@ -5,6 +5,7 @@ import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import ImageComponent from "@/shared-uis/components/image-component";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import Colors from "@/shared-uis/constants/Colors";
@@ -15,7 +16,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
-import { router } from "expo-router";
 import { doc, getDoc } from "firebase/firestore";
 import React, { FC, useEffect, useState } from "react";
 import { Text, View } from "../theme/Themed";
@@ -40,6 +40,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
   const theme = useTheme();
   const [manager, setManager] = useState<IManagers>();
   const { fetchChannelCid } = useChatContext();
+  const router = useMyNavigation()
 
   const renderStars = (rating: number) => {
     const fullStars = Math.floor(rating);
@@ -164,7 +165,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
                   const channelCid = await fetchChannelCid(
                     contract.streamChannelId
                   );
-                  router.navigate(`/channel/${channelCid}`);
+                  router.push(`/channel/${channelCid}`);
                 }}
               >
                 Go to Messages

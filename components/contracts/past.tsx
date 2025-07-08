@@ -10,10 +10,10 @@ import {
 import { IContracts } from "@/shared-libs/firestore/trendly-pro/models/contracts";
 import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import Colors from "@/shared-uis/constants/Colors";
 import { stylesFn } from "@/styles/Proposal.styles";
 import { useTheme } from "@react-navigation/native";
-import { router } from "expo-router";
 import {
   collection,
   doc,
@@ -42,6 +42,7 @@ const PastContracts = () => {
   const theme = useTheme();
   const styles = stylesFn(theme);
   const { user } = useAuthContext();
+  const router = useMyNavigation()
 
   const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -199,7 +200,7 @@ const PastContracts = () => {
                     item.applications[0] || {
                       message: "No message",
                       quotation: "No quotation",
-                      timeline: new Date().toISOString(),
+                      // timeline: new Date().toISOString(),
                     }
                   }
                   collabDetails={item.collaborationData.description || ""}

@@ -1,14 +1,13 @@
 import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { Console } from "@/shared-libs/utils/console";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import Colors from "@/shared-uis/constants/Colors";
 import {
-  faClockRotateLeft,
-  faDollarSign,
+  faDollarSign
 } from "@fortawesome/free-solid-svg-icons";
-import DateTimePicker from "@react-native-community/datetimepicker";
 import { useTheme } from "@react-navigation/native";
-import { router, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import React, { FC, useEffect, useState } from "react";
 import {
   Modal,
@@ -42,17 +41,18 @@ const ReviseQuotationModal: FC<ReviseQuotationModalProps> = ({
   refreshData,
 }) => {
   const theme = useTheme();
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [timeline, setTimeline] = useState<Date | null>();
-  const [quotation, setQuotation] = useState("");
+  // const [showDatePicker, setShowDatePicker] = useState(false);
+  // const [timeline, setTimeline] = useState<Date | null>();
+  const [quotation, setQuotation] = useState<number | undefined>(undefined);
   const params = useLocalSearchParams();
+  const router = useMyNavigation()
   const { updateApplication } = useApplication()
   const updateMyApplication = async () => {
     try {
       if (!application) return;
       await updateApplication(application.collaborationId, {
         quotation: quotation,
-        timeline: timeline?.getTime(),
+        // timeline: timeline?.getTime(),
       })
 
       Toaster.success("Quotation updated successfully");
@@ -66,9 +66,9 @@ const ReviseQuotationModal: FC<ReviseQuotationModalProps> = ({
 
   useEffect(() => {
     if (application) {
-      const date = new Date(application.timeline);
-      setTimeline(date);
-      setQuotation("" + application.quotation);
+      // const date = new Date(application.timeline);
+      // setTimeline(date);
+      setQuotation(application.quotation);
     }
   }, [application]);
 
@@ -103,32 +103,32 @@ const ReviseQuotationModal: FC<ReviseQuotationModalProps> = ({
           title="Your Quote"
           leftIcon={faDollarSign}
           rightContent
-          content={quotation === "" ? "" : "Rs. " + quotation}
+          content={quotation === undefined ? "(Required)" : "Rs. " + quotation}
           onAction={() => {
             onDismiss();
             router.push({
               pathname: "/apply-now/quotation",
               params: {
                 title: "Quotation",
-                value: quotation === "" ? "" : quotation,
+                value: quotation === undefined ? "" : quotation,
                 path: `/contract-details/${contractId}`,
                 placeholder: "Add your quotation",
               },
             });
           }}
         />
-        <ListItem
+        {/* <ListItem
           title="Timeline"
           leftIcon={faClockRotateLeft}
           rightContent
           content={timeline ? timeline.toLocaleDateString() : ""}
           onAction={() => setShowDatePicker(true)}
-        />
+        /> */}
         <Button mode="contained" style={{}} onPress={updateMyApplication}>
           Revise Quotation
         </Button>
       </View>
-      {showDatePicker && (
+      {/* {showDatePicker && (
         <View
           style={{
             backgroundColor: "white",
@@ -153,7 +153,7 @@ const ReviseQuotationModal: FC<ReviseQuotationModalProps> = ({
             themeVariant={theme.dark ? "dark" : "light"}
           />
         </View>
-      )}
+      )} */}
     </Modal>
   );
 };

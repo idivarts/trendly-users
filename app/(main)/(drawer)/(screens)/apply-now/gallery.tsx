@@ -4,6 +4,7 @@ import ScreenHeader from "@/components/ui/screen-header";
 import { useAuthContext } from "@/contexts";
 import { processRawAttachment } from "@/shared-libs/utils/attachments";
 import { Console } from "@/shared-libs/utils/console";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import Colors from "@/shared-uis/constants/Colors";
 import { stylesFn } from "@/styles/apply-now/gallery.styles";
@@ -14,7 +15,7 @@ import { useTheme } from "@react-navigation/native";
 import { Camera, useCameraPermissions } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
-import { router, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   Alert,
@@ -54,9 +55,9 @@ const mutex = new Mutex();
 
 const GalleryScreen = () => {
   const { pageID } = useLocalSearchParams();
-  // const params = useLocalSearchParams();
+  const router = useMyNavigation()
+
   const [assets, setAssets] = useState<MediaLibrary.AssetInfo[]>([]);
-  const [assetAfter, setAssetAfter] = useState<any>(undefined)
   const [reachedEnd, setReachedEnd] = useState<boolean>(false)
   // const [loading, setLoading] = useState(false)
   const [selectedItems, setSelectedItems] = useState<AssetItem[]>([]);

@@ -55,17 +55,16 @@ const ContractDetails: FC<ContractDetailsProps> = ({
             color: Colors(theme).text,
           }}
         >
-          Quote: Rs {application.quotation}
+          Quote: {application?.quotation || "Free"}
         </Text>
-        <Text
+        {/* <Text
           style={{
             fontSize: 16,
             color: Colors(theme).text,
           }}
         >
-          {/* timeline */}
           Timeline: {new Date(application.timeline).toLocaleDateString()}
-        </Text>
+        </Text> */}
       </View>
     </View>
   );

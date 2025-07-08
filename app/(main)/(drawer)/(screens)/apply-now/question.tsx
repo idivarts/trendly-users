@@ -1,11 +1,11 @@
 import { Text, View } from "@/components/theme/Themed";
 import TextInput from "@/components/ui/text-input";
 import AppLayout from "@/layouts/app-layout";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import Colors from "@/shared-uis/constants/Colors";
 import { useTheme } from "@react-navigation/native";
 import {
-  router,
   useLocalSearchParams
 } from "expo-router";
 import React, { useState } from "react";
@@ -32,6 +32,8 @@ const Question: React.FC = () => {
     quotation,
     fileAttachments,
   } = useLocalSearchParams();
+
+  const router = useMyNavigation()
 
   const [value, setValue] = useState(initialValue || "");
 

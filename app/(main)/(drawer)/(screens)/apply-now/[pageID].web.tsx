@@ -1,41 +1,22 @@
+import ApplyNowContent from "@/components/collaboration/apply-now/ApplyNowContent";
 import { TextModal } from "@/components/TextInputModal/TextModal.web";
-import { Text } from "@/components/theme/Themed";
 import AssetsPreview from "@/components/ui/assets-preview";
-import Button from "@/components/ui/button";
-import ListItem from "@/components/ui/list-item/ListItem";
 import ScreenHeader from "@/components/ui/screen-header";
-import TextInput from "@/components/ui/text-input";
 import AppLayout from "@/layouts/app-layout";
-import { AWSProgressUpdateSubject, useAWSContext } from "@/shared-libs/contexts/aws-context.provider";
+import { useAWSContext } from "@/shared-libs/contexts/aws-context.provider";
 import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
-import ProgressLoader from "@/shared-uis/components/ProgressLoader";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
-import Colors from "@/shared-uis/constants/Colors";
 import { stylesFn } from "@/styles/ApplyNow.styles";
 import { handleModalOrInputPage } from "@/utils/TextInput";
-import { faCircleQuestion } from "@fortawesome/free-regular-svg-icons";
-import {
-  faClapperboard,
-  faClockRotateLeft,
-  faDollarSign,
-  faPaperclip,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 // import DateTimePicker from "@react-native-community/datetimepicker";
 import { useTheme } from "@react-navigation/native";
-import * as DocumentPicker from "expo-document-picker";
-import { router, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import { doc, getDoc } from "firebase/firestore";
 import React, { useEffect, useRef, useState } from "react";
-import { Platform, ScrollView, View } from "react-native";
-import {
-  Card,
-  HelperText,
-  IconButton,
-  List
-} from "react-native-paper";
+import { Platform } from "react-native";
 ;
 
 const ApplyScreenWeb = () => {
@@ -45,12 +26,13 @@ const ApplyScreenWeb = () => {
     : params.pageID;
   const [note, setNote] = useState<string>("");
 
+  const router = useMyNavigation()
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const dateRef = useRef<HTMLInputElement>()
   // const [showDatePicker, setShowDatePicker] = useState(false);
   const [timelineData, setTimelineData] = useState<Date | null>(null);
-  const [quotation, setQuotation] = useState<string>("");
+  const [quotation, setQuotation] = useState<number | undefined>(undefined);
   const [questions, setQuestions] = useState<string[]>([]);
   const [answers, setAnswers] = useState<{ [key: string]: string }>(
     params.answers ? JSON.parse(params.answers as string) : {}
@@ -89,8 +71,6 @@ const ApplyScreenWeb = () => {
   const styles = stylesFn(theme);
 
   const {
-    processMessage,
-    processPercentage,
     setProcessMessage,
     setProcessPercentage,
     uploadFiles,
@@ -143,7 +123,7 @@ const ApplyScreenWeb = () => {
         setLoading(false);
         setProcessMessage("");
         setProcessPercentage(0);
-        router.navigate({
+        router.push({
           pathname: "/apply-now/preview",
           params: {
             pageID,
@@ -160,30 +140,6 @@ const ApplyScreenWeb = () => {
       Console.error(error);
       setErrorMessage("Error uploading files");
       setLoading(false);
-    }
-  };
-
-  const handlePickAttachment = async () => {
-    try {
-      const result = await DocumentPicker.getDocumentAsync({
-        type: "*/*", // Allow all file types
-        copyToCacheDirectory: true,
-      });
-
-      if (!result.canceled) {
-        const newAttachment: any = {
-          id: result.assets[0].name, // Use file name as ID
-          uri: result.assets[0].uri,
-          type: result.assets[0].mimeType,
-        };
-
-        setFileAttachments((prevAttachments: any) => [
-          ...prevAttachments,
-          newAttachment,
-        ]);
-      }
-    } catch (error) {
-      Console.error(error);
     }
   };
 
@@ -220,211 +176,66 @@ const ApplyScreenWeb = () => {
   return (
     <AppLayout withWebPadding={true}>
       <ScreenHeader title="Apply Now" />
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.contentContainerStyle}
-      >
-        {files.length > 0 && (
-          <AssetsPreview
-            files={previewUrls.map((file) => ({
-              id: file.id,
-              type: file.type,
-              url: file.url,
-            }))}
-            handleAssetUpload={() => inputRef.current?.click()}
-            onRemove={removeFile}
-          />
-        )}
-        {files.length == 0 &&
-          <Card style={styles.card} onPress={() => inputRef.current?.click()}>
-            <Card.Content style={styles.cardContent}>
-              <IconButton
-                icon={() => (
-                  <FontAwesomeIcon
-                    icon={faClapperboard}
-                    size={20}
-                    color={Colors(theme).text}
-                  />
-                )}
-                onPress={() => inputRef.current?.click()}
-              />
-              <Text style={{ fontSize: 14, color: Colors(theme).text, textAlign: "center" }}>Select photos or videos that would help us understand your content style</Text>
-            </Card.Content>
-          </Card>}
-        <input
-          ref={inputRef}
-          type="file"
-          style={{
-            backgroundColor: "transparent",
-            visibility: "hidden",
-          }}
-          multiple
-          onChange={handleFileSelection}
-          accept="image/*, video/*"
-        />
+      <input
+        ref={inputRef}
+        type="file"
+        style={{
+          backgroundColor: "transparent",
+          visibility: "hidden",
+        }}
+        multiple
+        onChange={handleFileSelection}
+        accept="image/*, video/*"
+      />
 
-        <View>
-          <TextInput
-            style={{
-              backgroundColor: Colors(theme).background,
-            }}
-            activeOutlineColor={Colors(theme).primary}
-            label="Add a short note"
-            mode="outlined"
-            multiline
-            onChangeText={(text) => setNote(text)}
-            placeholderTextColor={Colors(theme).text}
-            textColor={Colors(theme).text}
-            value={note}
-          />
-          <HelperText type="info" style={styles.helperText}>
-            Write a short note to the brand about why you are interested in this
-          </HelperText>
+      <ApplyNowContent
+        note={note}
+        quotation={quotation}
+        questions={questions}
+        answers={answers}
+        attachmentLength={files.length}
+        setNote={setNote}
 
-          <List.Section>
-            <ListItem
-              title="Your Quote"
-              small={true}
-              leftIcon={faDollarSign}
-              content={quotation === "" ? "" : "Rs. " + quotation}
-              rightContent={true}
-              onAction={() => {
-                handleModalOrInputPage({
-                  isWeb: Platform.OS === "web",
-                  openModal,
-                  router,
-                  fieldTitle: "Enter Quotation",
-                  fieldValue: quotation,
-                  setFieldValue: (value) =>
-                    setQuotation(value.replace(/[^0-9]/g, "")),
-                  pathBack: `/apply-now/${pageID}`,
-                });
-              }}
-            />
-            <ListItem
-              title="Timeline"
-              small={true}
-              leftIcon={faClockRotateLeft}
-              content={<input
-                // @ts-ignore
-                ref={dateRef}
-                type="date"
-                onChange={(e) => setTimelineData(new Date(e.target.value))}
-                value={
-                  timelineData ? timelineData.toISOString().split("T")[0] : ""
-                }
-                placeholder="Select a date"
-                style={{
-                  border: "none",
-                  backgroundColor: "transparent",
-                  fontSize: 16,
-                  color: Colors(theme).textSecondary,
-                  // color: "inherit",
-                  outline: "none",
-                  borderWidth: 0,
-                }}
-              />}
-              rightContent={true}
-              onAction={() => {
-                try {
-                  dateRef.current?.showPicker?.() || dateRef.current?.click()
-                } catch (e: any) {
-                  Console.error(e);
-                }
-              }}
-            />
+        errorMessage={errorMessage}
+        loading={loading}
 
-            <ListItem
-              title="Attachments"
-              small={true}
-              leftIcon={faPaperclip}
-              content=""
-              attachments={fileAttachments}
-              onAction={handlePickAttachment}
-              onRemove={(id) => {
-                setFileAttachments((prevAttachments: any) =>
-                  prevAttachments.filter((f: any) => f.id !== id)
-                );
-              }}
-            />
-            {questions.map((question, index) => (
-              <ListItem
-                key={index}
-                small={true}
-                title={question}
-                leftIcon={faCircleQuestion}
-                content={answers[index] || ""}
-                onAction={() => {
-                  handleModalOrInputPage({
-                    isWeb: Platform.OS === "web",
-                    openModal,
-                    router,
-                    fieldTitle: question,
-                    fieldValue: answers[index],
-                    setFieldValue: (value) =>
-                      setAnswers({ ...answers, [index]: value }),
-                    pathBack: `/apply-now/${pageID}`,
-                  });
-                }}
-              />
-            ))}
-          </List.Section>
-
-          {errorMessage ? (
-            <HelperText type="error" style={styles.errorText}>
-              {errorMessage}
-            </HelperText>
-          ) : null}
-
-          {/* {processMessage && (
-            <HelperText type="info" style={styles.processText}>
-              {processMessage} - {processPercentage}% done
-            </HelperText>
-          )}
-
-          {processMessage && (
-            <ProgressBar
-              progress={processPercentage / 100}
-              color={Colors(theme).primary}
-              style={styles.progressBar}
-            />
-          )} */}
-          {loading && <ProgressLoader isProcessing={loading} progress={0} subject={AWSProgressUpdateSubject} />}
-          <Button
-            mode="contained"
-            onPress={async () => {
-              if (!note || note.length === 0) {
-                Toaster.error("Please add a note");
-                return;
-              }
-              if (files.length === 0) {
-                Toaster.error("Please upload photos/videos on your application");
-                return;
-              }
-              if (quotation == "") {
-                Toaster.error("Please fill out your quotation", "If its Barter, type quotation as 0")
-                return
-              }
-              if (!timelineData) {
-                Toaster.error("Please fill out the timeline")
-                return
-              }
-              await handleUploadFiles();
-            }}
-            loading={loading}
-          >
-            {processMessage ? "Uploading Assets" : "Preview Application"}
-          </Button>
-        </View>
-      </ScrollView>
-      {/* {showDatePicker && (
-        <DateTimePicker
-          value={timelineData || new Date()} // Use the selected date or current date
-          mode="date" // Show the date picker
-          display="spinner" // Use spinner for iOS
-          onChange={onDateChange} // Handle date changes
-        />
-      )} */}
+        handleAssetUpload={() => inputRef.current?.click()}
+        FileRenderComponent={<AssetsPreview
+          files={previewUrls.map((file) => ({
+            id: file.id,
+            type: file.type,
+            url: file.url,
+          }))}
+          handleAssetUpload={() => inputRef.current?.click()}
+          onRemove={removeFile}
+        />}
+        setQuotation={() => {
+          handleModalOrInputPage({
+            isWeb: Platform.OS === "web",
+            openModal,
+            router,
+            fieldTitle: "Enter Quotation",
+            fieldValue: quotation ? "" + quotation : "",
+            setFieldValue: (value) => {
+              const d = value.replace(/[^0-9]/g, "")
+              const quote = d ? parseInt(d) : undefined
+              setQuotation(quote)
+            },
+            pathBack: `/apply-now/${pageID}`,
+          });
+        }}
+        setAnswers={(question: string, index: number) => {
+          handleModalOrInputPage({
+            isWeb: Platform.OS === "web",
+            openModal,
+            router,
+            fieldTitle: question,
+            fieldValue: answers[index],
+            setFieldValue: (value) =>
+              setAnswers({ ...answers, [index]: value }),
+            pathBack: `/apply-now/${pageID}`,
+          });
+        }} handleSubmit={handleUploadFiles} />
       <TextModal
         isOpen={modalData.isOpen}
         onClose={() => setModalData({ ...modalData, isOpen: false })}

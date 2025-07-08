@@ -1,4 +1,4 @@
-import { router, useFocusEffect } from "expo-router";
+import { useFocusEffect } from "expo-router";
 import React, { useCallback, useState } from "react";
 import { Searchbar } from "react-native-paper";
 import { Channel as ChannelType } from "stream-chat";
@@ -7,6 +7,7 @@ import { ChannelList } from "stream-chat-expo";
 import { View } from "@/components/theme/Themed";
 import { useAuthContext, useChatContext } from "@/contexts";
 import { Console } from "@/shared-libs/utils/console";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import Colors from "@/shared-uis/constants/Colors";
 import stylesFn from "@/styles/searchbar/Searchbar.styles";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
@@ -18,6 +19,7 @@ const ChannelListNative = () => {
   const [searchInput, setSearchInput] = useState("");
   const theme = useTheme();
   const styles = stylesFn(theme);
+  const router = useMyNavigation()
 
   const {
     user,
