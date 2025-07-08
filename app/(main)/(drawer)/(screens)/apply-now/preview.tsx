@@ -38,7 +38,7 @@ const Preview = () => {
     }[]
   >([]);
   const [timeline, setTimeline] = useState<number>(0);
-  const [quotation, setQuotation] = useState<string>("");
+  const [quotation, setQuotation] = useState<number>(0);
 
   const { xl } = useBreakpoints();
 
