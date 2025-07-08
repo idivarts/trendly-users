@@ -146,6 +146,7 @@ export const ChatContextProvider: React.FC<PropsWithChildren> = ({
       Console.log("Error connecting to chat", error);
       setToken("")
       setHasError(true)
+      PersistentStorage.clear("streamToken")
     }
     return ""
   };
