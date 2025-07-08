@@ -121,8 +121,8 @@ const ApplyScreen = () => {
           note,
           attachments: JSON.stringify(finalFiles),
           quotation: quotation,
-          timeline: timelineTimestamp,
-          fileAttachments: JSON.stringify(uploadedFiles),
+          // timeline: timelineTimestamp,
+          // fileAttachments: JSON.stringify(uploadedFiles),
           answers: JSON.stringify(answers),
         },
       });

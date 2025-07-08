@@ -13,10 +13,11 @@ import { useMyNavigation } from "@/shared-libs/utils/router";
 import InfluencerCard from "@/shared-uis/components/InfluencerCard";
 import Colors from "@/shared-uis/constants/Colors";
 import { convertToKUnits } from "@/utils/conversion";
+import { FontAwesome } from "@expo/vector-icons";
 import { useTheme } from "@react-navigation/native";
 import { useLocalSearchParams } from "expo-router";
-import React, { useEffect, useState } from "react";
-import { Platform, ScrollView, Text, View } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { Animated, Easing, Platform, ScrollView, Text, View } from "react-native";
 
 const Preview = () => {
   const params = useLocalSearchParams();
@@ -30,15 +31,18 @@ const Preview = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [processedAttachments, setProcessedAttachments] = useState([]);
   const [rawAttachments, setRawAttachments] = useState([]);
-  const [fileAttachments, setFileAttachments] = useState([]);
+  // const [fileAttachments, setFileAttachments] = useState([]);
   const [answers, setAnswers] = useState<
     {
       question: number;
       answer: string;
     }[]
   >([]);
-  const [timeline, setTimeline] = useState<number>(0);
+  // const [timeline, setTimeline] = useState<number>(0);
   const [quotation, setQuotation] = useState<number>(0);
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  const successScale = useRef(new Animated.Value(0)).current;
 
   const { xl } = useBreakpoints();
 
@@ -64,29 +68,29 @@ const Preview = () => {
     }
   }, [params.attachments]);
 
-  useEffect(() => {
-    try {
-      if (params.fileAttachments) {
-        const rawAttachments = JSON.parse(params.fileAttachments as string);
-        setFileAttachments(rawAttachments);
-      }
-    } catch (error) {
-      Console.error(error);
-      setErrorMessage("Error processing attachments");
-    }
-  }, [params.fileAttachments]);
+  // useEffect(() => {
+  //   try {
+  //     if (params.fileAttachments) {
+  //       const rawAttachments = JSON.parse(params.fileAttachments as string);
+  //       setFileAttachments(rawAttachments);
+  //     }
+  //   } catch (error) {
+  //     Console.error(error);
+  //     setErrorMessage("Error processing attachments");
+  //   }
+  // }, [params.fileAttachments]);
 
   useEffect(() => {
     try {
       const quotationFromParams = JSON.parse(params.quotation as string);
       setQuotation(quotationFromParams);
-      const timelineFromParams = JSON.parse(params.timeline as string);
-      setTimeline(Number(timelineFromParams));
+      // const timelineFromParams = JSON.parse(params.timeline as string);
+      // setTimeline(Number(timelineFromParams));
     } catch (error) {
       Console.error(error);
       setErrorMessage("Error processing attachments");
     }
-  }, [params.fileAttachments]);
+  }, [params.quotation, params.timeline]);
 
   useEffect(() => {
     try {
@@ -137,14 +141,20 @@ const Preview = () => {
         timeStamp: Date.now(),
         message: note,
         attachments: rawAttachments,
-        fileAttachments: fileAttachments,
         answersFromInfluencer: answers,
         quotation: quotation,
-        timeline,
+        // fileAttachments: fileAttachments,
+        // timeline,
       };
 
       await insertApplication(pageID, applicantData).then(() => {
-        setErrorMessage("Application submitted successfully");
+        setShowSuccess(true);
+        Animated.timing(successScale, {
+          toValue: 1,
+          duration: 500,
+          easing: Easing.out(Easing.exp),
+          useNativeDriver: true,
+        }).start();
         setTimeout(() => {
           router.push("/collaborations");
         }, 1000); // Give user time to see success message
@@ -164,57 +174,85 @@ const Preview = () => {
   Console.log("Raw attachments", rawAttachments);
 
   return (
-    <AppLayout withWebPadding={true}>
-      <ScreenHeader title="Preview" />
-      <ScrollView>
-        {user &&
-          <InfluencerCard
-            style={[{
-              paddingVertical: 16,
-            }, Platform.OS === "web" ? { alignSelf: "center", maxWidth: MAX_WIDTH_WEB, marginVertical: 8 } : {}]}
-            influencer={{
-              ...user, profile: {
-                ...user.profile,
-                content: {
-                  ...user.profile?.content,
-                  about: note
+    <>
+      {showSuccess && (
+        <View style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: "rgba(0,0,0,0.4)",
+          justifyContent: "center",
+          alignItems: "center",
+          zIndex: 999
+        }}>
+          <Animated.View style={{
+            backgroundColor: "#fff",
+            padding: 24,
+            borderRadius: 100,
+            justifyContent: "center",
+            alignItems: "center",
+            transform: [{ scale: successScale }]
+          }}>
+            <FontAwesome name="check-circle" size={64} color={Colors(theme).green} />
+            <Text style={{ marginTop: 8, fontSize: 16, fontWeight: "600", color: Colors(theme).green }}>
+              Submitted!
+            </Text>
+          </Animated.View>
+        </View>
+      )}
+      <AppLayout withWebPadding={true}>
+        <ScreenHeader title="Preview" />
+        <ScrollView>
+          {user &&
+            <InfluencerCard
+              style={[{
+                paddingVertical: 16,
+              }, Platform.OS === "web" ? { alignSelf: "center", maxWidth: MAX_WIDTH_WEB, marginVertical: 8 } : {}]}
+              influencer={{
+                ...user, profile: {
+                  ...user.profile,
+                  content: {
+                    ...user.profile?.content,
+                    about: note
+                  }
                 }
-              }
+              }}
+              customAttachments={rawAttachments}
+              ToggleModal={() => { }}
+              openProfile={() => { }}
+              type="application"
+              footerNode={<CardFooter
+                quote={convertToKUnits(Number(quotation)) as string}
+              // timeline={new Date(timeline).toLocaleDateString("en-US")}
+              />}
+            />
+          }
+        </ScrollView>
+        <View style={{ paddingHorizontal: 16, paddingBottom: 8 }}>
+          <Text
+            style={{
+              color: errorMessage.includes("successfully")
+                ? Colors(theme).green
+                : Colors(theme).red,
+              marginBottom: 8,
+              textAlign: "center",
             }}
-            customAttachments={rawAttachments}
-            ToggleModal={() => { }}
-            openProfile={() => { }}
-            type="application"
-            footerNode={<CardFooter
-              quote={convertToKUnits(Number(quotation)) as string}
-              timeline={new Date(timeline).toLocaleDateString("en-US")}
-            />}
-          />
-        }
-      </ScrollView>
-      <View style={{ paddingHorizontal: 16, paddingBottom: 8 }}>
-        <Text
-          style={{
-            color: errorMessage.includes("successfully")
-              ? Colors(theme).green
-              : Colors(theme).red,
-            marginBottom: 8,
-            textAlign: "center",
-          }}
-        >
-          {errorMessage}
-        </Text>
-        <Button
-          mode="contained"
-          onPress={handleSubmit}
-          loading={loading}
-          disabled={loading}
-          style={{ marginTop: 8 }}
-        >
-          Submit Application
-        </Button>
-      </View>
-      {/* <FlatList
+          >
+            {errorMessage}
+          </Text>
+          <Button
+            mode="contained"
+            onPress={handleSubmit}
+            loading={loading}
+            disabled={loading}
+            style={{ marginTop: 8 }}
+          >
+            Submit Application
+          </Button>
+        </View>
+        {/* <FlatList
         data={[1]}
         renderItem={() => {
           return (
@@ -233,8 +271,9 @@ const Preview = () => {
           paddingHorizontal: Platform.OS === "web" ? 16 : 0,
         }}
       /> */}
-    </AppLayout>
-  );
+      </AppLayout>
+    </>
+  )
 };
 
 export default Preview;
