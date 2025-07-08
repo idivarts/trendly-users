@@ -28,6 +28,7 @@ interface IProps {
     errorMessage?: string
     loading?: boolean
 
+    submitText?: string
     handleSubmit: Function
     handleAssetUpload: Function
 
@@ -193,7 +194,7 @@ const ApplyNowContent = (props: IProps) => {
                     }}
                     loading={props.loading}
                 >
-                    {props.loading ? "Uploading Assets" : "Preview Application"}
+                    {props.loading ? "Uploading Assets" : (props.submitText || "Preview Application")}
                 </Button>
             </View>
         </>

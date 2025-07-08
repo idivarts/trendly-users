@@ -508,7 +508,9 @@ const EditApplicationScreen = () => {
               note: note,
             },
           });
-        }} handleSubmit={handleUploadFiles}
+        }}
+        submitText="Update Application"
+        handleSubmit={handleUploadFiles}
         handleAssetUpload={handleAssetUpload}
         errorMessage={errorMessage}
         loading={loading}

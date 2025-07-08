@@ -365,6 +365,7 @@ const ApplyScreenWeb = () => {
             pathBack: `/apply-now/${pageID}`,
           });
         }}
+        submitText="Update Application"
         handleSubmit={handleUploadFiles}
         handleAssetUpload={() => inputRef.current?.click()}
         FileRenderComponent={<AssetsPreview
