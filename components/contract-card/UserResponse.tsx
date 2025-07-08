@@ -1,8 +1,6 @@
 import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { processRawAttachment } from "@/shared-libs/utils/attachments";
 import RenderMediaItem from "@/shared-uis/components/carousel/render-media-item";
-import { faPaperclip } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
 import { FC } from "react";
 import { ScrollView } from "react-native";
@@ -77,14 +75,14 @@ const UserResponse: FC<UserResponseProps> = ({
           <Text style={{ fontSize: 16 }}>
             Quote: Rs. {application?.quotation || "N/A"}
           </Text>
-          {application?.timeline && (
+          {/* {application?.timeline && (
             <Text style={{ fontSize: 16 }}>
               Timeline:{" "}
               {new Date(application?.timeline).toLocaleDateString() || "N/A"}
             </Text>
-          )}
+          )} */}
         </View>
-        {application?.fileAttachments &&
+        {/* {application?.fileAttachments &&
           application.fileAttachments.map((attachment, index) => {
             return (
               <View
@@ -103,7 +101,7 @@ const UserResponse: FC<UserResponseProps> = ({
                 </Text>
               </View>
             );
-          })}
+          })} */}
 
         <View
           style={{

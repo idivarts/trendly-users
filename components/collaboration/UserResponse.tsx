@@ -5,8 +5,6 @@ import { processRawAttachment } from "@/shared-libs/utils/attachments";
 import { useMyNavigation } from "@/shared-libs/utils/router";
 import ScrollMedia from "@/shared-uis/components/carousel/scroll-media";
 import Colors from "@/shared-uis/constants/Colors";
-import { faPaperclip } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
 import { FC } from "react";
 import { Pressable } from "react-native";
@@ -130,14 +128,14 @@ const UserResponse: FC<UserResponseProps> = ({
           <Text style={{ fontSize: 16 }}>
             Quote: {application?.quotation || "N/A"}
           </Text>
-          {application?.timeline ? (
+          {/* {application?.timeline ? (
             <Text style={{ fontSize: 16 }}>
               Timeline:{" "}
               {new Date(application?.timeline).toLocaleDateString() || "N/A"}
             </Text>
-          ) : null}
+          ) : null} */}
         </View>
-        {application?.fileAttachments &&
+        {/* {application?.fileAttachments &&
           application.fileAttachments.map((attachment, index) => {
             return (
               <View
@@ -158,7 +156,7 @@ const UserResponse: FC<UserResponseProps> = ({
                 </Text>
               </View>
             );
-          })}
+          })} */}
 
         <View
           style={{

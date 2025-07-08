@@ -200,7 +200,7 @@ const PastContracts = () => {
                     item.applications[0] || {
                       message: "No message",
                       quotation: "No quotation",
-                      timeline: new Date().toISOString(),
+                      // timeline: new Date().toISOString(),
                     }
                   }
                   collabDetails={item.collaborationData.description || ""}

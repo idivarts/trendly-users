@@ -57,15 +57,14 @@ const ContractDetails: FC<ContractDetailsProps> = ({
         >
           Quote: Rs {application.quotation}
         </Text>
-        <Text
+        {/* <Text
           style={{
             fontSize: 16,
             color: Colors(theme).text,
           }}
         >
-          {/* timeline */}
           Timeline: {new Date(application.timeline).toLocaleDateString()}
-        </Text>
+        </Text> */}
       </View>
     </View>
   );

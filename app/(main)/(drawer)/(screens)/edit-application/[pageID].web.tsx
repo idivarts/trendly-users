@@ -141,10 +141,10 @@ const ApplyScreenWeb = () => {
     if (applicationData) {
       setNote(applicationData.message || "");
       setQuotation(applicationData.quotation);
-      setTimelineData(
-        applicationData.timeline ? new Date(applicationData.timeline) : null
-      );
-      setFileAttachments(applicationData.fileAttachments || []);
+      // setTimelineData(
+      //   applicationData.timeline ? new Date(applicationData.timeline) : null
+      // );
+      // setFileAttachments(applicationData.fileAttachments || []);
       setAnswers(
         applicationData.answersFromInfluencer.reduce(
           (acc, curr) => ({ ...acc, [curr.question]: curr.answer }),
@@ -232,16 +232,16 @@ const ApplyScreenWeb = () => {
         ...originalAttachmentsWithoutID,
         ...uploadedFilesResponse,
       ];
-      var finalFileAttachments = [...filesWithoutID, ...uploadedFiles];
+      // var finalFileAttachments = [...filesWithoutID, ...uploadedFiles];
 
-      const timelineTimestamp = timelineData?.getTime() || 0;
+      // const timelineTimestamp = timelineData?.getTime() || 0;
 
       await updateApplication(params.collaborationId as string, {
         message: note,
         attachments: finalMedia,
         quotation: quotation,
-        timeline: timelineTimestamp,
-        fileAttachments: finalFileAttachments,
+        // timeline: timelineTimestamp,
+        // fileAttachments: finalFileAttachments,
         // @ts-ignore
         answersFromInfluencer: Object.entries(answers).map(
           ([question, answer]) => ({

@@ -198,15 +198,15 @@ const EditApplicationScreen = () => {
         ...uploadedFileUrisResponse,
         ...finalProfileAttachments,
       ];
-      const timelineTimestamp = timelineData?.getTime();
+      // const timelineTimestamp = timelineData?.getTime();
 
       await updateApplication(params.collaborationId as string, {
         message: note,
         // @ts-ignore
         attachments: finalFilesSending,
         quotation: quotation,
-        timeline: timelineTimestamp,
-        fileAttachments: finalFileAttachment,
+        // timeline: timelineTimestamp,
+        // fileAttachments: finalFileAttachment,
         // @ts-ignore
         answersFromInfluencer: Object.entries(answers).map(
           ([question, answer]) => ({
@@ -336,10 +336,10 @@ const EditApplicationScreen = () => {
     if (applicationData) {
       setNote(applicationData.message || "");
       setQuotation(applicationData.quotation);
-      setTimelineData(
-        applicationData.timeline ? new Date(applicationData.timeline) : null
-      );
-      setFileAttachments(applicationData.fileAttachments || []);
+      // setTimelineData(
+      //   applicationData.timeline ? new Date(applicationData.timeline) : null
+      // );
+      // setFileAttachments(applicationData.fileAttachments || []);
       setOriginalAttachments(
         applicationData.attachments as {
           id: string;
