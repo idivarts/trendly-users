@@ -1,15 +1,15 @@
 import DrawerMenuContent from "@/components/drawer-layout/DrawerMenuContent";
-import BackButton from "@/components/ui/back-button/BackButton";
 import { useBreakpoints } from "@/hooks";
 import { SocialsProtectedScreen } from "@/layouts/protected";
-import { Drawer } from "expo-router/drawer";
+import CustomDrawerWrapper from "@/shared-uis/components/CustomDrawer";
+import { Stack } from "expo-router";
 
 const DrawerLayout = () => {
   const { xl } = useBreakpoints();
 
   return (
     <SocialsProtectedScreen>
-      <Drawer
+      {/* <Drawer
         backBehavior="history"
         drawerContent={() => <DrawerMenuContent />}
         screenOptions={{
@@ -20,20 +20,27 @@ const DrawerLayout = () => {
           },
           headerLeft: () => xl ? null : <BackButton />,
         }}
-      >
-        <Drawer.Screen
-          name="(tabs)"
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Drawer.Screen
-          name="(screens)"
-          options={{
-            headerShown: false,
-          }}
-        />
-      </Drawer>
+      > */}
+      <CustomDrawerWrapper DrawerContent={<DrawerMenuContent />} isFixed={xl}>
+        <Stack screenOptions={{
+          animation: "ios",
+          headerShown: false
+        }}>
+          <Stack.Screen
+            name="(tabs)"
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="(screens)"
+            options={{
+              headerShown: false,
+            }}
+          />
+        </Stack>
+      </CustomDrawerWrapper>
+      {/* </Drawer> */}
     </SocialsProtectedScreen>
   );
 };
