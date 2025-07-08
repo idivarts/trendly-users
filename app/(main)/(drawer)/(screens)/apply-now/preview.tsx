@@ -156,7 +156,7 @@ const Preview = () => {
           useNativeDriver: true,
         }).start();
         setTimeout(() => {
-          router.push("/collaborations");
+          router.resetAndNavigate("/collaborations");
         }, 1000); // Give user time to see success message
       }).catch((e) => {
         setErrorMessage("Failed to submit application");
