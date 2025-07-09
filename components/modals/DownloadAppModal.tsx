@@ -26,6 +26,7 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
   const styles = stylesFn(theme);
   const [isVisible, setIsVisible] = useState(false);
   const pathname = usePathname()
+  const [isAppInstalled, setIsAppInstalled] = useState(false)
 
   const openUrl = async () => {
     const url = `trendly-creators:/${pathname}`
@@ -35,11 +36,12 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
     if (canOpen) {
       const mWindow = window.open(url, "_parent");
       if (mWindow) {
-        setTimeout(() => {
-          if (mWindow && !mWindow.closed) {
-            mWindow.close();
-          }
-        }, 5000);
+        // setIsAppInstalled(true)
+        // setTimeout(() => {
+        //   if (mWindow && !mWindow.closed) {
+        //     mWindow.close();
+        //   }
+        // }, 5000);
       }
     }
   }
@@ -103,13 +105,13 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
             },
           }}
           onPress={() => {
-            if (collaborationId)
-              handleDeepLink(`collaboration/${collaborationId}`, lg);
+            if (isAppInstalled)
+              openUrl()
             else
               handleDeepLink(undefined, lg);
           }}
         >
-          Download App Now
+          {isAppInstalled ? "Open App" : "Download App Now"}
         </Button>
       </View>
     </BottomSheetContainer>
