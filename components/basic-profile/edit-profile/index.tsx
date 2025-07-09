@@ -114,7 +114,7 @@ const EditProfile: React.FC<EditProfileProps> = ({
             if (user) {
               updateUser(user.id, {
                 profile: {
-                  ...user?.profile,
+                  ...user.profile,
                   attachments: attachments
                 }
               })

@@ -48,10 +48,7 @@ const EditTextArea: React.FC = () => {
         ...user,
         profile: {
           ...(user?.profile || {}),
-          content: {
-            ...(user?.profile?.content || {}),
-            [key as string]: value,
-          },
+          content,
         }
       });
 
@@ -60,10 +57,7 @@ const EditTextArea: React.FC = () => {
         profile: {
           ...(user?.profile || {}),
           completionPercentage: percentage,
-          content: {
-            ...(user?.profile?.content || {}),
-            [key as string]: value,
-          },
+          content,
         },
       };
 
