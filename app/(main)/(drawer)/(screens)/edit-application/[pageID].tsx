@@ -17,7 +17,6 @@ import { stylesFn } from "@/styles/ApplyNow.styles";
 import { AssetItem } from "@/types/Asset";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useIsFocused, useTheme } from "@react-navigation/native";
-import * as DocumentPicker from "expo-document-picker";
 import * as MediaLibrary from "expo-media-library";
 import { useLocalSearchParams } from "expo-router";
 import { doc, getDoc } from "firebase/firestore";
@@ -220,12 +219,12 @@ const EditApplicationScreen = () => {
       setLoading(false);
       setProcessMessage("");
       setTimeout(() => {
-        router.replace("/collaborations");
+        router.resetAndNavigate("/collaborations");
       }, 1000);
     } catch (error) {
       Console.error(error);
     } finally {
-      setLoading(true);
+      setLoading(false);
     }
   };
 
@@ -272,29 +271,6 @@ const EditApplicationScreen = () => {
     }
   };
 
-  const handlePickAttachment = async () => {
-    try {
-      const result = await DocumentPicker.getDocumentAsync({
-        type: "*/*", // Allow all file types
-        copyToCacheDirectory: true,
-      });
-
-      if (!result.canceled) {
-        const newAttachment: any = {
-          id: result.assets[0].name, // Use file name as ID
-          uri: result.assets[0].uri,
-          type: result.assets[0].mimeType,
-        };
-
-        setFileAttachments((prevAttachments: any) => [
-          ...prevAttachments,
-          newAttachment,
-        ]);
-      }
-    } catch (error) {
-      Console.error(error);
-    }
-  };
 
   const fetchQuestions = async () => {
     try {
