@@ -23,6 +23,7 @@ const DownloadPlayModal: React.FC<DownloadPlayModalProps> = ({ }) => {
   const [displayedOnce, setDisplayedOnce] = useState(false)
 
   const pathname = usePathname()
+  const [isAppInstalled, setIsAppInstalled] = useState(false)
 
   const openUrl = async () => {
     const url = `trendly-creators:/${pathname}`
@@ -32,6 +33,7 @@ const DownloadPlayModal: React.FC<DownloadPlayModalProps> = ({ }) => {
     if (canOpen) {
       const mWindow = window.open(url, "_parent");
       if (mWindow) {
+        setIsAppInstalled(true)
         setTimeout(() => {
           if (mWindow && !mWindow.closed) {
             mWindow.close();
@@ -83,7 +85,10 @@ const DownloadPlayModal: React.FC<DownloadPlayModalProps> = ({ }) => {
             <View style={{ flexDirection: "row", gap: 12, marginTop: 12 }}>
               <Text
                 onPress={() => {
-                  window.open(CREATORS_PLAYSTORE_URL, "_blank");
+                  if (isAppInstalled)
+                    openUrl()
+                  else
+                    window.open(CREATORS_PLAYSTORE_URL, "_blank");
                 }}
                 style={{
                   paddingVertical: 8,
@@ -95,7 +100,7 @@ const DownloadPlayModal: React.FC<DownloadPlayModalProps> = ({ }) => {
                   fontWeight: "500",
                 }}
               >
-                Download App
+                {isAppInstalled ? "Open App" : "Download App"}
               </Text>
               <Text
                 onPress={handleClose}
