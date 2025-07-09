@@ -33,7 +33,7 @@ const DownloadPlayModal: React.FC<DownloadPlayModalProps> = ({ }) => {
     if (canOpen) {
       const mWindow = window.open(url, "_parent");
       if (mWindow) {
-        setIsAppInstalled(true)
+        // setIsAppInstalled(true)
         setTimeout(() => {
           if (mWindow && !mWindow.closed) {
             mWindow.close();
