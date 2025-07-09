@@ -17,7 +17,7 @@ import { RichEditor } from "react-native-pell-rich-editor";
 
 const EditTextArea: React.FC = () => {
   const theme = useTheme();
-  const navigation = useMyNavigation();
+  const router = useMyNavigation();
   const richText = useRef<RichEditor>(null);
   const [loading, setLoading] = useState(false)
 
@@ -68,7 +68,7 @@ const EditTextArea: React.FC = () => {
       };
 
       await updateUser(user.id, updatedContent).then(() => {
-        navigation.push("/edit-profile");
+        handleGoBack()
         Toaster.success(`${title ? title : "Profile"} updated successfully`);
       });
     } finally {
@@ -77,34 +77,17 @@ const EditTextArea: React.FC = () => {
   };
 
   const handleSubmit = () => {
-    if (userProfile === "true") {
-      handleUpdateProfileContent();
-      return;
-    }
-
     if (!value) {
       Toaster.error("Please enter a value");
       return;
     }
-
-    const valueToSubmit = {
-      textbox: {
-        title,
-        value,
-      },
-    };
-
-    navigation.push({
-      //@ts-ignore
-      pathname: path as string,
-      params: {
-        value: JSON.stringify(valueToSubmit),
-      },
-    });
+    if (userProfile === "true") {
+      handleUpdateProfileContent();
+    }
   };
 
   const handleGoBack = () => {
-    navigation.back();
+    router.back();
   };
 
   return (
