@@ -4,9 +4,11 @@ import { useEffect, useMemo, useState } from "react";
 import { useAuthContext } from "@/contexts";
 import { useBreakpoints } from "@/hooks";
 import { CREATORS_PLAYSTORE_URL } from "@/shared-constants/app";
+import { Console } from "@/shared-libs/utils/console";
 import BottomSheetContainer from "@/shared-uis/components/bottom-sheet";
 import Colors, { ColorsStatic } from "@/shared-uis/constants/Colors";
-import { Image, StyleSheet } from "react-native";
+import { usePathname } from "expo-router";
+import { Image, Linking, StyleSheet } from "react-native";
 import { Text, View } from "../theme/Themed";
 
 interface DownloadPlayModalProps { }
@@ -20,6 +22,25 @@ const DownloadPlayModal: React.FC<DownloadPlayModalProps> = ({ }) => {
   const { user } = useAuthContext()
   const [displayedOnce, setDisplayedOnce] = useState(false)
 
+  const pathname = usePathname()
+
+  const openUrl = async () => {
+    const url = `trendly-creators:/${pathname}`
+    Console.log("Opening URL", url)
+    const canOpen = await Linking.canOpenURL(url)
+    Console.log("Can Open URL ", canOpen)
+    if (canOpen) {
+      const mWindow = window.open(url, "_parent");
+      if (mWindow) {
+        setTimeout(() => {
+          if (mWindow && !mWindow.closed) {
+            mWindow.close();
+          }
+        }, 5000);
+      }
+    }
+  }
+
   useEffect(() => {
     if (!user || !user.primarySocial || displayedOnce)
       return
@@ -28,6 +49,7 @@ const DownloadPlayModal: React.FC<DownloadPlayModalProps> = ({ }) => {
     setTimeout(() => {
       setIsVisible(true);
     }, 5000);
+    openUrl()
   }, [user])
 
   const {

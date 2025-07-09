@@ -25,7 +25,7 @@ const MainLayout = () => {
                               headerShown: false,
                             }}
                           >
-                            <Stack.Screen
+                            {/* <Stack.Screen
                               name="(onboarding)"
                               options={{
                                 headerShown: false,
@@ -44,7 +44,7 @@ const MainLayout = () => {
                               options={{
                                 headerShown: false,
                               }}
-                            />
+                            /> */}
                           </Stack>
                         </ScrollProvider>
                       </ChatContextProvider>
