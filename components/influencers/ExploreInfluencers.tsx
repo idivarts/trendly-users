@@ -9,9 +9,6 @@ import { View } from "../theme/Themed";
 
 
 import ProfileBottomSheet from "@/shared-uis/components/ProfileModal/Profile-Modal";
-import {
-    BottomSheetBackdrop
-} from "@gorhom/bottom-sheet";
 
 import { MAX_WIDTH_WEB } from "@/constants/Container";
 import { useAuthContext } from "@/contexts";
@@ -30,21 +27,11 @@ import { Button } from "react-native-paper";
 import { useSharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import InfluencerActionModal from "./InfluencerActionModal";
+import IntroductoryModal from "./IntroductoryModal";
 
 const ExploreInfluencers = () => {
-    const [searchQuery, setSearchQuery] = useState("");
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const [isFilterModalVisible, setIsFilterModalVisible] = useState(false);
-    const [currentCollaborationType, setCurrentCollaborationType] =
-        useState("All");
-    const [currentInfluencerType, setCurrentInfluencerType] = useState("All");
-    const [currentFollowersRange, setCurrentFollowersRange] = useState([
-        0, 1000000,
-    ]);
-    const [currentReachRange, setCurrentReachRange] = useState([0, 1000000]);
-    const [currentEngagementRange, setCurrentEngagementRange] = useState([
-        0, 10000000,
-    ]);
+    const [introductionVisible, setIntroductionVisible] = useState(false)
     const ToggleModal = () => {
         setIsModalVisible(!isModalVisible);
     };
@@ -70,6 +57,10 @@ const ExploreInfluencers = () => {
             return;
         getInfluencer(influencerId as string)
     }, [influencerId])
+
+    useEffect(() => {
+        setIntroductionVisible(true)
+    }, [])
 
     // const bottomSheetModalRef = useRef<BottomSheetModal>(null);
     // const snapPoints = useMemo(() => ["25%", "50%", "90%"], []);
@@ -116,13 +107,6 @@ const ExploreInfluencers = () => {
         const newFilteredInfluencers = influencers.filter((influencer) => {
             if (user?.moderations?.blockedInfluencers?.includes(influencer.id))
                 return false
-            // const isSearchQueryMatch = influencer.name
-            //     .toLowerCase()
-            //     .includes(searchQuery.toLowerCase());
-
-            // return (
-            //     isSearchQueryMatch
-            // );
             return true
         });
 
@@ -132,26 +116,9 @@ const ExploreInfluencers = () => {
     useEffect(() => {
         filterInfluencers();
     }, [
-        currentCollaborationType,
-        currentInfluencerType,
-        currentFollowersRange,
-        currentReachRange,
-        currentEngagementRange,
-        searchQuery,
         influencers,
         user
-        // manager
     ]);
-
-    const renderBackdrop = (props: any) => {
-        return (
-            <BottomSheetBackdrop
-                {...props}
-                disappearsOnIndex={-1}
-                appearsOnIndex={0}
-            />
-        );
-    };
 
     if (isLoading && influencers.length == 0) {
         return (
@@ -242,6 +209,7 @@ const ExploreInfluencers = () => {
                     closeModal={() => setOpenProfileModal(false)}
                 />
             </BottomSheetScrollContainer>
+            {introductionVisible && <IntroductoryModal isOpen={introductionVisible} onClose={() => setIntroductionVisible(false)} />}
         </AppLayout>
     );
 };
