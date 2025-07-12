@@ -113,15 +113,15 @@ const ExploreInfluencers = () => {
 
     const filterInfluencers = () => {
         const newFilteredInfluencers = influencers.filter((influencer) => {
-            //   if (user?.moderations?.blockedInfluencers?.includes(influencer.id))
-            //     return false
-            //   const isSearchQueryMatch = influencer.name
+            if (user?.moderations?.blockedInfluencers?.includes(influencer.id))
+                return false
+            // const isSearchQueryMatch = influencer.name
             //     .toLowerCase()
             //     .includes(searchQuery.toLowerCase());
 
-            //   return (
+            // return (
             //     isSearchQueryMatch
-            //   );
+            // );
             return true
         });
 
