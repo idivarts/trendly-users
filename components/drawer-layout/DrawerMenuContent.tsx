@@ -28,6 +28,13 @@ const DRAWER_MENU_CONTENT_ITEMS = [
     label: "Collaborations",
   },
   {
+    href: "/influencers",
+    icon: ({
+      focused,
+    }: IconPropFn) => focused ? faHandshakeSolid : faHandshake,
+    label: "Influencers",
+  },
+  {
     href: "/messages",
     icon: ({
       focused,
@@ -41,13 +48,6 @@ const DRAWER_MENU_CONTENT_ITEMS = [
       focused,
     }: IconPropFn) => focused ? faFileLinesSolid : faFileLines,
     label: "Contracts",
-  },
-  {
-    href: "/proposals",
-    icon: ({
-      focused,
-    }: IconPropFn) => focused ? faHandshakeSolid : faHandshake,
-    label: "Proposals",
   },
   {
     href: "/profile",

@@ -1,21 +1,32 @@
 
-import { View } from "@/components/theme/Themed";
-import AppLayout from "@/layouts/app-layout";
-import TopTabNavigation from "@/components/ui/top-tab-navigation";
 import ActiveContracts from "@/components/contracts/active";
-import PastContracts from "@/components/contracts/past";
+import Applications from "@/components/proposals/Applications";
+import Invitations from "@/components/proposals/Invitations";
+import { View } from "@/components/theme/Themed";
+import TopTabNavigation from "@/components/ui/top-tab-navigation";
+import AppLayout from "@/layouts/app-layout";
 
 const tabs = [
   {
-    id: "Active",
-    title: "Active",
+    id: "Invitations",
+    title: "Invitations",
+    component: <Invitations />,
+  },
+  {
+    id: "Contracts",
+    title: "Contracts",
     component: <ActiveContracts />,
   },
   {
-    id: "Past",
-    title: "Past",
-    component: <PastContracts />,
-  },
+    id: "Applications",
+    title: "Applications",
+    component: <Applications />,
+  }
+  // {
+  //   id: "Past",
+  //   title: "Past",
+  //   component: <PastContracts />,
+  // },
 ];
 
 const Contracts = () => {

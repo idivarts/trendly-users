@@ -1,8 +1,8 @@
+import ExploreInfluencers from "@/components/influencers/explore-influencers";
 import Applications from "@/components/proposals/Applications";
 import Invitations from "@/components/proposals/Invitations";
-import { View } from "@/components/theme/Themed";
-import TopTabNavigation from "@/components/ui/top-tab-navigation";
-import AppLayout from "@/layouts/app-layout";
+import { useAuthContext } from "@/contexts";
+import { ActivityIndicator } from "react-native";
 
 const tabs = [
   {
@@ -18,20 +18,10 @@ const tabs = [
 ];
 
 const ProposalScreen = () => {
-  return (
-    <AppLayout>
-      <View
-        style={{
-          flex: 1,
-          paddingTop: 16,
-        }}
-      >
-        <TopTabNavigation
-          tabs={tabs}
-        />
-      </View>
-    </AppLayout>
-  );
+  const { user } = useAuthContext()
+  if (!user)
+    return <ActivityIndicator />
+  return <ExploreInfluencers />
 };
 
 export default ProposalScreen;

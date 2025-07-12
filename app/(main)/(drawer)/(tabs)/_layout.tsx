@@ -71,10 +71,10 @@ const TabLayout = () => {
         }}
       />
       <Tabs.Screen
-        name="proposals"
+        name="influencers"
         options={{
-          title: "Proposals",
-          tabBarLabel: "Proposals",
+          title: "Influencers",
+          tabBarLabel: "Influencers",
           tabBarIcon: ({ color, focused }) => (
             <FontAwesomeIcon
               color={color}
