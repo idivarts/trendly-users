@@ -15,6 +15,7 @@ import {
 
 import { MAX_WIDTH_WEB } from "@/constants/Container";
 import { useAuthContext } from "@/contexts";
+import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { useInfiniteScroll } from "@/shared-libs/utils/infinite-scroll";
 import BottomSheetScrollContainer from "@/shared-uis/components/bottom-sheet/scroll-view";
@@ -23,9 +24,11 @@ import InfluencerCard from "@/shared-uis/components/InfluencerCard";
 import { CarouselInViewProvider } from "@/shared-uis/components/scroller/CarouselInViewContext";
 import CarouselScroller from "@/shared-uis/components/scroller/CarouselScroller";
 import Colors from "@/shared-uis/constants/Colors";
-import { collection, orderBy, query, where } from "firebase/firestore";
+import { useLocalSearchParams } from "expo-router";
+import { collection, doc, getDoc, orderBy, query, where } from "firebase/firestore";
 import { useSharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import InfluencerActionModal from "./InfluencerActionModal";
 
 const ExploreInfluencers = () => {
     const [searchQuery, setSearchQuery] = useState("");
@@ -49,6 +52,23 @@ const ExploreInfluencers = () => {
     const [selectedInfluencer, setSelectedInfluencer] = useState<User | null>(
         null
     );
+
+    const getInfluencer = async (influencerId: string) => {
+        const influencerRef = doc(collection(FirestoreDB, "users"), influencerId);
+        const influencerDoc = await getDoc(influencerRef)
+        const influencer: User = {
+            ...influencerDoc.data() as IUsers,
+            id: influencerDoc.id
+        }
+        setSelectedInfluencer(influencer)
+        setOpenProfileModal(true)
+    }
+    const { influencerId } = useLocalSearchParams()
+    useEffect(() => {
+        if (!influencerId)
+            return;
+        getInfluencer(influencerId as string)
+    }, [influencerId])
 
     // const bottomSheetModalRef = useRef<BottomSheetModal>(null);
     // const snapPoints = useMemo(() => ["25%", "50%", "90%"], []);
@@ -195,7 +215,7 @@ const ExploreInfluencers = () => {
                 </View>
             </View>
 
-            {/* <InfluencerActionModal influencerId={selectedInfluencer?.id} isModalVisible={isModalVisible} openProfile={() => setOpenProfileModal(true)} toggleModal={ToggleModal} /> */}
+            <InfluencerActionModal influencerId={selectedInfluencer?.id} isModalVisible={isModalVisible} openProfile={() => setOpenProfileModal(true)} toggleModal={ToggleModal} />
 
             <BottomSheetScrollContainer
                 isVisible={openProfileModal}
