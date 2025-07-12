@@ -26,6 +26,7 @@ import CarouselScroller from "@/shared-uis/components/scroller/CarouselScroller"
 import Colors from "@/shared-uis/constants/Colors";
 import { useLocalSearchParams } from "expo-router";
 import { collection, doc, getDoc, orderBy, query, where } from "firebase/firestore";
+import { Button } from "react-native-paper";
 import { useSharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import InfluencerActionModal from "./InfluencerActionModal";
@@ -193,6 +194,7 @@ const ExploreInfluencers = () => {
                                     influencer={item}
                                     style={{ marginBottom: 32 }}
                                     setSelectedInfluencer={setSelectedInfluencer as any}
+                                    cardActionNode={<Button mode="outlined">Add to Connections</Button>}
                                     openProfile={(item) => {
                                         if (item)
                                             setSelectedInfluencer(item as User);

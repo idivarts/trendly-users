@@ -1,4 +1,4 @@
-import ExploreInfluencers from "@/components/influencers/explore-influencers";
+import ExploreInfluencers from "@/components/influencers/ExploreInfluencers";
 import Applications from "@/components/proposals/Applications";
 import Invitations from "@/components/proposals/Invitations";
 import { useAuthContext } from "@/contexts";
