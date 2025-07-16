@@ -5,7 +5,7 @@ import { useTheme } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Dimensions } from "react-native";
 // import InfluencerCard from "../InfluencerCard";
-import { View } from "../theme/Themed";
+import { Text, View } from "../theme/Themed";
 
 
 import ProfileBottomSheet from "@/shared-uis/components/ProfileModal/Profile-Modal";
@@ -206,14 +206,17 @@ const ExploreInfluencers = () => {
                 <ProfileBottomSheet
                     influencer={selectedInfluencer as User}
                     theme={theme}
+                    showCampaignGoals={false}
                     actionCard={
                         <View
                             style={{
                                 backgroundColor: Colors(theme).transparent,
                                 marginHorizontal: 16,
+                                paddingVertical: 16
                             }}
                         >
-                            <Button onPress={() => {
+                            <Text>Use this button to connect with the influencer</Text>
+                            <Button mode="contained" onPress={() => {
                                 setOpenProfileModal(false);
                                 setConnectionModal(true);
                             }}>Connect to Influencer</Button>
