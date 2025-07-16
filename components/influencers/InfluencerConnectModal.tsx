@@ -6,7 +6,7 @@ import { FontAwesome } from '@expo/vector-icons'
 import { useTheme } from '@react-navigation/native'
 import React, { useState } from 'react'
 import { Keyboard, KeyboardAvoidingView, TouchableOpacity, View } from 'react-native'
-import { ActivityIndicator, Modal, Portal, TextInput } from 'react-native-paper'
+import { ActivityIndicator, Button, Modal, Portal, TextInput } from 'react-native-paper'
 import { Text } from '../theme/Themed'
 
 interface IProps {
@@ -89,7 +89,7 @@ const InfluencerConnectModal: React.FC<IProps> = ({ influencer, onClose }) => {
                                     onChangeText={setMessage}
                                     multiline
                                     numberOfLines={5}
-                                    placeholder="Tell the influencer why you want to connect with them and let them know if you have any collaboration idea with them?"
+                                    placeholder="Tell the influencer why you want to connect..."
                                     textAlignVertical="top"
                                     style={{
                                         textAlignVertical: 'top',
@@ -98,20 +98,12 @@ const InfluencerConnectModal: React.FC<IProps> = ({ influencer, onClose }) => {
                                         marginBottom: 16,
                                     }}
                                 />
-                                <TouchableOpacity
+                                <Button
+                                    mode='contained'
                                     onPress={() => {
                                         setIsTyping(false);
                                         Keyboard.dismiss();
-                                    }}
-                                    style={{
-                                        padding: 12,
-                                        backgroundColor: Colors(theme).primary,
-                                        borderRadius: 6,
-                                        alignItems: 'center',
-                                    }}
-                                >
-                                    <Text style={{ color: Colors(theme).white, fontWeight: 'bold' }}>Done</Text>
-                                </TouchableOpacity>
+                                    }}>Done</Button>
                             </KeyboardAvoidingView>
                         )}
                     </View>
