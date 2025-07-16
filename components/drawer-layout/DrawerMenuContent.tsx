@@ -43,11 +43,11 @@ const DRAWER_MENU_CONTENT_ITEMS = [
     showMessageCount: true,
   },
   {
-    href: "/contracts",
+    href: "/activity",
     icon: ({
       focused,
     }: IconPropFn) => focused ? faFileLinesSolid : faFileLines,
-    label: "Contracts",
+    label: "Activity",
   },
   {
     href: "/profile",

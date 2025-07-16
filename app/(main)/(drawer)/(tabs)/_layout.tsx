@@ -119,7 +119,7 @@ const TabLayout = () => {
         }}
       />
       <Tabs.Screen
-        name="contracts"
+        name="activity"
         options={{
           tabBarIcon: ({ color, focused }) => (
             <FontAwesomeIcon
@@ -128,8 +128,8 @@ const TabLayout = () => {
               size={24}
             />
           ),
-          title: "Contracts",
-          tabBarLabel: "Contracts",
+          title: "Activity",
+          tabBarLabel: "Activity",
           headerTitleAlign: "left",
           headerRight: () => <NotificationIcon />,
         }}

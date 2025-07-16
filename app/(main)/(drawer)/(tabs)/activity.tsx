@@ -29,7 +29,7 @@ const tabs = [
   // },
 ];
 
-const Contracts = () => {
+const MyActivity = () => {
   return (
     <AppLayout>
       <View
@@ -44,4 +44,4 @@ const Contracts = () => {
   );
 };
 
-export default Contracts;
+export default MyActivity;
