@@ -87,6 +87,7 @@ const ExploreInfluencers = () => {
         where("profile.completionPercentage", ">=", 60),
         ...((user?.moderations?.blockedInfluencers || []).length > 0 ? [where(documentId(), "not-in", user?.moderations?.blockedInfluencers)] : []),
         ...((user?.moderations?.reportedInfluencers || []).length > 0 ? [where(documentId(), "not-in", user?.moderations?.reportedInfluencers)] : []),
+        ...((user?.connectedInfluencers || []).length > 0 ? [where(documentId(), "not-in", user?.connectedInfluencers)] : []),
         orderBy("lastUseTime", "desc")
     );
 
@@ -110,6 +111,8 @@ const ExploreInfluencers = () => {
             if (user?.moderations?.blockedInfluencers?.includes(influencer.id))
                 return false
             if (user?.moderations?.reportedInfluencers?.includes(influencer.id))
+                return false
+            if (user?.connectedInfluencers?.includes(influencer.id))
                 return false
             return true
         });
