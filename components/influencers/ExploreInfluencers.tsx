@@ -95,6 +95,7 @@ const ExploreInfluencers = () => {
     const q = query(
         influencersRef,
         where("profile.completionPercentage", ">=", 60),
+        where(documentId(), "!=", user?.id || ""),
         ...((user?.moderations?.blockedInfluencers || []).length > 0 ? [where(documentId(), "not-in", user?.moderations?.blockedInfluencers)] : []),
         ...((user?.moderations?.reportedInfluencers || []).length > 0 ? [where(documentId(), "not-in", user?.moderations?.reportedInfluencers)] : []),
         ...((user?.connectedInfluencers || []).length > 0 ? [where(documentId(), "not-in", user?.connectedInfluencers)] : []),

@@ -35,6 +35,17 @@ const InfluencerConnectModal: React.FC<IProps> = ({ influencer, onClose }) => {
         return null; // Ensure primarySocial is available before rendering
     }
 
+    if ((user?.profile?.completionPercentage || 0) < 60) {
+        Toaster.error("Complete your profile!", "Need atleast 60% profile completion to connect with influencers.");
+        onClose();
+        return null;
+    }
+    if (!(user?.profile?.content?.influencerConectionGoals)) {
+        Toaster.error("Influencer Connection Goal Missing!", "Need to update influencer Connection Goal to be able to connect.");
+        onClose();
+        return null;
+    }
+
     return (
         <Portal>
             <Modal
