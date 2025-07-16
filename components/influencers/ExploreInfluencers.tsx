@@ -15,6 +15,7 @@ import { useAuthContext } from "@/contexts";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { useInfiniteScroll } from "@/shared-libs/utils/infinite-scroll";
+import { PersistentStorage } from "@/shared-libs/utils/persistent-storage";
 import BottomSheetScrollContainer from "@/shared-uis/components/bottom-sheet/scroll-view";
 import { APPROX_CARD_HEIGHT } from "@/shared-uis/components/carousel/carousel-util";
 import InfluencerCard from "@/shared-uis/components/InfluencerCard";
@@ -60,8 +61,15 @@ const ExploreInfluencers = () => {
         getInfluencer(influencerId as string)
     }, [influencerId])
 
+    const openIntroductoryModal = async () => {
+        let x = await PersistentStorage.get("influencers-introductory-modal")
+        if (!x) {
+            setIntroductionVisible(true)
+            PersistentStorage.set("influencers-introductory-modal", "true")
+        }
+    }
     useEffect(() => {
-        setIntroductionVisible(true)
+        openIntroductoryModal()
     }, [])
 
     // const bottomSheetModalRef = useRef<BottomSheetModal>(null);
