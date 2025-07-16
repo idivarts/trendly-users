@@ -1,7 +1,7 @@
-import React, { useEffect } from "react";
-import { useTheme } from "@react-navigation/native";
-import { KeyboardAvoidingView, Platform, ScrollView } from "react-native";
 import { RichText, Toolbar, useEditorBridge } from "@10play/tentap-editor";
+import { useTheme } from "@react-navigation/native";
+import React from "react";
+import { KeyboardAvoidingView, Platform, ScrollView } from "react-native";
 
 interface EditTextAreaProps {
   value: string;
@@ -25,7 +25,14 @@ const EditTextAreaComponent: React.FC<EditTextAreaProps> = ({
     initialContent: value,
     onChange: () => {
       editor.getHTML().then((html: string) => {
-        setValue(html);
+        const textOnly = html.replace(/<[^>]*>/g, "").trim();
+        const isEmpty = textOnly === "";
+
+        if (isEmpty) {
+          setValue("");
+        } else {
+          setValue(html);
+        }
       });
     },
   });

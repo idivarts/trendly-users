@@ -3,6 +3,7 @@ import { Text, View } from "@/components/theme/Themed";
 import ScreenHeader from "@/components/ui/screen-header";
 import { useAuthContext } from "@/contexts";
 import AppLayout from "@/layouts/app-layout";
+import { Console } from "@/shared-libs/utils/console";
 import { useMyNavigation } from "@/shared-libs/utils/router";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import Colors from "@/shared-uis/constants/Colors";
@@ -39,10 +40,12 @@ const EditTextArea: React.FC = () => {
     try {
       if (!user) return;
 
+
       const content = {
         ...(user?.profile?.content || {}),
-        [key as string]: value,
+        [key as string]: value ? value : "",
       };
+      Console.log("Updating profile content", content);
 
       const percentage = calculateProfileCompletion({
         ...user,
@@ -61,6 +64,7 @@ const EditTextArea: React.FC = () => {
         },
       };
 
+      Console.log("Updating profile content 2", updatedContent);
       await updateUser(user.id, updatedContent).then(() => {
         handleGoBack()
         Toaster.success(`${title ? title : "Profile"} updated successfully`);
@@ -71,10 +75,10 @@ const EditTextArea: React.FC = () => {
   };
 
   const handleSubmit = () => {
-    if (!value) {
-      Toaster.error("Please enter a value");
-      return;
-    }
+    // if (!value) {
+    //   Toaster.error("Please enter a value");
+    //   return;
+    // }
     if (userProfile === "true") {
       handleUpdateProfileContent();
     }

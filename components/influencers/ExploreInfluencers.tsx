@@ -207,6 +207,7 @@ const ExploreInfluencers = () => {
                     influencer={selectedInfluencer as User}
                     theme={theme}
                     showCampaignGoals={false}
+                    showInfluencerGoals={true}
                     actionCard={
                         <View
                             style={{
