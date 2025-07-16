@@ -32,6 +32,7 @@ const InfluencerConnectModal: React.FC<IProps> = ({ influencer, onClose }) => {
         Toaster.success("Influencer Invited successfully!")
     }
     if (!primarySocial) {
+        onClose();
         return null; // Ensure primarySocial is available before rendering
     }
 
