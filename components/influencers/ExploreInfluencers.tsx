@@ -178,7 +178,7 @@ const ExploreInfluencers = () => {
                                     influencer={item}
                                     style={{ marginBottom: 32 }}
                                     setSelectedInfluencer={setSelectedInfluencer as any}
-                                    cardActionNode={<Button mode="outlined" onPress={() => {
+                                    cardActionNode={<Button mode="contained" onPress={() => {
                                         setSelectedInfluencer(item as User);
                                         setConnectionModal(true);
                                     }}>Add to Connections</Button>}
@@ -224,7 +224,9 @@ const ExploreInfluencers = () => {
                                 paddingVertical: 16
                             }}
                         >
-                            <Text>Use this button to connect with the influencer</Text>
+                            <Text style={{ paddingVertical: 16 }}>
+                                You can discover and connect with other influencers who are in a similar stage as you — based on follower count, reach, or engagement. Feel free to connect for content collaborations or simply to expand your network.
+                            </Text>
                             <Button mode="contained" onPress={() => {
                                 setOpenProfileModal(false);
                                 setConnectionModal(true);
