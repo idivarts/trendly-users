@@ -5,8 +5,9 @@ import { User } from '@/types/User'
 import { FontAwesome } from '@expo/vector-icons'
 import { useTheme } from '@react-navigation/native'
 import React, { useState } from 'react'
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native'
-import { ActivityIndicator, Modal, Portal } from 'react-native-paper'
+import { Keyboard, KeyboardAvoidingView, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Modal, Portal, TextInput } from 'react-native-paper'
+import { Text } from '../theme/Themed'
 
 interface IProps {
     influencer: User
@@ -20,6 +21,9 @@ const InfluencerConnectModal: React.FC<IProps> = ({ influencer, onClose }) => {
     const { primarySocial } = useSocialContext()
 
     const { xl } = useBreakpoints()
+
+    const [isTyping, setIsTyping] = useState(false)
+    const [message, setMessage] = useState('')
 
     if (!primarySocial) {
         return null; // Ensure primarySocial is available before rendering
@@ -42,40 +46,75 @@ const InfluencerConnectModal: React.FC<IProps> = ({ influencer, onClose }) => {
             >
                 {loading && <ActivityIndicator size={"small"} />}
                 {!loading && (
-                    <ScrollView contentContainerStyle={{ alignItems: 'center' }}>
-                        <View style={{ width: '100%', gap: 16 }}>
-                            <TouchableOpacity
-                                style={{
-                                    padding: 20,
-                                    backgroundColor: Colors(theme).primary,
-                                    borderRadius: 10,
-                                    alignItems: 'center',
-                                }}
-                            >
-                                <FontAwesome name="handshake-o" size={28} color={Colors(theme).white} style={{ marginBottom: 10 }} />
-                                <Text style={{ color: Colors(theme).white, fontSize: 18, fontWeight: 'bold' }}>Connect to Co-Create</Text>
-                                <Text style={{ color: Colors(theme).white, fontSize: 14, textAlign: 'center', marginTop: 6 }}>
-                                    Team up with fellow creators to collaborate on content or exchange shoutouts.
-                                </Text>
-                            </TouchableOpacity>
+                    <View style={{ width: '100%', gap: 16 }}>
+                        {!isTyping ? (
+                            <>
+                                <TouchableOpacity
+                                    onPress={() => setIsTyping(true)}
+                                    style={{
+                                        padding: 20,
+                                        backgroundColor: Colors(theme).primary,
+                                        borderRadius: 10,
+                                        alignItems: 'center',
+                                    }}
+                                >
+                                    <FontAwesome name="handshake-o" size={28} color={Colors(theme).white} style={{ marginBottom: 10 }} />
+                                    <Text style={{ color: Colors(theme).white, fontSize: 18, fontWeight: 'bold' }}>Connect to Co-Create</Text>
+                                    <Text style={{ color: Colors(theme).white, fontSize: 14, textAlign: 'center', marginTop: 6 }}>
+                                        Team up with fellow creators to collaborate on content or exchange shoutouts.
+                                    </Text>
+                                </TouchableOpacity>
 
-                            <TouchableOpacity
-                                style={{
-                                    padding: 20,
-                                    backgroundColor: Colors(theme).primary,
-                                    borderRadius: 10,
-                                    alignItems: 'center',
-                                }}
-                            >
-                                <FontAwesome name="users" size={28} color={Colors(theme).white} style={{ marginBottom: 10 }} />
-                                <Text style={{ color: Colors(theme).white, fontSize: 18, fontWeight: 'bold' }}>Connect for Networking</Text>
-                                <Text style={{ color: Colors(theme).white, fontSize: 14, textAlign: 'center', marginTop: 6 }}>
-                                    Meet like-minded creators.
-                                </Text>
-                            </TouchableOpacity>
-
-                        </View>
-                    </ScrollView>
+                                <TouchableOpacity
+                                    onPress={() => setIsTyping(true)}
+                                    style={{
+                                        padding: 20,
+                                        backgroundColor: Colors(theme).primary,
+                                        borderRadius: 10,
+                                        alignItems: 'center',
+                                    }}
+                                >
+                                    <FontAwesome name="users" size={28} color={Colors(theme).white} style={{ marginBottom: 10 }} />
+                                    <Text style={{ color: Colors(theme).white, fontSize: 18, fontWeight: 'bold' }}>Connect for Networking</Text>
+                                    <Text style={{ color: Colors(theme).white, fontSize: 14, textAlign: 'center', marginTop: 6 }}>
+                                        Meet like-minded creators.
+                                    </Text>
+                                </TouchableOpacity>
+                            </>
+                        ) : (
+                            <KeyboardAvoidingView style={{ width: '100%' }} behavior="padding">
+                                <TextInput
+                                    autoFocus
+                                    value={message}
+                                    onChangeText={setMessage}
+                                    multiline
+                                    numberOfLines={5}
+                                    placeholder="Tell the influencer why you want to connect with them and let them know if you have any collaboration idea with them?"
+                                    textAlignVertical="top"
+                                    style={{
+                                        textAlignVertical: 'top',
+                                        minHeight: 120,
+                                        width: '100%',
+                                        marginBottom: 16,
+                                    }}
+                                />
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        setIsTyping(false);
+                                        Keyboard.dismiss();
+                                    }}
+                                    style={{
+                                        padding: 12,
+                                        backgroundColor: Colors(theme).primary,
+                                        borderRadius: 6,
+                                        alignItems: 'center',
+                                    }}
+                                >
+                                    <Text style={{ color: Colors(theme).white, fontWeight: 'bold' }}>Done</Text>
+                                </TouchableOpacity>
+                            </KeyboardAvoidingView>
+                        )}
+                    </View>
                 )}
             </Modal>
         </Portal>
