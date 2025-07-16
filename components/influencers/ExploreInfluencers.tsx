@@ -27,11 +27,13 @@ import { Button } from "react-native-paper";
 import { useSharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import InfluencerActionModal from "./InfluencerActionModal";
+import InfluencerConnectModal from "./InfluencerConnectModal";
 import IntroductoryModal from "./IntroductoryModal";
 
 const ExploreInfluencers = () => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [introductionVisible, setIntroductionVisible] = useState(false)
+    const [connectionModal, setConnectionModal] = useState(false)
     const ToggleModal = () => {
         setIsModalVisible(!isModalVisible);
     };
@@ -168,7 +170,10 @@ const ExploreInfluencers = () => {
                                     influencer={item}
                                     style={{ marginBottom: 32 }}
                                     setSelectedInfluencer={setSelectedInfluencer as any}
-                                    cardActionNode={<Button mode="outlined">Add to Connections</Button>}
+                                    cardActionNode={<Button mode="outlined" onPress={() => {
+                                        setSelectedInfluencer(item as User);
+                                        setConnectionModal(true);
+                                    }}>Add to Connections</Button>}
                                     openProfile={(item) => {
                                         if (item)
                                             setSelectedInfluencer(item as User);
@@ -208,6 +213,10 @@ const ExploreInfluencers = () => {
                                 marginHorizontal: 16,
                             }}
                         >
+                            <Button onPress={() => {
+                                setOpenProfileModal(false);
+                                setConnectionModal(true);
+                            }}>Connect to Influencer</Button>
                             {/* <InfluencerInvite selectedInfluencer={selectedInfluencer as User} /> */}
                         </View>
                     }
@@ -217,6 +226,7 @@ const ExploreInfluencers = () => {
                 />
             </BottomSheetScrollContainer>
             {introductionVisible && <IntroductoryModal isOpen={introductionVisible} onClose={() => setIntroductionVisible(false)} />}
+            {(connectionModal && selectedInfluencer) && <InfluencerConnectModal influencer={selectedInfluencer} onClose={() => setConnectionModal(false)} />}
         </AppLayout>
     );
 };
