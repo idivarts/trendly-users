@@ -22,7 +22,7 @@ import { CarouselInViewProvider } from "@/shared-uis/components/scroller/Carouse
 import CarouselScroller from "@/shared-uis/components/scroller/CarouselScroller";
 import Colors from "@/shared-uis/constants/Colors";
 import { useLocalSearchParams } from "expo-router";
-import { collection, doc, getDoc, orderBy, query, where } from "firebase/firestore";
+import { collection, doc, documentId, getDoc, orderBy, query, where } from "firebase/firestore";
 import { Button } from "react-native-paper";
 import { useSharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -85,6 +85,8 @@ const ExploreInfluencers = () => {
     const q = query(
         influencersRef,
         where("profile.completionPercentage", ">=", 60),
+        ...((user?.moderations?.blockedInfluencers || []).length > 0 ? [where(documentId(), "not-in", user?.moderations?.blockedInfluencers)] : []),
+        ...((user?.moderations?.reportedInfluencers || []).length > 0 ? [where(documentId(), "not-in", user?.moderations?.reportedInfluencers)] : []),
         orderBy("lastUseTime", "desc")
     );
 
@@ -106,6 +108,8 @@ const ExploreInfluencers = () => {
     const filterInfluencers = () => {
         const newFilteredInfluencers = influencers.filter((influencer) => {
             if (user?.moderations?.blockedInfluencers?.includes(influencer.id))
+                return false
+            if (user?.moderations?.reportedInfluencers?.includes(influencer.id))
                 return false
             return true
         });
