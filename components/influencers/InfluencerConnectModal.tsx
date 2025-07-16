@@ -1,5 +1,6 @@
 import { useAuthContext, useSocialContext } from '@/contexts'
 import { useBreakpoints } from '@/hooks'
+import Toaster from '@/shared-uis/components/toaster/Toaster'
 import Colors from '@/shared-uis/constants/Colors'
 import { User } from '@/types/User'
 import { FontAwesome } from '@expo/vector-icons'
@@ -25,6 +26,11 @@ const InfluencerConnectModal: React.FC<IProps> = ({ influencer, onClose }) => {
     const [isTyping, setIsTyping] = useState(false)
     const [message, setMessage] = useState('')
 
+    const postInvitation = async () => {
+        setLoading(false)
+        onClose()
+        Toaster.success("Influencer Invited successfully!")
+    }
     if (!primarySocial) {
         return null; // Ensure primarySocial is available before rendering
     }
@@ -101,7 +107,7 @@ const InfluencerConnectModal: React.FC<IProps> = ({ influencer, onClose }) => {
                                 <Button
                                     mode='contained'
                                     onPress={() => {
-                                        setIsTyping(false);
+                                        postInvitation();
                                         Keyboard.dismiss();
                                     }}>Done</Button>
                             </KeyboardAvoidingView>
