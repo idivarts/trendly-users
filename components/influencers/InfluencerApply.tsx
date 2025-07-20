@@ -1,5 +1,7 @@
 import { INFLUENCER_COLLAB_TYPES } from '@/shared-constants/preferences/influencer-collab-types'
 import { PLATFORMS } from '@/shared-constants/preferences/platforms'
+import Colors from '@/shared-uis/constants/Colors'
+import { useTheme } from '@react-navigation/native'
 import React, { useState } from 'react'
 import { KeyboardAvoidingView, Platform, ScrollView } from 'react-native'
 import { Button, HelperText, SegmentedButtons, Text, TextInput } from 'react-native-paper'
@@ -12,6 +14,8 @@ const isValidLink = (url: string) => {
 }
 
 const InfluencerApplyScreen = () => {
+    const theme = useTheme()
+
     const [reason, setReason] = useState('')
     const [collabType, setCollabType] = useState<SelectItem[]>([])
     const [exampleLinks, setExampleLinks] = useState('')
@@ -51,7 +55,7 @@ const InfluencerApplyScreen = () => {
                     Reason is required
                 </HelperText>
 
-                <Text variant="titleMedium" style={{ marginTop: 20 }}>What kind of collab are you thinking?</Text>
+                <Text variant="titleMedium" style={{ marginTop: 0 }}>What kind of collab are you thinking?</Text>
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
                     <Select
                         items={INFLUENCER_COLLAB_TYPES.map(v => ({ label: v, value: v }))}
@@ -79,7 +83,50 @@ const InfluencerApplyScreen = () => {
                     ))} */}
                 </View>
 
-                <Text variant="titleMedium" style={{ marginTop: 20 }}>Add any example collab link?</Text>
+                <Text variant="titleMedium" style={{ marginTop: 20 }}>Are you willing to pay for Collab?</Text>
+                <SegmentedButtons
+                    value={collabMode}
+                    onValueChange={setCollabMode}
+                    buttons={[
+                        { value: 'free', label: 'Free' },
+                        { value: 'paid', label: 'Paid' },
+                    ]}
+                    style={{ marginTop: 10 }}
+                />
+                {collabMode === 'paid' && (
+                    <View style={{ flexDirection: 'row', gap: 10, marginTop: 10 }}>
+                        <TextInput
+                            label="Min Budget (Rs)"
+                            value={budgetMin}
+                            onChangeText={setBudgetMin}
+                            keyboardType="numeric"
+                            mode="outlined"
+                            style={{ flex: 1 }}
+                        />
+                        <TextInput
+                            label="Max Budget (Rs)"
+                            value={budgetMax}
+                            onChangeText={setBudgetMax}
+                            keyboardType="numeric"
+                            mode="outlined"
+                            style={{ flex: 1 }}
+                        />
+                    </View>
+                )}
+                <Text variant="bodySmall" style={{ marginTop: 8, color: Colors(theme).textSecondary }}>
+                    Most influencers don’t work for free—adding a budget makes your offer more compelling and shows you’re serious.
+                </Text>
+
+                <View style={{ marginBottom: 30, marginTop: 50 }}>
+                    <Text variant="titleSmall" style={{ color: Colors(theme).textSecondary, textAlign: 'center' }}>
+                        Optional items below
+                    </Text>
+                    <Text variant="bodySmall" style={{ color: Colors(theme).textSecondary, textAlign: 'center', marginTop: 4 }}>
+                        Filling these out increases your chances of getting your invite accepted
+                    </Text>
+                </View>
+
+                <Text variant="titleMedium" style={{ marginTop: 0 }}>Add any example collab link?</Text>
                 <TextInput
                     placeholder="Paste your reel or video links here"
                     value={exampleLinks}
@@ -91,7 +138,7 @@ const InfluencerApplyScreen = () => {
                     Please enter a valid link
                 </HelperText>
 
-                <Text variant="titleMedium" style={{ marginTop: 20 }}>Which platform are you planning this collab on?</Text>
+                <Text variant="titleMedium" style={{ marginTop: 0 }}>Which platform are you planning this collab on?</Text>
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
                     <Select
                         items={PLATFORMS.map(v => ({ label: v, value: v }))}
@@ -119,43 +166,13 @@ const InfluencerApplyScreen = () => {
                     ))} */}
                 </View>
 
-                <Text variant="titleMedium" style={{ marginTop: 20 }}>Is this a paid or free collab?</Text>
-                <SegmentedButtons
-                    value={collabMode}
-                    onValueChange={setCollabMode}
-                    buttons={[
-                        { value: 'free', label: 'Free' },
-                        { value: 'paid', label: 'Paid' },
-                    ]}
-                    style={{ marginTop: 10 }}
-                />
 
-                {collabMode === 'paid' && (
-                    <View style={{ flexDirection: 'row', gap: 10, marginTop: 10 }}>
-                        <TextInput
-                            label="Min Budget (Rs)"
-                            value={budgetMin}
-                            onChangeText={setBudgetMin}
-                            keyboardType="numeric"
-                            mode="outlined"
-                            style={{ flex: 1 }}
-                        />
-                        <TextInput
-                            label="Max Budget (Rs)"
-                            value={budgetMax}
-                            onChangeText={setBudgetMax}
-                            keyboardType="numeric"
-                            mode="outlined"
-                            style={{ flex: 1 }}
-                        />
-                    </View>
-                )}
             </ScrollView>
             <View style={{ padding: 16 }}>
                 <Button
                     mode="contained"
                     onPress={handleSubmit}
-                    disabled={!reason || (!!exampleLinks && !isValidLink(exampleLinks)) || (collabMode === 'paid' && (!budgetMin || !budgetMax))}
+                    disabled={!reason || (!!exampleLinks && !isValidLink(exampleLinks)) || (collabMode === 'paid' && (!budgetMin || !budgetMax) || collabType.length === 0)}
                     loading={loading}
                 >
                     Submit
