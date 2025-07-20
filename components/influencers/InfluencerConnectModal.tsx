@@ -1,6 +1,7 @@
 import { useAuthContext, useSocialContext } from '@/contexts'
 import { useBreakpoints } from '@/hooks'
-import Toaster from '@/shared-uis/components/toaster/Toaster'
+import { useMyNavigation } from '@/shared-libs/utils/router'
+import { useConfirmationModel } from '@/shared-uis/components/ConfirmationModal'
 import Colors from '@/shared-uis/constants/Colors'
 import { User } from '@/types/User'
 import { FontAwesome } from '@expo/vector-icons'
@@ -20,6 +21,8 @@ const InfluencerConnectModal: React.FC<IProps> = ({ influencer, onClose }) => {
     const { user } = useAuthContext()
     const [loading, setLoading] = useState(false)
     const { primarySocial } = useSocialContext()
+    const { openModal } = useConfirmationModel()
+    const router = useMyNavigation()
 
     const { xl } = useBreakpoints()
 
@@ -39,12 +42,28 @@ const InfluencerConnectModal: React.FC<IProps> = ({ influencer, onClose }) => {
     }
 
     if ((user?.profile?.completionPercentage || 0) < 60) {
-        Toaster.error("Complete your profile!", "Need atleast 60% profile completion to connect with influencers.");
+        // Toaster.error("Complete your profile!", "Need atleast 60% profile completion to connect with influencers.");
+        openModal({
+            title: "Profile Incomplete",
+            description: "Please complete your profile to a minimum of 60% to connect with influencers.",
+            confirmText: "Go to Profile",
+            confirmAction: () => {
+                router.push("/edit-profile")
+            }
+        })
         onClose();
         return null;
     }
     if (!(user?.profile?.content?.influencerConectionGoals)) {
-        Toaster.error("Influencer Connection Goal Missing!", "Need to update influencer Connection Goal to be able to connect.");
+        // Toaster.error("Influencer Connection Goal Missing!", "Need to update influencer Connection Goal to be able to connect.");
+        openModal({
+            title: "Connection Goal Missing",
+            description: "Please update your influencer connection goal to connect with influencers.",
+            confirmText: "Update Goal",
+            confirmAction: () => {
+                router.push("/edit-profile")
+            }
+        })
         onClose();
         return null;
     }
