@@ -1,4 +1,4 @@
-import { INFLUENCER_COLLAB_TYPES } from '@/shared-constants/preferences/influencer-collab-types'
+import { INFLUENCER_COLLAB_NETWORKING_TYPES, INFLUENCER_COLLAB_TYPES } from '@/shared-constants/preferences/influencer-collab-types'
 import { PLATFORMS } from '@/shared-constants/preferences/platforms'
 import { Console } from '@/shared-libs/utils/console'
 import { HttpWrapper } from '@/shared-libs/utils/http-wrapper'
@@ -35,7 +35,7 @@ const InfluencerApplyScreen = () => {
     const [budgetMax, setBudgetMax] = useState('')
     const [submitted, setSubmitted] = useState(false)
 
-    const [ableToNetwork, setAbleToNetwork] = useState(true)
+    const [onSameLevel, setAbleToNetwork] = useState(true)
 
     const [loading, setLoading] = useState(false)
 
@@ -94,13 +94,26 @@ const InfluencerApplyScreen = () => {
                         mode="outlined"
                         multiline
                         numberOfLines={4}
-                        disabled={!ableToNetwork}
                         error={submitted && !reason}
                     />
                     <HelperText type="error" visible={submitted && !reason}>
                         Reason is required
                     </HelperText>
-                    {ableToNetwork ? (
+
+                    <Text variant="titleMedium" style={{ marginTop: 0, color: Colors(theme).text }}>Why do you want to network?</Text>
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
+                        <Select
+                            items={INFLUENCER_COLLAB_NETWORKING_TYPES.map(v => ({ label: v, value: v }))}
+                            selectItemIcon={true}
+                            value={collabType}
+                            multiselect
+                            onSelect={(data) => {
+                                setCollabType(data)
+                            }}
+                        />
+                    </View>
+
+                    {!onSameLevel &&
                         <View style={{ marginTop: 20, backgroundColor: '#fff3cd', borderRadius: 8, padding: 12, borderWidth: 1, borderColor: '#ffeeba' }}>
                             <Text style={{ color: '#856404', fontWeight: '600', marginBottom: 6 }}>
                                 Friendly Heads-up!
@@ -108,21 +121,9 @@ const InfluencerApplyScreen = () => {
                             <Text style={{ color: '#856404' }}>
                                 Love the networking spirit! But to make real connections, try the “Co-create” route—most influencers respond better when there’s a fun collab idea in the mix.
                             </Text>
-                        </View>
-                    ) : (
-                        <View style={{ marginTop: 20, backgroundColor: '#f8d7da', borderRadius: 8, padding: 12, borderWidth: 1, borderColor: '#f5c6cb' }}>
-                            <Text style={{ color: '#721c24', fontWeight: '600', marginBottom: 6 }}>
-                                Unable to Connect
-                            </Text>
-                            <Text style={{ color: '#721c24' }}>
-                                This influencer currently doesn't match your profile criteria for networking. You can still collaborate if you have a content idea.
-                            </Text>
-                        </View>
-                    )}
+                        </View>}
 
                     <Text style={{ marginTop: 16, color: Colors(theme).primary, textDecorationLine: 'underline', lineHeight: 22 }} onPress={() => {
-                        // Replace this with your navigation or modal logic
-                        // console.log('Navigate to collab flow or show modal')
                         router.replace(`/influencer-invite/${influencerId}?category=co-create`)
                     }}>
                         Have a content creation idea? Click here to connect for collaboration instead.
@@ -132,7 +133,7 @@ const InfluencerApplyScreen = () => {
                         <Text variant="titleMedium" style={{ marginBottom: 8, color: Colors(theme).text }}>Tell us why you want to collab?</Text>
                         <TextInput
                             autoFocus
-                            placeholder="Drop a line or two here"
+                            placeholder="Drop any collaboration idea you have"
                             value={reason}
                             onChangeText={setReason}
                             mode="outlined"
