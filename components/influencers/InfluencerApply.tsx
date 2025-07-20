@@ -4,8 +4,9 @@ import Colors from '@/shared-uis/constants/Colors'
 import { useTheme } from '@react-navigation/native'
 import React, { useState } from 'react'
 import { KeyboardAvoidingView, Platform, ScrollView } from 'react-native'
-import { Button, HelperText, SegmentedButtons, Text, TextInput } from 'react-native-paper'
+import { HelperText, SegmentedButtons, Text, TextInput } from 'react-native-paper'
 import { View } from '../theme/Themed'
+import Button from '../ui/button'
 import Select, { SelectItem } from '../ui/select'
 
 const isValidLink = (url: string) => {
@@ -40,7 +41,7 @@ const InfluencerApplyScreen = () => {
     return (
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
             <ScrollView contentContainerStyle={{ padding: 20 }}>
-                <Text variant="titleMedium" style={{ marginBottom: 8 }}>Tell us why you want to collab?</Text>
+                <Text variant="titleMedium" style={{ marginBottom: 8, color: Colors(theme).text }}>Tell us why you want to collab?</Text>
                 <TextInput
                     autoFocus
                     placeholder="Drop a line or two here"
@@ -55,7 +56,7 @@ const InfluencerApplyScreen = () => {
                     Reason is required
                 </HelperText>
 
-                <Text variant="titleMedium" style={{ marginTop: 0 }}>What kind of collab are you thinking?</Text>
+                <Text variant="titleMedium" style={{ marginTop: 0, color: Colors(theme).text }}>What kind of collab are you thinking?</Text>
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
                     <Select
                         items={INFLUENCER_COLLAB_TYPES.map(v => ({ label: v, value: v }))}
@@ -83,13 +84,23 @@ const InfluencerApplyScreen = () => {
                     ))} */}
                 </View>
 
-                <Text variant="titleMedium" style={{ marginTop: 20 }}>Are you willing to pay for Collab?</Text>
+                <Text variant="titleMedium" style={{ marginTop: 20, color: Colors(theme).text }}>Are you willing to pay for Collab?</Text>
                 <SegmentedButtons
                     value={collabMode}
                     onValueChange={setCollabMode}
                     buttons={[
-                        { value: 'free', label: 'Free' },
-                        { value: 'paid', label: 'Paid' },
+                        {
+                            value: 'free',
+                            label: 'Free',
+                            style: { backgroundColor: collabMode === 'free' ? Colors(theme).primary : undefined },
+                            labelStyle: { color: collabMode === 'free' ? Colors(theme).white : Colors(theme).text },
+                        },
+                        {
+                            value: 'paid',
+                            label: 'Paid',
+                            style: { backgroundColor: collabMode === 'paid' ? Colors(theme).primary : undefined },
+                            labelStyle: { color: collabMode === 'paid' ? Colors(theme).white : Colors(theme).text },
+                        },
                     ]}
                     style={{ marginTop: 10 }}
                 />
@@ -126,7 +137,7 @@ const InfluencerApplyScreen = () => {
                     </Text>
                 </View>
 
-                <Text variant="titleMedium" style={{ marginTop: 0 }}>Add any example collab link?</Text>
+                <Text variant="titleMedium" style={{ marginTop: 0, color: Colors(theme).text }}>Add any example collab link?</Text>
                 <TextInput
                     placeholder="Paste your reel or video links here"
                     value={exampleLinks}
@@ -138,7 +149,7 @@ const InfluencerApplyScreen = () => {
                     Please enter a valid link
                 </HelperText>
 
-                <Text variant="titleMedium" style={{ marginTop: 0 }}>Which platform are you planning this collab on?</Text>
+                <Text variant="titleMedium" style={{ marginTop: 0, color: Colors(theme).text }}>Which platform are you planning this collab on?</Text>
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 8 }}>
                     <Select
                         items={PLATFORMS.map(v => ({ label: v, value: v }))}
