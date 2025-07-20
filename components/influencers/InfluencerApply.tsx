@@ -1,6 +1,9 @@
 import { INFLUENCER_COLLAB_TYPES } from '@/shared-constants/preferences/influencer-collab-types'
 import { PLATFORMS } from '@/shared-constants/preferences/platforms'
+import { Console } from '@/shared-libs/utils/console'
+import { HttpWrapper } from '@/shared-libs/utils/http-wrapper'
 import { useMyNavigation } from '@/shared-libs/utils/router'
+import Toaster from '@/shared-uis/components/toaster/Toaster'
 import Colors from '@/shared-uis/constants/Colors'
 import { useTheme } from '@react-navigation/native'
 import { useLocalSearchParams } from 'expo-router'
@@ -43,7 +46,29 @@ const InfluencerApplyScreen = () => {
         try {
             if (category == "networking" ? !reason : (!reason || (!!exampleLinks && !isValidLink(exampleLinks)) || (collabMode === 'paid' && (!budgetMin || !budgetMax) || collabType.length === 0)))
                 return
-            // Submit logic here
+
+            HttpWrapper.fetch(`/influencer-invite/${influencerId}`, {
+                method: "POST",
+                body: JSON.stringify({
+                    category,
+                    reason,
+                    collabType: collabType.map(v => v.value),
+                    exampleLinks: exampleLinks.trim(),
+                    platforms: platforms.map(v => v.value),
+                    collabMode,
+                    budgetMin: budgetMin ? parseInt(budgetMin) : undefined,
+                    budgetMax: budgetMax ? parseInt(budgetMax) : undefined,
+                }),
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }).then((res) => {
+                Toaster.success("Invite Sent", "Your invite has been sent successfully!")
+                router.resetAndNavigate(`/influencers`)
+            }).catch((err) => {
+                Console.error(err, "Error sending invite")
+                Toaster.error("Failed to send invite", "Please try again later.")
+            })
         } finally {
             setLoading(false)
         }
