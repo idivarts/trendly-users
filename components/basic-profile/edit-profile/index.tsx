@@ -18,7 +18,7 @@ import { stylesFn } from "@/styles/edit-profile/EditProfile.styles";
 import { includeSingleSelectedItem } from "@/utils/items-list";
 import { useTheme } from "@react-navigation/native";
 import { useEffect, useState } from "react";
-import { Animated, Keyboard, Platform, Pressable } from "react-native";
+import { Animated, Keyboard, Platform } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
 import DragAndDropGrid from "../../../shared-libs/functional-uis/grid/DragAndDropGrid";
 import ContentItem from "./ContentItem";
@@ -343,25 +343,21 @@ const EditProfile: React.FC<EditProfileProps> = ({
             style={styles.processPercentage}
           /> */}
 
-          <Pressable
+          <Button
+            mode="contained"
+            loading={isProcessing}
             onPress={() => handleSave()}
+            style={[
+              styles.saveButton,
+              {
+                marginBottom: keyboardVisible ? -36 : 0,
+                height: keyboardVisible ? 60 : 'auto',
+                borderRadius: keyboardVisible ? 0 : 100,
+              }
+            ]}
           >
-            <Button
-              mode="contained"
-              loading={isProcessing}
-              onPress={() => handleSave()}
-              style={[
-                styles.saveButton,
-                {
-                  marginBottom: keyboardVisible ? -36 : 0,
-                  height: keyboardVisible ? 60 : 'auto',
-                  borderRadius: keyboardVisible ? 0 : 100,
-                }
-              ]}
-            >
-              {isProcessing ? 'Saving...' : 'Save'}
-            </Button>
-          </Pressable>
+            {isProcessing ? 'Saving...' : 'Save'}
+          </Button>
         </Animated.View>}
     </View>
   );
