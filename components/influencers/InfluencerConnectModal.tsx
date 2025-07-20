@@ -41,9 +41,9 @@ const InfluencerConnectModal: React.FC<IProps> = ({ influencer, onClose }) => {
         onClose()
 
         if (category == 0) {
-
+            router.push(`/influencer-invite/${influencer.id}?category=co-create`)
         } else if (category == 1) {
-
+            router.push(`/influencer-invite/${influencer.id}?category=networking`)
         }
     }
 
