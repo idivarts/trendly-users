@@ -7,7 +7,7 @@ import { User } from '@/types/User'
 import { FontAwesome } from '@expo/vector-icons'
 import { useTheme } from '@react-navigation/native'
 import React, { useState } from 'react'
-import { TouchableOpacity, View } from 'react-native'
+import { Animated, TouchableOpacity, View } from 'react-native'
 import { ActivityIndicator, Modal, Portal } from 'react-native-paper'
 import { Text } from '../theme/Themed'
 
@@ -25,6 +25,17 @@ const InfluencerConnectModal: React.FC<IProps> = ({ influencer, onClose }) => {
     const router = useMyNavigation()
 
     const { xl } = useBreakpoints()
+
+    const [scaleAnim] = useState(new Animated.Value(0.7))
+
+    React.useEffect(() => {
+        Animated.spring(scaleAnim, {
+            toValue: 1,
+            useNativeDriver: true,
+            friction: 6,
+            tension: 100,
+        }).start()
+    }, [])
 
     const inviteToCollab = (category: number) => {
         onClose()
@@ -73,52 +84,61 @@ const InfluencerConnectModal: React.FC<IProps> = ({ influencer, onClose }) => {
             <Modal
                 visible={true}
                 onDismiss={onClose}
-                contentContainerStyle={[{
-                    backgroundColor: Colors(theme).card,
-                    margin: 20,
-                    borderRadius: 8,
-                    padding: 20,
-                }, xl && {
-                    width: 600,
-                    alignSelf: "center"
-                }]}
+                dismissable={true}
+                contentContainerStyle={{ backgroundColor: 'transparent' }}
             >
-                {loading && <ActivityIndicator size={"small"} />}
-                {!loading && (
-                    <View style={{ width: '100%', gap: 16 }}>
-                        <TouchableOpacity
-                            onPress={() => inviteToCollab(0)}
-                            style={{
-                                padding: 20,
-                                backgroundColor: Colors(theme).primary,
-                                borderRadius: 10,
-                                alignItems: 'center',
-                            }}
-                        >
-                            <FontAwesome name="handshake-o" size={28} color={Colors(theme).white} style={{ marginBottom: 10 }} />
-                            <Text style={{ color: Colors(theme).white, fontSize: 18, fontWeight: 'bold' }}>Connect to Co-Create</Text>
-                            <Text style={{ color: Colors(theme).white, fontSize: 14, textAlign: 'center', marginTop: 6 }}>
-                                Team up with fellow creators to collaborate on content or exchange shoutouts.
-                            </Text>
-                        </TouchableOpacity>
+                <Animated.View
+                    style={[
+                        {
+                            backgroundColor: Colors(theme).card,
+                            margin: 20,
+                            borderRadius: 8,
+                            padding: 20,
+                            transform: [{ scale: scaleAnim }],
+                        },
+                        xl && {
+                            width: 600,
+                            alignSelf: "center",
+                        }
+                    ]}
+                >
+                    {loading && <ActivityIndicator size={"small"} />}
+                    {!loading && (
+                        <View style={{ width: '100%', gap: 16 }}>
+                            <TouchableOpacity
+                                onPress={() => inviteToCollab(0)}
+                                style={{
+                                    padding: 20,
+                                    backgroundColor: Colors(theme).primary,
+                                    borderRadius: 10,
+                                    alignItems: 'center',
+                                }}
+                            >
+                                <FontAwesome name="handshake-o" size={28} color={Colors(theme).white} style={{ marginBottom: 10 }} />
+                                <Text style={{ color: Colors(theme).white, fontSize: 18, fontWeight: 'bold' }}>Connect to Co-Create</Text>
+                                <Text style={{ color: Colors(theme).white, fontSize: 14, textAlign: 'center', marginTop: 6 }}>
+                                    Team up with fellow creators to collaborate on content or exchange shoutouts.
+                                </Text>
+                            </TouchableOpacity>
 
-                        <TouchableOpacity
-                            onPress={() => inviteToCollab(1)}
-                            style={{
-                                padding: 20,
-                                backgroundColor: Colors(theme).primary,
-                                borderRadius: 10,
-                                alignItems: 'center',
-                            }}
-                        >
-                            <FontAwesome name="users" size={28} color={Colors(theme).white} style={{ marginBottom: 10 }} />
-                            <Text style={{ color: Colors(theme).white, fontSize: 18, fontWeight: 'bold' }}>Connect for Networking</Text>
-                            <Text style={{ color: Colors(theme).white, fontSize: 14, textAlign: 'center', marginTop: 6 }}>
-                                Meet like-minded creators.
-                            </Text>
-                        </TouchableOpacity>
-                    </View>
-                )}
+                            <TouchableOpacity
+                                onPress={() => inviteToCollab(1)}
+                                style={{
+                                    padding: 20,
+                                    backgroundColor: Colors(theme).primary,
+                                    borderRadius: 10,
+                                    alignItems: 'center',
+                                }}
+                            >
+                                <FontAwesome name="users" size={28} color={Colors(theme).white} style={{ marginBottom: 10 }} />
+                                <Text style={{ color: Colors(theme).white, fontSize: 18, fontWeight: 'bold' }}>Connect for Networking</Text>
+                                <Text style={{ color: Colors(theme).white, fontSize: 14, textAlign: 'center', marginTop: 6 }}>
+                                    Meet like-minded creators.
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+                    )}
+                </Animated.View>
             </Modal>
         </Portal>
     )
