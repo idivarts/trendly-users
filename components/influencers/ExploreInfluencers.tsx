@@ -174,7 +174,7 @@ const ExploreInfluencers = () => {
                                 <InfluencerCard
                                     xl={xl}
                                     key={item.id}
-                                    type="explore"
+                                    type="influencers"
                                     ToggleModal={ToggleModal}
                                     influencer={item}
                                     style={{ marginBottom: 32 }}
