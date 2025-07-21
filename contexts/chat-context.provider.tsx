@@ -4,6 +4,7 @@ import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import { PersistentStorage } from "@/shared-libs/utils/persistent-storage";
 import { useMyNavigation } from "@/shared-libs/utils/router";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
+import { useIsFocused } from "@react-navigation/native";
 import * as Notification from "expo-notifications";
 import {
   createContext,
@@ -164,6 +165,12 @@ export const ChatContextProvider: React.FC<PropsWithChildren> = ({
     };
   }, [user]);
 
+  const isFocused = useIsFocused()
+  useEffect(() => {
+    if (user && isFocused) {
+      HttpWrapper.fetch("/api/v1/chat/auth", { method: "POST", });
+    }
+  }, [user, isFocused])
 
   const fetchMembers = async (channel: string) => {
     const channelToWatch = streamClient.channel("messaging", channel);
