@@ -124,6 +124,7 @@ export const ChatContextProvider: React.FC<PropsWithChildren> = ({
       const storedToken = await PersistentStorage.get("streamToken")
       if (storedToken) {
         Console.log("Using Stored Token", storedToken)
+        HttpWrapper.fetch("/api/v1/chat/auth", { method: "POST", });
         await connectStream(storedToken);
         return storedToken
       }
