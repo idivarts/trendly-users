@@ -1,5 +1,4 @@
 
-import ActiveContracts from "@/components/contracts/active";
 import Applications from "@/components/proposals/Applications";
 import Invitations from "@/components/proposals/Invitations";
 import { View } from "@/components/theme/Themed";
@@ -13,20 +12,10 @@ const tabs = [
     component: <Invitations />,
   },
   {
-    id: "Contracts",
-    title: "Contracts",
-    component: <ActiveContracts />,
-  },
-  {
     id: "Applications",
     title: "Applications",
     component: <Applications />,
   }
-  // {
-  //   id: "Past",
-  //   title: "Past",
-  //   component: <PastContracts />,
-  // },
 ];
 
 const MyActivity = () => {

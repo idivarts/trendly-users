@@ -1,3 +1,4 @@
+import { faDocker } from "@fortawesome/free-brands-svg-icons";
 import {
   faChartSimple,
   faGears,
@@ -15,6 +16,13 @@ export const PROFILE_ITEMS = [
   },
   {
     id: "2",
+    title: "Contracts",
+    icon: faDocker,
+    route: "/contracts",
+    active: true,
+  },
+  {
+    id: "3",
     title: "Connected Socials",
     icon: faUsers,
     route: "/connected-socials",
