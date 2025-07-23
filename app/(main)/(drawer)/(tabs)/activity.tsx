@@ -1,5 +1,4 @@
 
-import Applications from "@/components/proposals/Applications";
 import Invitations from "@/components/proposals/Invitations";
 import { View } from "@/components/theme/Themed";
 import TopTabNavigation from "@/components/ui/top-tab-navigation";
@@ -7,14 +6,14 @@ import AppLayout from "@/layouts/app-layout";
 
 const tabs = [
   {
-    id: "Invitations",
-    title: "Invitations",
+    id: "brand-invites",
+    title: "Brand Invites",
     component: <Invitations />,
   },
   {
-    id: "Applications",
-    title: "Applications",
-    component: <Applications />,
+    id: "influencer-invites",
+    title: "Influencer Invites",
+    component: <Invitations />,
   }
 ];
 

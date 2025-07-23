@@ -128,8 +128,8 @@ const TabLayout = () => {
               size={24}
             />
           ),
-          title: "Activity",
-          tabBarLabel: "Activity",
+          title: "Invites",
+          tabBarLabel: "Invites",
           headerTitleAlign: "left",
           headerRight: () => <NotificationIcon />,
         }}
