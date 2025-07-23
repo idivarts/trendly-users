@@ -3,7 +3,7 @@ import AppLayout from "@/layouts/app-layout";
 import { User } from "@/types/User";
 import { useTheme } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Dimensions } from "react-native";
+import { Dimensions } from "react-native";
 // import InfluencerCard from "../InfluencerCard";
 import { Text, View } from "../theme/Themed";
 
@@ -14,16 +14,19 @@ import { MAX_WIDTH_WEB } from "@/constants/Container";
 import { useAuthContext } from "@/contexts";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
-import { useInfiniteScroll } from "@/shared-libs/utils/infinite-scroll";
+import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
+import { useInfiniteIdScroll } from "@/shared-libs/utils/infinite-id-scroll";
 import { PersistentStorage } from "@/shared-libs/utils/persistent-storage";
 import BottomSheetScrollContainer from "@/shared-uis/components/bottom-sheet/scroll-view";
 import { APPROX_CARD_HEIGHT } from "@/shared-uis/components/carousel/carousel-util";
 import InfluencerCard from "@/shared-uis/components/InfluencerCard";
 import { CarouselInViewProvider } from "@/shared-uis/components/scroller/CarouselInViewContext";
 import CarouselScroller from "@/shared-uis/components/scroller/CarouselScroller";
+import SlowLoader from "@/shared-uis/components/SlowLoader";
+import Toaster from "@/shared-uis/components/toaster/Toaster";
 import Colors from "@/shared-uis/constants/Colors";
 import { useLocalSearchParams } from "expo-router";
-import { collection, doc, documentId, getDoc, orderBy, query, where } from "firebase/firestore";
+import { collection, doc, documentId, getDoc, query, where } from "firebase/firestore";
 import { Button } from "react-native-paper";
 import { useSharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -43,6 +46,7 @@ const ExploreInfluencers = () => {
     const [selectedInfluencer, setSelectedInfluencer] = useState<User | null>(
         null
     );
+    const [influencerIds, setInfluencerIds] = useState<string[]>([])
 
     const getInfluencer = async (influencerId: string) => {
         const influencerRef = doc(collection(FirestoreDB, "users"), influencerId);
@@ -94,16 +98,31 @@ const ExploreInfluencers = () => {
     const influencersRef = collection(FirestoreDB, "users");
     const q = query(
         influencersRef,
-        where("profile.completionPercentage", ">=", 60),
+        // where("profile.completionPercentage", ">=", 60),
         where(documentId(), "!=", user?.id || ""),
         ...((user?.moderations?.blockedInfluencers || []).length > 0 ? [where(documentId(), "not-in", user?.moderations?.blockedInfluencers)] : []),
         ...((user?.moderations?.reportedInfluencers || []).length > 0 ? [where(documentId(), "not-in", user?.moderations?.reportedInfluencers)] : []),
         ...((user?.connectedInfluencers || []).length > 0 ? [where(documentId(), "not-in", user?.connectedInfluencers)] : []),
-        orderBy("lastUseTime", "desc")
+        // orderBy("lastUseTime", "desc")
     );
 
-    const { loading: isLoading, data, loadMore } = useInfiniteScroll<User>(q, 10)
+    // const { loading: isLoading, data, loadMore } = useInfiniteScroll<User>(q, 10)
+    const { loading: isLoading, data, loadMore } = useInfiniteIdScroll<User>(influencerIds, q, 5)
 
+    const loadInfluencerIds = () => {
+        HttpWrapper.fetch(`/api/matchmaking/influencer-for-influencer`, {
+            method: "GET",
+        }).then(async (res) => {
+            const body = await res.json()
+            setInfluencerIds(body.influencers as string[])
+        }).catch(e => {
+            Toaster.error("Cant fetch Influencers")
+        })
+    }
+
+    useEffect(() => {
+        loadInfluencerIds()
+    }, [])
     useEffect(() => {
         const fetchedInfluencers: User[] = [];
         data.forEach((doc) => {
@@ -148,7 +167,7 @@ const ExploreInfluencers = () => {
                         alignItems: "center",
                     }}
                 >
-                    <ActivityIndicator size="large" color={Colors(theme).primary} />
+                    <SlowLoader />
                 </View>
             </AppLayout>
         );
