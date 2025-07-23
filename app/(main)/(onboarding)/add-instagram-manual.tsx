@@ -140,7 +140,7 @@ const AddInstagramManual = () => {
         }
 
         setApiLoading(true);
-        await HttpWrapper.fetch('/api/v1/socials/instagram/manual', {
+        await HttpWrapper.fetch('/api/v2/socials/instagram/manual', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

@@ -22,7 +22,7 @@ export const useApplication = () => {
             application.quotation = parseInt(application.quotation)
         const applicantDocRef = doc(applicantColRef, uid);
         await setDoc(applicantDocRef, application)
-        HttpWrapper.fetch(`/api/v1/collaborations/${collaborationId}/applications/${uid}`, {
+        HttpWrapper.fetch(`/api/collabs/collaborations/${collaborationId}/applications/${uid}`, {
             method: "POST"
         })
     }
@@ -42,7 +42,7 @@ export const useApplication = () => {
         if (application.quotation && typeof application.quotation != "number")
             application.quotation = parseInt(application.quotation)
         await updateDoc(applicantDocRef, application)
-        HttpWrapper.fetch(`/api/v1/collaborations/${collaborationId}/applications/${uid}`, {
+        HttpWrapper.fetch(`/api/collabs/collaborations/${collaborationId}/applications/${uid}`, {
             method: "PUT"
         })
     }

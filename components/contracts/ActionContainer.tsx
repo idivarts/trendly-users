@@ -109,7 +109,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
                 onPress={() => {
                   try {
                     Toaster.success("Successfully informed brand to start the collaboration");
-                    HttpWrapper.fetch(`/api/v1/contracts/${contract.streamChannelId}`, {
+                    HttpWrapper.fetch(`/api/collabs/contracts/${contract.streamChannelId}`, {
                       method: "POST"
                     }).catch(e => {
                       Toaster.error("Successfully went wrong!!");
@@ -143,7 +143,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
                   {
                     try {
                       Toaster.success("Successfully informed brand to end the collaboration");
-                      HttpWrapper.fetch(`/api/v1/contracts/${contract.streamChannelId}/end`, {
+                      HttpWrapper.fetch(`/api/collabs/contracts/${contract.streamChannelId}/end`, {
                         method: "POST"
                       }).catch(r => {
                         Toaster.error("Something went wrong");

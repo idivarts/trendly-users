@@ -34,7 +34,7 @@ const SettingsScreen = () => {
 
   const handleDeactivate = async () => {
     setIsDeactivating(true);
-    await HttpWrapper.fetch("/api/v1/users/deactivate", { method: "DELETE" }).then(async r => {
+    await HttpWrapper.fetch("/api/v2/users/deactivate", { method: "DELETE" }).then(async r => {
       Toaster.success('Account deactivated successfully');
       await updatedTokens?.();
       logout().catch(e => {
@@ -49,7 +49,7 @@ const SettingsScreen = () => {
 
   const handleDelete = async () => {
     setIsDeleting(true);
-    await HttpWrapper.fetch("/api/v1/users/delete", { method: "DELETE" }).then(async r => {
+    await HttpWrapper.fetch("/api/v2/users/delete", { method: "DELETE" }).then(async r => {
       Toaster.success('Account deleted successfully');
       await updatedTokens?.();
       logout().catch(e => {

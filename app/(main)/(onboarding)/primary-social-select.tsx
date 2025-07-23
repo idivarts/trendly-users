@@ -41,7 +41,7 @@ const PrimarySocialSelect = () => {
       const userDocRef = doc(FirestoreDB, "users", userId);
       await updateDoc(userDocRef, { primarySocial: socialId })
         .then(() => {
-          HttpWrapper.fetch("/api/v1/chat/auth", { method: "POST", });
+          HttpWrapper.fetch("/api/v2/chat/auth", { method: "POST", });
           Toaster.success("Social marked as primary");
           resetAndNavigate("/questions");
         })

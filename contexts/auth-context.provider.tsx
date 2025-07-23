@@ -162,7 +162,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
 
       setSession(userCredential.user.uid);
 
-      HttpWrapper.fetch("/api/v1/chat/auth", { method: "POST", });
+      HttpWrapper.fetch("2/chat/auth", { method: "POST", });
 
       await Console.analytics("signed_in", {
         id: userCredential.user.uid,
@@ -194,7 +194,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
 
       setSession(userCredential.user.uid);
 
-      HttpWrapper.fetch("/api/v1/chat/auth", { method: "POST" });
+      HttpWrapper.fetch("/api/v2/chat/auth", { method: "POST" });
 
       // After signup, redirect user to the no-social-connected.
       resetAndNavigate("/no-social-connected");
@@ -207,7 +207,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
 
   const firebaseSignIn = async (uid: string) => {
     setSession(uid);
-    HttpWrapper.fetch("/api/v1/chat/auth", { method: "POST" });
+    HttpWrapper.fetch("/api/v2/chat/auth", { method: "POST" });
 
     if (collaborationId)
       resetAndNavigate(`/collaboration-details/${collaborationId}`);
@@ -232,7 +232,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
 
   const firebaseSignUp = async (uid: string, hasSocials?: number) => {
     setSession(uid);
-    HttpWrapper.fetch("/api/v1/chat/auth", { method: "POST", });
+    HttpWrapper.fetch("/api/v2/chat/auth", { method: "POST", });
 
     if (!hasSocials) {
       resetAndNavigate("/no-social-connected");
