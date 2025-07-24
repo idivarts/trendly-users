@@ -1,5 +1,6 @@
 import { SelectItem } from "@/components/ui/select";
 import { useAuthContext } from "@/contexts";
+import { PersistentStorage } from "@/shared-libs/utils/persistent-storage";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { NativeAssetItem, WebAssetItem } from "@/types/Asset";
 import { calculateProfileCompletion } from "@/utils/profile";
@@ -180,6 +181,7 @@ const useEditProfile = ({
         if (showToast)
           Toaster.success("Profile saved successfully");
         setUnsavedChanges && setUnsavedChanges(false);
+        PersistentStorage.clear("matchmaking_influencers");
       })
       .catch((error) => {
         if (showToast)
