@@ -17,7 +17,7 @@ const tabs = [
   }
 ];
 
-const MyActivity = () => {
+const MyInvites = () => {
   return (
     <AppLayout>
       <View
@@ -32,4 +32,4 @@ const MyActivity = () => {
   );
 };
 
-export default MyActivity;
+export default MyInvites;

@@ -121,7 +121,7 @@ const ContractDetailsScreen = () => {
           if (router.canGoBack()) {
             router.back();
           } else {
-            router.push("/activity");
+            router.push("/contracts");
           }
         }}
         rightActionButton={

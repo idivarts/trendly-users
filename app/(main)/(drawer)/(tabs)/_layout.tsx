@@ -119,7 +119,7 @@ const TabLayout = () => {
         }}
       />
       <Tabs.Screen
-        name="activity"
+        name="invites"
         options={{
           tabBarIcon: ({ color, focused }) => (
             <FontAwesomeIcon

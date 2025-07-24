@@ -43,7 +43,7 @@ const DRAWER_MENU_CONTENT_ITEMS = [
     showMessageCount: true,
   },
   {
-    href: "/activity",
+    href: "/invites",
     icon: ({
       focused,
     }: IconPropFn) => focused ? faFileLinesSolid : faFileLines,
