@@ -58,8 +58,8 @@ const TabLayout = () => {
       <Tabs.Screen
         name="collaborations"
         options={{
-          title: "Collaborations",
-          tabBarLabel: "Collaborations",
+          title: "Brand Collaborations",
+          tabBarLabel: "Brands",
           headerRight: () => <NotificationIcon />,
           tabBarIcon: ({ color, focused }) => (
             <FontAwesomeIcon
@@ -73,7 +73,7 @@ const TabLayout = () => {
       <Tabs.Screen
         name="influencers"
         options={{
-          title: "Influencers",
+          title: "Creators Matchmaking",
           tabBarLabel: "Influencers",
           tabBarIcon: ({ color, focused }) => (
             <FontAwesomeIcon
