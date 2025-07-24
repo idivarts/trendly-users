@@ -108,19 +108,26 @@ const ExploreInfluencers = () => {
     // const { loading: isLoading, data, loadMore } = useInfiniteScroll<User>(q, 10)
     const { loading: isLoading, data, loadMore } = useInfiniteIdScroll<User>(influencerIds, q, 5)
 
-    const loadInfluencerIds = () => {
-        HttpWrapper.fetch(`/api/matchmaking/influencer-for-influencer`, {
-            method: "GET",
-        }).then(async (res) => {
-            const body = await res.json()
-            if (__DEV__) {
-                setInfluencerIds(["MvLmVKwUcXXZXfBfQHSnq5udnaO2", "mmUwj1YlPUVn0h2hlN4qVw1bEZo1", "jEZf51INayY4ZcJs2ck0XWR8Ptj2", ...body.influencers as string[]])
-            } else {
-                setInfluencerIds(body.influencers as string[])
-            }
-        }).catch(e => {
-            Toaster.error("Cant fetch Influencers")
-        })
+    const loadInfluencerIds = async () => {
+        const influencerIds = await PersistentStorage.getItemWithExpiry("matchmaking_influencers")
+        if (influencerIds) {
+            setInfluencerIds(influencerIds as string[])
+        } else
+            HttpWrapper.fetch(`/api/matchmaking/influencer-for-influencer`, {
+                method: "GET",
+            }).then(async (res) => {
+                const body = await res.json()
+                let influencerIds: string[] = []
+                if (__DEV__) {
+                    influencerIds = ["MvLmVKwUcXXZXfBfQHSnq5udnaO2", "mmUwj1YlPUVn0h2hlN4qVw1bEZo1", "jEZf51INayY4ZcJs2ck0XWR8Ptj2", ...body.influencers as string[]]
+                } else {
+                    influencerIds = body.influencers as string[]
+                }
+                setInfluencerIds(influencerIds)
+                PersistentStorage.setItemWithExpiry("matchmaking_influencers", influencerIds)
+            }).catch(e => {
+                Toaster.error("Cant fetch Influencers")
+            })
     }
 
     useEffect(() => {

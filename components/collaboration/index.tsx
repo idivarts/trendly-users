@@ -9,6 +9,7 @@ import { processRawAttachment } from "@/shared-libs/utils/attachments";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import { useInfiniteIdScroll } from "@/shared-libs/utils/infinite-id-scroll";
+import { PersistentStorage } from "@/shared-libs/utils/persistent-storage";
 import { useMyNavigation } from "@/shared-libs/utils/router";
 import Carousel from "@/shared-uis/components/carousel/carousel";
 import { APPROX_CARD_HEIGHT } from "@/shared-uis/components/carousel/carousel-util";
@@ -86,15 +87,20 @@ const Collaboration = () => {
   // const { loading: isLoading, data, loadMore } = useInfiniteScroll<User>(q, 10)
   const { loading, data: collabs, loadMore } = useInfiniteIdScroll<ICollaborationAddCardProps>(collabIds, collabQuery, 5)
 
-  const loadCollabIds = () => {
-    HttpWrapper.fetch(`/api/matchmaking/collaborations`, {
-      method: "GET",
-    }).then(async (res) => {
-      const body = await res.json()
-      setCollabIds(body.collabs as string[])
-    }).catch(e => {
-      Toaster.error("Cant fetch Influencers")
-    })
+  const loadCollabIds = async () => {
+    const collabIds = await PersistentStorage.getItemWithExpiry("matchmaking_collaborations")
+    if (collabIds) {
+      setCollabIds(collabIds as string[])
+    } else
+      HttpWrapper.fetch(`/api/matchmaking/collaborations`, {
+        method: "GET",
+      }).then(async (res) => {
+        const body = await res.json()
+        setCollabIds(body.collabs as string[])
+        PersistentStorage.setItemWithExpiry("matchmaking_collaborations", body.collabs as string[])
+      }).catch(e => {
+        Toaster.error("Cant fetch Influencers")
+      })
   }
 
   useEffect(() => {
