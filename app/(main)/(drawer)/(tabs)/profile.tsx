@@ -1,4 +1,4 @@
-import { Platform, ScrollView, StyleSheet, Text } from "react-native";
+import { Linking, Platform, ScrollView, StyleSheet, Text } from "react-native";
 
 import ProfileCard from "@/components/profile/ProfileCard";
 import ProfileItemCard from "@/components/profile/ProfileItemCard";
@@ -7,6 +7,7 @@ import { COMPLETION_PERCENTAGE } from "@/constants/CompletionPercentage";
 import { PROFILE_ITEMS } from "@/constants/Profile";
 import { useAuthContext, useCloudMessagingContext } from "@/contexts";
 import AppLayout from "@/layouts/app-layout";
+import { INFLUENCER_VERIFY_LINK } from "@/shared-constants/app";
 import { useMyNavigation } from "@/shared-libs/utils/router";
 import ConfirmationModal from "@/shared-uis/components/ConfirmationModal";
 import Colors from "@/shared-uis/constants/Colors";
@@ -87,6 +88,8 @@ const ProfileScreen = () => {
             onPress={() => {
               if (item.title === "Help and Support" && Platform.OS === "web") {
                 window.open("https://www.trendly.now/help-and-support/", "_blank");
+              } if (item.title == "Verify Profile") {
+                Linking.openURL(INFLUENCER_VERIFY_LINK)
               } else {
                 router.push(item.route as Href);
               }

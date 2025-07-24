@@ -1,6 +1,8 @@
-import { faDiscord, faDocker } from "@fortawesome/free-brands-svg-icons";
+import { faDiscord } from "@fortawesome/free-brands-svg-icons";
 import {
+  faCertificate,
   faChartSimple,
+  faFile,
   faGears,
   faHeadset,
   faUsers
@@ -17,7 +19,7 @@ export const PROFILE_ITEMS = [
   {
     id: "2",
     title: "My Contracts",
-    icon: faDocker,
+    icon: faFile,
     route: "/contracts",
     active: false,
   },
@@ -37,6 +39,13 @@ export const PROFILE_ITEMS = [
   },
   {
     id: "6",
+    title: "Verify Profile",
+    active: false,
+    icon: faCertificate,
+    route: "/",
+  },
+  {
+    id: "7",
     title: "Help and Support",
     active: false,
     icon: faHeadset,
