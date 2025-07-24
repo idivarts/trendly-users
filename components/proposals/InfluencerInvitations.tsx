@@ -10,10 +10,12 @@ import { ISocials } from "@/shared-libs/firestore/trendly-pro/models/socials";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
+import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import { useMyNavigation } from "@/shared-libs/utils/router";
 import BottomSheetScrollContainer from "@/shared-uis/components/bottom-sheet/scroll-view";
 import InfluencerCard from "@/shared-uis/components/InfluencerCard";
 import ProfileBottomSheet from "@/shared-uis/components/ProfileModal/Profile-Modal";
+import Toaster from "@/shared-uis/components/toaster/Toaster";
 import Colors from "@/shared-uis/constants/Colors";
 import { stylesFn } from "@/styles/Proposal.styles";
 import { User } from "@/types/User";
@@ -125,6 +127,34 @@ const InfluencerInvitations = () => {
     await fetchInvitations();
     setRefreshing(false);
   };
+  const handleInviteAction = (accept: boolean, influencerId: string) => {
+    if (accept) {
+      HttpWrapper.fetch(`/api/influencers/invite/${influencerId}/accept`, {
+        method: "POST",
+      }).then((res) => {
+        Toaster.success("Invitation Accepted")
+        router.resetAndNavigate(`/messages`)
+      }).catch((err) => {
+        Console.error(err, "Error accepting invite")
+        Toaster.error("Failed to accept invite", "Please try again later.")
+      })
+    } else {
+      HttpWrapper.fetch(`/api/influencers/invite/${influencerId}/reject`, {
+        method: "POST",
+        body: JSON.stringify({
+          reason: "Not interested in this collaboration"
+        }),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }).then((res) => {
+        Toaster.success("Invitation Rejected")
+      }).catch((err) => {
+        Console.error(err, "Error rejecting invite")
+        Toaster.error("Failed to reject invite", "Please try again later.")
+      })
+    }
+  }
 
 
   if (isLoading) {
@@ -219,15 +249,21 @@ const InfluencerInvitations = () => {
               style={{
                 backgroundColor: Colors(theme).transparent,
                 marginHorizontal: 16,
-                paddingVertical: 16
+                paddingVertical: 16,
+                gap: 8,
               }}
             >
               <Text style={{ paddingVertical: 16 }}>
-                You can discover and connect with other influencers who are in a similar stage as you — based on follower count, reach, or engagement. Feel free to connect for content collaborations or simply to expand your network.
+                {selectedInfluencer?.reason}
               </Text>
               <Button mode="contained" onPress={() => {
                 setOpenProfileModal(false);
-              }}>Connect to Influencer</Button>
+                handleInviteAction(true, selectedInfluencer?.influencerId || "");
+              }}>Accept Invite</Button>
+              <Button mode="outlined" onPress={() => {
+                setOpenProfileModal(false);
+                handleInviteAction(false, selectedInfluencer?.influencerId || "");
+              }}>Reject Invite</Button>
               {/* <InfluencerInvite selectedInfluencer={selectedInfluencer as User} /> */}
             </View>
           }
