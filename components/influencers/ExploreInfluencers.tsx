@@ -32,7 +32,6 @@ import { useSharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import InfluencerActionModal from "./InfluencerActionModal";
 import InfluencerConnectModal from "./InfluencerConnectModal";
-import IntroductoryModal from "./IntroductoryModal";
 
 const ExploreInfluencers = () => {
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -263,7 +262,7 @@ const ExploreInfluencers = () => {
                     closeModal={() => setOpenProfileModal(false)}
                 />
             </BottomSheetScrollContainer>
-            {introductionVisible && <IntroductoryModal isOpen={introductionVisible} onClose={() => setIntroductionVisible(false)} />}
+            {/* {introductionVisible && <IntroductoryModal isOpen={introductionVisible} onClose={() => setIntroductionVisible(false)} />} */}
             {(connectionModal && selectedInfluencer) && <InfluencerConnectModal influencer={selectedInfluencer} onClose={() => setConnectionModal(false)} />}
         </AppLayout>
     );
