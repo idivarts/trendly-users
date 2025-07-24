@@ -1,4 +1,5 @@
 
+import InfluencerInvitations from "@/components/proposals/InfluencerInvitations";
 import Invitations from "@/components/proposals/Invitations";
 import { View } from "@/components/theme/Themed";
 import TopTabNavigation from "@/components/ui/top-tab-navigation";
@@ -13,7 +14,7 @@ const tabs = [
   {
     id: "influencer-invites",
     title: "Influencer Invites",
-    component: <Invitations />,
+    component: <InfluencerInvitations />,
   }
 ];
 
