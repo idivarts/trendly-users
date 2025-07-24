@@ -28,7 +28,7 @@ const InfluencerApplyScreen = () => {
 
     const [reason, setReason] = useState('')
     const [collabType, setCollabType] = useState<SelectItem[]>([])
-    const [exampleLinks, setExampleLinks] = useState('')
+    const [exampleLink, setExampleLink] = useState('')
     const [platforms, setPlatforms] = useState<SelectItem[]>([])
     const [collabMode, setCollabMode] = useState('free')
     const [budgetMin, setBudgetMin] = useState('')
@@ -44,16 +44,16 @@ const InfluencerApplyScreen = () => {
         setLoading(true)
 
         try {
-            if (category == "networking" ? !reason : (!reason || (!!exampleLinks && !isValidLink(exampleLinks)) || (collabMode === 'paid' && (!budgetMin || !budgetMax) || collabType.length === 0)))
+            if (category == "networking" ? !reason : (!reason || (!!exampleLink && !isValidLink(exampleLink)) || (collabMode === 'paid' && (!budgetMin || !budgetMax) || collabType.length === 0)))
                 return
 
-            HttpWrapper.fetch(`/influencer-invite/${influencerId}`, {
+            HttpWrapper.fetch(`/api/influencers/invite/${influencerId}`, {
                 method: "POST",
                 body: JSON.stringify({
                     category,
                     reason,
                     collabType: collabType.map(v => v.value),
-                    exampleLinks: exampleLinks.trim(),
+                    exampleLink: exampleLink.trim(),
                     platforms: platforms.map(v => v.value),
                     collabMode,
                     budgetMin: budgetMin ? parseInt(budgetMin) : undefined,
@@ -214,12 +214,12 @@ const InfluencerApplyScreen = () => {
                         <Text variant="titleMedium" style={{ marginTop: 0, color: Colors(theme).text }}>Add any example collab link?</Text>
                         <TextInput
                             placeholder="Paste your reel or video links here"
-                            value={exampleLinks}
-                            onChangeText={setExampleLinks}
+                            value={exampleLink}
+                            onChangeText={setExampleLink}
                             mode="outlined"
-                            error={!!exampleLinks && !isValidLink(exampleLinks)}
+                            error={!!exampleLink && !isValidLink(exampleLink)}
                         />
-                        <HelperText type="error" visible={!!exampleLinks && !isValidLink(exampleLinks)}>
+                        <HelperText type="error" visible={!!exampleLink && !isValidLink(exampleLink)}>
                             Please enter a valid link
                         </HelperText>
 
@@ -240,7 +240,7 @@ const InfluencerApplyScreen = () => {
                     <Button
                         mode="contained"
                         onPress={handleSubmit}
-                        disabled={category == "networking" ? !reason : (!reason || (!!exampleLinks && !isValidLink(exampleLinks)) || (collabMode === 'paid' && (!budgetMin || !budgetMax) || collabType.length === 0))}
+                        disabled={category == "networking" ? !reason : (!reason || (!!exampleLink && !isValidLink(exampleLink)) || (collabMode === 'paid' && (!budgetMin || !budgetMax) || collabType.length === 0))}
                         loading={loading}
                     >
                         Submit
