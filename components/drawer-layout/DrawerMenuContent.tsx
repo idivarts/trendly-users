@@ -25,7 +25,7 @@ const DRAWER_MENU_CONTENT_ITEMS = [
     icon: ({
       focused,
     }: IconPropFn) => focused ? faStarSolid : faStar,
-    label: "Collaborations",
+    label: "Brands",
   },
   {
     href: "/influencers",
