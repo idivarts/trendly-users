@@ -114,7 +114,11 @@ const ExploreInfluencers = () => {
             method: "GET",
         }).then(async (res) => {
             const body = await res.json()
-            setInfluencerIds(body.influencers as string[])
+            if (__DEV__) {
+                setInfluencerIds(["MvLmVKwUcXXZXfBfQHSnq5udnaO2", "mmUwj1YlPUVn0h2hlN4qVw1bEZo1", "jEZf51INayY4ZcJs2ck0XWR8Ptj2", ...body.influencers as string[]])
+            } else {
+                setInfluencerIds(body.influencers as string[])
+            }
         }).catch(e => {
             Toaster.error("Cant fetch Influencers")
         })
