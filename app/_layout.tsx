@@ -71,7 +71,7 @@ const RootLayout = () => {
   }
 
   return (
-    <UpdateProvider force={true}>
+    <UpdateProvider force={true} influencerApp={true}>
       <AuthContextProvider>
         <GestureHandlerRootView>
           <BottomSheetModalProvider>
