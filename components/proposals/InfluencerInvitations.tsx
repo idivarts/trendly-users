@@ -162,7 +162,7 @@ const InfluencerInvitations = () => {
                     type="explore"
                     customAttachments={[]}
                     customText={item.reason}
-                    customTaxonomies={[...(item.collabType || []), (item.collabMode == "free" ? "Free" : "Paid"), ...(item.collabMode == "paid" ? ["Budget : " + item.budgetMin + " - " + item.budgetMax] : [])]}
+                    customTaxonomies={[...(item.collabType || []), (item.collabMode == "free" ? "Free" : "Paid"), ...(item.collabMode == "paid" ? ["Budget: ₹" + item.budgetMin + " - ₹" + item.budgetMax] : [])]}
                     openProfile={(influencer) => {
                       router.push({
                         pathname: "/review-influencer",

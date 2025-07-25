@@ -3,7 +3,7 @@ import { User } from "@/types/User";
 import { useTheme } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 // import InfluencerCard from "../InfluencerCard";
-import { Text, View } from "../theme/Themed";
+import { View } from "../theme/Themed";
 
 
 import ProfileBottomSheet from "@/shared-uis/components/ProfileModal/Profile-Modal";
@@ -19,7 +19,7 @@ import Toaster from "@/shared-uis/components/toaster/Toaster";
 import Colors from "@/shared-uis/constants/Colors";
 import { useLocalSearchParams } from "expo-router";
 import { collection, doc, getDoc } from "firebase/firestore";
-import { ActivityIndicator, Button } from "react-native-paper";
+import { ActivityIndicator, Button, Chip, Text } from "react-native-paper";
 import ScreenHeader from "../ui/screen-header";
 
 const ReviewInfluencerComponent = () => {
@@ -31,8 +31,6 @@ const ReviewInfluencerComponent = () => {
     const theme = useTheme();
     const [acceptLoading, setAcceptLoading] = useState(false)
     const [rejectLoading, setRejectLoading] = useState(false)
-
-
 
     const getInfluencer = async (influencerId: string) => {
         try {
@@ -143,7 +141,7 @@ const ReviewInfluencerComponent = () => {
                     showCampaignGoals={false}
                     showInfluencerGoals={true}
                     actionCard={
-                        <View
+                        invite ? <View
                             style={{
                                 backgroundColor: Colors(theme).transparent,
                                 marginHorizontal: 16,
@@ -151,17 +149,91 @@ const ReviewInfluencerComponent = () => {
                                 gap: 16,
                             }}
                         >
-                            <Text style={{ paddingVertical: 16 }}>
-                                {invite?.reason}
-                            </Text>
-                            <Button mode="contained" onPress={() => {
-                                handleInviteAction(true, invite?.influencerId || "");
-                            }} loading={acceptLoading} disabled={rejectLoading}>Accept Invite</Button>
-                            <Button mode="outlined" onPress={() => {
-                                handleInviteAction(false, invite?.influencerId || "");
-                            }} loading={rejectLoading} disabled={acceptLoading}>Reject Invite</Button>
+                            {/* 
+                            invite variable has these fields. Please create UI to display any fields that is not null. For String array I think we can use chip cards. Make beautiful UI with react-native-paper -
+                            
+                            category: string,
+                            reason: string,
+                            collabType?: string[],
+                            exampleLink?: string,
+                            platforms?: string[],
+                            collabMode?: "free" | "paid",
+                            budgetMin?: number,
+                            budgetMax?: number, */}
+                            <View style={{ gap: 16, paddingHorizontal: 4 }}>
+                                {invite.reason && (
+                                    <View style={{ marginBottom: 12 }}>
+                                        <Text style={{ fontWeight: '600', fontSize: 16, marginBottom: 6 }}>Reason For Connecting</Text>
+                                        <Text style={{ fontSize: 16, lineHeight: 20 }}>{invite.reason}</Text>
+                                    </View>
+                                )}
+                                {invite.category && (
+                                    <View style={{ marginBottom: 12 }}>
+                                        <Text style={{ fontWeight: '600', fontSize: 16, marginBottom: 6 }}>Category</Text>
+                                        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+                                            <Chip icon="tag" disabled>{invite.category}</Chip>
+                                        </View>
+                                    </View>
+                                )}
+                                {invite.collabType && invite.collabType.length > 0 && (
+                                    <View style={{ marginBottom: 12 }}>
+                                        <Text style={{ fontWeight: '600', fontSize: 16, marginBottom: 6 }}>Collaboration Type</Text>
+                                        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+                                            {invite.collabType.map((type, index) => (
+                                                <Chip key={index} disabled>{type}</Chip>
+                                            ))}
+                                        </View>
+                                    </View>
+                                )}
+                                {invite.exampleLink && (
+                                    <View style={{ marginBottom: 12 }}>
+                                        <Text style={{ fontWeight: '600', fontSize: 16, marginBottom: 6 }}>Example Link</Text>
+                                        <Text style={{ fontSize: 14, lineHeight: 20, color: theme.colors.primary }}>{invite.exampleLink}</Text>
+                                    </View>
+                                )}
+                                {invite.platforms && invite.platforms.length > 0 && (
+                                    <View style={{ marginBottom: 12 }}>
+                                        <Text style={{ fontWeight: '600', fontSize: 16, marginBottom: 6 }}>Platforms</Text>
+                                        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+                                            {invite.platforms.map((platform, index) => (
+                                                <Chip key={index} disabled>{platform}</Chip>
+                                            ))}
+                                        </View>
+                                    </View>
+                                )}
+                                {invite.collabMode && (
+                                    <View style={{ marginBottom: 12 }}>
+                                        <Text style={{ fontWeight: '600', fontSize: 16, marginBottom: 6 }}>Collaboration Mode</Text>
+                                        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+                                            <Chip icon={invite.collabMode === 'paid' ? 'currency-inr' : 'gift'} disabled>
+                                                {invite.collabMode === 'paid' ? 'Paid' : 'Free'}
+                                            </Chip>
+                                        </View>
+                                    </View>
+                                )}
+                                {(invite.collabMode === 'paid' && (invite.budgetMin || invite.budgetMax)) && (
+                                    <View style={{ marginBottom: 12 }}>
+                                        <Text style={{ fontWeight: '600', fontSize: 16, marginBottom: 6 }}>Budget</Text>
+                                        <Text style={{ fontSize: 14, lineHeight: 20 }}>
+                                            ₹{invite.budgetMin || 0} - ₹{invite.budgetMax || 'No Max'}
+                                        </Text>
+                                    </View>
+                                )}
+                            </View>
 
-                        </View>
+
+                            {invite.status == 0 &&
+                                <>
+                                    <Button mode="contained" onPress={() => {
+                                        handleInviteAction(true, invite.influencerId);
+                                    }} loading={acceptLoading} disabled={rejectLoading}>Accept Invite</Button>
+                                    <Button mode="outlined" onPress={() => {
+                                        handleInviteAction(false, invite.influencerId);
+                                    }} loading={rejectLoading} disabled={acceptLoading}>Reject Invite</Button>
+                                </>
+                            }
+
+                        </View> : null
                     }
                     FireStoreDB={FirestoreDB}
                     isBrandsApp={true}
