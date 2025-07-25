@@ -32,9 +32,10 @@ const ReviewInfluencerComponent = () => {
     const [acceptLoading, setAcceptLoading] = useState(false)
     const [rejectLoading, setRejectLoading] = useState(false)
 
-    const getInfluencer = async (influencerId: string) => {
+    const { influencerId, userId } = useLocalSearchParams()
+    const getInfluencer = async (fetchUser: string) => {
         try {
-            const influencerRef = doc(collection(FirestoreDB, "users"), influencerId);
+            const influencerRef = doc(collection(FirestoreDB, "users"), fetchUser);
             const influencerDoc = await getDoc(influencerRef)
             const influencer: User = {
                 ...influencerDoc.data() as IUsers,
@@ -45,16 +46,18 @@ const ReviewInfluencerComponent = () => {
             const infId = influencerId as string || user?.id || ""
             const uId = userId as string || user?.id || ""
 
+            Console.log("Fetching invite for influencerId:", influencerId, infId, "and userId:", userId, uId)
             const inviteRef = doc(collection(FirestoreDB, "users", uId, "invitations"), infId);
             const inviteDoc = await getDoc(inviteRef)
             const invite: InfluencerInvite = inviteDoc.data() as InfluencerInvite
+            Console.log("Invite Data:", invite)
             setInvite(invite)
         } finally {
             setLoading(false);
         }
     }
 
-    const { influencerId, userId } = useLocalSearchParams()
+
 
     useEffect(() => {
         if (!user)
