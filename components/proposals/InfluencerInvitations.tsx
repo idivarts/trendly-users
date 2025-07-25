@@ -1,5 +1,5 @@
 import BottomSheetActions from "@/components/BottomSheetActions";
-import { Text, View } from "@/components/theme/Themed";
+import { View } from "@/components/theme/Themed";
 import { MAX_WIDTH_WEB } from "@/constants/Container";
 import { useAuthContext } from "@/contexts";
 import { useBreakpoints } from "@/hooks";
@@ -10,12 +10,8 @@ import { ISocials } from "@/shared-libs/firestore/trendly-pro/models/socials";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
-import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import { useMyNavigation } from "@/shared-libs/utils/router";
-import BottomSheetScrollContainer from "@/shared-uis/components/bottom-sheet/scroll-view";
 import InfluencerCard from "@/shared-uis/components/InfluencerCard";
-import ProfileBottomSheet from "@/shared-uis/components/ProfileModal/Profile-Modal";
-import Toaster from "@/shared-uis/components/toaster/Toaster";
 import Colors from "@/shared-uis/constants/Colors";
 import { stylesFn } from "@/styles/Proposal.styles";
 import { User } from "@/types/User";
@@ -34,7 +30,6 @@ import {
   FlatList,
   RefreshControl
 } from "react-native";
-import { Button } from "react-native-paper";
 import EmptyState from "../ui/empty-state";
 ;
 
@@ -50,8 +45,6 @@ const InfluencerInvitations = () => {
   const [refreshing, setRefreshing] = useState(false);
   const { user } = useAuthContext();
   const router = useMyNavigation()
-  const [openProfileModal, setOpenProfileModal] = useState(false)
-  const [selectedInfluencer, setSelectedInfluencer] = useState<InvitationType | undefined>(undefined)
 
   const openBottomSheet = (id: string, invitation: string) => {
     setIsVisible(true);
@@ -127,35 +120,6 @@ const InfluencerInvitations = () => {
     await fetchInvitations();
     setRefreshing(false);
   };
-  const handleInviteAction = (accept: boolean, influencerId: string) => {
-    if (accept) {
-      HttpWrapper.fetch(`/api/influencers/invite/${influencerId}/accept`, {
-        method: "POST",
-      }).then((res) => {
-        Toaster.success("Invitation Accepted")
-        router.resetAndNavigate(`/messages`)
-      }).catch((err) => {
-        Console.error(err, "Error accepting invite")
-        Toaster.error("Failed to accept invite", "Please try again later.")
-      })
-    } else {
-      HttpWrapper.fetch(`/api/influencers/invite/${influencerId}/reject`, {
-        method: "POST",
-        body: JSON.stringify({
-          reason: "Not interested in this collaboration"
-        }),
-        headers: {
-          "Content-Type": "application/json"
-        }
-      }).then((res) => {
-        Toaster.success("Invitation Rejected")
-      }).catch((err) => {
-        Console.error(err, "Error rejecting invite")
-        Toaster.error("Failed to reject invite", "Please try again later.")
-      })
-    }
-  }
-
 
   if (isLoading) {
     return (
@@ -200,8 +164,12 @@ const InfluencerInvitations = () => {
                     customText={item.reason}
                     customTaxonomies={[...(item.collabType || []), (item.collabMode == "free" ? "Free" : "Paid"), ...(item.collabMode == "paid" ? ["Budget : " + item.budgetMin + " - " + item.budgetMax] : [])]}
                     openProfile={(influencer) => {
-                      setSelectedInfluencer(item);
-                      setOpenProfileModal(true);
+                      router.push({
+                        pathname: "/review-influencer",
+                        params: {
+                          influencerId: influencer.id,
+                        },
+                      })
                     }}
                   />
                 </View>
@@ -234,44 +202,7 @@ const InfluencerInvitations = () => {
           key={selectedCollabId}
         />
       )}
-      <BottomSheetScrollContainer
-        isVisible={openProfileModal}
-        snapPointsRange={["90%", "90%"]}
-        onClose={() => { setOpenProfileModal(false) }}
-      >
-        <ProfileBottomSheet
-          influencer={selectedInfluencer?.influencer as User}
-          theme={theme}
-          showCampaignGoals={false}
-          showInfluencerGoals={true}
-          actionCard={
-            <View
-              style={{
-                backgroundColor: Colors(theme).transparent,
-                marginHorizontal: 16,
-                paddingVertical: 16,
-                gap: 8,
-              }}
-            >
-              <Text style={{ paddingVertical: 16 }}>
-                {selectedInfluencer?.reason}
-              </Text>
-              <Button mode="contained" onPress={() => {
-                setOpenProfileModal(false);
-                handleInviteAction(true, selectedInfluencer?.influencerId || "");
-              }}>Accept Invite</Button>
-              <Button mode="outlined" onPress={() => {
-                setOpenProfileModal(false);
-                handleInviteAction(false, selectedInfluencer?.influencerId || "");
-              }}>Reject Invite</Button>
-              {/* <InfluencerInvite selectedInfluencer={selectedInfluencer as User} /> */}
-            </View>
-          }
-          FireStoreDB={FirestoreDB}
-          isBrandsApp={true}
-          closeModal={() => setOpenProfileModal(false)}
-        />
-      </BottomSheetScrollContainer>
+
     </View>
   );
 };
