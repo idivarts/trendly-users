@@ -17,6 +17,8 @@ import ChatMessageTopbar from "./chat-message-topbar";
 
 import { streamClient } from "@/contexts/streamClient";
 import { useMyNavigation } from "@/shared-libs/utils/router";
+import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import React from "react";
 import {
   AttachButton,
@@ -106,12 +108,11 @@ const ChannelNative = () => {
       >
         <ScreenHeader
           title={channel?.data?.name || 'Chat'}
-          rightAction={!!contract}
+          rightAction={true}
           rightActionButton={
             <>
               {!!contract && <Pressable
                 style={{
-                  // marginRight: 8,
                   paddingHorizontal: 16
                 }}
                 onPress={() => {
@@ -126,21 +127,16 @@ const ChannelNative = () => {
                   source={imageUrl(brand?.image)}
                 />
               </Pressable>}
-              {(!channel?.data?.name && channel.data?.member_count == 2) && <Pressable
-                style={{
-                  // marginRight: 8,
-                  paddingHorizontal: 16
-                }}
+              {(channel?.data?.threadType == "influencer-invite") && <Pressable
+                style={{ paddingHorizontal: 16 }}
                 onPress={() => {
                   router.push(`/review-influencer?${channel?.data?.influencerId == user?.id ? ("userId=" + channel?.data?.userId) : ("influencerId=" + channel?.data?.influencerId)}`);
                 }}
               >
-                <Avatar.Image
-                  style={{
-                    backgroundColor: Colors(theme).transparent,
-                  }}
-                  size={40}
-                  source={imageUrl(brand?.image)}
+                <FontAwesomeIcon
+                  icon={faInfoCircle}
+                  size={24}
+                  color={Colors(theme).gray100}
                 />
               </Pressable>}
             </>
