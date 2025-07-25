@@ -12,7 +12,6 @@ import ProfileBottomSheet from "@/shared-uis/components/ProfileModal/Profile-Mod
 
 import { MAX_WIDTH_WEB } from "@/constants/Container";
 import { useAuthContext } from "@/contexts";
-import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import { useInfiniteIdScroll } from "@/shared-libs/utils/infinite-id-scroll";
@@ -25,11 +24,8 @@ import CarouselScroller from "@/shared-uis/components/scroller/CarouselScroller"
 import SlowLoader from "@/shared-uis/components/SlowLoader";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import Colors from "@/shared-uis/constants/Colors";
-import { useLocalSearchParams } from "expo-router";
-import { collection, doc, getDoc, query } from "firebase/firestore";
+import { collection, query } from "firebase/firestore";
 import { Button } from "react-native-paper";
-import { useSharedValue } from "react-native-reanimated";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import InfluencerActionModal from "./InfluencerActionModal";
 import InfluencerConnectModal from "./InfluencerConnectModal";
 
@@ -40,54 +36,14 @@ const ExploreInfluencers = () => {
     const ToggleModal = () => {
         setIsModalVisible(!isModalVisible);
     };
-    const [influencers, setInfluencers] = useState<User[]>([]);
-    const [filteredInfluencers, setFilteredInfluencers] = useState<User[]>([]);
+    // const [influencers, setInfluencers] = useState<User[]>([]);
+    // const [filteredInfluencers, setFilteredInfluencers] = useState<User[]>([]);
     const [selectedInfluencer, setSelectedInfluencer] = useState<User | null>(
         null
     );
     const [influencerIds, setInfluencerIds] = useState<string[]>([])
 
-    const getInfluencer = async (influencerId: string) => {
-        const influencerRef = doc(collection(FirestoreDB, "users"), influencerId);
-        const influencerDoc = await getDoc(influencerRef)
-        const influencer: User = {
-            ...influencerDoc.data() as IUsers,
-            id: influencerDoc.id
-        }
-        setSelectedInfluencer(influencer)
-        setOpenProfileModal(true)
-    }
-    const { influencerId } = useLocalSearchParams()
-    useEffect(() => {
-        if (!influencerId)
-            return;
-        getInfluencer(influencerId as string)
-    }, [influencerId])
-
-    const openIntroductoryModal = async () => {
-        let x = await PersistentStorage.get("influencers-introductory-modal")
-        if (!x) {
-            setIntroductionVisible(true)
-            PersistentStorage.set("influencers-introductory-modal", "true")
-        }
-    }
-    useEffect(() => {
-        openIntroductoryModal()
-    }, [])
-
-    // const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-    // const snapPoints = useMemo(() => ["25%", "50%", "90%"], []);
     const [openProfileModal, setOpenProfileModal] = useState(false)
-
-    const insets = useSafeAreaInsets();
-    const containerOffset = useSharedValue({
-        top: insets.top,
-        bottom: insets.bottom,
-        left: insets.left,
-        right: insets.right,
-    });
-
-    // const [isLoading, setIsLoading] = useState(true);
 
     const { user } = useAuthContext()
     const theme = useTheme();
@@ -105,22 +61,22 @@ const ExploreInfluencers = () => {
     const { loading: isLoading, data, loadMore } = useInfiniteIdScroll<User>(influencerIds, q, 5)
 
     const loadInfluencerIds = async () => {
-        const influencerIds: string[] = await PersistentStorage.getItemWithExpiry("matchmaking_influencers")
-        if (influencerIds) {
-            setInfluencerIds(influencerIds.filter((id) => !idsToIgnore.includes(id)))
+        const influencerIdsCached: string[] = await PersistentStorage.getItemWithExpiry("matchmaking_influencers")
+        if (influencerIdsCached) {
+            setInfluencerIds(influencerIdsCached.filter((id) => !idsToIgnore.includes(id)))
         } else
             HttpWrapper.fetch(`/api/matchmaking/influencer-for-influencer`, {
                 method: "GET",
             }).then(async (res) => {
                 const body = await res.json()
-                let influencerIds: string[] = []
+                let influencerIdsLocal: string[] = []
                 if (__DEV__) {
-                    influencerIds = ["MvLmVKwUcXXZXfBfQHSnq5udnaO2", "mmUwj1YlPUVn0h2hlN4qVw1bEZo1", "jEZf51INayY4ZcJs2ck0XWR8Ptj2", ...body.influencers as string[]]
+                    influencerIdsLocal = ["MvLmVKwUcXXZXfBfQHSnq5udnaO2", "mmUwj1YlPUVn0h2hlN4qVw1bEZo1", "jEZf51INayY4ZcJs2ck0XWR8Ptj2", ...body.influencers as string[]]
                 } else {
-                    influencerIds = body.influencers as string[]
+                    influencerIdsLocal = body.influencers as string[]
                 }
-                setInfluencerIds(influencerIds.filter((id) => !idsToIgnore.includes(id)))
-                PersistentStorage.setItemWithExpiry("matchmaking_influencers", influencerIds)
+                setInfluencerIds(influencerIdsLocal.filter((id) => !idsToIgnore.includes(id)))
+                PersistentStorage.setItemWithExpiry("matchmaking_influencers", influencerIdsLocal)
             }).catch(e => {
                 Toaster.error("Cant fetch Influencers")
             })
@@ -129,41 +85,28 @@ const ExploreInfluencers = () => {
     useEffect(() => {
         loadInfluencerIds()
     }, [])
-    useEffect(() => {
-        const fetchedInfluencers: User[] = [];
-        data.forEach((doc) => {
-            const inf = doc
-            if (inf.primarySocial)
-                fetchedInfluencers.push({
-                    ...inf,
-                    id: doc.documentId,
-                } as User);
-        });
-        setInfluencers(fetchedInfluencers);
-    }, [data])
 
-    const filterInfluencers = () => {
-        const newFilteredInfluencers = influencers.filter((influencer) => {
-            if (user?.moderations?.blockedInfluencers?.includes(influencer.id))
-                return false
-            if (user?.moderations?.reportedInfluencers?.includes(influencer.id))
-                return false
-            if (user?.connectedInfluencers?.includes(influencer.id))
-                return false
-            return true
-        });
+    const influencers = data.map((doc) => {
+        const inf = doc
+        if (inf.primarySocial)
+            return {
+                ...inf,
+                id: doc.documentId,
+            };
+    })
+    const filteredInfluencers = influencers.filter((influencer) => {
+        if (!influencer) return false; // Skip if influencer is undefined
+        if (user?.moderations?.blockedInfluencers?.includes(influencer.id))
+            return false
+        if (user?.moderations?.reportedInfluencers?.includes(influencer.id))
+            return false
+        if (user?.connectedInfluencers?.includes(influencer.id))
+            return false
+        return true
+    }) as User[];
 
-        setFilteredInfluencers(newFilteredInfluencers);
-    };
 
-    useEffect(() => {
-        filterInfluencers();
-    }, [
-        influencers,
-        user
-    ]);
-
-    if (isLoading && influencers.length == 0) {
+    if (isLoading && data.length == 0) {
         return (
             <AppLayout>
                 <View
