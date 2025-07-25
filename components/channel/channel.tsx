@@ -6,7 +6,7 @@ import { ActivityIndicator, Pressable } from "react-native";
 import { Channel as ChannelType } from "stream-chat";
 import { Channel, MessageInput, MessageList } from "stream-chat-expo";
 
-import { useBrandContext, useChatContext, useContractContext } from "@/contexts";
+import { useAuthContext, useBrandContext, useChatContext, useContractContext } from "@/contexts";
 import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
 import { IContracts } from "@/shared-libs/firestore/trendly-pro/models/contracts";
 import Colors from "@/shared-uis/constants/Colors";
@@ -17,6 +17,7 @@ import ChatMessageTopbar from "./chat-message-topbar";
 
 import { streamClient } from "@/contexts/streamClient";
 import { useMyNavigation } from "@/shared-libs/utils/router";
+import React from "react";
 import {
   AttachButton,
   AttachmentPickerSelectionBar,
@@ -30,8 +31,9 @@ const ChannelNative = () => {
   const [contract, setContract] = useState<IContracts | null>(null);
   const [brand, setBrand] = useState<IBrands | null>(null);
   const { cid } = useLocalSearchParams<{ cid: string }>();
+  const { user } = useAuthContext()
 
-  const { connectUser } = useChatContext()
+  const { isChatConnected } = useChatContext()
 
   const { getContractById } = useContractContext();
   const { getBrandById } = useBrandContext();
@@ -59,7 +61,7 @@ const ChannelNative = () => {
 
   useEffect(() => {
     const fetchChannel = async () => {
-      await connectUser()
+      // await connectUser()
       const channels = await client.queryChannels({ cid });
       setChannel(channels[0]);
 
@@ -68,14 +70,15 @@ const ChannelNative = () => {
       }
     };
 
-    fetchChannel();
-  }, [cid]);
+    if (isChatConnected && cid)
+      fetchChannel();
+  }, [cid, isChatConnected]);
 
   useEffect(() => {
-    if (contract) {
+    if (contract && user) {
       fetchBrand(contract?.brandId as string);
     }
-  }, [contract]);
+  }, [contract, user]);
 
   if (!channel) {
     return (
@@ -105,23 +108,42 @@ const ChannelNative = () => {
           title={channel?.data?.name || 'Chat'}
           rightAction={!!contract}
           rightActionButton={
-            !!contract && <Pressable
-              style={{
-                // marginRight: 8,
-                paddingHorizontal: 16
-              }}
-              onPress={() => {
-                router.push(`/contract-details/${contract.streamChannelId}`);
-              }}
-            >
-              <Avatar.Image
+            <>
+              {!!contract && <Pressable
                 style={{
-                  backgroundColor: Colors(theme).transparent,
+                  // marginRight: 8,
+                  paddingHorizontal: 16
                 }}
-                size={40}
-                source={imageUrl(brand?.image)}
-              />
-            </Pressable>
+                onPress={() => {
+                  router.push(`/contract-details/${contract.streamChannelId}`);
+                }}
+              >
+                <Avatar.Image
+                  style={{
+                    backgroundColor: Colors(theme).transparent,
+                  }}
+                  size={40}
+                  source={imageUrl(brand?.image)}
+                />
+              </Pressable>}
+              {(!channel?.data?.name && channel.data?.member_count == 2) && <Pressable
+                style={{
+                  // marginRight: 8,
+                  paddingHorizontal: 16
+                }}
+                onPress={() => {
+                  router.push(`/review-influencer?${channel?.data?.influencerId == user?.id ? ("userId=" + channel?.data?.userId) : ("influencerId=" + channel?.data?.influencerId)}`);
+                }}
+              >
+                <Avatar.Image
+                  style={{
+                    backgroundColor: Colors(theme).transparent,
+                  }}
+                  size={40}
+                  source={imageUrl(brand?.image)}
+                />
+              </Pressable>}
+            </>
           }
         />
         {!!contract && <ChatMessageTopbar

@@ -1,6 +1,6 @@
 import { useFocusEffect } from "expo-router";
 import React, { useCallback, useState } from "react";
-import { Searchbar } from "react-native-paper";
+import { ActivityIndicator, Searchbar } from "react-native-paper";
 import { Channel as ChannelType } from "stream-chat";
 import { ChannelList } from "stream-chat-expo";
 
@@ -25,7 +25,7 @@ const ChannelListNative = () => {
     user,
   } = useAuthContext();
 
-  const { hasError, connectUser } = useChatContext();
+  const { loading, hasError, connectUser } = useChatContext();
 
   useFocusEffect(
     useCallback(() => {
@@ -57,6 +57,14 @@ const ChannelListNative = () => {
       return channel.data?.name?.toLowerCase().includes(searchInput.toLowerCase());
     });
   };
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator color={Colors(theme).primary} />
+      </View>
+    );
+  }
 
   return (
     <>

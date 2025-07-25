@@ -1,5 +1,6 @@
 import { useCloudMessagingContext } from "@/shared-libs/contexts/cloud-messaging.provider";
 import { Console } from "@/shared-libs/utils/console";
+import { AuthApp } from "@/shared-libs/utils/firebase/auth";
 import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import { PersistentStorage } from "@/shared-libs/utils/persistent-storage";
 import { useMyNavigation } from "@/shared-libs/utils/router";
@@ -20,6 +21,7 @@ import { streamClient } from "./streamClient";
 
 export { streamClient };
 interface ChatContextProps {
+  loading: boolean;
   connectUser: () => Promise<string>;
   fetchMembers: (channel: string) => Promise<any>;
   fetchChannelCid: (channelId: string) => Promise<string>;
@@ -29,6 +31,7 @@ interface ChatContextProps {
 }
 
 const ChatContext = createContext<ChatContextProps>({
+  loading: false,
   connectUser: async () => "",
   fetchMembers: async () => { },
   fetchChannelCid: async () => "",
@@ -45,6 +48,7 @@ export const ChatContextProvider: React.FC<PropsWithChildren> = ({
   const [token, setToken] = useState("");
   const [hasError, setHasError] = useState(false)
   const router = useMyNavigation()
+  const [loading, setLoading] = useState(false)
 
   const [client, setClient] = useState<StreamChat<DefaultGenerics> | null>(null);
   const [unreadCount, setUnreadCountMain] = useState(0)
@@ -67,6 +71,7 @@ export const ChatContextProvider: React.FC<PropsWithChildren> = ({
     }, streamToken).then(async () => {
       setClient(streamClient);
       setToken(streamToken);
+      Console.log("Setting Token", streamToken)
       PersistentStorage.set("streamToken", streamToken)
       setHasError(false);
       getToken().then(token => registerPushTokenWithStream(token))
@@ -120,6 +125,7 @@ export const ChatContextProvider: React.FC<PropsWithChildren> = ({
       return token
     }
     Console.log("Connecting to Chat")
+    setLoading(true);
     try {
       const storedToken = await PersistentStorage.get("streamToken")
       if (storedToken) {
@@ -147,23 +153,22 @@ export const ChatContextProvider: React.FC<PropsWithChildren> = ({
       setToken("")
       setHasError(true)
       PersistentStorage.clear("streamToken")
+    } finally {
+      setLoading(false);
     }
     return ""
   };
 
   useEffect(() => {
-    if (session) {
-      HttpWrapper.fetch("/api/v2/chat/auth", { method: "POST", });
+    if (user) {
       connectUser();
     }
-
-    return () => {
-      if (token && client) {
-        streamClient.disconnectUser();
-        setToken("");
-      }
-    };
-  }, [session]);
+  }, [user]);
+  useEffect(() => {
+    AuthApp.authStateReady().then(async () => {
+      HttpWrapper.fetch("/api/v2/chat/auth", { method: "POST", });
+    })
+  }, [])
 
   const fetchMembers = async (channel: string) => {
     const channelToWatch = streamClient.channel("messaging", channel);
@@ -182,6 +187,7 @@ export const ChatContextProvider: React.FC<PropsWithChildren> = ({
   return (
     <ChatContext.Provider
       value={{
+        loading,
         connectUser,
         fetchMembers,
         fetchChannelCid,
