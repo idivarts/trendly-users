@@ -5,6 +5,7 @@ import { usePathname } from "expo-router";
 import { Pressable, StyleSheet } from "react-native";
 
 import { useChatContext } from "@/contexts";
+import { useInviteContext } from "@/contexts/use-invite";
 import { useMyNavigation } from "@/shared-libs/utils/router";
 import Colors from "@/shared-uis/constants/Colors";
 import { Badge } from "react-native-paper";
@@ -19,6 +20,7 @@ type Tab = {
   icon: IconProp | ((props: IconPropFn) => IconProp);
   label: string;
   showMessageCount?: boolean;
+  showInviteCount?: boolean
 };
 
 type DrawerMenuItemProps = {
@@ -30,6 +32,7 @@ const DrawerMenuItem: React.FC<DrawerMenuItemProps> = ({ tab }) => {
   const pathname = usePathname();
   const theme = useTheme();
   const { unreadCount } = useChatContext();
+  const { brandCount, influencerCount } = useInviteContext()
 
   return (
     //@ts-ignore
@@ -83,6 +86,17 @@ const DrawerMenuItem: React.FC<DrawerMenuItemProps> = ({ tab }) => {
             }}
           >
             {unreadCount}
+          </Badge>)}
+        {tab.showInviteCount && (brandCount + influencerCount) > 0 && (
+          <Badge
+            visible={true}
+            size={24}
+            selectionColor={Colors(theme).red}
+            style={{
+              backgroundColor: Colors(theme).red,
+            }}
+          >
+            {(brandCount + influencerCount)}
           </Badge>)}
       </View>
     </Pressable>

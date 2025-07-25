@@ -48,6 +48,7 @@ const DRAWER_MENU_CONTENT_ITEMS = [
       focused,
     }: IconPropFn) => focused ? faFileLinesSolid : faFileLines,
     label: "Invites",
+    showInviteCount: true,
   },
   {
     href: "/profile",
