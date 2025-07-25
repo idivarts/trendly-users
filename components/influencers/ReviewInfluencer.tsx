@@ -19,6 +19,8 @@ import Toaster from "@/shared-uis/components/toaster/Toaster";
 import Colors from "@/shared-uis/constants/Colors";
 import { useLocalSearchParams } from "expo-router";
 import { collection, doc, getDoc } from "firebase/firestore";
+import { Linking } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import { ActivityIndicator, Button, Chip, Text } from "react-native-paper";
 import ScreenHeader from "../ui/screen-header";
 
@@ -166,13 +168,13 @@ const ReviewInfluencerComponent = () => {
                             <View style={{ gap: 16, paddingHorizontal: 4 }}>
                                 {invite.reason && (
                                     <View style={{ marginBottom: 12 }}>
-                                        <Text style={{ fontWeight: '600', fontSize: 16, marginBottom: 6 }}>Reason For Connecting</Text>
-                                        <Text style={{ fontSize: 16, lineHeight: 20 }}>{invite.reason}</Text>
+                                        <Text style={{ fontWeight: '600', fontSize: 16, marginBottom: 6, color: Colors(theme).text }}>Reason For Connecting</Text>
+                                        <Text style={{ fontSize: 16, lineHeight: 20, color: Colors(theme).text }}>{invite.reason}</Text>
                                     </View>
                                 )}
                                 {invite.category && (
                                     <View style={{ marginBottom: 12 }}>
-                                        <Text style={{ fontWeight: '600', fontSize: 16, marginBottom: 6 }}>Category</Text>
+                                        <Text style={{ fontWeight: '600', fontSize: 16, marginBottom: 6, color: Colors(theme).text }}>Category</Text>
                                         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
                                             <Chip icon="tag" disabled>{invite.category}</Chip>
                                         </View>
@@ -180,7 +182,7 @@ const ReviewInfluencerComponent = () => {
                                 )}
                                 {invite.collabType && invite.collabType.length > 0 && (
                                     <View style={{ marginBottom: 12 }}>
-                                        <Text style={{ fontWeight: '600', fontSize: 16, marginBottom: 6 }}>Collaboration Type</Text>
+                                        <Text style={{ fontWeight: '600', fontSize: 16, marginBottom: 6, color: Colors(theme).text }}>Collaboration Type</Text>
                                         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
                                             {invite.collabType.map((type, index) => (
                                                 <Chip key={index} disabled>{type}</Chip>
@@ -190,13 +192,19 @@ const ReviewInfluencerComponent = () => {
                                 )}
                                 {invite.exampleLink && (
                                     <View style={{ marginBottom: 12 }}>
-                                        <Text style={{ fontWeight: '600', fontSize: 16, marginBottom: 6 }}>Example Link</Text>
-                                        <Text style={{ fontSize: 14, lineHeight: 20, color: theme.colors.primary }}>{invite.exampleLink}</Text>
+                                        <Text style={{ fontWeight: '600', fontSize: 16, marginBottom: 6, color: Colors(theme).text }}>Example Link</Text>
+                                        <TouchableOpacity onPress={() => {
+                                            if (invite?.exampleLink) {
+                                                Linking.openURL(invite.exampleLink)
+                                            }
+                                        }}>
+                                            <Text style={{ fontSize: 14, lineHeight: 20, color: theme.colors.primary }}>{invite.exampleLink}</Text>
+                                        </TouchableOpacity>
                                     </View>
                                 )}
                                 {invite.platforms && invite.platforms.length > 0 && (
                                     <View style={{ marginBottom: 12 }}>
-                                        <Text style={{ fontWeight: '600', fontSize: 16, marginBottom: 6 }}>Platforms</Text>
+                                        <Text style={{ fontWeight: '600', fontSize: 16, marginBottom: 6, color: Colors(theme).text }}>Platforms</Text>
                                         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
                                             {invite.platforms.map((platform, index) => (
                                                 <Chip key={index} disabled>{platform}</Chip>
@@ -206,7 +214,7 @@ const ReviewInfluencerComponent = () => {
                                 )}
                                 {invite.collabMode && (
                                     <View style={{ marginBottom: 12 }}>
-                                        <Text style={{ fontWeight: '600', fontSize: 16, marginBottom: 6 }}>Collaboration Mode</Text>
+                                        <Text style={{ fontWeight: '600', fontSize: 16, marginBottom: 6, color: Colors(theme).text }}>Collaboration Mode</Text>
                                         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
                                             <Chip icon={invite.collabMode === 'paid' ? 'currency-inr' : 'gift'} disabled>
                                                 {invite.collabMode === 'paid' ? 'Paid' : 'Free'}
@@ -216,8 +224,8 @@ const ReviewInfluencerComponent = () => {
                                 )}
                                 {(invite.collabMode === 'paid' && (invite.budgetMin || invite.budgetMax)) && (
                                     <View style={{ marginBottom: 12 }}>
-                                        <Text style={{ fontWeight: '600', fontSize: 16, marginBottom: 6 }}>Budget</Text>
-                                        <Text style={{ fontSize: 14, lineHeight: 20 }}>
+                                        <Text style={{ fontWeight: '600', fontSize: 16, marginBottom: 6, color: Colors(theme).text }}>Budget</Text>
+                                        <Text style={{ fontSize: 14, lineHeight: 20, color: Colors(theme).text }}>
                                             ₹{invite.budgetMin || 0} - ₹{invite.budgetMax || 'No Max'}
                                         </Text>
                                     </View>
