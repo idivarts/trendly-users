@@ -66,7 +66,7 @@ const useInstagramLogin = (
       return;
     }
     setLoading(true);
-    await HttpWrapper.fetch("/api/v1/socials/instagram", {
+    await HttpWrapper.fetch("/api/v2/socials/instagram", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

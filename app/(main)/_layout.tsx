@@ -1,6 +1,8 @@
 import { AWSContextProvider, BrandContextProvider, ChatContextProvider, CollaborationContextProvider, ContractContextProvider, FirebaseStorageContextProvider, NotificationContextProvider, SocialContextProvider, useAuthContext } from "@/contexts";
 import { streamClient } from "@/contexts/chat-context.provider";
+import { InviteContextProvider } from "@/contexts/use-invite";
 import { CloudMessagingContextProvider } from "@/shared-libs/contexts/cloud-messaging.provider";
+import { ScrapeImagesProvider } from "@/shared-libs/contexts/scrape-images";
 import { ScrollProvider } from "@/shared-libs/contexts/scroll-context";
 import TrackingProvider from "@/shared-libs/contexts/tracking-provider";
 import { Stack } from "expo-router";
@@ -19,13 +21,15 @@ const MainLayout = () => {
                     <CloudMessagingContextProvider streamClient={streamClient} userOrmanager={user} updateUserOrManager={updateUser}>
                       <ChatContextProvider>
                         <ScrollProvider>
-                          <Stack
-                            screenOptions={{
-                              animation: "ios",
-                              headerShown: false,
-                            }}
-                          >
-                            {/* <Stack.Screen
+                          <InviteContextProvider>
+                            <ScrapeImagesProvider>
+                              <Stack
+                                screenOptions={{
+                                  animation: "ios",
+                                  headerShown: false,
+                                }}
+                              >
+                                {/* <Stack.Screen
                               name="(onboarding)"
                               options={{
                                 headerShown: false,
@@ -45,7 +49,9 @@ const MainLayout = () => {
                                 headerShown: false,
                               }}
                             /> */}
-                          </Stack>
+                              </Stack>
+                            </ScrapeImagesProvider>
+                          </InviteContextProvider>
                         </ScrollProvider>
                       </ChatContextProvider>
                     </CloudMessagingContextProvider>

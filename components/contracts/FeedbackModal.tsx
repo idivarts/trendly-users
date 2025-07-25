@@ -65,7 +65,7 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
         },
         status: 3,
       })
-      HttpWrapper.fetch(`/api/v1/contracts/${contract.streamChannelId}/feedback`, {
+      HttpWrapper.fetch(`/api/collabs/contracts/${contract.streamChannelId}/feedback`, {
         method: "POST"
       })
 

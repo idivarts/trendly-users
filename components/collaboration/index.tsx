@@ -7,16 +7,20 @@ import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
 import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { processRawAttachment } from "@/shared-libs/utils/attachments";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
-import { useInfiniteScroll } from "@/shared-libs/utils/infinite-scroll";
+import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
+import { useInfiniteIdScroll } from "@/shared-libs/utils/infinite-id-scroll";
+import { PersistentStorage } from "@/shared-libs/utils/persistent-storage";
 import { useMyNavigation } from "@/shared-libs/utils/router";
 import Carousel from "@/shared-uis/components/carousel/carousel";
 import { APPROX_CARD_HEIGHT } from "@/shared-uis/components/carousel/carousel-util";
 import { CarouselInViewProvider } from "@/shared-uis/components/scroller/CarouselInViewContext";
 import CarouselScroller from "@/shared-uis/components/scroller/CarouselScroller";
+import SlowLoader from "@/shared-uis/components/SlowLoader";
+import Toaster from "@/shared-uis/components/toaster/Toaster";
 import Colors from "@/shared-uis/constants/Colors";
 import { stylesFn } from "@/styles/Collections.styles";
 import { useTheme } from "@react-navigation/native";
-import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -50,6 +54,7 @@ const Collaboration = () => {
   const router = useMyNavigation()
   const [filterVisible, setFilterVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [collabIds, setCollabIds] = useState<string[]>([])
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedJobType, setSelectedJobType] = useState("");
   const [salaryRange, setSalaryRange] = useState([0, 100000]);
@@ -75,9 +80,32 @@ const Collaboration = () => {
     whereArray.push(where("brandId", "not-in", user.moderations.blockedBrands))
   const collabQuery = query(collabRef,
     where("status", "==", "active"),
-    ...whereArray,
-    orderBy("timeStamp", "desc"));
-  const { loadMore, data: collabs, loading } = useInfiniteScroll<ICollaborationAddCardProps>(collabQuery)
+    ...whereArray);
+
+
+  // const { loadMore, data: collabs, loading } = useInfiniteScroll<ICollaborationAddCardProps>(collabQuery)
+  // const { loading: isLoading, data, loadMore } = useInfiniteScroll<User>(q, 10)
+  const { loading, data: collabs, loadMore } = useInfiniteIdScroll<ICollaborationAddCardProps>(collabIds, collabQuery, 5)
+
+  const loadCollabIds = async () => {
+    const collabIds = await PersistentStorage.getItemWithExpiry("matchmaking_collaborations")
+    if (collabIds) {
+      setCollabIds(collabIds as string[])
+    } else
+      HttpWrapper.fetch(`/api/matchmaking/collaborations`, {
+        method: "GET",
+      }).then(async (res) => {
+        const body = await res.json()
+        setCollabIds(body.collabs as string[])
+        PersistentStorage.setItemWithExpiry("matchmaking_collaborations", body.collabs as string[])
+      }).catch(e => {
+        Toaster.error("Cant fetch Influencers")
+      })
+  }
+
+  useEffect(() => {
+    loadCollabIds()
+  }, [])
 
   const [brandMap, setBrandMap] = useState<{
     [key: string]: {
@@ -186,7 +214,7 @@ const Collaboration = () => {
               alignItems: "center",
             }}
           >
-            <ActivityIndicator color={Colors(theme).primary} size="large" />
+            <SlowLoader />
           </View>
         </View>
       </AppLayout>

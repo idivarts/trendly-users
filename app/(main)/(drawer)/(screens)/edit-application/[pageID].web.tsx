@@ -19,7 +19,6 @@ import { stylesFn } from "@/styles/ApplyNow.styles";
 import { handleModalOrInputPage } from "@/utils/TextInput";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useTheme } from "@react-navigation/native";
-import * as DocumentPicker from "expo-document-picker";
 import { useLocalSearchParams } from "expo-router";
 import { doc, getDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
@@ -252,39 +251,15 @@ const ApplyScreenWeb = () => {
       })
 
       Toaster.success("Application updated successfully");
-      setLoading(false);
       setProcessMessage("");
       setTimeout(() => {
-        router.push("/collaborations");
+        router.resetAndNavigate("/collaborations");
       }, 1000);
     } catch (error) {
       Console.error(error);
       setErrorMessage("Error uploading files");
+    } finally {
       setLoading(false);
-    }
-  };
-
-  const handlePickAttachment = async () => {
-    try {
-      const result = await DocumentPicker.getDocumentAsync({
-        type: "*/*", // Allow all file types
-        copyToCacheDirectory: true,
-      });
-
-      if (!result.canceled) {
-        const newAttachment: any = {
-          id: result.assets[0].name, // Use file name as ID
-          uri: result.assets[0].uri,
-          type: result.assets[0].mimeType,
-        };
-
-        setFileAttachments((prevAttachments: any) => [
-          ...prevAttachments,
-          newAttachment,
-        ]);
-      }
-    } catch (error) {
-      Console.error(error);
     }
   };
 

@@ -119,7 +119,7 @@ const useFacebookLogin = (
 
         const userToken = await auth.currentUser?.getIdToken();
 
-        HttpWrapper.fetch("/api/v1/socials/facebook", {
+        HttpWrapper.fetch("/api/v2/socials/facebook", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

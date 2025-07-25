@@ -43,7 +43,7 @@ const FacebookLoginButton: React.FC = () => {
 
       const user = await AuthApp.currentUser?.getIdToken();
 
-      let responseFacebook = await HttpWrapper.fetch("/api/v1/socials/facebook", {
+      let responseFacebook = await HttpWrapper.fetch("/api/v2/socials/facebook", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

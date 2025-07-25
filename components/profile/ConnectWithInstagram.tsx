@@ -2,8 +2,8 @@ import { IS_BETA_ENABLED } from "@/constants/App";
 import { FB_APP_ID as fbid } from "@/constants/Facebook";
 import { useInitialUserData } from "@/constants/User";
 import { useInstagramLogin } from "@/hooks/requests";
-import { AuthApp } from "@/shared-libs/utils/firebase/auth";
 import { Console } from "@/shared-libs/utils/console";
+import { AuthApp } from "@/shared-libs/utils/firebase/auth";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import * as WebBrowser from "expo-web-browser";
@@ -33,7 +33,7 @@ const InstagramLoginButton: React.FC = () => {
     setIsLoading(true);
     try {
       const token = await user?.getIdToken();
-      await HttpWrapper.fetch("/api/v1/socials/instagram", {
+      await HttpWrapper.fetch("/api/v2/socials/instagram", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

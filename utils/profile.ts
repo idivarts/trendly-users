@@ -2,7 +2,7 @@ import { IPreferences, IUsers } from "@/shared-libs/firestore/trendly-pro/models
 import { SurveyAnswer } from "@/types/Survey";
 
 export const calculateProfileCompletion = (user: Partial<IUsers>) => {
-  const totalFields = 17;
+  const totalFields = 18;
   let completedFields = 0;
 
   if (user?.name) {

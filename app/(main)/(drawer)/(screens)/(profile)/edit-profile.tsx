@@ -37,7 +37,7 @@ const EditProfileScreen: React.FC = () => {
 
   const fetchPosts = async () => {
     setLoadingPosts(true);
-    const response = await HttpWrapper.fetch(`/api/v1/socials/medias?userId=${AuthApp.currentUser?.uid}`, {
+    const response = await HttpWrapper.fetch(`/api/v2/socials/medias?userId=${AuthApp.currentUser?.uid}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

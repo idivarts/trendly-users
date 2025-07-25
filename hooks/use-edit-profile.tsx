@@ -1,5 +1,6 @@
 import { SelectItem } from "@/components/ui/select";
 import { useAuthContext } from "@/contexts";
+import { PersistentStorage } from "@/shared-libs/utils/persistent-storage";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { NativeAssetItem, WebAssetItem } from "@/types/Asset";
 import { calculateProfileCompletion } from "@/utils/profile";
@@ -35,6 +36,7 @@ const useEditProfile = ({
     collaborationGoals: "",
     audienceInsights: "",
     funFactAboutUser: "",
+    influencerConectionGoals: ""
   });
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -71,6 +73,13 @@ const useEditProfile = ({
         defaultContent:
           "Write in brief what are you looking for in your next Collaboration",
         content: content.collaborationGoals,
+      },
+      {
+        key: "influencerConectionGoals",
+        title: "Influencer Connection Goals",
+        defaultContent:
+          "Open to collabs or networking with other influencers? Mention what you are looking for.",
+        content: content.influencerConectionGoals,
       },
       {
         key: "audienceInsights",
@@ -172,6 +181,7 @@ const useEditProfile = ({
         if (showToast)
           Toaster.success("Profile saved successfully");
         setUnsavedChanges && setUnsavedChanges(false);
+        PersistentStorage.clear("matchmaking_influencers");
       })
       .catch((error) => {
         if (showToast)

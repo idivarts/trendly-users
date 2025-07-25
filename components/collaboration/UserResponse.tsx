@@ -169,6 +169,7 @@ const UserResponse: FC<UserResponseProps> = ({
             application?.answersFromInfluencer.map((answer, index) => {
               return (
                 <View
+                  key={index}
                   style={{
                     flexDirection: "column",
                     gap: 10,

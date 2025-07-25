@@ -55,7 +55,7 @@ const SocialPage: React.FC<SocialPageProps> = ({
 
     await updateDoc(userDocRef, { primarySocial: id })
       .then(() => {
-        HttpWrapper.fetch("/api/v1/chat/auth", { method: "POST" });
+        HttpWrapper.fetch("/api/v2/chat/auth", { method: "POST" });
         Toaster.success("Social marked as primary");
       })
       .catch((error) => {

@@ -35,7 +35,7 @@ interface NotificationContextProps {
 
 const NotificationContext = createContext<NotificationContextProps>(null!);
 
-export const NotficationTypesToHandle = ["revise-quotation", "application-accepted", "contract-started", "contract-ended", "invitation"]
+export const NotficationTypesToHandle = ["revise-quotation", "application-accepted", "contract-started", "contract-ended", "invitation", "influencer-invite", "influencer-invite-accepted", "influencer-invite-rejected"]
 
 export const useNotificationContext = () => useContext(NotificationContext);
 

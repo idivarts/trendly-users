@@ -6,6 +6,7 @@ import { View } from "@/components/theme/Themed";
 import { useClientOnlyValue } from "@/components/useClientOnlyValue";
 import { COMPLETION_PERCENTAGE } from "@/constants/CompletionPercentage";
 import { useAuthContext, useChatContext } from "@/contexts";
+import { useInviteContext } from "@/contexts/use-invite";
 import { useBreakpoints } from "@/hooks";
 import { useMyNavigation } from "@/shared-libs/utils/router";
 import Colors from "@/shared-uis/constants/Colors";
@@ -34,6 +35,7 @@ const TabLayout = () => {
   const theme = useTheme();
   const { user } = useAuthContext();
   const { unreadCount } = useChatContext();
+  const { brandCount, influencerCount } = useInviteContext()
   const router = useMyNavigation()
   return (
     <Tabs
@@ -58,8 +60,8 @@ const TabLayout = () => {
       <Tabs.Screen
         name="collaborations"
         options={{
-          title: "Collaborations",
-          tabBarLabel: "Collaborations",
+          title: "Brand Collaborations",
+          tabBarLabel: "Brands",
           headerRight: () => <NotificationIcon />,
           tabBarIcon: ({ color, focused }) => (
             <FontAwesomeIcon
@@ -71,10 +73,10 @@ const TabLayout = () => {
         }}
       />
       <Tabs.Screen
-        name="proposals"
+        name="influencers"
         options={{
-          title: "Proposals",
-          tabBarLabel: "Proposals",
+          title: "Creators Matchmaking",
+          tabBarLabel: "Influencers",
           tabBarIcon: ({ color, focused }) => (
             <FontAwesomeIcon
               color={color}
@@ -119,17 +121,35 @@ const TabLayout = () => {
         }}
       />
       <Tabs.Screen
-        name="contracts"
+        name="invites"
         options={{
           tabBarIcon: ({ color, focused }) => (
-            <FontAwesomeIcon
-              color={color}
-              icon={focused ? faFileLinesSolid : faFileLines}
-              size={24}
-            />
+            <>
+              <FontAwesomeIcon
+                color={color}
+                icon={focused ? faFileLinesSolid : faFileLines}
+                size={24}
+              />
+              {((brandCount + influencerCount) > 0) && (
+                <Badge
+                  visible={true}
+                  size={20}
+                  selectionColor={Colors(theme).red}
+                  style={{
+                    backgroundColor: Colors(theme).red,
+                    zIndex: 1,
+                    position: "absolute",
+                    top: 0,
+                    right: 12,
+                  }}
+                >
+                  {(brandCount + influencerCount)}
+                </Badge>
+              )}
+            </>
           ),
-          title: "Contracts",
-          tabBarLabel: "Contracts",
+          title: "Invites",
+          tabBarLabel: "Invites",
           headerTitleAlign: "left",
           headerRight: () => <NotificationIcon />,
         }}

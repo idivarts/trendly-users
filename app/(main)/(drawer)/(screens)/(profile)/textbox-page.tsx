@@ -3,6 +3,7 @@ import { Text, View } from "@/components/theme/Themed";
 import ScreenHeader from "@/components/ui/screen-header";
 import { useAuthContext } from "@/contexts";
 import AppLayout from "@/layouts/app-layout";
+import { Console } from "@/shared-libs/utils/console";
 import { useMyNavigation } from "@/shared-libs/utils/router";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import Colors from "@/shared-uis/constants/Colors";
@@ -17,7 +18,7 @@ import { RichEditor } from "react-native-pell-rich-editor";
 
 const EditTextArea: React.FC = () => {
   const theme = useTheme();
-  const navigation = useMyNavigation();
+  const router = useMyNavigation();
   const richText = useRef<RichEditor>(null);
   const [loading, setLoading] = useState(false)
 
@@ -39,19 +40,18 @@ const EditTextArea: React.FC = () => {
     try {
       if (!user) return;
 
+
       const content = {
         ...(user?.profile?.content || {}),
-        [key as string]: value,
+        [key as string]: value ? value : "",
       };
+      Console.log("Updating profile content", content);
 
       const percentage = calculateProfileCompletion({
         ...user,
         profile: {
           ...(user?.profile || {}),
-          content: {
-            ...(user?.profile?.content || {}),
-            [key as string]: value,
-          },
+          content,
         }
       });
 
@@ -60,15 +60,13 @@ const EditTextArea: React.FC = () => {
         profile: {
           ...(user?.profile || {}),
           completionPercentage: percentage,
-          content: {
-            ...(user?.profile?.content || {}),
-            [key as string]: value,
-          },
+          content,
         },
       };
 
+      Console.log("Updating profile content 2", updatedContent);
       await updateUser(user.id, updatedContent).then(() => {
-        navigation.push("/edit-profile");
+        handleGoBack()
         Toaster.success(`${title ? title : "Profile"} updated successfully`);
       });
     } finally {
@@ -77,34 +75,17 @@ const EditTextArea: React.FC = () => {
   };
 
   const handleSubmit = () => {
+    // if (!value) {
+    //   Toaster.error("Please enter a value");
+    //   return;
+    // }
     if (userProfile === "true") {
       handleUpdateProfileContent();
-      return;
     }
-
-    if (!value) {
-      Toaster.error("Please enter a value");
-      return;
-    }
-
-    const valueToSubmit = {
-      textbox: {
-        title,
-        value,
-      },
-    };
-
-    navigation.push({
-      //@ts-ignore
-      pathname: path as string,
-      params: {
-        value: JSON.stringify(valueToSubmit),
-      },
-    });
   };
 
   const handleGoBack = () => {
-    navigation.back();
+    router.back();
   };
 
   return (

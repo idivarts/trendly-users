@@ -1,8 +1,10 @@
+import { useInviteContext } from '@/contexts/use-invite';
 import Colors from '@/shared-uis/constants/Colors';
 import { stylesFn } from '@/styles/top-tab-navigation/TopTabNavigation.styles';
 import { useTheme } from '@react-navigation/native';
 import React, { useEffect, useRef, useState } from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Badge } from 'react-native-paper';
 
 interface TopTabNavigationProps {
   tabs: {
@@ -23,6 +25,7 @@ const TopTabNavigation: React.FC<TopTabNavigationProps> = ({
   const scrollViewRef = useRef<ScrollView>(null);
   const theme = useTheme();
   const styles = stylesFn(theme);
+  const { brandCount, influencerCount } = useInviteContext()
 
   useEffect(() => {
     setActiveTab(tabs[0]);
@@ -75,6 +78,7 @@ const TopTabNavigation: React.FC<TopTabNavigationProps> = ({
               key={tab.id}
               style={[
                 styles.tab,
+                { flexDirection: "row", alignItems: "center", gap: 8 },
                 size === "compact" && styles.compactTab,
                 {
                   backgroundColor: activeTab === tab ? Colors(theme).primary : 'transparent',
@@ -101,6 +105,28 @@ const TopTabNavigation: React.FC<TopTabNavigationProps> = ({
               ]}>
                 {tab.title}
               </Text>
+              {tab.id == "brand-invites" && (brandCount) > 0 && (
+                <Badge
+                  visible={true}
+                  size={24}
+                  selectionColor={Colors(theme).red}
+                  style={{
+                    backgroundColor: Colors(theme).red,
+                  }}
+                >
+                  {(brandCount)}
+                </Badge>)}
+              {tab.id == "influencer-invites" && (influencerCount) > 0 && (
+                <Badge
+                  visible={true}
+                  size={24}
+                  selectionColor={Colors(theme).red}
+                  style={{
+                    backgroundColor: Colors(theme).red,
+                  }}
+                >
+                  {(influencerCount)}
+                </Badge>)}
             </Pressable>
           ))}
         </View>

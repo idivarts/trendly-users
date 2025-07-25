@@ -11,6 +11,7 @@ import {
 import UpdateProvider from "@/shared-libs/contexts/update-provider";
 import { Console } from "@/shared-libs/utils/console";
 import { useMyNavigation } from "@/shared-libs/utils/router";
+import { ConfirmationModalProvider } from "@/shared-uis/components/ConfirmationModal";
 import { queryParams } from "@/utils/url";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
@@ -142,19 +143,21 @@ const RootLayoutStack = () => {
     <ThemeProvider value={appTheme === "dark" ? DarkTheme : ExpoDefaultTheme}>
       <Provider theme={CustomPaperTheme(theme)}>
         <DownloadApp />
-        <Stack
-          screenOptions={{
-            animation: "ios",
-            headerShown: false,
-          }}
-        >
-          {/* <Stack.Screen name="(main)" options={{ headerShown: false }} />
+        <ConfirmationModalProvider>
+          <Stack
+            screenOptions={{
+              animation: "ios",
+              headerShown: false,
+            }}
+          >
+            {/* <Stack.Screen name="(main)" options={{ headerShown: false }} />
           <Stack.Screen name="(auth)" options={{ headerShown: false }} />
           <Stack.Screen name="(public)" options={{ headerShown: false }} /> */}
-          <Stack.Screen name="index" />
-          <Stack.Screen name="+not-found" />
-          {/* <Stack.Screen name="modal" options={{ presentation: "modal" }} /> */}
-        </Stack>
+            <Stack.Screen name="index" />
+            <Stack.Screen name="+not-found" />
+            {/* <Stack.Screen name="modal" options={{ presentation: "modal" }} /> */}
+          </Stack>
+        </ConfirmationModalProvider>
       </Provider>
     </ThemeProvider>
   );

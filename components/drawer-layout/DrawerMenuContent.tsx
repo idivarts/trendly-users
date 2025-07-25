@@ -25,7 +25,14 @@ const DRAWER_MENU_CONTENT_ITEMS = [
     icon: ({
       focused,
     }: IconPropFn) => focused ? faStarSolid : faStar,
-    label: "Collaborations",
+    label: "Brands",
+  },
+  {
+    href: "/influencers",
+    icon: ({
+      focused,
+    }: IconPropFn) => focused ? faHandshakeSolid : faHandshake,
+    label: "Influencers",
   },
   {
     href: "/messages",
@@ -36,18 +43,12 @@ const DRAWER_MENU_CONTENT_ITEMS = [
     showMessageCount: true,
   },
   {
-    href: "/contracts",
+    href: "/invites",
     icon: ({
       focused,
     }: IconPropFn) => focused ? faFileLinesSolid : faFileLines,
-    label: "Contracts",
-  },
-  {
-    href: "/proposals",
-    icon: ({
-      focused,
-    }: IconPropFn) => focused ? faHandshakeSolid : faHandshake,
-    label: "Proposals",
+    label: "Invites",
+    showInviteCount: true,
   },
   {
     href: "/profile",
