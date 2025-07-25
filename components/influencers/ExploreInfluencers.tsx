@@ -26,7 +26,7 @@ import SlowLoader from "@/shared-uis/components/SlowLoader";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import Colors from "@/shared-uis/constants/Colors";
 import { useLocalSearchParams } from "expo-router";
-import { collection, doc, documentId, getDoc, query, where } from "firebase/firestore";
+import { collection, doc, getDoc, query } from "firebase/firestore";
 import { Button } from "react-native-paper";
 import { useSharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -97,21 +97,17 @@ const ExploreInfluencers = () => {
     const influencersRef = collection(FirestoreDB, "users");
     const q = query(
         influencersRef,
-        // where("profile.completionPercentage", ">=", 60),
-        where(documentId(), "!=", user?.id || ""),
-        ...((user?.moderations?.blockedInfluencers || []).length > 0 ? [where(documentId(), "not-in", user?.moderations?.blockedInfluencers)] : []),
-        ...((user?.moderations?.reportedInfluencers || []).length > 0 ? [where(documentId(), "not-in", user?.moderations?.reportedInfluencers)] : []),
-        ...((user?.connectedInfluencers || []).length > 0 ? [where(documentId(), "not-in", user?.connectedInfluencers)] : []),
-        // orderBy("lastUseTime", "desc")
     );
 
     // const { loading: isLoading, data, loadMore } = useInfiniteScroll<User>(q, 10)
+    const idsToIgnore = [...(user?.connectedInfluencers || []), ...(user?.moderations?.blockedInfluencers || []), ...(user?.moderations?.reportedInfluencers || []), ...(user?.id ? [user.id] : [])]
+
     const { loading: isLoading, data, loadMore } = useInfiniteIdScroll<User>(influencerIds, q, 5)
 
     const loadInfluencerIds = async () => {
-        const influencerIds = await PersistentStorage.getItemWithExpiry("matchmaking_influencers")
+        const influencerIds: string[] = await PersistentStorage.getItemWithExpiry("matchmaking_influencers")
         if (influencerIds) {
-            setInfluencerIds(influencerIds as string[])
+            setInfluencerIds(influencerIds.filter((id) => !idsToIgnore.includes(id)))
         } else
             HttpWrapper.fetch(`/api/matchmaking/influencer-for-influencer`, {
                 method: "GET",
@@ -123,7 +119,7 @@ const ExploreInfluencers = () => {
                 } else {
                     influencerIds = body.influencers as string[]
                 }
-                setInfluencerIds(influencerIds)
+                setInfluencerIds(influencerIds.filter((id) => !idsToIgnore.includes(id)))
                 PersistentStorage.setItemWithExpiry("matchmaking_influencers", influencerIds)
             }).catch(e => {
                 Toaster.error("Cant fetch Influencers")

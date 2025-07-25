@@ -1,3 +1,4 @@
+import { useAuthContext } from '@/contexts'
 import { INFLUENCER_COLLAB_NETWORKING_TYPES, INFLUENCER_COLLAB_TYPES } from '@/shared-constants/preferences/influencer-collab-types'
 import { PLATFORMS } from '@/shared-constants/preferences/platforms'
 import { Console } from '@/shared-libs/utils/console'
@@ -10,9 +11,8 @@ import { useLocalSearchParams } from 'expo-router'
 import React, { useState } from 'react'
 import { KeyboardAvoidingView, Platform, ScrollView } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
-import { HelperText, SegmentedButtons, Text, TextInput } from 'react-native-paper'
+import { Button, HelperText, SegmentedButtons, Text, TextInput } from 'react-native-paper'
 import { View } from '../theme/Themed'
-import Button from '../ui/button'
 import ScreenHeader from '../ui/screen-header'
 import Select, { SelectItem } from '../ui/select'
 
@@ -34,12 +34,13 @@ const InfluencerApplyScreen = () => {
     const [budgetMin, setBudgetMin] = useState('')
     const [budgetMax, setBudgetMax] = useState('')
     const [submitted, setSubmitted] = useState(false)
+    const { user, updateUser } = useAuthContext()
 
     const [onSameLevel, setAbleToNetwork] = useState(true)
 
     const [loading, setLoading] = useState(false)
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         setSubmitted(true)
         setLoading(true)
 
@@ -47,7 +48,7 @@ const InfluencerApplyScreen = () => {
             if (category == "networking" ? !reason : (!reason || (!!exampleLink && !isValidLink(exampleLink)) || (collabMode === 'paid' && (!budgetMin || !budgetMax) || collabType.length === 0)))
                 return
 
-            HttpWrapper.fetch(`/api/influencers/invite/${influencerId}`, {
+            await HttpWrapper.fetch(`/api/influencers/invite/${influencerId}`, {
                 method: "POST",
                 body: JSON.stringify({
                     category,
@@ -64,6 +65,13 @@ const InfluencerApplyScreen = () => {
                 },
             }).then((res) => {
                 Toaster.success("Invite Sent", "Your invite has been sent successfully!")
+                if (user)
+                    updateUser(user.id, {
+                        connectedInfluencers: [
+                            ...(user.connectedInfluencers || []),
+                            influencerId as string
+                        ],
+                    })
                 router.resetAndNavigate(`/influencers`)
             }).catch((err) => {
                 Console.error(err, "Error sending invite")
