@@ -1,4 +1,3 @@
-import { useBreakpoints } from "@/hooks";
 import AppLayout from "@/layouts/app-layout";
 import { User } from "@/types/User";
 import { useTheme } from "@react-navigation/native";
@@ -30,7 +29,9 @@ const ReviewInfluencerComponent = () => {
     const router = useMyNavigation()
     const { user } = useAuthContext()
     const theme = useTheme();
-    const { xl } = useBreakpoints();
+    const [acceptLoading, setAcceptLoading] = useState(false)
+    const [rejectLoading, setRejectLoading] = useState(false)
+
 
 
     const getInfluencer = async (influencerId: string) => {
@@ -76,6 +77,7 @@ const ReviewInfluencerComponent = () => {
 
     const handleInviteAction = (accept: boolean, influencerId: string) => {
         if (accept) {
+            setAcceptLoading(true)
             HttpWrapper.fetch(`/api/influencers/invite/${influencerId}/accept`, {
                 method: "POST",
             }).then((res) => {
@@ -84,8 +86,11 @@ const ReviewInfluencerComponent = () => {
             }).catch((err) => {
                 Console.error(err, "Error accepting invite")
                 Toaster.error("Failed to accept invite", "Please try again later.")
+            }).finally(() => {
+                setAcceptLoading(false)
             })
         } else {
+            setRejectLoading(true)
             HttpWrapper.fetch(`/api/influencers/invite/${influencerId}/reject`, {
                 method: "POST",
                 body: JSON.stringify({
@@ -99,6 +104,8 @@ const ReviewInfluencerComponent = () => {
             }).catch((err) => {
                 Console.error(err, "Error rejecting invite")
                 Toaster.error("Failed to reject invite", "Please try again later.")
+            }).finally(() => {
+                setRejectLoading(false)
             })
         }
     }
@@ -149,10 +156,10 @@ const ReviewInfluencerComponent = () => {
                             </Text>
                             <Button mode="contained" onPress={() => {
                                 handleInviteAction(true, invite?.influencerId || "");
-                            }}>Accept Invite</Button>
+                            }} loading={acceptLoading} disabled={rejectLoading}>Accept Invite</Button>
                             <Button mode="outlined" onPress={() => {
                                 handleInviteAction(false, invite?.influencerId || "");
-                            }}>Reject Invite</Button>
+                            }} loading={rejectLoading} disabled={acceptLoading}>Reject Invite</Button>
 
                         </View>
                     }
