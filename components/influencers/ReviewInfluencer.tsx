@@ -130,7 +130,7 @@ const ReviewInfluencerComponent = () => {
 
     return (
         <>
-            <ScreenHeader title="Review Influencer" />
+            <ScreenHeader title={(influencer?.name || "Influencer")} />
             <View
                 style={{
                     flex: 1,
