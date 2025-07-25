@@ -56,6 +56,12 @@ export const NotificationCard: React.FC<NotificationCardProps> = ({
           redirectUrl = `/contract-details/${data.groupId}`;
         } else if (type === "invitation") {
           redirectUrl = `/collaboration-details/${data.collaborationId}`;
+        } else if (type === "influencer-invite") {
+          redirectUrl = `/review-influencer?influencerId=${data.userId}`;
+        } else if (type === "influencer-invite-accepted") {
+          redirectUrl = `/channel/messaging:${data.groupId}`;
+        } else if (type === "influencer-invite-rejected") {
+          redirectUrl = `/influencers`;
         } else
           return;
         router.push(redirectUrl);
