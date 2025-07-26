@@ -75,7 +75,7 @@ const TabLayout = () => {
       <Tabs.Screen
         name="influencers"
         options={{
-          title: "Creators Matchmaking",
+          title: "Creators Collaborations",
           tabBarLabel: "Influencers",
           tabBarIcon: ({ color, focused }) => (
             <FontAwesomeIcon

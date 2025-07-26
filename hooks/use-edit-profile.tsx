@@ -69,9 +69,9 @@ const useEditProfile = ({
       },
       {
         key: "collaborationGoals",
-        title: "Collaboration Goals",
+        title: "Brand Collaboration Goals",
         defaultContent:
-          "Write in brief what are you looking for in your next Collaboration",
+          "Write in brief what are you looking for in your next Collaboration with brands",
         content: content.collaborationGoals,
       },
       {
