@@ -134,7 +134,7 @@ const ExploreInfluencers = () => {
                     width: "100%", //xl ? MAX_WIDTH_WEB :
                 }}
             >
-                <View style={{ alignSelf: "stretch" }}>
+                <View style={{ alignSelf: "stretch", flex: 1, minHeight: 0 }}>
                     <CarouselInViewProvider>
                         <CarouselScroller
                             data={filteredInfluencers}
@@ -142,10 +142,10 @@ const ExploreInfluencers = () => {
                                 <InfluencerCard
                                     xl={xl}
                                     key={item.id}
+                                    fullHeight={true}
                                     type="influencers"
                                     ToggleModal={ToggleModal}
                                     influencer={item}
-                                    style={{ marginBottom: 32 }}
                                     setSelectedInfluencer={setSelectedInfluencer as any}
                                     cardActionNode={<Button mode="contained" onPress={() => {
                                         setSelectedInfluencer(item as User);
@@ -159,7 +159,7 @@ const ExploreInfluencers = () => {
                                 />
                             )}
                             objectKey='id'
-                            vertical={false}
+                            vertical={true}
                             width={width} // Default width if not provided
                             height={height}
                             onLoadMore={() => loadMore()}
@@ -174,6 +174,9 @@ const ExploreInfluencers = () => {
             </View>
 
             <InfluencerActionModal influencerId={selectedInfluencer?.id} isModalVisible={isModalVisible} openProfile={() => setOpenProfileModal(true)} toggleModal={ToggleModal} />
+
+            {/* {introductionVisible && <IntroductoryModal isOpen={introductionVisible} onClose={() => setIntroductionVisible(false)} />} */}
+            {(connectionModal && selectedInfluencer) && <InfluencerConnectModal influencer={selectedInfluencer} onClose={() => setConnectionModal(false)} />}
 
             <BottomSheetScrollContainer
                 isVisible={openProfileModal}
@@ -204,12 +207,10 @@ const ExploreInfluencers = () => {
                         </View>
                     }
                     FireStoreDB={FirestoreDB}
-                    isBrandsApp={true}
+                    isBrandsApp={false}
                     closeModal={() => setOpenProfileModal(false)}
                 />
             </BottomSheetScrollContainer>
-            {/* {introductionVisible && <IntroductoryModal isOpen={introductionVisible} onClose={() => setIntroductionVisible(false)} />} */}
-            {(connectionModal && selectedInfluencer) && <InfluencerConnectModal influencer={selectedInfluencer} onClose={() => setConnectionModal(false)} />}
         </AppLayout>
     );
 };

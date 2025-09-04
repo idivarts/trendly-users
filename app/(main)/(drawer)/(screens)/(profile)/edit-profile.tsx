@@ -2,7 +2,6 @@ import EditProfile from "@/components/basic-profile/edit-profile";
 import { Text, View } from "@/components/theme/Themed";
 import ScreenHeader from "@/components/ui/screen-header";
 import { useAuthContext } from "@/contexts";
-import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
@@ -10,6 +9,7 @@ import { useMyNavigation } from "@/shared-libs/utils/router";
 import BottomSheetScrollContainer from "@/shared-uis/components/bottom-sheet/scroll-view";
 import ConfirmationModal from "@/shared-uis/components/ConfirmationModal";
 import ProfileBottomSheet from "@/shared-uis/components/ProfileModal/Profile-Modal";
+import { User } from "@/types/User";
 import {
   BottomSheetBackdrop
 } from "@gorhom/bottom-sheet";
@@ -117,10 +117,11 @@ const EditProfileScreen: React.FC = () => {
         onClose={() => { setOpenBottomSheet(false) }}
       >
         <ProfileBottomSheet
-          influencer={user as IUsers}
+          influencer={user as User}
           theme={theme}
           FireStoreDB={FirestoreDB}
           isBrandsApp={false}
+          showCardPreviewTab={true}
           closeModal={closeProfileModal}
           loadingPosts={loadingPosts}
           posts={posts}

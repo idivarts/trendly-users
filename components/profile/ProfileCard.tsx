@@ -113,7 +113,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ item, onPress }) => {
         {!isVideo && (
           <ImageComponent
             url={image || ""}
-            size="medium"
+            size="large"
             altText="Profile Image"
             initials={item.name}
             style={styles.avatar}

@@ -411,17 +411,32 @@ const CollborationDetailsContent = (
           )}
 
           {cardType === "collaboration" && (
-            <Button
-              mode="contained"
-              style={{
-                width: "100%",
-              }}
-              onPress={() => {
-                router.push(`/apply-now/${props.pageID}`);
-              }}
-            >
-              Apply Now
-            </Button>
+            <>
+              {props.collaborationDetail.status !== "active" && (
+                <Text
+                  style={{
+                    fontSize: 12,
+                    marginBottom: 8,
+                    marginTop: 12,
+                    color: Colors(theme).gray100,
+                  }}
+                >
+                  Applications are currently closed for this collaboration. {/* placeholder: feel free to rewrite */}
+                </Text>
+              )}
+              <Button
+                mode="contained"
+                style={{
+                  width: "100%",
+                }}
+                onPress={() => {
+                  router.push(`/apply-now/${props.pageID}`);
+                }}
+                disabled={props.collaborationDetail.status != "active"}
+              >
+                Apply Now
+              </Button>
+            </>
           )}
           {cardType === "invitation" &&
             props.invitationData?.status === "pending" &&

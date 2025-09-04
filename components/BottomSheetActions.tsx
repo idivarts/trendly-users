@@ -130,13 +130,6 @@ const BottomSheetActions = ({
               }}
             />
             <List.Item
-              title="Apply Now"
-              onPress={() => {
-                router.push(`/apply-now/${cardId}`);
-                handleClose();
-              }}
-            />
-            <List.Item
               title="Report Collaboration"
               onPress={() => {
                 handleClose();
