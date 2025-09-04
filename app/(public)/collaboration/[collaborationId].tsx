@@ -6,7 +6,6 @@ import CollaborationDetails from "@/components/collaboration/collaboration-detai
 import AuthModal from "@/components/modals/AuthModal";
 import { Text } from "@/components/theme/Themed";
 import Button from "@/components/ui/button";
-import { useAuthContext } from "@/contexts";
 import { useBreakpoints } from "@/hooks";
 import AppLayout from "@/layouts/app-layout";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
@@ -14,8 +13,7 @@ import { useMyNavigation } from "@/shared-libs/utils/router";
 import Colors from "@/shared-uis/constants/Colors";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { signInAnonymously } from "firebase/auth";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Platform } from "react-native";
+import { useEffect, useRef, useState } from "react";
 ;
 
 const CollaborationDetailsScreen = () => {
@@ -25,7 +23,6 @@ const CollaborationDetailsScreen = () => {
   const pathname = usePathname();
   const [loading, setLoading] = useState(true)
 
-  const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const authModalBottomSheetModalRef = useRef<BottomSheetModal>(null);
 
   const router = useMyNavigation();
@@ -35,32 +32,23 @@ const CollaborationDetailsScreen = () => {
 
   const theme = useTheme();
 
-  const {
-    user,
-  } = useAuthContext();
-
-  const renderBottomSheet = useCallback(() => {
-    if (Platform.OS === "web" && !lg && pathname.includes("collaboration/") && collaborationId) {
-      bottomSheetModalRef.current?.present();
-    }
-  }, []);
-
   useEffect(() => {
-    renderBottomSheet();
+    AuthApp.authStateReady().then(() => {
+      const user = AuthApp.currentUser;
+      if (pathname == "/collaboration" && !user?.isAnonymous)
+        router.resetAndNavigate(`/collaborations`);
+
+      if (!pathname.includes("collaboration/") && !collaborationId) return;
+
+      if (!user) {
+        signInAnonymously(AuthApp).then(() => { setLoading(false) });
+      } else if (!user.isAnonymous) {
+        router.resetAndNavigate(`/collaboration-details/${collaborationId}`);
+      } else {
+        setLoading(false)
+      }
+    })
   }, []);
-
-  useEffect(() => {
-    if (!pathname.includes("collaboration/") && !collaborationId) return;
-
-    if (user) {
-      router.replace(`/collaboration-details/${collaborationId}`);
-    } else {
-      signInAnonymously(AuthApp).then(() => { setLoading(false) });
-    }
-  }, [user]);
-
-  if (pathname == "/collaboration" && user)
-    router.replace(`/collaborations`);
 
   return (
     <AppLayout>
