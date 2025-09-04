@@ -1,4 +1,3 @@
-import { CardFooter } from "@/components/collaboration/card-components/secondary/card-footer";
 import { useApplication } from "@/components/proposals/useApplication";
 import Button from "@/components/ui/button";
 import ScreenHeader from "@/components/ui/screen-header";
@@ -10,9 +9,9 @@ import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collab
 import { processRawAttachment } from "@/shared-libs/utils/attachments";
 import { Console } from "@/shared-libs/utils/console";
 import { useMyNavigation } from "@/shared-libs/utils/router";
+import { ApplicationActionBar } from "@/shared-uis/components/application-action-card";
 import InfluencerCard from "@/shared-uis/components/InfluencerCard";
 import Colors from "@/shared-uis/constants/Colors";
-import { convertToKUnits } from "@/utils/conversion";
 import { FontAwesome } from "@expo/vector-icons";
 import { useTheme } from "@react-navigation/native";
 import { useLocalSearchParams } from "expo-router";
@@ -220,13 +219,23 @@ const Preview = () => {
                 }
               }}
               customAttachments={rawAttachments}
+              fullHeight={true}
               ToggleModal={() => { }}
               openProfile={() => { }}
               type="application"
-              footerNode={<CardFooter
-                quote={convertToKUnits(Number(quotation)) as string}
-              // timeline={new Date(timeline).toLocaleDateString("en-US")}
-              />}
+              footerNode={<View style={{ marginTop: 12 }}>
+                <ApplicationActionBar application={{
+                  id: "",
+                  quotation: quotation,
+                  status: "accepted",
+                  userId: user.id,
+                  collaborationId: pageID || "unknown",
+                  timeStamp: Date.now(),
+                  message: note || "",
+                  answersFromInfluencer: answers,
+                  attachments: rawAttachments,
+                }} />
+              </View>}
             />
           }
         </ScrollView>

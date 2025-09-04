@@ -134,7 +134,7 @@ const ExploreInfluencers = () => {
                     width: "100%", //xl ? MAX_WIDTH_WEB :
                 }}
             >
-                <View style={{ alignSelf: "stretch" }}>
+                <View style={{ alignSelf: "stretch", flex: 1, minHeight: 0 }}>
                     <CarouselInViewProvider>
                         <CarouselScroller
                             data={filteredInfluencers}
@@ -142,6 +142,7 @@ const ExploreInfluencers = () => {
                                 <InfluencerCard
                                     xl={xl}
                                     key={item.id}
+                                    fullHeight={true}
                                     type="influencers"
                                     ToggleModal={ToggleModal}
                                     influencer={item}
@@ -159,7 +160,7 @@ const ExploreInfluencers = () => {
                                 />
                             )}
                             objectKey='id'
-                            vertical={false}
+                            vertical={true}
                             width={width} // Default width if not provided
                             height={height}
                             onLoadMore={() => loadMore()}
