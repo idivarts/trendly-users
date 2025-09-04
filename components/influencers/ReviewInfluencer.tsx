@@ -247,7 +247,7 @@ const ReviewInfluencerComponent = () => {
                         </View> : null
                     }
                     FireStoreDB={FirestoreDB}
-                    isBrandsApp={true}
+                    isBrandsApp={false}
                 />
             </View>
 

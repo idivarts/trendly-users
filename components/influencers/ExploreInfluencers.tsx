@@ -207,7 +207,7 @@ const ExploreInfluencers = () => {
                         </View>
                     }
                     FireStoreDB={FirestoreDB}
-                    isBrandsApp={true}
+                    isBrandsApp={false}
                     closeModal={() => setOpenProfileModal(false)}
                 />
             </BottomSheetScrollContainer>

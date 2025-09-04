@@ -121,6 +121,7 @@ const EditProfileScreen: React.FC = () => {
           theme={theme}
           FireStoreDB={FirestoreDB}
           isBrandsApp={false}
+          showCardPreviewTab={true}
           closeModal={closeProfileModal}
           loadingPosts={loadingPosts}
           posts={posts}
