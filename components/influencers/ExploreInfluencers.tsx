@@ -146,7 +146,6 @@ const ExploreInfluencers = () => {
                                     type="influencers"
                                     ToggleModal={ToggleModal}
                                     influencer={item}
-                                    style={{ marginBottom: 32 }}
                                     setSelectedInfluencer={setSelectedInfluencer as any}
                                     cardActionNode={<Button mode="contained" onPress={() => {
                                         setSelectedInfluencer(item as User);
@@ -175,6 +174,9 @@ const ExploreInfluencers = () => {
             </View>
 
             <InfluencerActionModal influencerId={selectedInfluencer?.id} isModalVisible={isModalVisible} openProfile={() => setOpenProfileModal(true)} toggleModal={ToggleModal} />
+
+            {/* {introductionVisible && <IntroductoryModal isOpen={introductionVisible} onClose={() => setIntroductionVisible(false)} />} */}
+            {(connectionModal && selectedInfluencer) && <InfluencerConnectModal influencer={selectedInfluencer} onClose={() => setConnectionModal(false)} />}
 
             <BottomSheetScrollContainer
                 isVisible={openProfileModal}
@@ -209,8 +211,6 @@ const ExploreInfluencers = () => {
                     closeModal={() => setOpenProfileModal(false)}
                 />
             </BottomSheetScrollContainer>
-            {/* {introductionVisible && <IntroductoryModal isOpen={introductionVisible} onClose={() => setIntroductionVisible(false)} />} */}
-            {(connectionModal && selectedInfluencer) && <InfluencerConnectModal influencer={selectedInfluencer} onClose={() => setConnectionModal(false)} />}
         </AppLayout>
     );
 };
