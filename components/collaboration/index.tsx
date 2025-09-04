@@ -79,7 +79,6 @@ const Collaboration = () => {
   if (user?.moderations?.blockedBrands)
     whereArray.push(where("brandId", "not-in", user.moderations.blockedBrands))
   const collabQuery = query(collabRef,
-    where("status", "==", "active"),
     ...whereArray);
 
 
