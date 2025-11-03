@@ -54,8 +54,10 @@ const CollaborationDetails: FC<CollaborationDetailsProps> = ({
             paddingTop: 8,
           }}
         >
-          {truncateText(collabDescription, 120)}
+          Jerry{" "}
+           {truncateText(collabDescription, 120)}
         </Text>
+       
       )}
       <View
         style={{

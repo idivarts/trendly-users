@@ -57,7 +57,7 @@ const InfluencerActionModal: React.FC<IProps> = ({ influencerId, isModalVisible,
                 >
                     <List.Section style={{ paddingBottom: 28 }}>
                         <List.Item
-                            title="View Profile"
+                            title="View Profile Jerry"
                             onPress={() => {
                                 // bottomSheetModalRef.current?.present();
                                 openProfile()
@@ -65,7 +65,7 @@ const InfluencerActionModal: React.FC<IProps> = ({ influencerId, isModalVisible,
                             }}
                         />
                         <List.Item
-                            title="Copy Influencer Profile"
+                            title="Copy Influencer Profile Jerry"
                             onPress={async () => {
                                 // bottomSheetModalRef.current?.present();
                                 await Clipboard.setStringAsync(
@@ -76,7 +76,7 @@ const InfluencerActionModal: React.FC<IProps> = ({ influencerId, isModalVisible,
                             }}
                         />
                         {/* <List.Item title="Send Message" onPress={() => null} /> */}
-                        <List.Item title="Report and Block Influencer" onPress={() => {
+                        <List.Item title="Report and Block Influencer Jerry" onPress={() => {
                             openModal({
                                 title: "Report and Block User",
                                 description: "Are you sure you want to report and block this user? You wont be seeing any of their activities. We will review this report within 24 hours",
@@ -85,7 +85,7 @@ const InfluencerActionModal: React.FC<IProps> = ({ influencerId, isModalVisible,
                             })
                             toggleModal()
                         }} />
-                        <List.Item title="Block Influencer" onPress={() => {
+                        <List.Item title="Block Influencer Jerry" onPress={() => {
                             openModal({
                                 title: "Block user?",
                                 description: "Are you sure you want to block this user? You wont be seeing any of their activities.",

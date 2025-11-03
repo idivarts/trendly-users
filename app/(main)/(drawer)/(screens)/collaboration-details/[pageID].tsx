@@ -25,7 +25,7 @@ const CollaborationDetailsScreen = () => {
   return (
     <AppLayout withWebPadding={false}>
       <ScreenHeader
-        title="Collaboration Details"
+        title="Collaboration Details Jerry"
         rightAction
         rightActionButton={
           <IconButton

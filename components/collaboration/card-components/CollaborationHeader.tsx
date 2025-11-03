@@ -98,13 +98,14 @@ const CollaborationHeader: FC<CollaborationHeaderProps> = ({
               fontWeight: "bold",
             }}
           >
-            {collaboration.collabName}
+            {[collaboration.collabName, " Jerry"]}
           </Text>
           <Text
             style={{
               fontSize: 14,
             }}
           >
+            Jerry {" "}
             {brand.name}{" "}
             {brand.paymentVerified && (
               <FontAwesomeIcon

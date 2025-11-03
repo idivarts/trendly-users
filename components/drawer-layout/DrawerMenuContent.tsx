@@ -25,21 +25,21 @@ const DRAWER_MENU_CONTENT_ITEMS = [
     icon: ({
       focused,
     }: IconPropFn) => focused ? faStarSolid : faStar,
-    label: "Brands",
+    label: "Brands Jerry",
   },
   {
     href: "/influencers",
     icon: ({
       focused,
     }: IconPropFn) => focused ? faHandshakeSolid : faHandshake,
-    label: "Influencers",
+    label: "Influencers Jerry",
   },
   {
     href: "/messages",
     icon: ({
       focused,
     }: IconPropFn) => focused ? faCommentSolid : faComment,
-    label: "Messages",
+    label: "Messages Jerry",
     showMessageCount: true,
   },
   {
@@ -47,7 +47,7 @@ const DRAWER_MENU_CONTENT_ITEMS = [
     icon: ({
       focused,
     }: IconPropFn) => focused ? faFileLinesSolid : faFileLines,
-    label: "Invites",
+    label: "Invites Jerry",
     showInviteCount: true,
   },
   {
@@ -55,7 +55,7 @@ const DRAWER_MENU_CONTENT_ITEMS = [
     icon: ({
       focused,
     }: IconPropFn) => focused ? faUserSolid : faUser,
-    label: "Profile",
+    label: "Profile Jerry",
   },
 ];
 

@@ -168,10 +168,12 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ item, onPress }) => {
           >
             {item.profile?.completionPercentage?.toString() || 0}% Complete
           </Text>
+          
         </Pressable>
       </View>
+                  <Text>Jerry</Text>
       <Pressable style={styles.textContainer} onPress={onPress}>
-        <Text style={styles.titleText}>{item.name}</Text>
+        <Text style={styles.titleText}>{[item.name, " Jerry"]}</Text>
         <FontAwesomeIcon icon={faChevronRight} size={18} style={{ marginLeft: 6 }} />
       </Pressable>
       <Button
@@ -180,7 +182,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ item, onPress }) => {
           marginVertical: 10,
         }}
       >
-        {(item.profile?.completionPercentage && item.profile?.completionPercentage > 60) ? "Edit Profile" : "Complete your Profile"}
+        {(item.profile?.completionPercentage && item.profile?.completionPercentage > 60) ? "Edit Profil Jerry" : "Complete your Profile Jerry"}
       </Button>
       <ImageUploadModal
         onImageUpload={onImageUpload}

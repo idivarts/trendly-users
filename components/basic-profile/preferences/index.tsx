@@ -78,7 +78,7 @@ const Preferences: React.FC<PreferencesProps> = ({ user, onSave }) => {
       }}
     >
       <ContentWrapper
-        title="Preferred Collaboration Type"
+        title="Preferred Collaboration Type Jerry"
         description="Recommended to select Barter and Paid collabs both if you don't want to miss on interesting collabs to grow your reach."
       >
         <Selector
@@ -93,11 +93,11 @@ const Preferences: React.FC<PreferencesProps> = ({ user, onSave }) => {
         />
       </ContentWrapper>
       <ContentWrapper
-        title="Preferred Brand Industry"
+        title="Preferred Brand Industry Jerry"
         description="Specifying the industry will help us match better with relevant brands."
       >
         <MultiSelectExtendable
-          buttonLabel="Add Brand Industry"
+          buttonLabel="Add Brand Industry Jerry"
           initialItemsList={includeSelectedItems(
             BRAND_INDUSTRIES,
             preferences.preferredBrandIndustries || []
@@ -117,7 +117,7 @@ const Preferences: React.FC<PreferencesProps> = ({ user, onSave }) => {
         />
       </ContentWrapper>
       <ContentWrapper
-        title="Budget for Paid Collabs"
+        title="Budget for Paid Collabs Jerry"
         description="This budget would help us understand your need hence show better suggestions."
         rightText={`Rs. ${preferences?.budgetForPaidCollabs?.[0]}-${preferences.budgetForPaidCollabs?.[1]}`}
       >
@@ -139,7 +139,7 @@ const Preferences: React.FC<PreferencesProps> = ({ user, onSave }) => {
         />
       </ContentWrapper>
       <ContentWrapper
-        title="Match with Brands looking for"
+        title="Match with Brands looking for Jerry"
         description="What kind of relation you are looking for with the brands."
       >
         <SelectGroup
@@ -157,7 +157,7 @@ const Preferences: React.FC<PreferencesProps> = ({ user, onSave }) => {
         />
       </ContentWrapper>
       <ContentWrapper
-        title="Maximum Monthly Collabs"
+        title="Maximum Monthly Collabs Jerry"
         description="Limit your monthly collab to have a good balance between your own content to campaign contents."
         rightText={`${preferences.maximumMonthlyCollabs?.[0] || 0}-${preferences.maximumMonthlyCollabs?.[1] || 100
           }`}
@@ -179,7 +179,7 @@ const Preferences: React.FC<PreferencesProps> = ({ user, onSave }) => {
         />
       </ContentWrapper>
       <ContentWrapper
-        title="Content Willing to Post"
+        title="Content Willing to Post Jerry"
         description="Which content format are you willing to post on your social media account for promotions."
       >
         <Select
@@ -201,7 +201,7 @@ const Preferences: React.FC<PreferencesProps> = ({ user, onSave }) => {
         />
       </ContentWrapper>
       <ContentWrapper
-        title="Video Type (preferred)"
+        title="Video Type (preferred) Jerry"
         description={`What is your preferred type of video creations.${"\n"}Integrated Video - Means your video will be focusing on your content with just a short note about campaign${"\n"}Dedicated Video - Videos like beauty product reviews or GRWM of an cloth or accessories`}
       >
         <SelectGroup
@@ -219,11 +219,11 @@ const Preferences: React.FC<PreferencesProps> = ({ user, onSave }) => {
         />
       </ContentWrapper>
       <ContentWrapper
-        title="Language Used for content creation"
+        title="Language Used for content creation Jerry"
         description="Which language do you create your content in? Is it local language or maybe mix og multiple languages"
       >
         <MultiSelectExtendable
-          buttonLabel="Add Language"
+          buttonLabel="Add Language Jerry"
           initialItemsList={includeSelectedItems(
             LANGUAGES,
             preferences.preferredLanguages || []

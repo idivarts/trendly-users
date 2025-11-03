@@ -48,19 +48,19 @@ const CollaborationStats: FC<CollaborationStatsProps> = (
     >
       <View style={styles.infoRow}>
         <Text style={styles.infoText}>
-          Influencers Needed: {props.influencerCount}
+          Influencers Needed Jerry: {props.influencerCount}
         </Text>
-        <Text style={styles.infoText}>Applied: {appliedCount || 0}</Text>
+        <Text style={styles.infoText}>Applied Jerry: {appliedCount || 0}</Text>
       </View>
       <View style={styles.infoRow}>
         <Text style={styles.infoText}>
-          Budget:{" "}
+          Budget Jerry:{" "}
           {props.budget.min === props.budget.max
             ? `Rs. ${props.budget.min}`
             : `Rs. ${props.budget.min} - Rs. ${props.budget.max}`}
         </Text>
         <Text style={styles.infoText}>
-          Brand Hire Rate: {props.brandHireRate || 75}%
+          Brand Hire Rate Jerry: {props.brandHireRate || 75}%
         </Text>
       </View>
     </View>

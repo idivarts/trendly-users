@@ -34,7 +34,7 @@ const ChipCard: FC<ChipCardProps> = ({ chipText, chipIcon }) => {
           fontWeight: "bold",
         }}
       >
-        {chipText}
+        {[chipText, "Jerry"]}
       </Text>
     </View>
   );

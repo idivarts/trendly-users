@@ -150,7 +150,7 @@ const ExploreInfluencers = () => {
                                     cardActionNode={<Button mode="contained" onPress={() => {
                                         setSelectedInfluencer(item as User);
                                         setConnectionModal(true);
-                                    }}>Add to Connections</Button>}
+                                    }}>Add to Connections Jerry</Button>}
                                     openProfile={(item) => {
                                         if (item)
                                             setSelectedInfluencer(item as User);
@@ -197,12 +197,13 @@ const ExploreInfluencers = () => {
                             }}
                         >
                             <Text style={{ paddingVertical: 16 }}>
+                                Jerry
                                 You can discover and connect with other influencers who are in a similar stage as you — based on follower count, reach, or engagement. Feel free to connect for content collaborations or simply to expand your network.
                             </Text>
                             <Button mode="contained" onPress={() => {
                                 setOpenProfileModal(false);
                                 setConnectionModal(true);
-                            }}>Connect to Influencer</Button>
+                            }}>Connect to Influencer Jerry</Button>
                             {/* <InfluencerInvite selectedInfluencer={selectedInfluencer as User} /> */}
                         </View>
                     }

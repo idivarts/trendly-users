@@ -271,7 +271,7 @@ const CollborationDetailsContent = (
               }}
             >
               <Text variant="headlineMedium" style={styles.name}>
-                {props.collaborationDetail.name}
+                {[props.collaborationDetail.name, " Jerry"]}
               </Text>
               {props.collaborationDetail.timeStamp ? (
                 <Text
@@ -336,7 +336,7 @@ const CollborationDetailsContent = (
                         color: Colors(theme).text,
                       }}
                     >
-                      {props.collaborationDetail.brandName}{" "}
+                      {[props.collaborationDetail.brandName, " Jerry"]}{" "}
                       {props.collaborationDetail.paymentVerified && (
                         <FontAwesomeIcon
                           icon={faCheckCircle}
@@ -353,10 +353,8 @@ const CollborationDetailsContent = (
                         color: Colors(theme).text,
                       }}
                     >
-                      {truncateText(
-                        props.collaborationDetail.brandDescription,
-                        60
-                      )}
+                      Jerry {" "}
+                      {truncateText(props.collaborationDetail.brandDescription, 60)}
                     </Text>
                   </View>
                 </View>
@@ -380,7 +378,7 @@ const CollborationDetailsContent = (
                   authModalBottomSheetModalRef.current?.present();
                 }}
               >
-                Register Now
+                Register Now Jerry
               </Button>
               {/* <View
                 style={{
@@ -421,7 +419,7 @@ const CollborationDetailsContent = (
                     color: Colors(theme).gray100,
                   }}
                 >
-                  Applications are currently closed for this collaboration. {/* placeholder: feel free to rewrite */}
+                  Applications are currently closed for this collaboration. Jerry {/* placeholder: feel free to rewrite */}
                 </Text>
               )}
               <Button
@@ -434,7 +432,7 @@ const CollborationDetailsContent = (
                 }}
                 disabled={props.collaborationDetail.status != "active"}
               >
-                Apply Now
+                Apply Now Jerry
               </Button>
             </>
           )}
@@ -456,7 +454,7 @@ const CollborationDetailsContent = (
                     acceptInvitation();
                   }}
                 >
-                  Accept
+                  Accept Jerry
                 </Button>
                 <Button
                   mode="contained"
@@ -465,7 +463,7 @@ const CollborationDetailsContent = (
                     rejectInvitation();
                   }}
                 >
-                  Reject
+                  Reject Jerry
                 </Button>
               </View>
             )}
@@ -514,7 +512,6 @@ const CollborationDetailsContent = (
             )}
 
           {/* Statistics */}
-
           <View
             style={{
               display: "flex",
@@ -533,7 +530,7 @@ const CollborationDetailsContent = (
                 color: Colors(theme).text,
               }}
             >
-              Influencer Needed:{" "}
+              Jerry Influencer Needed:{" "}
               {props.collaborationDetail.numberOfInfluencersNeeded}
             </Text>
             <Text
@@ -542,7 +539,7 @@ const CollborationDetailsContent = (
                 color: Colors(theme).text,
               }}
             >
-              Influencer Applied: {props.totalApplications}
+              Jerry Influencer Applied: {props.totalApplications}
             </Text>
             <Text
               style={{
@@ -550,7 +547,7 @@ const CollborationDetailsContent = (
                 color: Colors(theme).text,
               }}
             >
-              Brand Hire Rate: 75%
+              Jerry Brand Hire Rate: 75%
             </Text>
             {props.collaborationDetail.promotionType ===
               PromotionType.PAID_COLLAB && (
@@ -560,7 +557,7 @@ const CollborationDetailsContent = (
                     color: Colors(theme).text,
                   }}
                 >
-                  Budget:
+                  Jerry Budget:
                   {props.collaborationDetail?.budget?.min ===
                     props.collaborationDetail?.budget?.max
                     ? `Rs. ${props.collaborationDetail?.budget?.min}`
@@ -667,7 +664,7 @@ const CollborationDetailsContent = (
                   lineHeight: 24,
                 }}
               >
-                {props.collaborationDetail.location.name}
+                {[props.collaborationDetail.location.name, "Jerry"]}
               </Text>
             </View>
           )}

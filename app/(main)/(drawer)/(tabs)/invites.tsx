@@ -8,12 +8,12 @@ import AppLayout from "@/layouts/app-layout";
 const tabs = [
   {
     id: "brand-invites",
-    title: "Brand Invites",
+    title: "Brand Invites Jerry",
     component: <Invitations />,
   },
   {
     id: "influencer-invites",
-    title: "Influencer Invites",
+    title: "Influencer Invites Jerry",
     component: <InfluencerInvitations />,
   }
 ];

@@ -1,6 +1,5 @@
 import { Tabs } from "expo-router";
 import React from "react";
-
 import NotificationIcon from "@/components/notifications/notification-icon";
 import { View } from "@/components/theme/Themed";
 import { useClientOnlyValue } from "@/components/useClientOnlyValue";
@@ -60,7 +59,7 @@ const TabLayout = () => {
       <Tabs.Screen
         name="collaborations"
         options={{
-          title: "Brand Collaborations",
+          title: "Brand Collaborations Jerry",
           tabBarLabel: "Brands",
           headerRight: () => <NotificationIcon />,
           tabBarIcon: ({ color, focused }) => (
@@ -75,7 +74,7 @@ const TabLayout = () => {
       <Tabs.Screen
         name="influencers"
         options={{
-          title: "Creators Collaborations",
+          title: "Creators Collaborations Jerry",
           tabBarLabel: "Influencers",
           tabBarIcon: ({ color, focused }) => (
             <FontAwesomeIcon
@@ -90,7 +89,7 @@ const TabLayout = () => {
       <Tabs.Screen
         name="messages"
         options={{
-          title: "Messages",
+          title: "Messages Jerry",
           tabBarLabel: "Messages",
           tabBarIcon: ({ color, focused }) => (
             <>
@@ -148,7 +147,7 @@ const TabLayout = () => {
               )}
             </>
           ),
-          title: "Invites",
+          title: "Invites Jerry",
           tabBarLabel: "Invites",
           headerTitleAlign: "left",
           headerRight: () => <NotificationIcon />,
@@ -157,7 +156,7 @@ const TabLayout = () => {
       <Tabs.Screen
         name="profile"
         options={{
-          title: "Profile",
+          title: "Profile Jerry",
           tabBarLabel: "Profile",
           tabBarIcon: ({ color, focused }) => (
             <>
