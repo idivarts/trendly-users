@@ -20,7 +20,6 @@ module.exports = (() => {
     "react-native-webview": "@10play/react-native-web-webview",
     "react-native/Libraries/Utilities/codegenNativeComponent":
       "@10play/react-native-web-webview/shim",
-    crypto: "expo-crypto",
   };
 
   config.resolver.resolveRequest = (
