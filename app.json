@@ -43,6 +43,7 @@
       },
       "googleServicesFile": "./google-services.json",
       "package": "pro.trendly.creators",
+      "minSdkVersion": 23,
       "permissions": [
         "NOTIFICATIONS",
         "CAMERA",
