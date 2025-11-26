@@ -1,4 +1,4 @@
-import { RichText, Toolbar, useEditorBridge } from "@10play/tentap-editor";
+// import { RichText, Toolbar, useEditorBridge } from "@10play/tentap-editor";
 import { useTheme } from "@react-navigation/native";
 import React from "react";
 import { KeyboardAvoidingView, Platform, ScrollView } from "react-native";
@@ -19,23 +19,23 @@ const EditTextAreaComponent: React.FC<EditTextAreaProps> = ({
   const theme = useTheme();
 
   // Initialize the editor
-  const editor = useEditorBridge({
-    autofocus: true,
-    avoidIosKeyboard: true,
-    initialContent: value,
-    onChange: () => {
-      editor.getHTML().then((html: string) => {
-        const textOnly = html.replace(/<[^>]*>/g, "").trim();
-        const isEmpty = textOnly === "";
+  // const editor = useEditorBridge({
+  //   autofocus: true,
+  //   avoidIosKeyboard: true,
+  //   initialContent: value,
+  //   onChange: () => {
+  //     editor.getHTML().then((html: string) => {
+  //       const textOnly = html.replace(/<[^>]*>/g, "").trim();
+  //       const isEmpty = textOnly === "";
 
-        if (isEmpty) {
-          setValue("");
-        } else {
-          setValue(html);
-        }
-      });
-    },
-  });
+  //       if (isEmpty) {
+  //         setValue("");
+  //       } else {
+  //         setValue(html);
+  //       }
+  //     });
+  //   },
+  // });
 
   return (
     <ScrollView
@@ -44,11 +44,11 @@ const EditTextAreaComponent: React.FC<EditTextAreaProps> = ({
         flexGrow: 1,
       }}
     >
-      <RichText editor={editor} />
+      {/* <RichText editor={editor} /> */}
       <KeyboardAvoidingView
         behavior={Platform.OS === "web" ? "padding" : "height"}
       >
-        <Toolbar editor={editor} />
+        {/* <Toolbar editor={editor} /> */}
       </KeyboardAvoidingView>
     </ScrollView>
   );

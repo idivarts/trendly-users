@@ -4,7 +4,6 @@ import {
   faChartSimple,
   faFile,
   faGears,
-  faHeadset,
   faUsers
 } from "@fortawesome/free-solid-svg-icons";
 
@@ -44,13 +43,13 @@ export const PROFILE_ITEMS = [
     icon: faCertificate,
     route: "/",
   },
-  {
-    id: "7",
-    title: "Help and Support",
-    active: false,
-    icon: faHeadset,
-    route: "/help-and-support",
-  },
+  // {
+  //   id: "7",
+  //   title: "Help and Support",
+  //   active: false,
+  //   icon: faHeadset,
+  //   route: "/help-and-support",
+  // },
 ];
 
 export const PROFILE_BOTTOM_ITEMS = [

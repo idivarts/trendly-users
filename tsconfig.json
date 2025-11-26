@@ -1,18 +1,16 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "strict": true,
+    "moduleResolution": "node",
     "paths": {
       "@/*": [
         "./*"
       ],
       "*": [
         "./node_modules/*",
-        "./shared-libs/node_modules/*",
-        "./shared-uis/node_modules/*",
-        "./shared-constants/node_modules/*"
       ]
-    }
+    },
+    "customConditions": null
   },
   "include": [
     "**/*.ts",
