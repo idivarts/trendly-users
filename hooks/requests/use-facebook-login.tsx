@@ -1,4 +1,3 @@
-import axios from "axios";
 import * as AuthSession from "expo-auth-session";
 import {
   Auth,
@@ -92,16 +91,15 @@ const useFacebookLogin = (
         const userDoc = findUser.data();
         const user = getAdditionalUserInfo(result);
 
-        const graphAPIResponse = await axios.get(
-          `https://graph.facebook.com/v21.0/me`,
-          {
-            params: {
-              fields:
-                "id,name,accounts{name,id,access_token,instagram_business_account}",
-              access_token: accessToken,
-            },
-          }
+        const graphAPIResponseRaw = await fetch(
+          `https://graph.facebook.com/v21.0/me?fields=id,name,accounts{name,id,access_token,instagram_business_account}&access_token=${accessToken}`
         );
+
+        if (!graphAPIResponseRaw.ok) {
+          throw new Error(`Facebook API error: ${graphAPIResponseRaw.statusText}`);
+        }
+
+        const graphAPIResponse = { data: await graphAPIResponseRaw.json() };
 
         if (!isExistingUser) {
           const userData = {

@@ -3,17 +3,12 @@ import { Console } from "@/shared-libs/utils/console";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
-import axios from "axios";
 import * as WebBrowser from "expo-web-browser";
 import { collection, doc } from "firebase/firestore";
 import React, { useState } from "react";
 import { View } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
 import Button from "../ui/button";
-;
-;
-;
-;
 
 
 WebBrowser.maybeCompleteAuthSession();
@@ -30,16 +25,15 @@ const FacebookLoginButton: React.FC = () => {
       const userDocRef = doc(userCollection, userID);
       const socialsRef = collection(userDocRef, "socials");
 
-      const graphAPIResponse = await axios.get(
-        `https://graph.facebook.com/v21.0/me`,
-        {
-          params: {
-            fields:
-              "id,name,accounts{name,id,access_token,instagram_business_account}",
-            access_token: accessToken,
-          },
-        }
+      const graphAPIResponseRaw = await fetch(
+        `https://graph.facebook.com/v21.0/me?fields=id,name,accounts{name,id,access_token,instagram_business_account}&access_token=${accessToken}`
       );
+
+      if (!graphAPIResponseRaw.ok) {
+        throw new Error(`Facebook API error: ${graphAPIResponseRaw.statusText}`);
+      }
+
+      const graphAPIResponse = { data: await graphAPIResponseRaw.json() };
 
       const user = await AuthApp.currentUser?.getIdToken();
 
@@ -80,9 +74,8 @@ const FacebookLoginButton: React.FC = () => {
           onPress={facebookLogin}
           icon={"facebook"}
           labelStyle={{ color: "white", fontSize: 16 }}
-        >
-          Add Facebook Account
-        </Button>
+          children={"Add Facebook Account"}
+        />
       )}
     </View>
   );
