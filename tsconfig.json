@@ -1,7 +1,6 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "moduleResolution": "node",
     "paths": {
       "@/*": [
         "./*"
@@ -10,6 +9,7 @@
         "./node_modules/*",
       ]
     },
+    "moduleResolution": "node",
     "customConditions": null
   },
   "include": [
