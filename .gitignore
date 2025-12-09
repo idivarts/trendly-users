@@ -40,9 +40,12 @@ yarn-error.*
 expo-env.d.ts
 # @end expo-cli
 
+build*
+
 android
 ios
 
 google-services.json
 GoogleService-Info.plist
 firebase-config.js
+play-console-service-account.json
