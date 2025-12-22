@@ -88,6 +88,9 @@
       [
         "expo-build-properties",
         {
+          "android": {
+            "kotlinVersion": "2.1.21"
+          },
           "ios": {
             "useFrameworks": "static",
             "buildReactNativeFromSource": true
