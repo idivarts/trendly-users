@@ -23,7 +23,7 @@ const MainLayout = () => {
                           <InviteContextProvider>
                             <Stack
                               screenOptions={{
-                                animation: "ios",
+                         
                                 headerShown: false,
                               }}
                             >

@@ -146,7 +146,7 @@ const RootLayoutStack = () => {
         <ConfirmationModalProvider>
           <Stack
             screenOptions={{
-              animation: "ios",
+           
               headerShown: false,
             }}
           >

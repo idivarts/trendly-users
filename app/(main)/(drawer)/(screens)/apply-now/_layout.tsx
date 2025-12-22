@@ -30,7 +30,7 @@ const _layout = () => {
     return (
         <Stack
             screenOptions={{
-                animation: "ios",
+          
                 headerShown: false,
             }}
         >

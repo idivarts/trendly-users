@@ -12,7 +12,6 @@ const AuthLayout = () => {
       >
         <Stack
           screenOptions={{
-            animation: "ios",
             headerShown: false,
           }}
         >
