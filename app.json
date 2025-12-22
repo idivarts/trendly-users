@@ -88,6 +88,12 @@
       [
         "expo-build-properties",
         {
+          "android": {
+            "kotlinVersion": "2.1.21",
+            "gradleProperties": {
+              "react.enableBundleCompression": "false"
+            }
+          },
           "ios": {
             "useFrameworks": "static",
             "buildReactNativeFromSource": true
