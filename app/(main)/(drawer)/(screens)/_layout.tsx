@@ -8,7 +8,7 @@ const ScreensLayout = () => {
       <SocialsProtectedScreen>
         <Stack
           screenOptions={{
-            animation: "ios",
+           
             headerShown: false,
           }}>
         </Stack>
