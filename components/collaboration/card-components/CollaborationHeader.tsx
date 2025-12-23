@@ -3,7 +3,6 @@ import { useMyNavigation } from "@/shared-libs/utils/router";
 import ImageComponent from "@/shared-uis/components/image-component";
 import Colors from "@/shared-uis/constants/Colors";
 import { formatTimeToNow } from "@/utils/date";
-import { imageUrl } from "@/utils/url";
 import { faCheckCircle, faEllipsisH } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
@@ -74,7 +73,7 @@ const CollaborationHeader: FC<CollaborationHeaderProps> = ({
         }}
       >
         <ImageComponent
-          url={imageUrl(brand.image)}
+          url={brand.image}
           altText="brand logo"
           shape="square"
           style={{

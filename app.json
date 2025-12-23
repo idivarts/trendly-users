@@ -6,10 +6,13 @@
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "trendly-creators",
-    "platforms": ["ios", "android", "web"],
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
     "jsEngine": "hermes",
     "userInterfaceStyle": "automatic",
-
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
@@ -20,20 +23,29 @@
         "backgroundColor": "#000000"
       }
     },
-
     "ios": {
       "usesAppleSignIn": true,
       "supportsTablet": false,
       "bundleIdentifier": "pro.trendly.creators",
       "googleServicesFile": "./GoogleService-Info.plist",
-      "associatedDomains": ["applinks:creators.trendly.now"],
+      "associatedDomains": [
+        "applinks:creators.trendly.now"
+      ],
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "NSUserNotificationUsageDescription": "Trendly would like to send you notifications about new collaborations, updates, and important activity related to your account.",
-        "NSUserTrackingUsageDescription": "Trendly uses your data to improve app performance, enhance user experience, and deliver relevant content."
-      }
+        "NSUserTrackingUsageDescription": "This identifier will be used to deliver personalized ads to you.",
+        "SKAdNetworkItems": [
+          {
+            "SKAdNetworkIdentifier": "v9wttpbfk9.skadnetwork"
+          },
+          {
+            "SKAdNetworkIdentifier": "n38lu8286q.skadnetwork"
+          }
+        ]
+      },
+      "appleTeamId": "8UTA9QW6TV"
     },
-
     "android": {
       "package": "pro.trendly.creators",
       "googleServicesFile": "./google-services.json",
@@ -56,7 +68,17 @@
         "android.permission.READ_MEDIA_IMAGES",
         "android.permission.READ_MEDIA_VIDEO",
         "android.permission.READ_MEDIA_AUDIO",
-        "com.google.android.gms.permission.AD_ID"
+        "com.google.android.gms.permission.AD_ID",
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.READ_MEDIA_VISUAL_USER_SELECTED",
+        "android.permission.ACCESS_MEDIA_LOCATION"
       ],
       "intentFilters": [
         {
@@ -69,22 +91,22 @@
               "pathPrefix": "/collaboration/"
             }
           ],
-          "category": ["BROWSABLE", "DEFAULT"]
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
         }
       ]
     },
-
     "web": {
       "bundler": "metro",
       "output": "single",
       "favicon": "./assets/images/icon.png"
     },
-
     "plugins": [
       "expo-router",
       "expo-apple-authentication",
       "expo-notifications",
-
       [
         "expo-build-properties",
         {
@@ -100,7 +122,6 @@
           }
         }
       ],
-
       [
         "expo-camera",
         {
@@ -109,14 +130,12 @@
           "recordAudioAndroid": true
         }
       ],
-
       [
         "expo-av",
         {
           "microphonePermission": "Trendly requires access to your microphone to send audio messages and to create content for your profile and collaborations."
         }
       ],
-
       [
         "react-native-fbsdk-next",
         {
@@ -128,21 +147,18 @@
           "iosUserTrackingPermission": "This identifier will be used to deliver personalized ads to you."
         }
       ],
-
       [
         "expo-document-picker",
         {
           "iCloudContainerEnvironment": "Production"
         }
       ],
-
       [
         "expo-location",
         {
           "locationAlwaysAndWhenInUsePermission": "Trendly requires access to your location to show localized collaborations."
         }
       ],
-
       [
         "expo-media-library",
         {
@@ -151,15 +167,12 @@
           "isAccessMediaLocationEnabled": true
         }
       ],
-
       "expo-tracking-transparency",
       "@react-native-google-signin/google-signin"
     ],
-
     "experiments": {
       "typedRoutes": true
     },
-
     "extra": {
       "router": {
         "origin": false
@@ -168,7 +181,6 @@
         "projectId": "36cae13c-e8b0-456c-9818-eee801a8c51e"
       }
     },
-
     "owner": "idiv"
   }
 }
