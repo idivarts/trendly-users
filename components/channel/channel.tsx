@@ -21,140 +21,140 @@ import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import React from "react";
 import {
-  AttachButton,
-  AttachmentPickerSelectionBar,
-  CommandsButton,
-  MoreOptionsButton,
-  SendButton,
+    AttachButton,
+    AttachmentPickerSelectionBar,
+    CommandsButton,
+    MoreOptionsButton,
+    SendButton,
 } from "./components";
 
 const ChannelNative = () => {
-  const [channel, setChannel] = useState<ChannelType | null>(null);
-  const [contract, setContract] = useState<IContracts | null>(null);
-  const [brand, setBrand] = useState<IBrands | null>(null);
-  const { cid } = useLocalSearchParams<{ cid: string }>();
-  const { user } = useAuthContext()
+    const [channel, setChannel] = useState<ChannelType | null>(null);
+    const [contract, setContract] = useState<IContracts | null>(null);
+    const [brand, setBrand] = useState<IBrands | null>(null);
+    const { cid } = useLocalSearchParams<{ cid: string }>();
+    const { user } = useAuthContext()
 
-  const { isChatConnected } = useChatContext()
+    const { isChatConnected } = useChatContext()
 
-  const { getContractById } = useContractContext();
-  const { getBrandById } = useBrandContext();
+    const { getContractById } = useContractContext();
+    const { getBrandById } = useBrandContext();
 
-  const client = streamClient
-  const router = useMyNavigation();
-  const theme = useTheme();
+    const client = streamClient
+    const router = useMyNavigation();
+    const theme = useTheme();
 
-  const fetchBrand = async (
-    brandId: string,
-  ) => {
-    const brandData = await getBrandById(brandId);
+    const fetchBrand = async (
+        brandId: string,
+    ) => {
+        const brandData = await getBrandById(brandId);
 
-    if (brandData) {
-      setBrand(brandData);
+        if (brandData) {
+            setBrand(brandData);
+        }
     }
-  }
 
-  const fetchContract = async (
-    contractId: string,
-  ) => {
-    const contractData = await getContractById(contractId);
-    setContract(contractData);
-  }
-
-  useEffect(() => {
-    const fetchChannel = async () => {
-      // await connectUser()
-      const channels = await client.queryChannels({ cid });
-      setChannel(channels[0]);
-
-      if (channels[0]?.data?.contractId) {
-        await fetchContract(channels[0]?.data?.contractId as string);
-      }
-    };
-
-    if (isChatConnected && cid)
-      fetchChannel();
-  }, [cid, isChatConnected]);
-
-  useEffect(() => {
-    if (contract && user) {
-      fetchBrand(contract?.brandId as string);
+    const fetchContract = async (
+        contractId: string,
+    ) => {
+        const contractData = await getContractById(contractId);
+        setContract(contractData);
     }
-  }, [contract, user]);
 
-  if (!channel) {
-    return (
-      <View
-        style={{
-          alignItems: 'center',
-          flex: 1,
-          justifyContent: 'center',
-        }}
-      >
-        <ActivityIndicator />
-      </View>
-    );
-  }
+    useEffect(() => {
+        const fetchChannel = async () => {
+            // await connectUser()
+            const channels = await client.queryChannels({ cid });
+            setChannel(channels[0]);
 
-  return (
-    <View style={{ flex: 1 }}>
-      <Channel
-        AttachButton={AttachButton}
-        audioRecordingEnabled
-        channel={channel}
-        CommandsButton={CommandsButton}
-        MoreOptionsButton={MoreOptionsButton}
-        SendButton={SendButton}
-      >
-        <ScreenHeader
-          title={channel?.data?.name || 'Chat'}
-          rightAction={true}
-          rightActionButton={
-            <>
-              {!!contract && <Pressable
+            if (channels[0]?.data?.contractId) {
+                await fetchContract(channels[0]?.data?.contractId as string);
+            }
+        };
+
+        if (isChatConnected && cid)
+            fetchChannel();
+    }, [cid, isChatConnected]);
+
+    useEffect(() => {
+        if (contract && user) {
+            fetchBrand(contract?.brandId as string);
+        }
+    }, [contract, user]);
+
+    if (!channel) {
+        return (
+            <View
                 style={{
-                  paddingHorizontal: 16
+                    alignItems: 'center',
+                    flex: 1,
+                    justifyContent: 'center',
                 }}
-                onPress={() => {
-                  router.push(`/contract-details/${contract.streamChannelId}`);
-                }}
-              >
-                <Avatar.Image
-                  style={{
-                    backgroundColor: Colors(theme).transparent,
-                  }}
-                  size={40}
-                  source={imageUrl(brand?.image)}
+            >
+                <ActivityIndicator />
+            </View>
+        );
+    }
+
+    return (
+        <View style={{ flex: 1 }}>
+            <Channel
+                AttachButton={AttachButton}
+                audioRecordingEnabled
+                channel={channel}
+                CommandsButton={CommandsButton}
+                MoreOptionsButton={MoreOptionsButton}
+                SendButton={SendButton}
+            >
+                <ScreenHeader
+                    title={channel?.data?.name || 'Chat'}
+                    rightAction={true}
+                    rightActionButton={
+                        <>
+                            {!!contract && <Pressable
+                                style={{
+                                    paddingHorizontal: 16
+                                }}
+                                onPress={() => {
+                                    router.push(`/contract-details/${contract.streamChannelId}`);
+                                }}
+                            >
+                                <Avatar.Image
+                                    style={{
+                                        backgroundColor: Colors(theme).transparent,
+                                    }}
+                                    size={40}
+                                    source={imageUrl(brand?.image)}
+                                />
+                            </Pressable>}
+                            {(channel?.data?.threadType == "influencer-invite") && <Pressable
+                                style={{ paddingHorizontal: 16 }}
+                                onPress={() => {
+                                    router.push(`/review-influencer?${channel?.data?.influencerId == user?.id ? ("userId=" + channel?.data?.userId) : ("influencerId=" + channel?.data?.influencerId)}`);
+                                }}
+                            >
+                                <FontAwesomeIcon
+                                    icon={faInfoCircle}
+                                    size={24}
+                                    color={Colors(theme).gray100}
+                                />
+                            </Pressable>}
+                        </>
+                    }
                 />
-              </Pressable>}
-              {(channel?.data?.threadType == "influencer-invite") && <Pressable
-                style={{ paddingHorizontal: 16 }}
-                onPress={() => {
-                  router.push(`/review-influencer?${channel?.data?.influencerId == user?.id ? ("userId=" + channel?.data?.userId) : ("influencerId=" + channel?.data?.influencerId)}`);
-                }}
-              >
-                <FontAwesomeIcon
-                  icon={faInfoCircle}
-                  size={24}
-                  color={Colors(theme).gray100}
+                {!!contract && <ChatMessageTopbar
+                    contract={{
+                        ...contract,
+                        id: channel?.data?.contractId as string,
+                    }}
+                />}
+                <MessageList />
+                <MessageInput
+                    AttachmentPickerSelectionBar={AttachmentPickerSelectionBar}
                 />
-              </Pressable>}
-            </>
-          }
-        />
-        {!!contract && <ChatMessageTopbar
-          contract={{
-            ...contract,
-            id: channel?.data?.contractId as string,
-          }}
-        />}
-        <MessageList />
-        <MessageInput
-          AttachmentPickerSelectionBar={AttachmentPickerSelectionBar}
-        />
-      </Channel>
-    </View>
-  );
+            </Channel>
+        </View>
+    );
 }
 
 export default ChannelNative;

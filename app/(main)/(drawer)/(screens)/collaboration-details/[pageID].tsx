@@ -13,51 +13,51 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
 
 const CollaborationDetailsScreen = () => {
-  const theme = useTheme();
-  const [isVisible, setIsVisible] = useState(false);
-  const { resetAndNavigate } = useMyNavigation()
+    const theme = useTheme();
+    const [isVisible, setIsVisible] = useState(false);
+    const { resetAndNavigate } = useMyNavigation()
 
-  const { cardId, cardType, collaborationID, pageID } = useLocalSearchParams();
-  if (pageID === undefined || pageID === "undefined") {
-    resetAndNavigate("/collaborations");
-  }
+    const { cardId, cardType, collaborationID, pageID } = useLocalSearchParams();
+    if (pageID === undefined || pageID === "undefined") {
+        resetAndNavigate("/collaborations");
+    }
 
-  return (
-    <AppLayout withWebPadding={false}>
-      <ScreenHeader
-        title="Collaboration Details"
-        rightAction
-        rightActionButton={
-          <IconButton
-            icon={() => (
-              <FontAwesomeIcon
-                icon={faEllipsisV}
-                size={20}
-                color={Colors(theme).text}
-              />
-            )}
-            onPress={() => {
-              setIsVisible(true);
-            }}
-            iconColor={Colors(theme).text}
-          />
-        }
-      />
-      <CollaborationDetails
-        cardType={cardType as any}
-        pageID={pageID as string}
-      />
-      <BottomSheetActions
-        cardId={pageID as string}
-        cardType="details"
-        isVisible={isVisible}
-        snapPointsRange={["30%", "50%"]}
-        onClose={() => {
-          setIsVisible(false);
-        }}
-      />
-    </AppLayout>
-  );
+    return (
+        <AppLayout withWebPadding={false}>
+            <ScreenHeader
+                title="Collaboration Details"
+                rightAction
+                rightActionButton={
+                    <IconButton
+                        icon={() => (
+                            <FontAwesomeIcon
+                                icon={faEllipsisV}
+                                size={20}
+                                color={Colors(theme).text}
+                            />
+                        )}
+                        onPress={() => {
+                            setIsVisible(true);
+                        }}
+                        iconColor={Colors(theme).text}
+                    />
+                }
+            />
+            <CollaborationDetails
+                cardType={cardType as any}
+                pageID={pageID as string}
+            />
+            <BottomSheetActions
+                cardId={pageID as string}
+                cardType="details"
+                isVisible={isVisible}
+                snapPointsRange={["30%", "50%"]}
+                onClose={() => {
+                    setIsVisible(false);
+                }}
+            />
+        </AppLayout>
+    );
 };
 
 export default CollaborationDetailsScreen;

@@ -1,17 +1,17 @@
 export const includeSelectedItems = (
-  itemsList: string[],
-  selectedItems: string[]
+    itemsList: string[],
+    selectedItems: string[]
 ) => {
-  return itemsList.concat(
-    selectedItems.filter((item) => !itemsList.includes(item))
-  );
+    return itemsList.concat(
+        selectedItems.filter((item) => !itemsList.includes(item))
+    );
 };
 
 export const includeSingleSelectedItem = (
-  itemsList: string[],
-  selectedItem?: string
+    itemsList: string[],
+    selectedItem?: string
 ) => {
-  if (!selectedItem || itemsList.includes(selectedItem))
-    return itemsList;
-  return [...itemsList, selectedItem];
+    if (!selectedItem || itemsList.includes(selectedItem))
+        return itemsList;
+    return [...itemsList, selectedItem];
 };

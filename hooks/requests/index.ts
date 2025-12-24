@@ -1,4 +1,5 @@
-import useInstagramLogin from "./use-instagram-login";
 import useFacebookLogin from "./use-facebook-login";
+import useInstagramLogin from "./use-instagram-login";
 
-export { useInstagramLogin, useFacebookLogin };
+export { useFacebookLogin, useInstagramLogin };
+

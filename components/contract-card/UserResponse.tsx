@@ -7,82 +7,82 @@ import { ScrollView } from "react-native";
 import { Text, View } from "../theme/Themed";
 
 interface UserResponseProps {
-  application?: IApplications;
-  influencerQuestions?: string[];
-  setConfirmationModalVisible: (value: boolean) => void;
+    application?: IApplications;
+    influencerQuestions?: string[];
+    setConfirmationModalVisible: (value: boolean) => void;
 }
 
 const UserResponse: FC<UserResponseProps> = ({
-  application,
-  influencerQuestions,
-  setConfirmationModalVisible,
+    application,
+    influencerQuestions,
+    setConfirmationModalVisible,
 }) => {
-  const attachmentFiltered = application?.attachments.map((attachment) => {
-    return processRawAttachment(attachment);
-  });
-  const theme = useTheme();
+    const attachmentFiltered = application?.attachments.map((attachment) => {
+        return processRawAttachment(attachment);
+    });
+    const theme = useTheme();
 
-  return (
-    <View
-      style={{
-        borderRadius: 5,
-        width: "100%",
-        gap: 16,
-      }}
-    >
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <Text
-          style={{
-            fontSize: 16,
-            fontWeight: "bold",
-          }}
-        >
-          Application
-        </Text>
-      </View>
-      <View
-        style={{
-          width: "100%",
-          gap: 16,
-        }}
-      >
-        <ScrollView horizontal style={{}}>
-          {attachmentFiltered?.map((attachment, index) => (
-            <RenderMediaItem
-              key={index}
-              item={attachment}
-              index={index}
-              height={100}
-              width={100}
-              handleImagePress={() => { }}
-            />
-          ))}
-        </ScrollView>
-        <Text style={{ fontSize: 16 }}>{application?.message}</Text>
+    return (
         <View
-          style={{
-            flexDirection: "row",
-            gap: 10,
-            justifyContent: "space-between",
-          }}
+            style={{
+                borderRadius: 5,
+                width: "100%",
+                gap: 16,
+            }}
         >
-          <Text style={{ fontSize: 16 }}>
-            Quote: {application?.quotation || "Free"}
-          </Text>
-          {/* {application?.timeline && (
+            <View
+                style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                }}
+            >
+                <Text
+                    style={{
+                        fontSize: 16,
+                        fontWeight: "bold",
+                    }}
+                >
+                    Application
+                </Text>
+            </View>
+            <View
+                style={{
+                    width: "100%",
+                    gap: 16,
+                }}
+            >
+                <ScrollView horizontal style={{}}>
+                    {attachmentFiltered?.map((attachment, index) => (
+                        <RenderMediaItem
+                            key={index}
+                            item={attachment}
+                            index={index}
+                            height={100}
+                            width={100}
+                            handleImagePress={() => { }}
+                        />
+                    ))}
+                </ScrollView>
+                <Text style={{ fontSize: 16 }}>{application?.message}</Text>
+                <View
+                    style={{
+                        flexDirection: "row",
+                        gap: 10,
+                        justifyContent: "space-between",
+                    }}
+                >
+                    <Text style={{ fontSize: 16 }}>
+                        Quote: {application?.quotation || "Free"}
+                    </Text>
+                    {/* {application?.timeline && (
             <Text style={{ fontSize: 16 }}>
               Timeline:{" "}
               {new Date(application?.timeline).toLocaleDateString() || "N/A"}
             </Text>
           )} */}
-        </View>
-        {/* {application?.fileAttachments &&
+                </View>
+                {/* {application?.fileAttachments &&
           application.fileAttachments.map((attachment, index) => {
             return (
               <View
@@ -103,47 +103,47 @@ const UserResponse: FC<UserResponseProps> = ({
             );
           })} */}
 
-        <View
-          style={{
-            flexDirection: "column",
-            gap: 10,
-          }}
-        >
-          {application?.answersFromInfluencer &&
-            influencerQuestions &&
-            application?.answersFromInfluencer.map((answer, index) => {
-              return (
                 <View
-                  key={index}
-                  style={{
-                    flexDirection: "column",
-                    gap: 10,
-                  }}
+                    style={{
+                        flexDirection: "column",
+                        gap: 10,
+                    }}
                 >
-                  <Text
-                    style={{
-                      fontSize: 16,
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Q{") "}
-                    {influencerQuestions[answer.question]}
-                  </Text>
-                  <Text
-                    style={{
-                      fontSize: 16,
-                    }}
-                  >
-                    A{") "}
-                    {answer.answer}
-                  </Text>
+                    {application?.answersFromInfluencer &&
+                        influencerQuestions &&
+                        application?.answersFromInfluencer.map((answer, index) => {
+                            return (
+                                <View
+                                    key={index}
+                                    style={{
+                                        flexDirection: "column",
+                                        gap: 10,
+                                    }}
+                                >
+                                    <Text
+                                        style={{
+                                            fontSize: 16,
+                                            fontWeight: "bold",
+                                        }}
+                                    >
+                                        Q{") "}
+                                        {influencerQuestions[answer.question]}
+                                    </Text>
+                                    <Text
+                                        style={{
+                                            fontSize: 16,
+                                        }}
+                                    >
+                                        A{") "}
+                                        {answer.answer}
+                                    </Text>
+                                </View>
+                            );
+                        })}
                 </View>
-              );
-            })}
+            </View>
         </View>
-      </View>
-    </View>
-  );
+    );
 };
 
 export default UserResponse;

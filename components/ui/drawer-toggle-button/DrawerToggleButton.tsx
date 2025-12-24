@@ -10,36 +10,36 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 interface DrawerToggleButtonProps extends React.ComponentProps<typeof Pressable> { }
 
 const DrawerToggleButton: React.FC<DrawerToggleButtonProps> = ({
-  ...props
+    ...props
 }) => {
-  const navigation = useNavigation();
-  const theme = useTheme();
+    const navigation = useNavigation();
+    const theme = useTheme();
 
-  return (
-    <Pressable
-      {...props}
-      key={0}
-      onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
-    >
-      <View
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        <FontAwesomeIcon
-          icon={faBars}
-          size={20}
-          style={{
-            marginLeft: 14,
-            color: Colors(theme).text,
-            marginBottom: -2,
-          }}
-        />
-      </View>
-    </Pressable>
-  )
+    return (
+        <Pressable
+            {...props}
+            key={0}
+            onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
+        >
+            <View
+                style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}
+            >
+                <FontAwesomeIcon
+                    icon={faBars}
+                    size={20}
+                    style={{
+                        marginLeft: 14,
+                        color: Colors(theme).text,
+                        marginBottom: -2,
+                    }}
+                />
+            </View>
+        </Pressable>
+    )
 };
 
 export default DrawerToggleButton;

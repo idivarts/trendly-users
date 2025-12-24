@@ -14,102 +14,102 @@ import { useState } from "react";
 export { MediaItem };
 
 interface RenderMediaItemProps {
-  handleImagePress: (item: MediaItem) => void;
-  height?: number;
-  index: number;
-  item: MediaItem;
-  videoRefs?: React.MutableRefObject<{ [key: number]: any }>;
-  width?: number;
-  shouldPlay?: boolean
-  useNativeControls?: boolean,
-  borderRadius?: number;
+    handleImagePress: (item: MediaItem) => void;
+    height?: number;
+    index: number;
+    item: MediaItem;
+    videoRefs?: React.MutableRefObject<{ [key: number]: any }>;
+    width?: number;
+    shouldPlay?: boolean
+    useNativeControls?: boolean,
+    borderRadius?: number;
 }
 
 const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
-  handleImagePress,
-  height,
-  index,
-  item,
-  borderRadius,
-  videoRefs,
-  width,
-  shouldPlay,
-  useNativeControls
+    handleImagePress,
+    height,
+    index,
+    item,
+    borderRadius,
+    videoRefs,
+    width,
+    shouldPlay,
+    useNativeControls
 }) => {
-  const theme = useTheme();
-  const styles = stylesFn(theme);
-  const [isLoading, setIsLoading] = useState(false);
+    const theme = useTheme();
+    const styles = stylesFn(theme);
+    const [isLoading, setIsLoading] = useState(false);
 
-  if (item?.type.includes("image")) {
+    if (item?.type.includes("image")) {
+        return (
+            <TapGestureHandler
+                onHandlerStateChange={({ nativeEvent }) => {
+                    if (nativeEvent.state === State.ACTIVE) {
+                        handleImagePress(item);
+                    }
+                }}
+            >
+                <Animated.View
+                    style={{
+                        position: "relative",
+                    }}
+                >
+                    <View
+                        style={[
+                            styles.loadingIndicatorContainer,
+                            {
+                                display: isLoading ? "flex" : "none",
+                            },
+                        ]}
+                    >
+                        {isLoading && <ActivityIndicator />}
+                    </View>
+                    <Image
+                        source={imageUrl(item.url)}
+                        style={[
+                            styles.media,
+                            {
+                                height: height || 250,
+                                width: width || "100%",
+                                borderRadius: borderRadius || 0,
+                            },
+                        ]}
+                        resizeMode="stretch"
+                        onLoadStart={() => setIsLoading(true)}
+                        onLoad={() => setIsLoading(false)}
+                    />
+                </Animated.View>
+            </TapGestureHandler>
+        );
+    }
+
     return (
-      <TapGestureHandler
-        onHandlerStateChange={({ nativeEvent }) => {
-          if (nativeEvent.state === State.ACTIVE) {
-            handleImagePress(item);
-          }
-        }}
-      >
-        <Animated.View
-          style={{
-            position: "relative",
-          }}
-        >
-          <View
+        <Video
+            ref={(ref) => {
+                if (ref && videoRefs) {
+                    videoRefs.current[index] = ref;
+                }
+            }}
+            source={{
+                uri: item.url,
+            }}
             style={[
-              styles.loadingIndicatorContainer,
-              {
-                display: isLoading ? "flex" : "none",
-              },
+                styles.media,
+                {
+                    height: height || 250,
+                    width: width || "100%",
+                    borderRadius: borderRadius || 0,
+                },
             ]}
-          >
-            {isLoading && <ActivityIndicator />}
-          </View>
-          <Image
-            source={imageUrl(item.url)}
-            style={[
-              styles.media,
-              {
-                height: height || 250,
-                width: width || "100%",
-                borderRadius: borderRadius || 0,
-              },
-            ]}
-            resizeMode="stretch"
+            resizeMode={ResizeMode.COVER}
+            isLooping={false}
+            shouldPlay={!!shouldPlay}
+            useNativeControls={!!useNativeControls}
+            onError={(error) => Console.error(error)}
             onLoadStart={() => setIsLoading(true)}
             onLoad={() => setIsLoading(false)}
-          />
-        </Animated.View>
-      </TapGestureHandler>
+        />
     );
-  }
-
-  return (
-    <Video
-      ref={(ref) => {
-        if (ref && videoRefs) {
-          videoRefs.current[index] = ref;
-        }
-      }}
-      source={{
-        uri: item.url,
-      }}
-      style={[
-        styles.media,
-        {
-          height: height || 250,
-          width: width || "100%",
-          borderRadius: borderRadius || 0,
-        },
-      ]}
-      resizeMode={ResizeMode.COVER}
-      isLooping={false}
-      shouldPlay={!!shouldPlay}
-      useNativeControls={!!useNativeControls}
-      onError={(error) => Console.error(error)}
-      onLoadStart={() => setIsLoading(true)}
-      onLoad={() => setIsLoading(false)}
-    />
-  );
 };
 
 export default RenderMediaItem;

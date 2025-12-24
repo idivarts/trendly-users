@@ -11,157 +11,157 @@ import ConfirmationModal from "@/shared-uis/components/ConfirmationModal";
 import ProfileBottomSheet from "@/shared-uis/components/ProfileModal/Profile-Modal";
 import { User } from "@/types/User";
 import {
-  BottomSheetBackdrop
+    BottomSheetBackdrop
 } from "@gorhom/bottom-sheet";
 import { useTheme } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { Pressable } from "react-native";
 
 const EditProfileScreen: React.FC = () => {
-  const [unsavedChanges, setUnsavedChanges] = useState(false);
-  const [confirmationModalVisible, setConfirmationModalVisible] =
-    useState(false);
-  const [clickBack, setClickBack] = useState(false)
-  const [openBottomSheet, setOpenBottomSheet] = useState(false)
+    const [unsavedChanges, setUnsavedChanges] = useState(false);
+    const [confirmationModalVisible, setConfirmationModalVisible] =
+        useState(false);
+    const [clickBack, setClickBack] = useState(false)
+    const [openBottomSheet, setOpenBottomSheet] = useState(false)
 
-  const theme = useTheme();
+    const theme = useTheme();
 
-  const navigation = useMyNavigation()
-  const closeProfileModal = () => {
-    setOpenBottomSheet(false)
-  }
-
-  const [loadingPosts, setLoadingPosts] = useState(false);
-  const [posts, setPosts] = useState([]);
-  const [isInstagram, setIsInstagram] = useState(false);
-
-  const fetchPosts = async () => {
-    setLoadingPosts(true);
-    const response = await HttpWrapper.fetch(`/api/v2/socials/medias?userId=${AuthApp.currentUser?.uid}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }).finally(() => {
-      setLoadingPosts(false)
-    });
-    const data = await response.json();
-
-    if (data.data.isInstagram) {
-      setIsInstagram(true);
-      setPosts(data.data.medias);
-      setLoadingPosts(false);
-    } else {
-      setIsInstagram(false);
-      setPosts(data.data.posts);
-      setLoadingPosts(false);
+    const navigation = useMyNavigation()
+    const closeProfileModal = () => {
+        setOpenBottomSheet(false)
     }
-  };
 
-  useEffect(() => {
-    fetchPosts();
-  }, []);
+    const [loadingPosts, setLoadingPosts] = useState(false);
+    const [posts, setPosts] = useState([]);
+    const [isInstagram, setIsInstagram] = useState(false);
 
-  const { user } = useAuthContext();
+    const fetchPosts = async () => {
+        setLoadingPosts(true);
+        const response = await HttpWrapper.fetch(`/api/v2/socials/medias?userId=${AuthApp.currentUser?.uid}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        }).finally(() => {
+            setLoadingPosts(false)
+        });
+        const data = await response.json();
 
-  const renderBackdrop = (props: any) => {
-    return (
-      <BottomSheetBackdrop
-        {...props}
-        disappearsOnIndex={-1}
-        appearsOnIndex={0}
-      />
-    );
-  };
-
-  return (
-    <View style={{ flex: 1 }}>
-      <ScreenHeader
-        title="Edit Profile"
-        action={() => {
-          if (unsavedChanges) {
-            setClickBack(true)
-            return;
-          }
-          if (navigation.canGoBack()) {
-            navigation.back();
-          } else {
-            navigation.resetAndNavigate("/collaborations");
-          }
-        }}
-        rightAction
-        rightActionButton={
-          <Pressable
-            onPress={() => {
-              if (unsavedChanges) {
-                setConfirmationModalVisible(true);
-                return;
-              }
-              setOpenBottomSheet(true)
-            }}
-            style={{ padding: 10 }}
-          >
-            <Text>Preview</Text>
-          </Pressable>
+        if (data.data.isInstagram) {
+            setIsInstagram(true);
+            setPosts(data.data.medias);
+            setLoadingPosts(false);
+        } else {
+            setIsInstagram(false);
+            setPosts(data.data.posts);
+            setLoadingPosts(false);
         }
-      />
+    };
 
-      <EditProfile
-        unsavedChanges={unsavedChanges}
-        setUnsavedChanges={setUnsavedChanges}
-      />
+    useEffect(() => {
+        fetchPosts();
+    }, []);
 
-      <BottomSheetScrollContainer
-        isVisible={openBottomSheet}
-        snapPointsRange={["90%", "90%"]}
-        onClose={() => { setOpenBottomSheet(false) }}
-      >
-        <ProfileBottomSheet
-          influencer={user as User}
-          theme={theme}
-          FireStoreDB={FirestoreDB}
-          isBrandsApp={false}
-          showCardPreviewTab={true}
-          closeModal={closeProfileModal}
-          loadingPosts={loadingPosts}
-          posts={posts}
-          isInstagram={isInstagram}
-        />
-      </BottomSheetScrollContainer>
+    const { user } = useAuthContext();
 
-      <ConfirmationModal
-        cancelAction={() => {
-          setClickBack(false);
-          if (navigation.canGoBack()) {
-            navigation.back();
-          } else {
-            navigation.resetAndNavigate("/collaborations");
-          }
-        }}
-        confirmAction={() => {
-          setClickBack(false);
-        }}
-        confirmText="Stay!"
-        cancelText="Discard"
-        title="Discard Changes?"
-        description="Going back would discard your changes. Are you sure?"
-        setVisible={setClickBack}
-        visible={clickBack}
-      />
-      <ConfirmationModal
-        cancelAction={() => setConfirmationModalVisible(false)}
-        confirmAction={() => {
-          setOpenBottomSheet(true)
-          setConfirmationModalVisible(false);
-        }}
-        confirmText="Continue"
-        title="Unsaved Changes"
-        description="You have unsaved changes. Are you sure you want to continue?"
-        setVisible={setConfirmationModalVisible}
-        visible={confirmationModalVisible}
-      />
-    </View>
-  );
+    const renderBackdrop = (props: any) => {
+        return (
+            <BottomSheetBackdrop
+                {...props}
+                disappearsOnIndex={-1}
+                appearsOnIndex={0}
+            />
+        );
+    };
+
+    return (
+        <View style={{ flex: 1 }}>
+            <ScreenHeader
+                title="Edit Profile"
+                action={() => {
+                    if (unsavedChanges) {
+                        setClickBack(true)
+                        return;
+                    }
+                    if (navigation.canGoBack()) {
+                        navigation.back();
+                    } else {
+                        navigation.resetAndNavigate("/collaborations");
+                    }
+                }}
+                rightAction
+                rightActionButton={
+                    <Pressable
+                        onPress={() => {
+                            if (unsavedChanges) {
+                                setConfirmationModalVisible(true);
+                                return;
+                            }
+                            setOpenBottomSheet(true)
+                        }}
+                        style={{ padding: 10 }}
+                    >
+                        <Text>Preview</Text>
+                    </Pressable>
+                }
+            />
+
+            <EditProfile
+                unsavedChanges={unsavedChanges}
+                setUnsavedChanges={setUnsavedChanges}
+            />
+
+            <BottomSheetScrollContainer
+                isVisible={openBottomSheet}
+                snapPointsRange={["90%", "90%"]}
+                onClose={() => { setOpenBottomSheet(false) }}
+            >
+                <ProfileBottomSheet
+                    influencer={user as User}
+                    theme={theme}
+                    FireStoreDB={FirestoreDB}
+                    isBrandsApp={false}
+                    showCardPreviewTab={true}
+                    closeModal={closeProfileModal}
+                    loadingPosts={loadingPosts}
+                    posts={posts}
+                    isInstagram={isInstagram}
+                />
+            </BottomSheetScrollContainer>
+
+            <ConfirmationModal
+                cancelAction={() => {
+                    setClickBack(false);
+                    if (navigation.canGoBack()) {
+                        navigation.back();
+                    } else {
+                        navigation.resetAndNavigate("/collaborations");
+                    }
+                }}
+                confirmAction={() => {
+                    setClickBack(false);
+                }}
+                confirmText="Stay!"
+                cancelText="Discard"
+                title="Discard Changes?"
+                description="Going back would discard your changes. Are you sure?"
+                setVisible={setClickBack}
+                visible={clickBack}
+            />
+            <ConfirmationModal
+                cancelAction={() => setConfirmationModalVisible(false)}
+                confirmAction={() => {
+                    setOpenBottomSheet(true)
+                    setConfirmationModalVisible(false);
+                }}
+                confirmText="Continue"
+                title="Unsaved Changes"
+                description="You have unsaved changes. Are you sure you want to continue?"
+                setVisible={setConfirmationModalVisible}
+                visible={confirmationModalVisible}
+            />
+        </View>
+    );
 };
 
 export default EditProfileScreen;

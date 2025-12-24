@@ -11,448 +11,448 @@ import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { User } from "@/types/User";
 import { useSegments } from "expo-router";
 import {
-  createUserWithEmailAndPassword,
-  deleteUser,
-  sendEmailVerification,
-  signInWithEmailAndPassword,
-  signOut
+    createUserWithEmailAndPassword,
+    deleteUser,
+    sendEmailVerification,
+    signInWithEmailAndPassword,
+    signOut
 } from "firebase/auth";
 import {
-  collection,
-  deleteDoc,
-  doc,
-  getDoc,
-  getDocs,
-  onSnapshot,
-  query,
-  setDoc,
-  updateDoc,
-  where,
-  writeBatch,
+    collection,
+    deleteDoc,
+    doc,
+    getDoc,
+    getDocs,
+    onSnapshot,
+    query,
+    setDoc,
+    updateDoc,
+    where,
+    writeBatch,
 } from "firebase/firestore";
 import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  type PropsWithChildren,
+    createContext,
+    useContext,
+    useEffect,
+    useState,
+    type PropsWithChildren,
 } from "react";
 import { Platform } from "react-native";
 ;
 ;
 
 interface AuthContextProps {
-  deleteUserAccount: (userId: string) => Promise<void>;
-  firebaseSignIn: (token: string) => void;
-  firebaseSignUp: (token: string, hasSocials?: number) => void;
-  getUser: (userId: string) => Promise<User | null>;
-  isLoading: boolean;
-  isLoggedIn: boolean;
-  isUserLoading: boolean;
-  session?: string | null;
-  signIn: (email: string, password: string) => void;
-  signOutUser: () => Promise<void>;
-  signUp: (name: string, email: string, password: string) => void;
-  updateUser: (userId: string, user: Partial<User>) => Promise<void>;
-  user: User | null;
-  verifyEmail: () => void;
-  collaborationId?: string;
-  setCollaborationId?: React.Dispatch<React.SetStateAction<string>>;
+    deleteUserAccount: (userId: string) => Promise<void>;
+    firebaseSignIn: (token: string) => void;
+    firebaseSignUp: (token: string, hasSocials?: number) => void;
+    getUser: (userId: string) => Promise<User | null>;
+    isLoading: boolean;
+    isLoggedIn: boolean;
+    isUserLoading: boolean;
+    session?: string | null;
+    signIn: (email: string, password: string) => void;
+    signOutUser: () => Promise<void>;
+    signUp: (name: string, email: string, password: string) => void;
+    updateUser: (userId: string, user: Partial<User>) => Promise<void>;
+    user: User | null;
+    verifyEmail: () => void;
+    collaborationId?: string;
+    setCollaborationId?: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const AuthContext = createContext<AuthContextProps>({
-  deleteUserAccount: () => Promise.resolve(),
-  firebaseSignIn: (token: string) => null,
-  firebaseSignUp: (token: string, hasSocials?: number) => null,
-  getUser: () => Promise.resolve(null),
-  isLoading: false,
-  isUserLoading: false,
-  isLoggedIn: false,
-  session: null,
-  signIn: (email: string, password: string) => null,
-  signOutUser: async () => { },
-  signUp: (name: string, email: string, password: string) => null,
-  updateUser: () => Promise.resolve(),
-  user: null,
-  verifyEmail: () => null,
+    deleteUserAccount: () => Promise.resolve(),
+    firebaseSignIn: (token: string) => null,
+    firebaseSignUp: (token: string, hasSocials?: number) => null,
+    getUser: () => Promise.resolve(null),
+    isLoading: false,
+    isUserLoading: false,
+    isLoggedIn: false,
+    session: null,
+    signIn: (email: string, password: string) => null,
+    signOutUser: async () => { },
+    signUp: (name: string, email: string, password: string) => null,
+    updateUser: () => Promise.resolve(),
+    user: null,
+    verifyEmail: () => null,
 });
 
 export const useAuthContext = () => useContext(AuthContext);
 let userUnsubscribe: any = null;
 
 export const AuthContextProvider: React.FC<PropsWithChildren> = ({
-  children,
+    children,
 }) => {
-  const [[isLoading, session], setSession] = useStorageState("id");
-  const [user, setUser] = useState<User | null>(null);
-  const [isUserLoading, setIsUserLoading] = useState(true);
-  const [collaborationId, setCollaborationId] = useState<string>("");
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const INITIAL_DATA = useInitialUserData()
-  const { resetAndNavigate } = useMyNavigation()
-  const segments = useSegments();
+    const [[isLoading, session], setSession] = useStorageState("id");
+    const [user, setUser] = useState<User | null>(null);
+    const [isUserLoading, setIsUserLoading] = useState(true);
+    const [collaborationId, setCollaborationId] = useState<string>("");
+    const [isLoggedIn, setIsLoggedIn] = useState(false)
+    const INITIAL_DATA = useInitialUserData()
+    const { resetAndNavigate } = useMyNavigation()
+    const segments = useSegments();
 
-  const fetchUser = async () => {
-    if (isLoading || !session || !AuthApp.currentUser)
-      return
+    const fetchUser = async () => {
+        if (isLoading || !session || !AuthApp.currentUser)
+            return
 
-    setIsUserLoading(true);
-    try {
-      const userDocRef = doc(FirestoreDB, "users", AuthApp.currentUser.uid);
+        setIsUserLoading(true);
+        try {
+            const userDocRef = doc(FirestoreDB, "users", AuthApp.currentUser.uid);
 
-      const unsubscribe = onSnapshot(userDocRef, (userSnap) => {
-        if (userSnap.exists()) {
-          const userData = {
-            ...(userSnap.data() as User),
-            id: userSnap.id as string,
-          };
-          setIsLoggedIn(true);
-          setUser(userData);
+            const unsubscribe = onSnapshot(userDocRef, (userSnap) => {
+                if (userSnap.exists()) {
+                    const userData = {
+                        ...(userSnap.data() as User),
+                        id: userSnap.id as string,
+                    };
+                    setIsLoggedIn(true);
+                    setUser(userData);
+                } else {
+                    Console.log("User not found");
+                    setIsLoggedIn(false)
+                }
+                setIsUserLoading(false);
+            })
+            if (userUnsubscribe) {
+                userUnsubscribe();
+            }
+            userUnsubscribe = unsubscribe;
+        } catch (error: any) {
+            Console.error(error, "User Snapshot catch error");
+            setIsUserLoading(false);
+            setIsLoggedIn(false)
+        }
+    };
+    const cUser = AuthApp.currentUser
+
+    useEffect(() => {
+        if (!isLoggedIn && !isUserLoading) {
+            const inMainGroup = segments[0] === "(main)";
+            if (inMainGroup) {
+                const cancelAction = setTimeout(() => { if (!isUserLoading) signOutUser() }, 2000)
+                return () => {
+                    clearTimeout(cancelAction)
+                }
+            }
+        }
+    }, [isLoggedIn, isUserLoading, segments])
+
+    useEffect(() => {
+        if (isLoading)
+            return
+        AuthApp.authStateReady().then(() => {
+            if (!AuthApp.currentUser) {
+                setIsUserLoading(false);
+                setIsLoggedIn(false);
+                PersistentStorage.clear("streamToken")
+            } else {
+                fetchUser();
+            }
+        })
+    }, [session, isLoading, cUser]);
+
+    const signIn = async (email: string, password: string) => {
+        try {
+            const userCredential = await signInWithEmailAndPassword(
+                AuthApp,
+                email,
+                password
+            );
+
+            setSession(userCredential.user.uid);
+
+            HttpWrapper.fetch("2/chat/auth", { method: "POST", });
+
+            await Console.analytics("signed_in", {
+                id: userCredential.user.uid,
+                name: userCredential.user.displayName,
+                email: userCredential.user.email,
+            });
+
+            Toaster.success("Signed In Successfully!");
+        } catch (error) {
+            Console.error(error);
+            Toaster.error("Error signing in. Please try again.");
+        }
+    };
+
+    const signUp = async (name: string, email: string, password: string) => {
+        try {
+            const userCredential = await createUserWithEmailAndPassword(
+                AuthApp,
+                email,
+                password
+            );
+
+            await setDoc(doc(FirestoreDB, "users", userCredential.user.uid), {
+                name,
+                email,
+                ...INITIAL_DATA,
+                creationTime: Date.now(),
+            });
+
+            setSession(userCredential.user.uid);
+
+            HttpWrapper.fetch("/api/v2/chat/auth", { method: "POST" });
+
+            // After signup, redirect user to the no-social-connected.
+            resetAndNavigate("/no-social-connected");
+            Toaster.success("Signed Up Successfully!");
+        } catch (error) {
+            Console.error(error);
+            Toaster.error("Error signing up. Please try again.");
+        }
+    };
+
+    const firebaseSignIn = async (uid: string) => {
+        setSession(uid);
+        HttpWrapper.fetch("/api/v2/chat/auth", { method: "POST" });
+
+        if (collaborationId)
+            resetAndNavigate(`/collaboration-details/${collaborationId}`);
+        else if ((user?.profile?.completionPercentage || 0) < 60) {
+            resetAndNavigate("/profile");
         } else {
-          Console.log("User not found");
-          setIsLoggedIn(false)
+            resetAndNavigate("/collaborations");
         }
-        setIsUserLoading(false);
-      })
-      if (userUnsubscribe) {
-        userUnsubscribe();
-      }
-      userUnsubscribe = unsubscribe;
-    } catch (error: any) {
-      Console.error(error, "User Snapshot catch error");
-      setIsUserLoading(false);
-      setIsLoggedIn(false)
-    }
-  };
-  const cUser = AuthApp.currentUser
 
-  useEffect(() => {
-    if (!isLoggedIn && !isUserLoading) {
-      const inMainGroup = segments[0] === "(main)";
-      if (inMainGroup) {
-        const cancelAction = setTimeout(() => { if (!isUserLoading) signOutUser() }, 2000)
-        return () => {
-          clearTimeout(cancelAction)
+        if (user?.settings?.accountStatus == AccountStatus.Deactivated) {
+            Toaster.success("Your account is successfuly activated")
+            updateUser(uid, {
+                settings: {
+                    ...user?.settings,
+                    accountStatus: AccountStatus.Activated
+                }
+            })
+        } else {
+            Toaster.success("Signed In Successfully!");
         }
-      }
-    }
-  }, [isLoggedIn, isUserLoading, segments])
+    };
 
-  useEffect(() => {
-    if (isLoading)
-      return
-    AuthApp.authStateReady().then(() => {
-      if (!AuthApp.currentUser) {
-        setIsUserLoading(false);
-        setIsLoggedIn(false);
-        PersistentStorage.clear("streamToken")
-      } else {
-        fetchUser();
-      }
-    })
-  }, [session, isLoading, cUser]);
+    const firebaseSignUp = async (uid: string, hasSocials?: number) => {
+        setSession(uid);
+        HttpWrapper.fetch("/api/v2/chat/auth", { method: "POST", });
 
-  const signIn = async (email: string, password: string) => {
-    try {
-      const userCredential = await signInWithEmailAndPassword(
-        AuthApp,
-        email,
-        password
-      );
-
-      setSession(userCredential.user.uid);
-
-      HttpWrapper.fetch("2/chat/auth", { method: "POST", });
-
-      await Console.analytics("signed_in", {
-        id: userCredential.user.uid,
-        name: userCredential.user.displayName,
-        email: userCredential.user.email,
-      });
-
-      Toaster.success("Signed In Successfully!");
-    } catch (error) {
-      Console.error(error);
-      Toaster.error("Error signing in. Please try again.");
-    }
-  };
-
-  const signUp = async (name: string, email: string, password: string) => {
-    try {
-      const userCredential = await createUserWithEmailAndPassword(
-        AuthApp,
-        email,
-        password
-      );
-
-      await setDoc(doc(FirestoreDB, "users", userCredential.user.uid), {
-        name,
-        email,
-        ...INITIAL_DATA,
-        creationTime: Date.now(),
-      });
-
-      setSession(userCredential.user.uid);
-
-      HttpWrapper.fetch("/api/v2/chat/auth", { method: "POST" });
-
-      // After signup, redirect user to the no-social-connected.
-      resetAndNavigate("/no-social-connected");
-      Toaster.success("Signed Up Successfully!");
-    } catch (error) {
-      Console.error(error);
-      Toaster.error("Error signing up. Please try again.");
-    }
-  };
-
-  const firebaseSignIn = async (uid: string) => {
-    setSession(uid);
-    HttpWrapper.fetch("/api/v2/chat/auth", { method: "POST" });
-
-    if (collaborationId)
-      resetAndNavigate(`/collaboration-details/${collaborationId}`);
-    else if ((user?.profile?.completionPercentage || 0) < 60) {
-      resetAndNavigate("/profile");
-    } else {
-      resetAndNavigate("/collaborations");
-    }
-
-    if (user?.settings?.accountStatus == AccountStatus.Deactivated) {
-      Toaster.success("Your account is successfuly activated")
-      updateUser(uid, {
-        settings: {
-          ...user?.settings,
-          accountStatus: AccountStatus.Activated
+        if (!hasSocials) {
+            resetAndNavigate("/no-social-connected");
+            Toaster.success("Signed Up Successfully!");
+        } else if (hasSocials == 1) {
+            resetAndNavigate("/questions");
+            Toaster.success("Signed Up Successfully!");
+        } else if (hasSocials > 1) {
+            resetAndNavigate("/primary-social-select");
+            Toaster.success("Signed Up Successfully!");
         }
-      })
-    } else {
-      Toaster.success("Signed In Successfully!");
-    }
-  };
+    };
 
-  const firebaseSignUp = async (uid: string, hasSocials?: number) => {
-    setSession(uid);
-    HttpWrapper.fetch("/api/v2/chat/auth", { method: "POST", });
+    const verifyEmail = async () => {
+        const userCredential = AuthApp.currentUser;
 
-    if (!hasSocials) {
-      resetAndNavigate("/no-social-connected");
-      Toaster.success("Signed Up Successfully!");
-    } else if (hasSocials == 1) {
-      resetAndNavigate("/questions");
-      Toaster.success("Signed Up Successfully!");
-    } else if (hasSocials > 1) {
-      resetAndNavigate("/primary-social-select");
-      Toaster.success("Signed Up Successfully!");
-    }
-  };
+        if (userCredential?.emailVerified) {
+            Toaster.error("Email is already verified.");
+            return;
+        }
 
-  const verifyEmail = async () => {
-    const userCredential = AuthApp.currentUser;
+        if (!userCredential || !user) {
+            Toaster.error("User not found.");
+            return;
+        }
 
-    if (userCredential?.emailVerified) {
-      Toaster.error("Email is already verified.");
-      return;
-    }
-
-    if (!userCredential || !user) {
-      Toaster.error("User not found.");
-      return;
-    }
-
-    await sendEmailVerification(userCredential).then(() => {
-      Toaster.success("Verification email sent successfully.");
-    });
-
-    const checkVerification = async () => {
-      await userCredential.reload();
-      if (userCredential.emailVerified) {
-        await updateUser(user?.id as string, {
-          emailVerified: true,
-          profile: {
-            completionPercentage: (user?.profile?.completionPercentage || 0) + 10,
-          }
+        await sendEmailVerification(userCredential).then(() => {
+            Toaster.success("Verification email sent successfully.");
         });
-        Toaster.success("Email verified successfully.");
-      } else {
-        setTimeout(checkVerification, 2000);
-      }
-    }
 
-    checkVerification();
-  };
+        const checkVerification = async () => {
+            await userCredential.reload();
+            if (userCredential.emailVerified) {
+                await updateUser(user?.id as string, {
+                    emailVerified: true,
+                    profile: {
+                        completionPercentage: (user?.profile?.completionPercentage || 0) + 10,
+                    }
+                });
+                Toaster.success("Email verified successfully.");
+            } else {
+                setTimeout(checkVerification, 2000);
+            }
+        }
 
-  const verifyPhoneNumber = async (phoneNumber: string) => {
-    const userCredential = AuthApp.currentUser;
+        checkVerification();
+    };
 
-    if (!userCredential) {
-      Toaster.error("User not found.");
-      return;
-    }
-  };
+    const verifyPhoneNumber = async (phoneNumber: string) => {
+        const userCredential = AuthApp.currentUser;
 
-  const signOutUser = async () => {
-    Console.log("Signing out user", "AuthContextProvider");
-    try {
-      if (Platform.OS !== "web") {
-        // Remove push notification token from the database
-        // const newUpdatedTokens = await updatedTokens(user);
+        if (!userCredential) {
+            Toaster.error("User not found.");
+            return;
+        }
+    };
 
-        // if (newUpdatedTokens) {
-        //   await updateUser(session as string, {
-        //     pushNotificationToken: newUpdatedTokens,
-        //   });
-        // }
-      }
-      PersistentStorage.clear("streamToken")
+    const signOutUser = async () => {
+        Console.log("Signing out user", "AuthContextProvider");
+        try {
+            if (Platform.OS !== "web") {
+                // Remove push notification token from the database
+                // const newUpdatedTokens = await updatedTokens(user);
 
-      if (userUnsubscribe) {
-        await userUnsubscribe();
-        userUnsubscribe = null;
-      }
-    } catch (e: any) {
-      Console.error(e, "Issues while removing tokens");
-    }
-    signOut(AuthApp)
-      .then(() => {
-        Console.analytics("signed_out", {
-          id: user?.id,
-          email: user?.email,
+                // if (newUpdatedTokens) {
+                //   await updateUser(session as string, {
+                //     pushNotificationToken: newUpdatedTokens,
+                //   });
+                // }
+            }
+            PersistentStorage.clear("streamToken")
+
+            if (userUnsubscribe) {
+                await userUnsubscribe();
+                userUnsubscribe = null;
+            }
+        } catch (e: any) {
+            Console.error(e, "Issues while removing tokens");
+        }
+        signOut(AuthApp)
+            .then(() => {
+                Console.analytics("signed_out", {
+                    id: user?.id,
+                    email: user?.email,
+                });
+                Toaster.success("Signed Out Successfully!");
+            }).catch((error) => {
+                Console.error(error, "Error signing out");
+            }).finally(() => {
+                setSession("");
+                setIsLoggedIn(false);
+                setUser(null);
+                resetAndNavigate("/pre-signin");
+            })
+    };
+
+    const getUser = async (userId: string): Promise<User | null> => {
+        const userRef = doc(FirestoreDB, "users", userId);
+        const userSnap = await getDoc(userRef);
+
+        if (userSnap.exists()) {
+            const userData = {
+                ...(userSnap.data() as User),
+                id: userSnap.id as string,
+            };
+            setUser(userData);
+            return userData;
+        }
+
+        return null;
+    };
+
+    const updateUser = async (
+        userId: string,
+        user: Partial<User>
+    ): Promise<void> => {
+        const userRef = doc(FirestoreDB, "users", userId);
+
+        await updateDoc(userRef, {
+            ...user,
         });
-        Toaster.success("Signed Out Successfully!");
-      }).catch((error) => {
-        Console.error(error, "Error signing out");
-      }).finally(() => {
-        setSession("");
-        setIsLoggedIn(false);
-        setUser(null);
-        resetAndNavigate("/pre-signin");
-      })
-  };
+    };
 
-  const getUser = async (userId: string): Promise<User | null> => {
-    const userRef = doc(FirestoreDB, "users", userId);
-    const userSnap = await getDoc(userRef);
+    const deleteUserReferences = async (
+        userId: string,
+        collectionName: string,
+        subcollectionName: string
+    ) => {
+        const mainCollectionRef = collection(FirestoreDB, collectionName);
+        const mainCollectionSnapshot = await getDocs(mainCollectionRef);
 
-    if (userSnap.exists()) {
-      const userData = {
-        ...(userSnap.data() as User),
-        id: userSnap.id as string,
-      };
-      setUser(userData);
-      return userData;
-    }
+        for (const mainDoc of mainCollectionSnapshot.docs) {
+            const subcollectionRef = collection(mainDoc.ref, subcollectionName);
+            const userQuery = query(subcollectionRef, where("userId", "==", userId));
+            const userSnapshot = await getDocs(userQuery);
 
-    return null;
-  };
+            userSnapshot.forEach((doc) => {
+                deleteDoc(doc.ref);
+            });
+        }
+    };
 
-  const updateUser = async (
-    userId: string,
-    user: Partial<User>
-  ): Promise<void> => {
-    const userRef = doc(FirestoreDB, "users", userId);
+    const deleteManagerNotifications = async (userId: string) => {
+        const managersRef = collection(FirestoreDB, "managers");
+        const managersSnapshot = await getDocs(managersRef);
 
-    await updateDoc(userRef, {
-      ...user,
-    });
-  };
+        for (const managerDoc of managersSnapshot.docs) {
+            const notificationsRef = collection(managerDoc.ref, "notifications");
+            const userQuery = query(
+                notificationsRef,
+                where("data.userId", "==", userId)
+            );
+            const notificationsSnapshot = await getDocs(userQuery);
 
-  const deleteUserReferences = async (
-    userId: string,
-    collectionName: string,
-    subcollectionName: string
-  ) => {
-    const mainCollectionRef = collection(FirestoreDB, collectionName);
-    const mainCollectionSnapshot = await getDocs(mainCollectionRef);
+            notificationsSnapshot.forEach((doc) => {
+                deleteDoc(doc.ref);
+            });
+        }
+    };
 
-    for (const mainDoc of mainCollectionSnapshot.docs) {
-      const subcollectionRef = collection(mainDoc.ref, subcollectionName);
-      const userQuery = query(subcollectionRef, where("userId", "==", userId));
-      const userSnapshot = await getDocs(userQuery);
+    const deleteUserAccount = async (userId: string) => {
+        try {
+            const user = AuthApp.currentUser;
 
-      userSnapshot.forEach((doc) => {
-        deleteDoc(doc.ref);
-      });
-    }
-  };
+            if (!user) {
+                Console.error("No authenticated user.");
+                return;
+            }
 
-  const deleteManagerNotifications = async (userId: string) => {
-    const managersRef = collection(FirestoreDB, "managers");
-    const managersSnapshot = await getDocs(managersRef);
+            const batch = writeBatch(FirestoreDB);
 
-    for (const managerDoc of managersSnapshot.docs) {
-      const notificationsRef = collection(managerDoc.ref, "notifications");
-      const userQuery = query(
-        notificationsRef,
-        where("data.userId", "==", userId)
-      );
-      const notificationsSnapshot = await getDocs(userQuery);
+            const notificationsRef = collection(
+                FirestoreDB,
+                `users/${userId}/notifications`
+            );
+            const notificationsSnapshot = await getDocs(notificationsRef);
 
-      notificationsSnapshot.forEach((doc) => {
-        deleteDoc(doc.ref);
-      });
-    }
-  };
+            notificationsSnapshot.forEach((doc) => {
+                batch.delete(doc.ref);
+            });
 
-  const deleteUserAccount = async (userId: string) => {
-    try {
-      const user = AuthApp.currentUser;
+            await deleteUserReferences(userId, "collaborations", "applications");
 
-      if (!user) {
-        Console.error("No authenticated user.");
-        return;
-      }
+            await deleteUserReferences(userId, "collaborations", "invitations");
 
-      const batch = writeBatch(FirestoreDB);
+            await deleteManagerNotifications(userId);
 
-      const notificationsRef = collection(
-        FirestoreDB,
-        `users/${userId}/notifications`
-      );
-      const notificationsSnapshot = await getDocs(notificationsRef);
+            const userDocRef = doc(FirestoreDB, "users", userId);
+            batch.delete(userDocRef);
 
-      notificationsSnapshot.forEach((doc) => {
-        batch.delete(doc.ref);
-      });
+            await batch.commit();
 
-      await deleteUserReferences(userId, "collaborations", "applications");
+            await deleteUser(user);
+        } catch (error) {
+            Console.error(error);
+        }
+    };
 
-      await deleteUserReferences(userId, "collaborations", "invitations");
-
-      await deleteManagerNotifications(userId);
-
-      const userDocRef = doc(FirestoreDB, "users", userId);
-      batch.delete(userDocRef);
-
-      await batch.commit();
-
-      await deleteUser(user);
-    } catch (error) {
-      Console.error(error);
-    }
-  };
-
-  return (
-    <AuthContext.Provider
-      value={{
-        deleteUserAccount,
-        firebaseSignIn,
-        firebaseSignUp,
-        getUser,
-        isLoading,
-        isUserLoading,
-        isLoggedIn,
-        session,
-        signIn,
-        signOutUser,
-        signUp,
-        updateUser,
-        user,
-        verifyEmail,
-        collaborationId,
-        setCollaborationId
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
+    return (
+        <AuthContext.Provider
+            value={{
+                deleteUserAccount,
+                firebaseSignIn,
+                firebaseSignUp,
+                getUser,
+                isLoading,
+                isUserLoading,
+                isLoggedIn,
+                session,
+                signIn,
+                signOutUser,
+                signUp,
+                updateUser,
+                user,
+                verifyEmail,
+                collaborationId,
+                setCollaborationId
+            }}
+        >
+            {children}
+        </AuthContext.Provider>
+    );
 };

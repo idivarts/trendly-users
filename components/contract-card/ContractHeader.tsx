@@ -9,103 +9,103 @@ import { FC } from "react";
 import { Pressable } from "react-native";
 
 interface ContractHeaderProps {
-  username: string;
-  collabName: string;
-  userImage: string;
-  collabId: string;
-  timePosted?: number;
-  onOpenBottomSheet: () => void;
+    username: string;
+    collabName: string;
+    userImage: string;
+    collabId: string;
+    timePosted?: number;
+    onOpenBottomSheet: () => void;
 }
 
 const ContractHeader: FC<ContractHeaderProps> = ({
-  username,
-  collabName,
-  collabId,
-  userImage,
-  timePosted,
-  onOpenBottomSheet,
+    username,
+    collabName,
+    collabId,
+    userImage,
+    timePosted,
+    onOpenBottomSheet,
 }) => {
-  const theme = useTheme();
+    const theme = useTheme();
 
-  return (
-    <View
-      style={{
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        padding: 16,
-      }}
-    >
-      <View
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          gap: 8,
-          flex: 1,
-        }}
-      >
-        <ImageComponent
-          url={userImage}
-          shape="circle"
-          altText="User Image"
-          style={{
-            width: 40,
-            height: 40,
-            borderRadius: 20,
-          }}
-        />
+    return (
         <View
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            gap: 2,
-          }}
+            style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+                padding: 16,
+            }}
         >
-          <Text
-            style={{
-              fontSize: 16,
-              fontWeight: "bold",
-              width: 200,
-            }}
-          >
-            {username}
-          </Text>
-          <Text
-            style={{
-              fontSize: 16,
-            }}
-          >
-            {collabName}
-          </Text>
+            <View
+                style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 8,
+                    flex: 1,
+                }}
+            >
+                <ImageComponent
+                    url={userImage}
+                    shape="circle"
+                    altText="User Image"
+                    style={{
+                        width: 40,
+                        height: 40,
+                        borderRadius: 20,
+                    }}
+                />
+                <View
+                    style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        gap: 2,
+                    }}
+                >
+                    <Text
+                        style={{
+                            fontSize: 16,
+                            fontWeight: "bold",
+                            width: 200,
+                        }}
+                    >
+                        {username}
+                    </Text>
+                    <Text
+                        style={{
+                            fontSize: 16,
+                        }}
+                    >
+                        {collabName}
+                    </Text>
+                </View>
+            </View>
+            <View
+                style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    gap: 8,
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                }}
+            >
+                {timePosted ? <Text>{formatTimeToNow(timePosted)}</Text> : null}
+                <Pressable
+                    onPress={() => {
+                        onOpenBottomSheet();
+                    }}
+                >
+                    <FontAwesomeIcon
+                        icon={faEllipsisH}
+                        size={24}
+                        color={Colors(theme).text}
+                    />
+                </Pressable>
+            </View>
         </View>
-      </View>
-      <View
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          gap: 8,
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        {timePosted ? <Text>{formatTimeToNow(timePosted)}</Text> : null}
-        <Pressable
-          onPress={() => {
-            onOpenBottomSheet();
-          }}
-        >
-          <FontAwesomeIcon
-            icon={faEllipsisH}
-            size={24}
-            color={Colors(theme).text}
-          />
-        </Pressable>
-      </View>
-    </View>
-  );
+    );
 };
 
 export default ContractHeader;
