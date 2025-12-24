@@ -6,31 +6,31 @@ import TopTabNavigation from "@/components/ui/top-tab-navigation";
 import AppLayout from "@/layouts/app-layout";
 
 const tabs = [
-  {
-    id: "brand-invites",
-    title: "Brand Invites",
-    component: <Invitations />,
-  },
-  {
-    id: "influencer-invites",
-    title: "Influencer Invites",
-    component: <InfluencerInvitations />,
-  }
+    {
+        id: "brand-invites",
+        title: "Brand Invites",
+        component: <Invitations />,
+    },
+    {
+        id: "influencer-invites",
+        title: "Influencer Invites",
+        component: <InfluencerInvitations />,
+    }
 ];
 
 const MyInvites = () => {
-  return (
-    <AppLayout>
-      <View
-        style={{
-          flex: 1,
-          paddingTop: 16,
-        }}
-      >
-        <TopTabNavigation tabs={tabs} />
-      </View>
-    </AppLayout>
-  );
+    return (
+        <AppLayout>
+            <View
+                style={{
+                    flex: 1,
+                    paddingTop: 16,
+                }}
+            >
+                <TopTabNavigation tabs={tabs} />
+            </View>
+        </AppLayout>
+    );
 };
 
 export default MyInvites;

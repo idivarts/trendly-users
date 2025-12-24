@@ -9,120 +9,120 @@ import { Image, Pressable, StyleSheet } from "react-native";
 import { Avatar } from "react-native-paper";
 
 type CardHeaderProps = {
-  avatar: string;
-  handle?: string;
-  isVerified?: boolean;
-  leftAction?: () => void;
-  name: string;
-  rightAction?: () => void;
-  timestamp?: string;
+    avatar: string;
+    handle?: string;
+    isVerified?: boolean;
+    leftAction?: () => void;
+    name: string;
+    rightAction?: () => void;
+    timestamp?: string;
 };
 
 export const CardHeader = ({
-  avatar,
-  handle,
-  isVerified = false,
-  leftAction,
-  name,
-  rightAction,
-  timestamp,
+    avatar,
+    handle,
+    isVerified = false,
+    leftAction,
+    name,
+    rightAction,
+    timestamp,
 }: CardHeaderProps) => {
-  const theme = useTheme();
-  const styles = stylesFn(theme);
+    const theme = useTheme();
+    const styles = stylesFn(theme);
 
-  return (
-    <View style={styles.header}>
-      <Pressable style={styles.leftContent} onPress={leftAction}>
-        {avatar ? (
-          <Avatar.Image size={48} source={imageUrl(avatar)} />
-        ) : (
-          <View style={styles.avatarPlaceholder}>
-            <Text style={styles.avatarText}>{name?.[0] || "U"}</Text>
-          </View>
-        )}
-        <View style={styles.userInfo}>
-          <View style={styles.nameContainer}>
-            <Text style={styles.name}>{name}</Text>
-            {isVerified && (
-              <Image
-                source={require("@/assets/icons/verified.png")}
-                style={styles.verifiedBadge}
-              />
-            )}
-          </View>
-          <Text style={styles.handle}>{handle || "@socialmedia"}</Text>
+    return (
+        <View style={styles.header}>
+            <Pressable style={styles.leftContent} onPress={leftAction}>
+                {avatar ? (
+                    <Avatar.Image size={48} source={imageUrl(avatar)} />
+                ) : (
+                    <View style={styles.avatarPlaceholder}>
+                        <Text style={styles.avatarText}>{name?.[0] || "U"}</Text>
+                    </View>
+                )}
+                <View style={styles.userInfo}>
+                    <View style={styles.nameContainer}>
+                        <Text style={styles.name}>{name}</Text>
+                        {isVerified && (
+                            <Image
+                                source={require("@/assets/icons/verified.png")}
+                                style={styles.verifiedBadge}
+                            />
+                        )}
+                    </View>
+                    <Text style={styles.handle}>{handle || "@socialmedia"}</Text>
+                </View>
+            </Pressable>
+            <View
+                style={{
+                    gap: 12,
+                    flexDirection: "row",
+                    alignItems: "center",
+                }}
+            >
+                {timestamp && <Text style={styles.timestamp}>{timestamp}</Text>}
+                <Pressable onPress={rightAction}>
+                    <FontAwesomeIcon
+                        icon={faEllipsis}
+                        color={Colors(theme).primary}
+                        size={20}
+                    />
+                </Pressable>
+            </View>
         </View>
-      </Pressable>
-      <View
-        style={{
-          gap: 12,
-          flexDirection: "row",
-          alignItems: "center",
-        }}
-      >
-        {timestamp && <Text style={styles.timestamp}>{timestamp}</Text>}
-        <Pressable onPress={rightAction}>
-          <FontAwesomeIcon
-            icon={faEllipsis}
-            color={Colors(theme).primary}
-            size={20}
-          />
-        </Pressable>
-      </View>
-    </View>
-  );
+    );
 };
 
 const stylesFn = (theme: Theme) =>
-  StyleSheet.create({
-    header: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      padding: 16,
-    },
-    leftContent: {
-      flexDirection: "row",
-      alignItems: "center",
-    },
-    avatar: {
-      width: 48,
-      height: 48,
-      borderRadius: 100,
-    },
-    avatarPlaceholder: {
-      width: 48,
-      height: 48,
-      borderRadius: 100,
-      backgroundColor: Colors(theme).aliceBlue,
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    avatarText: {
-      fontSize: 16,
-      color: Colors(theme).primary,
-    },
-    userInfo: {
-      marginLeft: 12,
-    },
-    nameContainer: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 2,
-    },
-    name: {
-      fontSize: 16,
-      fontWeight: "600",
-    },
-    verifiedBadge: {
-      marginLeft: 4,
-      width: 22,
-      height: 22,
-    },
-    handle: {
-      fontSize: 14,
-    },
-    timestamp: {
-      fontSize: 14,
-    },
-  });
+    StyleSheet.create({
+        header: {
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: 16,
+        },
+        leftContent: {
+            flexDirection: "row",
+            alignItems: "center",
+        },
+        avatar: {
+            width: 48,
+            height: 48,
+            borderRadius: 100,
+        },
+        avatarPlaceholder: {
+            width: 48,
+            height: 48,
+            borderRadius: 100,
+            backgroundColor: Colors(theme).aliceBlue,
+            alignItems: "center",
+            justifyContent: "center",
+        },
+        avatarText: {
+            fontSize: 16,
+            color: Colors(theme).primary,
+        },
+        userInfo: {
+            marginLeft: 12,
+        },
+        nameContainer: {
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 2,
+        },
+        name: {
+            fontSize: 16,
+            fontWeight: "600",
+        },
+        verifiedBadge: {
+            marginLeft: 4,
+            width: 22,
+            height: 22,
+        },
+        handle: {
+            fontSize: 14,
+        },
+        timestamp: {
+            fontSize: 14,
+        },
+    });

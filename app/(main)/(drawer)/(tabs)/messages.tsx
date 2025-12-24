@@ -1,9 +1,9 @@
 import ChannelListNative from "@/components/channel/channel-list";
 
 const ChannelListScreen = () => {
-  return (
-    <ChannelListNative />
-  );
+    return (
+        <ChannelListNative />
+    );
 };
 
 export default ChannelListScreen;

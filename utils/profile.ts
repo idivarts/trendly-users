@@ -2,55 +2,55 @@ import { IPreferences, IUsers } from "@/shared-libs/firestore/trendly-pro/models
 import { SurveyAnswer } from "@/types/Survey";
 
 export const calculateProfileCompletion = (user: Partial<IUsers>) => {
-  const totalFields = 18;
-  let completedFields = 0;
+    const totalFields = 18;
+    let completedFields = 0;
 
-  if (user?.name) {
-    completedFields++;
-  }
-  if (user?.profileImage) {
-    completedFields++;
-  }
-  if (user?.phoneNumber) {
-    completedFields++;
-  }
-  if ((user?.profile?.category?.length || 0) > 0) {
-    completedFields++;
-  }
-  if (user?.location) {
-    completedFields++;
-  }
-
-  Object.values(user?.profile?.content || {}).forEach((value) => {
-    if (value) {
-      completedFields++;
+    if (user?.name) {
+        completedFields++;
     }
-  });
+    if (user?.profileImage) {
+        completedFields++;
+    }
+    if (user?.phoneNumber) {
+        completedFields++;
+    }
+    if ((user?.profile?.category?.length || 0) > 0) {
+        completedFields++;
+    }
+    if (user?.location) {
+        completedFields++;
+    }
 
-  if ((user?.profile?.attachments?.length || 0) > 0) {
-    completedFields += (user?.profile?.attachments?.length || 0);
-  }
+    Object.values(user?.profile?.content || {}).forEach((value) => {
+        if (value) {
+            completedFields++;
+        }
+    });
 
-  if (user?.preferences) {
-    completedFields++;
-  }
+    if ((user?.profile?.attachments?.length || 0) > 0) {
+        completedFields += (user?.profile?.attachments?.length || 0);
+    }
 
-  return Math.floor((completedFields / totalFields) * 100);
+    if (user?.preferences) {
+        completedFields++;
+    }
+
+    return Math.floor((completedFields / totalFields) * 100);
 };
 
 export const truncateText = (text: string, length: number) => {
-  return text.length > length ? text.slice(0, length) + "..." : text;
+    return text.length > length ? text.slice(0, length) + "..." : text;
 };
 
 export const getFormattedPreferences = (
-  preferences: IPreferences,
-  answers: SurveyAnswer
+    preferences: IPreferences,
+    answers: SurveyAnswer
 ) => {
-  return {
-    ...preferences,
-    preferredBrandIndustries: answers.question1,
-    // contentCategory: answers.question2,
-    // contentWillingToPost: answers.question3,
-    // preferredLanguages: answers.question4,
-  };
+    return {
+        ...preferences,
+        preferredBrandIndustries: answers.question1,
+        // contentCategory: answers.question2,
+        // contentWillingToPost: answers.question3,
+        // preferredLanguages: answers.question4,
+    };
 };

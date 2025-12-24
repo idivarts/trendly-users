@@ -7,27 +7,27 @@ import TrackingProvider from "@/shared-libs/contexts/tracking-provider";
 import { Stack } from "expo-router";
 
 const MainLayout = () => {
-  const { user, updateUser } = useAuthContext()
-  return (
-    <TrackingProvider>
-      <SocialContextProvider>
-        <AWSContextProvider>
-          <FirebaseStorageContextProvider>
-            <BrandContextProvider>
-              <CollaborationContextProvider>
-                <ContractContextProvider>
-                  <NotificationContextProvider>
-                    <CloudMessagingContextProvider streamClient={streamClient} userOrmanager={user} updateUserOrManager={updateUser}>
-                      <ChatContextProvider>
-                        <ScrollProvider>
-                          <InviteContextProvider>
-                            <Stack
-                              screenOptions={{
-                         
-                                headerShown: false,
-                              }}
-                            >
-                              {/* <Stack.Screen
+    const { user, updateUser } = useAuthContext()
+    return (
+        <TrackingProvider>
+            <SocialContextProvider>
+                <AWSContextProvider>
+                    <FirebaseStorageContextProvider>
+                        <BrandContextProvider>
+                            <CollaborationContextProvider>
+                                <ContractContextProvider>
+                                    <NotificationContextProvider>
+                                        <CloudMessagingContextProvider streamClient={streamClient} userOrmanager={user} updateUserOrManager={updateUser}>
+                                            <ChatContextProvider>
+                                                <ScrollProvider>
+                                                    <InviteContextProvider>
+                                                        <Stack
+                                                            screenOptions={{
+
+                                                                headerShown: false,
+                                                            }}
+                                                        >
+                                                            {/* <Stack.Screen
                               name="(onboarding)"
                               options={{
                                 headerShown: false,
@@ -47,20 +47,20 @@ const MainLayout = () => {
                                 headerShown: false,
                               }}
                             /> */}
-                            </Stack>
-                          </InviteContextProvider>
-                        </ScrollProvider>
-                      </ChatContextProvider>
-                    </CloudMessagingContextProvider>
-                  </NotificationContextProvider>
-                </ContractContextProvider>
-              </CollaborationContextProvider>
-            </BrandContextProvider>
-          </FirebaseStorageContextProvider>
-        </AWSContextProvider>
-      </SocialContextProvider>
-    </TrackingProvider>
-  );
+                                                        </Stack>
+                                                    </InviteContextProvider>
+                                                </ScrollProvider>
+                                            </ChatContextProvider>
+                                        </CloudMessagingContextProvider>
+                                    </NotificationContextProvider>
+                                </ContractContextProvider>
+                            </CollaborationContextProvider>
+                        </BrandContextProvider>
+                    </FirebaseStorageContextProvider>
+                </AWSContextProvider>
+            </SocialContextProvider>
+        </TrackingProvider>
+    );
 };
 
 export default MainLayout;

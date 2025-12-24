@@ -9,29 +9,29 @@ import { Portal } from "react-native-paper";
 // import WebView from "react-native-webview";
 
 const HelpAndSupportScreen: React.FC = () => {
-  const [loading, setLoading] = useState(true);
-  const theme = useTheme();
+    const [loading, setLoading] = useState(true);
+    const theme = useTheme();
 
-  return (
-    <AppLayout style={{ flex: 1 }}>
-      <ScreenHeader title="Help and Support" />
-      {Platform.OS !== "web" && (
-        <>
-          {loading && (
-            <Portal>
-              <View
-                style={{
-                  flex: 1,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  backgroundColor: Colors(theme).backdrop,
-                }}
-              >
-                <ActivityIndicator size="large" color={Colors(theme).text} />
-              </View>
-            </Portal>
-          )}
-          {/* <WebView
+    return (
+        <AppLayout style={{ flex: 1 }}>
+            <ScreenHeader title="Help and Support" />
+            {Platform.OS !== "web" && (
+                <>
+                    {loading && (
+                        <Portal>
+                            <View
+                                style={{
+                                    flex: 1,
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    backgroundColor: Colors(theme).backdrop,
+                                }}
+                            >
+                                <ActivityIndicator size="large" color={Colors(theme).text} />
+                            </View>
+                        </Portal>
+                    )}
+                    {/* <WebView
             onLoad={() => {
               setLoading(false);
             }}
@@ -40,10 +40,10 @@ const HelpAndSupportScreen: React.FC = () => {
               flex: 1,
             }}
           /> */}
-        </>
-      )}
-    </AppLayout>
-  );
+                </>
+            )}
+        </AppLayout>
+    );
 };
 
 export default HelpAndSupportScreen;

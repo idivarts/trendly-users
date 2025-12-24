@@ -7,123 +7,123 @@ import { Pressable, StyleProp, ViewStyle } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 
 export type SelectItem = {
-  label: string;
-  value: string;
+    label: string;
+    value: string;
 };
 
 interface SelectProps {
-  direction?: "row" | "column";
-  items: SelectItem[];
-  multiselect?: boolean;
-  onSelect: (selectedItems: SelectItem[]) => void;
-  selectItemIcon?: boolean;
-  selectItemStyle?: StyleProp<ViewStyle>;
-  style?: StyleProp<ViewStyle>;
-  value: SelectItem[] | [];
+    direction?: "row" | "column";
+    items: SelectItem[];
+    multiselect?: boolean;
+    onSelect: (selectedItems: SelectItem[]) => void;
+    selectItemIcon?: boolean;
+    selectItemStyle?: StyleProp<ViewStyle>;
+    style?: StyleProp<ViewStyle>;
+    value: SelectItem[] | [];
 }
 
 const Select: React.FC<SelectProps> = ({
-  direction = "row",
-  items,
-  multiselect = false,
-  onSelect,
-  selectItemIcon = false,
-  selectItemStyle,
-  style,
-  value,
+    direction = "row",
+    items,
+    multiselect = false,
+    onSelect,
+    selectItemIcon = false,
+    selectItemStyle,
+    style,
+    value,
 }) => {
-  const theme = useTheme();
+    const theme = useTheme();
 
-  const handleSelect = (item: SelectItem) => {
-    if (multiselect) {
-      const index = value.findIndex(
-        (selectedItem) => selectedItem.value === item.value,
-      );
-      if (index === -1) {
-        onSelect([...value, item]);
-      } else {
-        onSelect([
-          ...value.slice(0, index),
-          ...value.slice(index + 1),
-        ]);
-      }
-    } else {
-      onSelect([item]);
-    }
-  };
-
-  return (
-    <ScrollView
-      contentContainerStyle={{ flexGrow: 1 }}
-      style={{ width: "100%", height: "100%", flex: 1 }}
-    >
-      <View style={[
-        {
-          gap: 8,
-          flex: 1,
-        },
-        direction === "row" ? {
-          flexDirection: "row",
-          flexWrap: "wrap",
-        } : {
-          flexDirection: "column",
-          justifyContent: "center",
-        },
-        style,
-      ]}>
-        {
-          items.map((item) => (
-            <Pressable
-              key={item.value}
-              onPress={() => handleSelect(item)}
-            >
-              <View
-                key={item.value}
-                style={[
-                  {
-                    backgroundColor: value.find(
-                      (selectedItem) => selectedItem.value === item.value,
-                    )
-                      ? Colors(theme).primary
-                      : Colors(theme).tag,
-                    borderRadius: 10,
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    paddingHorizontal: 16,
-                    paddingVertical: 12,
-                    gap: 12,
-                  },
-                  selectItemStyle,
-                ]}
-              >
-                <Text
-                  style={{
-                    color: value.find(
-                      (selectedItem) => selectedItem.value === item.value,
-                    )
-                      ? Colors(theme).white
-                      : Colors(theme).text,
-                  }}
-                >
-                  {item.label}
-                </Text>
-                {
-                  selectItemIcon && value.find(
-                    (selectedItem) => selectedItem.value === item.value,
-                  ) && (
-                    <FontAwesomeIcon
-                      icon={faCheck}
-                      color={Colors(theme).white}
-                    />
-                  )
-                }
-              </View>
-            </Pressable>
-          ))
+    const handleSelect = (item: SelectItem) => {
+        if (multiselect) {
+            const index = value.findIndex(
+                (selectedItem) => selectedItem.value === item.value,
+            );
+            if (index === -1) {
+                onSelect([...value, item]);
+            } else {
+                onSelect([
+                    ...value.slice(0, index),
+                    ...value.slice(index + 1),
+                ]);
+            }
+        } else {
+            onSelect([item]);
         }
-      </View>
-    </ScrollView>
-  );
+    };
+
+    return (
+        <ScrollView
+            contentContainerStyle={{ flexGrow: 1 }}
+            style={{ width: "100%", height: "100%", flex: 1 }}
+        >
+            <View style={[
+                {
+                    gap: 8,
+                    flex: 1,
+                },
+                direction === "row" ? {
+                    flexDirection: "row",
+                    flexWrap: "wrap",
+                } : {
+                    flexDirection: "column",
+                    justifyContent: "center",
+                },
+                style,
+            ]}>
+                {
+                    items.map((item) => (
+                        <Pressable
+                            key={item.value}
+                            onPress={() => handleSelect(item)}
+                        >
+                            <View
+                                key={item.value}
+                                style={[
+                                    {
+                                        backgroundColor: value.find(
+                                            (selectedItem) => selectedItem.value === item.value,
+                                        )
+                                            ? Colors(theme).primary
+                                            : Colors(theme).tag,
+                                        borderRadius: 10,
+                                        flexDirection: "row",
+                                        justifyContent: "space-between",
+                                        paddingHorizontal: 16,
+                                        paddingVertical: 12,
+                                        gap: 12,
+                                    },
+                                    selectItemStyle,
+                                ]}
+                            >
+                                <Text
+                                    style={{
+                                        color: value.find(
+                                            (selectedItem) => selectedItem.value === item.value,
+                                        )
+                                            ? Colors(theme).white
+                                            : Colors(theme).text,
+                                    }}
+                                >
+                                    {item.label}
+                                </Text>
+                                {
+                                    selectItemIcon && value.find(
+                                        (selectedItem) => selectedItem.value === item.value,
+                                    ) && (
+                                        <FontAwesomeIcon
+                                            icon={faCheck}
+                                            color={Colors(theme).white}
+                                        />
+                                    )
+                                }
+                            </View>
+                        </Pressable>
+                    ))
+                }
+            </View>
+        </ScrollView>
+    );
 };
 
 export default Select;

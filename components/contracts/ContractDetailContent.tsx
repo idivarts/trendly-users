@@ -3,8 +3,8 @@ import { useBreakpoints } from "@/hooks";
 import { IOScroll } from "@/shared-libs/contexts/scroll-context";
 import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
 import {
-  IApplications,
-  ICollaboration,
+    IApplications,
+    ICollaboration,
 } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { IContracts } from "@/shared-libs/firestore/trendly-pro/models/contracts";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
@@ -32,130 +32,130 @@ import ReviseQuotationModal from "./ReviseQuotationModal";
 ;
 
 export interface Application extends IApplications {
-  id: string;
+    id: string;
 }
 
 interface CollaborationDetailsContentProps {
-  collaborationDetail: ICollaboration;
-  applicationData?: Application;
-  userData: IUsers;
-  contractData: IContracts;
-  refreshData: () => void;
+    collaborationDetail: ICollaboration;
+    applicationData?: Application;
+    userData: IUsers;
+    contractData: IContracts;
+    refreshData: () => void;
 }
 
 const ContractDetailsContent = (props: CollaborationDetailsContentProps) => {
-  const theme = useTheme();
-  const styles = stylesFn(theme);
-  const [membersInContract, setMembersInContract] = useState<any[]>([]);
-  const [showQuotationModal, setShowQuotationModal] = useState(false);
-  const [feedbackModalVisible, setFeedbackModalVisible] = useState(false);
-  const params = useLocalSearchParams();
-  const [brandData, setBrandData] = useState<IBrands>();
+    const theme = useTheme();
+    const styles = stylesFn(theme);
+    const [membersInContract, setMembersInContract] = useState<any[]>([]);
+    const [showQuotationModal, setShowQuotationModal] = useState(false);
+    const [feedbackModalVisible, setFeedbackModalVisible] = useState(false);
+    const params = useLocalSearchParams();
+    const [brandData, setBrandData] = useState<IBrands>();
 
-  const { giveFeedback } = useLocalSearchParams()
-  const isFocused = useIsFocused()
+    const { giveFeedback } = useLocalSearchParams()
+    const isFocused = useIsFocused()
 
-  useEffect(() => {
-    if (giveFeedback && isFocused) {
-      setFeedbackModalVisible(true)
-    }
-  }, [giveFeedback, isFocused])
+    useEffect(() => {
+        if (giveFeedback && isFocused) {
+            setFeedbackModalVisible(true)
+        }
+    }, [giveFeedback, isFocused])
 
-  const fetchBrandData = async () => {
-    const brandRef = doc(
-      FirestoreDB,
-      "brands",
-      props.collaborationDetail.brandId
-    );
-    const brandData = await getDoc(brandRef);
-    setBrandData(brandData.data() as IBrands);
-  };
+    const fetchBrandData = async () => {
+        const brandRef = doc(
+            FirestoreDB,
+            "brands",
+            props.collaborationDetail.brandId
+        );
+        const brandData = await getDoc(brandRef);
+        setBrandData(brandData.data() as IBrands);
+    };
 
-  useEffect(() => {
-    if (params.showModal === "true") {
-      setShowQuotationModal(true);
-    }
-  }, [params.showModal]);
+    useEffect(() => {
+        if (params.showModal === "true") {
+            setShowQuotationModal(true);
+        }
+    }, [params.showModal]);
 
-  useEffect(() => {
-    fetchBrandData();
-  }, []);
+    useEffect(() => {
+        fetchBrandData();
+    }, []);
 
-  const { xl } = useBreakpoints();
+    const { xl } = useBreakpoints();
 
-  return (
-    <IOScroll
-      contentContainerStyle={styles.scrollContainer}
-      showsVerticalScrollIndicator={false}
-    >
-      {/* Collaboration Details */}
-      <View style={styles.profileCard}>
-        {props?.collaborationDetail?.attachments &&
-          props?.collaborationDetail?.attachments.length > 0 && (
-            <View style={{ alignSelf: "center" }}>
+    return (
+        <IOScroll
+            contentContainerStyle={styles.scrollContainer}
+            showsVerticalScrollIndicator={false}
+        >
+            {/* Collaboration Details */}
+            <View style={styles.profileCard}>
+                {props?.collaborationDetail?.attachments &&
+                    props?.collaborationDetail?.attachments.length > 0 && (
+                        <View style={{ alignSelf: "center" }}>
 
-              {xl ? <ScrollMedia
-                media={props?.collaborationDetail?.attachments?.map((attachment) =>
-                  processRawAttachment(attachment)
-                ) || []}
-                MAX_WIDTH_WEB={"100%"}
-                xl={xl}
-                theme={theme}
-                mediaRes={{
-                  width: 300,
-                  height: 300
-                }}
-              /> : <Carousel
-                theme={theme}
-                data={
-                  props?.collaborationDetail?.attachments?.map((attachment) =>
-                    processRawAttachment(attachment)
-                  ) || []
-                }
-              />}
-            </View>
-          )}
-        <Card.Content style={styles.profileContent}>
-          {/* About Collaboration */}
-          <View
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              width: "100%",
-            }}
-          >
-            <View
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-between",
-                width: "100%",
-                alignItems: "center",
-              }}
-            >
-              <Text variant="headlineMedium" style={styles.name}>
-                {props.collaborationDetail.name}
-              </Text>
-              {props.collaborationDetail.timeStamp ? (
-                <Text
-                  style={{
-                    fontSize: 12,
-                    color: Colors(theme).text,
-                    paddingRight: 8,
-                  }}
-                >
-                  {formatTimeToNow(props.collaborationDetail.timeStamp)}
-                </Text>
-              ) : null}
-            </View>
-            <View
-              style={{
-                width: "100%",
-                marginTop: 16
-              }}
-            >
-              <ReadMore text={props.collaborationDetail.description || ""} />
-              {/* <Text
+                            {xl ? <ScrollMedia
+                                media={props?.collaborationDetail?.attachments?.map((attachment) =>
+                                    processRawAttachment(attachment)
+                                ) || []}
+                                MAX_WIDTH_WEB={"100%"}
+                                xl={xl}
+                                theme={theme}
+                                mediaRes={{
+                                    width: 300,
+                                    height: 300
+                                }}
+                            /> : <Carousel
+                                theme={theme}
+                                data={
+                                    props?.collaborationDetail?.attachments?.map((attachment) =>
+                                        processRawAttachment(attachment)
+                                    ) || []
+                                }
+                            />}
+                        </View>
+                    )}
+                <Card.Content style={styles.profileContent}>
+                    {/* About Collaboration */}
+                    <View
+                        style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            width: "100%",
+                        }}
+                    >
+                        <View
+                            style={{
+                                display: "flex",
+                                flexDirection: "row",
+                                justifyContent: "space-between",
+                                width: "100%",
+                                alignItems: "center",
+                            }}
+                        >
+                            <Text variant="headlineMedium" style={styles.name}>
+                                {props.collaborationDetail.name}
+                            </Text>
+                            {props.collaborationDetail.timeStamp ? (
+                                <Text
+                                    style={{
+                                        fontSize: 12,
+                                        color: Colors(theme).text,
+                                        paddingRight: 8,
+                                    }}
+                                >
+                                    {formatTimeToNow(props.collaborationDetail.timeStamp)}
+                                </Text>
+                            ) : null}
+                        </View>
+                        <View
+                            style={{
+                                width: "100%",
+                                marginTop: 16
+                            }}
+                        >
+                            <ReadMore text={props.collaborationDetail.description || ""} />
+                            {/* <Text
                 style={{
                   fontSize: 16,
                   color: Colors(theme).gray100,
@@ -165,109 +165,109 @@ const ContractDetailsContent = (props: CollaborationDetailsContentProps) => {
               >
                 {props.collaborationDetail.description}
               </Text> */}
-            </View>
-          </View>
+                        </View>
+                    </View>
 
-          <ActionContainer
-            contract={props.contractData}
-            refreshData={props.refreshData}
-            showQuotationModal={() => setShowQuotationModal(true)}
-            feedbackModalVisible={() => setFeedbackModalVisible(true)}
-            userData={props.userData}
-          />
-
-          <MemberContainer
-            channelId={props.contractData.streamChannelId}
-            setMembersFromBrand={setMembersInContract}
-          />
-
-          <UserResponse
-            application={props.applicationData}
-            influencerQuestions={
-              props?.collaborationDetail?.questionsToInfluencers
-            }
-            setConfirmationModalVisible={() => { }}
-          />
-          <View
-            style={{
-              width: "100%",
-              borderWidth: 0.3,
-              padding: 10,
-              borderRadius: 10,
-              borderColor: Colors(theme).gray300,
-            }}
-          >
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                gap: 8,
-                flexGrow: 1,
-              }}
-            >
-              <ImageComponent
-                url={brandData?.image || ""}
-                altText="Brand Image"
-                shape="square"
-                style={{ width: 40, height: 40, borderRadius: 5 }}
-              />
-              <View style={{ flex: 1 }}>
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontWeight: "bold",
-                    color: Colors(theme).text,
-                  }}
-                >
-                  {brandData?.name}{" "}
-                  {brandData?.paymentMethodVerified && (
-                    <FontAwesomeIcon
-                      icon={faCheckCircle}
-                      color={Colors(theme).primary}
+                    <ActionContainer
+                        contract={props.contractData}
+                        refreshData={props.refreshData}
+                        showQuotationModal={() => setShowQuotationModal(true)}
+                        feedbackModalVisible={() => setFeedbackModalVisible(true)}
+                        userData={props.userData}
                     />
-                  )}
-                </Text>
-                <Text
-                  style={{
-                    fontSize: 16,
-                    flexWrap: "wrap",
-                    overflow: "hidden",
-                    lineHeight: 22,
-                    color: Colors(theme).text,
-                  }}
-                >
-                  {brandData?.profile?.about}
-                </Text>
-              </View>
+
+                    <MemberContainer
+                        channelId={props.contractData.streamChannelId}
+                        setMembersFromBrand={setMembersInContract}
+                    />
+
+                    <UserResponse
+                        application={props.applicationData}
+                        influencerQuestions={
+                            props?.collaborationDetail?.questionsToInfluencers
+                        }
+                        setConfirmationModalVisible={() => { }}
+                    />
+                    <View
+                        style={{
+                            width: "100%",
+                            borderWidth: 0.3,
+                            padding: 10,
+                            borderRadius: 10,
+                            borderColor: Colors(theme).gray300,
+                        }}
+                    >
+                        <View
+                            style={{
+                                flexDirection: "row",
+                                alignItems: "center",
+                                gap: 8,
+                                flexGrow: 1,
+                            }}
+                        >
+                            <ImageComponent
+                                url={brandData?.image || ""}
+                                altText="Brand Image"
+                                shape="square"
+                                style={{ width: 40, height: 40, borderRadius: 5 }}
+                            />
+                            <View style={{ flex: 1 }}>
+                                <Text
+                                    style={{
+                                        fontSize: 16,
+                                        fontWeight: "bold",
+                                        color: Colors(theme).text,
+                                    }}
+                                >
+                                    {brandData?.name}{" "}
+                                    {brandData?.paymentMethodVerified && (
+                                        <FontAwesomeIcon
+                                            icon={faCheckCircle}
+                                            color={Colors(theme).primary}
+                                        />
+                                    )}
+                                </Text>
+                                <Text
+                                    style={{
+                                        fontSize: 16,
+                                        flexWrap: "wrap",
+                                        overflow: "hidden",
+                                        lineHeight: 22,
+                                        color: Colors(theme).text,
+                                    }}
+                                >
+                                    {brandData?.profile?.about}
+                                </Text>
+                            </View>
+                        </View>
+                    </View>
+                </Card.Content>
             </View>
-          </View>
-        </Card.Content>
-      </View>
-      <ReviseQuotationModal
-        application={props.applicationData}
-        onDismiss={() => setShowQuotationModal(false)}
-        visible={showQuotationModal}
-        contractId={props.contractData.streamChannelId}
-        refreshData={props.refreshData}
-      />
-      {props.contractData.status === 2 && (
-        <Portal>
-          <FeedbackModal
-            feedbackGiven={
-              props.contractData.feedbackFromInfluencer?.feedbackReview
-                ? true
-                : false
-            }
-            setVisibility={() => setFeedbackModalVisible(false)}
-            star={props.contractData.feedbackFromInfluencer?.ratings || 0}
-            visible={feedbackModalVisible}
-            contract={props.contractData}
-            refreshData={props.refreshData}
-          />
-        </Portal>
-      )}
-    </IOScroll>
-  );
+            <ReviseQuotationModal
+                application={props.applicationData}
+                onDismiss={() => setShowQuotationModal(false)}
+                visible={showQuotationModal}
+                contractId={props.contractData.streamChannelId}
+                refreshData={props.refreshData}
+            />
+            {props.contractData.status === 2 && (
+                <Portal>
+                    <FeedbackModal
+                        feedbackGiven={
+                            props.contractData.feedbackFromInfluencer?.feedbackReview
+                                ? true
+                                : false
+                        }
+                        setVisibility={() => setFeedbackModalVisible(false)}
+                        star={props.contractData.feedbackFromInfluencer?.ratings || 0}
+                        visible={feedbackModalVisible}
+                        contract={props.contractData}
+                        refreshData={props.refreshData}
+                    />
+                </Portal>
+            )}
+        </IOScroll>
+    );
 };
 
 export default ContractDetailsContent;
