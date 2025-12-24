@@ -1,4 +1,4 @@
-import { Linking, Platform, ScrollView, StyleSheet, Text } from "react-native";
+import { ScrollView, StyleSheet, Text } from "react-native";
 
 import ProfileCard from "@/components/profile/ProfileCard";
 import ProfileItemCard from "@/components/profile/ProfileItemCard";
@@ -17,6 +17,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
+import * as WebBrowser from "expo-web-browser";
 import { Href } from "expo-router";
 import { useState } from "react";
 
@@ -34,90 +35,99 @@ const ProfileScreen = () => {
         await signOutUser();
     };
 
-    return (
-        <AppLayout>
-            <ScrollView
-                style={{
-                    ...styles.container,
-                    backgroundColor: Colors(theme).background,
-                    padding: 16,
-                }}
-                contentContainerStyle={{
-                    paddingBottom: 16,
-                }}
+  const openExternalLink = async (url: string) => {
+    if (!url) return;
+    await WebBrowser.openBrowserAsync(url);
+  };
+
+  return (
+    <AppLayout>
+      <ScrollView
+        style={{
+          ...styles.container,
+          backgroundColor: Colors(theme).background,
+          padding: 16,
+        }}
+        contentContainerStyle={{
+          paddingBottom: 16,
+        }}
+      >
+        {user && (
+          <ProfileCard
+            item={user}
+            onPress={() => router.push("/edit-profile")}
+          />
+        )}
+        {!user?.profile?.completionPercentage ||
+          user?.profile?.completionPercentage < COMPLETION_PERCENTAGE ? (
+          <View
+            style={{
+              backgroundColor: Colors(theme).yellow,
+              flexDirection: "row",
+              alignItems: "center",
+              padding: 10,
+              paddingHorizontal: 16,
+              marginHorizontal: 16,
+              marginTop: 8,
+              borderRadius: 10,
+            }}
+          >
+            <FontAwesomeIcon icon={faWarning} color="#fff" size={22} />
+            <Text
+              style={{
+                fontSize: 14,
+                lineHeight: 20,
+                color: Colors(theme).white,
+                padding: 16,
+                paddingVertical: 8,
+              }}
             >
-                {user && (
-                    <ProfileCard
-                        item={user}
-                        onPress={() => router.push("/edit-profile")}
-                    />
-                )}
-                {!user?.profile?.completionPercentage ||
-                    user?.profile?.completionPercentage < COMPLETION_PERCENTAGE ? (
-                    <View
-                        style={{
-                            backgroundColor: Colors(theme).yellow,
-                            flexDirection: "row",
-                            alignItems: "center",
-                            padding: 10,
-                            paddingHorizontal: 16,
-                            marginHorizontal: 16,
-                            marginTop: 8,
-                            borderRadius: 10,
-                        }}
-                    >
-                        <FontAwesomeIcon icon={faWarning} color="#fff" size={22} />
-                        <Text
-                            style={{
-                                fontSize: 14,
-                                lineHeight: 20,
-                                color: Colors(theme).white,
-                                padding: 16,
-                                paddingVertical: 8,
-                            }}
-                        >
-                            We only advertise you to our brands if your profile is more than{" "}
-                            {COMPLETION_PERCENTAGE}% complete
-                        </Text>
-                    </View>
-                ) : null}
-                {PROFILE_ITEMS.map((item) => (
-                    <ProfileItemCard
-                        key={item.id}
-                        item={item}
-                        onPress={() => {
-                            if (item.title === "Help and Support" && Platform.OS === "web") {
-                                window.open("https://www.trendly.now/help-and-support/", "_blank");
-                            } if (item.title == "Verify Profile") {
-                                Linking.openURL(INFLUENCER_VERIFY_LINK)
-                            } else {
-                                router.push(item.route as Href);
-                            }
-                        }}
-                    />
-                ))}
-                <ProfileItemCard
-                    onPress={() => {
-                        setLogoutModalVisible(true);
-                    }}
-                    item={{
-                        id: "7",
-                        title: "Logout",
-                        icon: faRightFromBracket,
-                    }}
-                />
-                <ConfirmationModal
-                    cancelAction={() => setLogoutModalVisible(false)}
-                    confirmAction={handleSignOut}
-                    confirmText="Logout"
-                    title="Logout"
-                    description="Are you sure you want to logout?"
-                    setVisible={setLogoutModalVisible}
-                    visible={logoutModalVisible}
-                />
-            </ScrollView>
-        </AppLayout>
-    );
+              We only advertise you to our brands if your profile is more than{" "}
+              {COMPLETION_PERCENTAGE}% complete
+            </Text>
+          </View>
+        ) : null}
+        {PROFILE_ITEMS.map((item) => (
+          <ProfileItemCard
+            key={item.id}
+            item={item}
+            onPress={async () => {
+              if (item.title === "Help and Support") {
+                await openExternalLink(
+                  "https://www.trendly.now/help-and-support/"
+                );
+                return;
+              }
+              if (item.title === "Verify Profile") {
+                await openExternalLink(INFLUENCER_VERIFY_LINK);
+                return;
+              }
+              router.push(item.route as Href);
+            }}
+          />
+        ))}
+        <ProfileItemCard
+          onPress={() => {
+            setLogoutModalVisible(true);
+          }}
+          item={{
+            id: "7",
+            title: "Logout",
+            icon: faRightFromBracket,
+          }}
+        />
+        <ConfirmationModal
+          cancelAction={() => setLogoutModalVisible(false)}
+          confirmAction={handleSignOut}
+          confirmText="Logout"
+          title="Logout"
+          description="Are you sure you want to logout?"
+          setVisible={setLogoutModalVisible}
+          visible={logoutModalVisible}
+        />
+      </ScrollView>
+    </AppLayout>
+  );
 };
 
 const styles = StyleSheet.create({
