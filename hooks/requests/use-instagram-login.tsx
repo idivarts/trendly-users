@@ -10,8 +10,6 @@ import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { Console } from "@/shared-libs/utils/console";
 import { BACKEND_URL, HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import * as WebBrowser from "expo-web-browser";
-;
-;
 
 interface useInstagramLoginType {
     instagramLogin: () => void;
@@ -36,8 +34,8 @@ const useInstagramLogin = (
         native: `fb${FB_APP_ID}://authorize`,
         ...(Platform.OS == "web" ? { path: "insta-redirect" } : {})
     });
-
-    const authUrl = `${BACKEND_URL}/instagram?redirect_type=${Platform.OS === "web" ? (isLocalhost ? 1 : 2) : 3}&`;
+    const redirectType = "" + (Platform.OS === "web" ? (isLocalhost ? 1 : 2) : 3);
+    const authUrl = `${BACKEND_URL}/instagram/redirect?redirect_type=${redirectType}&`;
 
     const [requestInstagram, responseInstagram, promptAsyncInstagram] =
         AuthSession.useAuthRequest(
@@ -73,7 +71,7 @@ const useInstagramLogin = (
             },
             body: JSON.stringify({
                 code: accessToken,
-                redirect_type: Platform.OS === "web" ? (isLocalhost ? 1 : 2) : 3,
+                redirect_type: redirectType,
             }),
         }).then(async (response) => {
             const data = await response.json();

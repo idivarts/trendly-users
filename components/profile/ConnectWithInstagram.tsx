@@ -28,6 +28,8 @@ const InstagramLoginButton: React.FC = () => {
     const handleAddAccount = async (accessToken: string) => {
         setIsLoading(true);
         try {
+            const isLocalhost = Platform.OS == "web" ? (window.location.hostname.includes('localhost')) : false;
+            const redirectType = "" + (Platform.OS === "web" ? (isLocalhost ? 1 : 2) : 3);
             const token = await user?.getIdToken();
             await HttpWrapper.fetch("/api/v2/socials/instagram", {
                 method: "POST",
@@ -36,7 +38,7 @@ const InstagramLoginButton: React.FC = () => {
                 },
                 body: JSON.stringify({
                     code: accessToken,
-                    redirect_type: Platform.OS === "web" ? "2" : "3",
+                    redirect_type: redirectType,
                 }),
             })
             setIsLoading(false);
