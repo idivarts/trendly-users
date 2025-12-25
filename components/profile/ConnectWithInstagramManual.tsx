@@ -6,7 +6,7 @@ import Button from "../ui/button";
 
 WebBrowser.maybeCompleteAuthSession();
 
-const InstagramLoginButton: React.FC = () => {
+const InstagramManualLoginButton: React.FC = () => {
     const router = useMyNavigation()
 
     const handleAddAccount = async () => {
@@ -28,4 +28,4 @@ const InstagramLoginButton: React.FC = () => {
     );
 };
 
-export default InstagramLoginButton;
+export default InstagramManualLoginButton;

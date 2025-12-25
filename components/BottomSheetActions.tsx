@@ -1,4 +1,3 @@
-import { IS_BETA_ENABLED } from "@/constants/App";
 import { useAuthContext } from "@/contexts";
 import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { Console } from "@/shared-libs/utils/console";
@@ -229,13 +228,13 @@ const BottomSheetActions = ({
                                 handleClose();
                             }}
                         />
-                        {IS_BETA_ENABLED && <List.Item
+                        {/* {IS_BETA_ENABLED && <List.Item
                             title="Proceed as Guests"
                             onPress={() => {
                                 // handleInstagramSignIn();
                                 // handleClose();
                             }}
-                        />}
+                        />} */}
 
                     </List.Section>
                 );

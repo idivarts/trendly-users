@@ -1,7 +1,9 @@
 import FacebookLoginButton from "@/components/profile/ConnectWithFacebook";
-import InstagramLoginButton from "@/components/profile/ConnectWithInstagramManual";
+import InstagramLoginButton from "@/components/profile/ConnectWithInstagram";
+import InstagramManualLoginButton from "@/components/profile/ConnectWithInstagramManual";
 import SocialPage from "@/components/profile/SocialPage";
 import { View } from "@/components/theme/Themed";
+import { IS_INSTA_ENABLED } from "@/constants/App";
 import { useSocialContext } from "@/contexts";
 import { SocialPlatform } from "@/shared-libs/firestore/trendly-pro/constants/social-platform";
 import React, { useState } from "react";
@@ -48,7 +50,8 @@ const ConnectedSocials: React.FC = () => {
                         }}
                     />
                     <FacebookLoginButton />
-                    <InstagramLoginButton />
+                    {IS_INSTA_ENABLED ?
+                        <InstagramLoginButton /> : <InstagramManualLoginButton />}
                 </>
             )}
         </View>

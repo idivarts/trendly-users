@@ -1,4 +1,4 @@
-import { IS_BETA_ENABLED } from "@/constants/App";
+import { IS_INSTA_ENABLED } from "@/constants/App";
 import { FB_APP_ID as fbid } from "@/constants/Facebook";
 import { useInitialUserData } from "@/constants/User";
 import { useInstagramLogin } from "@/hooks/requests";
@@ -11,10 +11,6 @@ import React, { useState } from "react";
 import { Platform, View } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
 import Button from "../ui/button";
-;
-;
-;
-;
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -50,7 +46,7 @@ const InstagramLoginButton: React.FC = () => {
         }
     };
 
-    if (!IS_BETA_ENABLED)
+    if (!IS_INSTA_ENABLED)
         return null;
 
     return (

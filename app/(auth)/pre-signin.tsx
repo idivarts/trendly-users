@@ -26,7 +26,6 @@ import Carousel, {
 import CombinedLoginList from "@/components/auth/CombinedLoginList";
 import BottomSheetActions from "@/components/BottomSheetActions";
 import ProfileOnboardLoader from "@/components/ProfileOnboardLoader";
-import { IS_BETA_ENABLED } from "@/constants/App";
 import { useBreakpoints } from "@/hooks";
 import { runOnJS, useSharedValue } from "react-native-reanimated";
 
@@ -206,7 +205,7 @@ const PreSignIn = () => {
                 isVisible={visible}
                 cardType="pre-signin"
                 onClose={() => setVisible(false)}
-                snapPointsRange={IS_BETA_ENABLED ? ["25%", "25%"] : ["20%", "20%"]}
+                snapPointsRange={["20%", "20%"]} //IS_BETA_ENABLED ? ["25%", "25%"] :
             />
             <BottomSheetActions
                 isVisible={termsCondition}

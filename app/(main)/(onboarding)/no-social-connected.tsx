@@ -1,6 +1,8 @@
 import FacebookLoginButton from "@/components/profile/ConnectWithFacebook";
-import InstagramLoginButton from "@/components/profile/ConnectWithInstagramManual";
+import InstagramLoginButton from "@/components/profile/ConnectWithInstagram";
+import InstagramManualLoginButton from "@/components/profile/ConnectWithInstagramManual";
 import Button from "@/components/ui/button";
+import { IS_INSTA_ENABLED } from "@/constants/App";
 import { useAuthContext, useCloudMessagingContext } from "@/contexts";
 import AppLayout from "@/layouts/app-layout";
 import Colors from "@/shared-uis/constants/Colors";
@@ -71,7 +73,10 @@ const TrendlyScreen = () => {
                             media to Trendly App
                         </Text>
                         <View style={styles.buttonContainer}>
-                            <InstagramLoginButton />
+
+                            {IS_INSTA_ENABLED ?
+                                <InstagramLoginButton /> :
+                                <InstagramManualLoginButton />}
                             <FacebookLoginButton />
                         </View>
                     </View>
