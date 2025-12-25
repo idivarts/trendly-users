@@ -1,6 +1,5 @@
 import Button from "@/components/ui/button";
 import TextInput from "@/components/ui/text-input";
-import { IS_BETA_ENABLED } from "@/constants/App";
 import { useAuthContext } from "@/contexts";
 import { Console } from "@/shared-libs/utils/console";
 import { useMyNavigation } from "@/shared-libs/utils/router";
@@ -98,7 +97,7 @@ const LoginScreen = () => {
                 </ScrollView>
             </KeyboardAvoidingView>
             {/* Sign Up and Forgot Password Links */}
-            {IS_BETA_ENABLED ? <View style={styles.footer}>
+            {/* {IS_BETA_ENABLED ? <View style={styles.footer}>
                 <Text style={styles.footerText}>
                     Don't have an account?{" "}
                     <Text
@@ -112,7 +111,8 @@ const LoginScreen = () => {
                         Sign Up
                     </Text>
                 </Text>
-            </View> : <View style={styles.footer}>
+            </View> :  */}
+            {<View style={styles.footer}>
                 <Text style={styles.footerText}>
                     Email signup is restricted to authorized users only.{" "}
                     <Text

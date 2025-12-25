@@ -16,7 +16,7 @@ import {
 } from "firebase/firestore";
 import React, { useEffect } from "react";
 
-import { IS_BETA_ENABLED } from "@/constants/App";
+import { IS_INSTA_ENABLED } from "@/constants/App";
 import { FB_APP_ID } from "@/constants/Facebook";
 import { useAuthContext } from "@/contexts";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
@@ -58,7 +58,7 @@ const useFacebookLogin = (
                     "email",
                     "pages_show_list",
                     "business_management",
-                    ...(IS_BETA_ENABLED ?
+                    ...(IS_INSTA_ENABLED ?
                         ["instagram_basic",
                             "pages_read_engagement",
                             "instagram_manage_insights",
