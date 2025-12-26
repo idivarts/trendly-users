@@ -96,7 +96,7 @@ const TrendlyScreen = () => {
                                 marginBottom: 30,
                             }}
                         >
-                            We noticed that you added instagram manually during your last onboarding. However, nowe we dont allow that
+                            We noticed that you added instagram manually during your last onboarding. However, now we dont allow that
                         </Text>
                         <View style={styles.buttonContainer}>
                             <InstagramLoginButton markAsPrimary={true} buttonText="Authorize Instagram" />
