@@ -3,13 +3,14 @@ import { ActivityIndicator } from "react-native";
 
 import { Text, View } from "@/components/theme/Themed";
 import { Console } from "@/shared-libs/utils/console";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import Colors from "@/shared-uis/constants/Colors";
 import { useURL } from "expo-linking";
 import { useEffect } from "react";
 
 const Index = () => {
     const theme = useTheme();
-
+    const { resetAndNavigate } = useMyNavigation()
     const url = useURL();
     useEffect(() => {
         if (url) {
@@ -19,14 +20,10 @@ const Index = () => {
                 Console.log("Code: ", code);
                 Console.log("Parent", window.parent);
 
-                // window.parent.postMessage({ code }, "*");
-                // window.opener.postMessage({ code }, "*");
                 localStorage.setItem("insta_code", code);
                 window.close();
             } else {
-                // localStorage.setItem("insta_code", "Somethign");
-                // window.parent.postMessage({ code: "Somethign" }, "*");
-                // window.opener.postMessage({ code: "Somethign" }, "*");
+                resetAndNavigate("/")
             }
         }
     }, [url])

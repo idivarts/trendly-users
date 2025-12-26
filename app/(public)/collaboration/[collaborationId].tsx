@@ -23,7 +23,7 @@ const CollaborationDetailsScreen = () => {
     const pathname = usePathname();
     const [loading, setLoading] = useState(true)
 
-    const authModalBottomSheetModalRef = useRef<BottomSheetModal>(null);
+    const authModalBottomSheetModalRef = useRef<BottomSheetModal>(null as any);
 
     const router = useMyNavigation();
     const {
