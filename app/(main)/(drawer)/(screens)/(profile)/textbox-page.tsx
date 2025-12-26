@@ -11,15 +11,13 @@ import { User } from "@/types/User";
 import { calculateProfileCompletion } from "@/utils/profile";
 import { useTheme } from "@react-navigation/native";
 import { useLocalSearchParams } from "expo-router";
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { Pressable } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
-import { RichEditor } from "react-native-pell-rich-editor";
 
 const EditTextArea: React.FC = () => {
     const theme = useTheme();
     const router = useMyNavigation();
-    const richText = useRef<RichEditor>(null);
     const [loading, setLoading] = useState(false)
 
     const {
@@ -139,7 +137,6 @@ const EditTextArea: React.FC = () => {
                     <Component
                         value={value as string}
                         setValue={setValue}
-                        richText={richText}
                         placeholder={placeholder}
                     />
                 </View>
