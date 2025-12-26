@@ -1,6 +1,6 @@
 import * as AuthSession from "expo-auth-session";
-import { Auth, signInWithCustomToken } from "firebase/auth";
-import { collection, doc, Firestore, updateDoc } from "firebase/firestore";
+import { Auth } from "firebase/auth";
+import { Firestore } from "firebase/firestore";
 import { useEffect } from "react";
 import { Platform } from "react-native";
 
@@ -24,7 +24,7 @@ const useInstagramLogin = (
     initialUserData: Partial<IUsers>,
     setLoading: React.Dispatch<React.SetStateAction<boolean>>,
     setError: React.Dispatch<React.SetStateAction<string | null>>,
-    customCodeHandler: ((code: string) => void) | null = null
+    customCodeHandler: (() => void) | null = null
 ): useInstagramLoginType => {
     const { firebaseSignIn, firebaseSignUp } = useAuthContext();
 
@@ -58,10 +58,6 @@ const useInstagramLogin = (
     };
 
     const handleInstagramSignIn = async (accessToken: string) => {
-        if (customCodeHandler) {
-            customCodeHandler(accessToken);
-            return;
-        }
         setLoading(true);
         await HttpWrapper.fetch("/api/v2/socials/instagram", {
             method: "POST",
@@ -72,31 +68,13 @@ const useInstagramLogin = (
                 code: accessToken,
                 redirect_type: redirectType,
             }),
-        }).then(async (response) => {
-            const data = await response.json();
-            const user = await signInWithCustomToken(
-                auth,
-                data.data.firebaseCustomToken
-            );
-            if (data.data.isExistingUser) {
-                firebaseSignIn(user.user.uid);
-            } else {
-                const userCollection = collection(firestore, "users");
-                const userDocRef = doc(userCollection, user.user.uid);
-                const userData = {
-                    ...initialUserData,
-                };
-
-                await updateDoc(userDocRef, userData);
-                firebaseSignUp(user.user.uid, 1);
-            }
-        })
-            .catch((error: Error) => {
-                Console.error(error, "Error signing in with Instagram: ");
-            })
-            .finally(() => {
-                setLoading(false);
-            });
+        }).then(() => {
+            customCodeHandler?.();
+        }).catch((error: Error) => {
+            Console.error(error, "Error signing in with Instagram: ");
+        }).finally(() => {
+            setLoading(false);
+        });
     };
 
     const receiveMessage = (event: StorageEvent) => {
