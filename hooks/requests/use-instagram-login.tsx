@@ -6,6 +6,7 @@ import { Platform } from "react-native";
 
 import { FB_APP_ID } from "@/constants/Facebook";
 import { useAuthContext } from "@/contexts";
+import { ISocials } from "@/shared-libs/firestore/trendly-pro/models/socials";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { Console } from "@/shared-libs/utils/console";
 import { BACKEND_URL, HttpWrapper } from "@/shared-libs/utils/http-wrapper";
@@ -24,7 +25,7 @@ const useInstagramLogin = (
     initialUserData: Partial<IUsers>,
     setLoading: React.Dispatch<React.SetStateAction<boolean>>,
     setError: React.Dispatch<React.SetStateAction<string | null>>,
-    customCodeHandler: (() => void) | null = null
+    customCodeHandler: ((social: ISocials) => void) | null = null
 ): useInstagramLoginType => {
     const { firebaseSignIn, firebaseSignUp } = useAuthContext();
 
@@ -68,9 +69,11 @@ const useInstagramLogin = (
                 code: accessToken,
                 redirect_type: redirectType,
             }),
-        }).then(() => {
-            if (customCodeHandler)
-                customCodeHandler();
+        }).then(async (res) => {
+            if (customCodeHandler) {
+                let data = await res.json()
+                customCodeHandler(data.social as ISocials);
+            }
         }).catch((error: Error) => {
             Console.error(error, "Error signing in with Instagram: ");
         }).finally(() => {
