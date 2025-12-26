@@ -1,3 +1,4 @@
+import { IS_INSTA_ENABLED } from "@/constants/App";
 import { ISocials } from "@/shared-libs/firestore/trendly-pro/models/socials";
 import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
@@ -85,9 +86,12 @@ export const SocialContextProvider = ({ children }: PropsWithChildren<{}>) => {
                 if (!primary) {
                     setPrimarySocial(null);
                     resetAndNavigate("/primary-social-select");
-                } else if (primary.isInstagram && !primary.instaProfile?.approxMetrics) {
+                } else if (!IS_INSTA_ENABLED && primary.isInstagram && !primary.instaProfile?.approxMetrics) {
                     // If primary social is Instagram and it doesn't have approxMetrics, take user to Instagram onboarding
                     resetAndNavigate(`/add-instagram-manual?socialId=${primary.id}`);
+                } else if (IS_INSTA_ENABLED && primary.isInstagram && !!primary.socialScreenShots) {
+                    setPrimarySocial(primary);
+                    resetAndNavigate("/manual-instagram-not-supported");
                 } else {
                     // @ts-ignore
                     setPrimarySocial(primary);

@@ -25,6 +25,7 @@ interface SocialPageProps {
     image: string;
     profile: any;
     id: string;
+    hideOptions?: boolean
 }
 
 const SocialPage: React.FC<SocialPageProps> = ({
@@ -34,6 +35,7 @@ const SocialPage: React.FC<SocialPageProps> = ({
     id,
     image,
     profile,
+    hideOptions = false
 }) => {
     const [menuVisible, setMenuVisible] = useState(false);
 
@@ -121,7 +123,7 @@ const SocialPage: React.FC<SocialPageProps> = ({
                     color={Colors(theme).white}
                 />
             </View>
-            {user?.primarySocial === id && (
+            {user?.primarySocial === id && !hideOptions && (
                 <View
                     style={{
                         backgroundColor: Colors(theme).primary,
@@ -148,40 +150,41 @@ const SocialPage: React.FC<SocialPageProps> = ({
                     </Text>
                 </View>
             )}
-            <Menu
-                visible={menuVisible}
-                onDismiss={toggleMenu}
-                anchor={
-                    <IconButton
-                        icon="dots-horizontal"
-                        onPress={toggleMenu}
-                        style={styles.iconButton}
-                    />
-                }
-                contentStyle={{
-                    marginTop: 40,
-                    backgroundColor: Colors(theme).background,
-                    borderWidth: 0.5,
-                    borderColor: Colors(theme).aliceBlue,
-                }}
-            >
-                <>
-                    <Menu.Item
-                        onPress={() => {
-                            makePrimary();
-                        }}
-                        title="Mark as Primary"
-                        style={styles.menuStyle}
-                        titleStyle={styles.menuTitleStyle}
-                    />
-                    <Menu.Item
-                        onPress={() => { disconnectSocial() }}
-                        title="Disconnect"
-                        style={styles.menuStyle}
-                        titleStyle={styles.menuTitleStyle}
-                    />
-                </>
-            </Menu>
+            {!hideOptions &&
+                <Menu
+                    visible={menuVisible}
+                    onDismiss={toggleMenu}
+                    anchor={
+                        <IconButton
+                            icon="dots-horizontal"
+                            onPress={toggleMenu}
+                            style={styles.iconButton}
+                        />
+                    }
+                    contentStyle={{
+                        marginTop: 40,
+                        backgroundColor: Colors(theme).background,
+                        borderWidth: 0.5,
+                        borderColor: Colors(theme).aliceBlue,
+                    }}
+                >
+                    <>
+                        <Menu.Item
+                            onPress={() => {
+                                makePrimary();
+                            }}
+                            title="Mark as Primary"
+                            style={styles.menuStyle}
+                            titleStyle={styles.menuTitleStyle}
+                        />
+                        <Menu.Item
+                            onPress={() => { disconnectSocial() }}
+                            title="Disconnect"
+                            style={styles.menuStyle}
+                            titleStyle={styles.menuTitleStyle}
+                        />
+                    </>
+                </Menu>}
         </View>
     );
 };
