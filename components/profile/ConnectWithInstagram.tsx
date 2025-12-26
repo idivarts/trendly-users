@@ -1,8 +1,10 @@
 import { IS_INSTA_ENABLED } from "@/constants/App";
 import { useInitialUserData } from "@/constants/User";
+import { useSocialContext } from "@/contexts";
 import { useInstagramLogin } from "@/hooks/requests";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import * as WebBrowser from "expo-web-browser";
 import React, { useState } from "react";
 import { View } from "react-native";
@@ -15,8 +17,13 @@ const InstagramLoginButton: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null)
     const INITIAL_DATA = useInitialUserData();
+    const { resetAndNavigate } = useMyNavigation()
+    const { primarySocial } = useSocialContext()
 
-    const { instagramLogin } = useInstagramLogin(AuthApp, FirestoreDB, INITIAL_DATA, setIsLoading, setError);
+    const { instagramLogin } = useInstagramLogin(AuthApp, FirestoreDB, INITIAL_DATA, setIsLoading, setError, () => {
+        if (!primarySocial)
+            resetAndNavigate("/primary-social-select");
+    });
 
     if (!IS_INSTA_ENABLED)
         return null;
