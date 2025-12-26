@@ -49,7 +49,8 @@ const DrawerMenuItem: React.FC<DrawerMenuItemProps> = ({ tab }) => {
                     flexDirection: "row",
                     gap: 12,
                     alignItems: "center",
-                    justifyContent: "flex-start"
+                    justifyContent: "flex-start",
+                    borderRadius: 12,
                 }}
             >
                 <FontAwesomeIcon
