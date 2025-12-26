@@ -69,7 +69,8 @@ const useInstagramLogin = (
                 redirect_type: redirectType,
             }),
         }).then(() => {
-            customCodeHandler?.();
+            if (customCodeHandler)
+                customCodeHandler();
         }).catch((error: Error) => {
             Console.error(error, "Error signing in with Instagram: ");
         }).finally(() => {
