@@ -16,6 +16,7 @@ import {
 } from "firebase/firestore";
 import React, { useEffect } from "react";
 
+import { IS_INSIGHT_ENABLED } from "@/constants/App";
 import { FB_APP_ID } from "@/constants/Facebook";
 import { useAuthContext } from "@/contexts";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
@@ -58,8 +59,10 @@ const useFacebookLogin = (
                     "pages_show_list",
                     "business_management",
                     // -->  // Engagement and Insights
-                    // "read_insights",
-                    // "pages_read_engagement"
+                    ...(IS_INSIGHT_ENABLED ? [
+                        "read_insights",
+                        "pages_read_engagement"
+                    ] : [])
                 ],
             },
             { authorizationEndpoint: "https://www.facebook.com/v10.0/dialog/oauth" }

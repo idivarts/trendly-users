@@ -10,11 +10,6 @@ import React, { useState } from "react";
 import { View } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
 import Button from "../ui/button";
-;
-;
-;
-;
-
 
 WebBrowser.maybeCompleteAuthSession();
 
