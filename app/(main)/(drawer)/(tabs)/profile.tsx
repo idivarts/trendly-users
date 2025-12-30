@@ -1,4 +1,4 @@
-import { Linking, Platform, ScrollView, StyleSheet, Text } from "react-native";
+import { ScrollView, StyleSheet, Text } from "react-native";
 
 import ProfileCard from "@/components/profile/ProfileCard";
 import ProfileItemCard from "@/components/profile/ProfileItemCard";
@@ -18,6 +18,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
 import { Href } from "expo-router";
+import * as WebBrowser from "expo-web-browser";
 import { useState } from "react";
 
 const ProfileScreen = () => {
@@ -32,6 +33,11 @@ const ProfileScreen = () => {
         setLogoutModalVisible(false);
         await updatedTokens?.();
         await signOutUser();
+    };
+
+    const openExternalLink = async (url: string) => {
+        if (!url) return;
+        await WebBrowser.openBrowserAsync(url);
     };
 
     return (
@@ -85,14 +91,18 @@ const ProfileScreen = () => {
                     <ProfileItemCard
                         key={item.id}
                         item={item}
-                        onPress={() => {
-                            if (item.title === "Help and Support" && Platform.OS === "web") {
-                                window.open("https://www.trendly.now/help-and-support/", "_blank");
-                            } if (item.title == "Verify Profile") {
-                                Linking.openURL(INFLUENCER_VERIFY_LINK)
-                            } else {
-                                router.push(item.route as Href);
+                        onPress={async () => {
+                            if (item.title === "Help and Support") {
+                                await openExternalLink(
+                                    "https://www.trendly.now/help-and-support/"
+                                );
+                                return;
                             }
+                            if (item.title === "Verify Profile") {
+                                await openExternalLink(INFLUENCER_VERIFY_LINK);
+                                return;
+                            }
+                            router.push(item.route as Href);
                         }}
                     />
                 ))}
