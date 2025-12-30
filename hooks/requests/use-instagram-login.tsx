@@ -4,6 +4,7 @@ import { Firestore } from "firebase/firestore";
 import { useEffect } from "react";
 import { Platform } from "react-native";
 
+import { IS_INSIGHT_ENABLED } from "@/constants/App";
 import { FB_APP_ID } from "@/constants/Facebook";
 import { useAuthContext } from "@/contexts";
 import { ISocials } from "@/shared-libs/firestore/trendly-pro/models/socials";
@@ -35,7 +36,7 @@ const useInstagramLogin = (
         native: `fb${FB_APP_ID}://authorize`,
     });
     const redirectType = "" + (Platform.OS === "web" ? (isLocalhost ? 1 : 2) : 3);
-    const authUrl = `${BACKEND_URL}/instagram/redirect?redirect_type=${redirectType}&`;
+    const authUrl = `${BACKEND_URL}/instagram/redirect?${IS_INSIGHT_ENABLED ? "insights=1&" : ""}redirect_type=${redirectType}&`;
 
     const [requestInstagram, responseInstagram, promptAsyncInstagram] =
         AuthSession.useAuthRequest(
