@@ -1,13 +1,15 @@
 [
   {
     "relation": [
-      "delegate_permission/common.handle_all_urls"
+      "delegate_permission/common.handle_all_urls",
+      "delegate_permission/common.get_login_creds"
     ],
     "target": {
       "namespace": "android_app",
       "package_name": "pro.trendly.creators",
       "sha256_cert_fingerprints": [
-        "3f:c3:bb:b7:05:30:f1:68:e0:83:be:14:01:8a:d3:c8:35:48:b5:3c"
+        "3f:c3:bb:b7:05:30:f1:68:e0:83:be:14:01:8a:d3:c8:35:48:b5:3c",
+        "7A:FB:BE:1C:15:A3:6E:E7:E0:05:5C:A6:1D:A9:44:74:14:27:FA:D8:59:C9:8F:87:C8:D4:E8:89:83:7E:7C:40"
       ]
     }
   }
