@@ -12,13 +12,17 @@ import React, { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 
+
+
 const TrendlyScreen = () => {
     const { signOutUser } = useAuthContext();
     const { updatedTokens } = useCloudMessagingContext();
     const { primarySocial } = useSocialContext();
     const { resetAndNavigate } = useMyNavigation()
-
     const theme = useTheme();
+    const color = Colors(theme);
+
+
 
     const logout = async () => {
         await updatedTokens?.()
@@ -46,7 +50,7 @@ const TrendlyScreen = () => {
             >
                 {/* Header */}
                 <View style={styles.header}>
-                    <Text style={styles.title}>Trendly</Text>
+                    <Text style={[styles.title, { color: Colors(theme).text }]}>Trendly</Text>
                     <Button
                         mode="text"
                         labelStyle={{
@@ -88,7 +92,7 @@ const TrendlyScreen = () => {
                             </View>}
 
                         {/* No Account Text */}
-                        <Text style={styles.noAccountText}>Instagram Login Required</Text>
+                        <Text style={[styles.noAccountText, { color: Colors(theme).text }]}>Instagram Login Required</Text>
                         <Text
                             style={{
                                 textAlign: "center",
@@ -120,15 +124,14 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 24,
         fontWeight: "bold",
+
     },
     imageContainer: {
-        flex: 1,
+
         alignItems: "stretch",
         width: 600,
         maxWidth: "100%",
         alignSelf: "center",
-        paddingBottom: 50
-        // marginVertical: 0,
     },
     image: {
         height: 300,
@@ -138,7 +141,7 @@ const styles = StyleSheet.create({
         textAlign: "center",
         fontSize: 18,
         fontWeight: "bold",
-        marginVertical: 10,
+        marginVertical: 20,
     },
     buttonContainer: {
         alignItems: "center",
