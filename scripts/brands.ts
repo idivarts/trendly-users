@@ -2,61 +2,61 @@ import { Console } from "@/shared-libs/utils/console";
 import { addDoc, collection, doc, Firestore, setDoc } from "firebase/firestore";
 
 export const populateBrands = async (
-  db: Firestore,
-  dummyBrands: any[],
-  managerId: string
+    db: Firestore,
+    dummyBrands: any[],
+    managerId: string
 ) => {
-  const brandsCollection = collection(db, "brands");
+    const brandsCollection = collection(db, "brands");
 
-  for (const brand of dummyBrands) {
-    const brandRef = await addDoc(brandsCollection, {
-      name: brand.name,
-      description: brand.description,
-      hireRate: brand.hireRate,
-      paymentMethodVerfied: brand.paymentMethodVerified,
-    });
-
-    Console.log(`Brand ${brand.name} added successfully.`);
-
-    const notificationsCollection = collection(brandRef, "notifications");
-
-    if (brand.notifications && brand.notifications.length > 0) {
-      for (const notification of brand.notifications) {
-        await addDoc(notificationsCollection, {
-          title: notification.title,
-          description: notification.description,
-          timeStamp: notification.timeStamp,
-          isRead: notification.isRead,
-          type: notification.type,
+    for (const brand of dummyBrands) {
+        const brandRef = await addDoc(brandsCollection, {
+            name: brand.name,
+            description: brand.description,
+            hireRate: brand.hireRate,
+            paymentMethodVerfied: brand.paymentMethodVerified,
         });
-      }
-    } else {
-      await addDoc(notificationsCollection, {
-        title: "Welcome to Trendly Pro",
-        description: "Start exploring the app today!",
-        timeStamp: Date.now(),
-        isRead: false,
-        type: "message",
-      });
+
+        Console.log(`Brand ${brand.name} added successfully.`);
+
+        const notificationsCollection = collection(brandRef, "notifications");
+
+        if (brand.notifications && brand.notifications.length > 0) {
+            for (const notification of brand.notifications) {
+                await addDoc(notificationsCollection, {
+                    title: notification.title,
+                    description: notification.description,
+                    timeStamp: notification.timeStamp,
+                    isRead: notification.isRead,
+                    type: notification.type,
+                });
+            }
+        } else {
+            await addDoc(notificationsCollection, {
+                title: "Welcome to Trendly Pro",
+                description: "Start exploring the app today!",
+                timeStamp: Date.now(),
+                isRead: false,
+                type: "message",
+            });
+        }
+
+        Console.log(`Notifications for brand ${brand.name} added successfully.`);
+
+        const membersCollection = collection(brandRef, "members");
+
+        if (brand.members && brand.members.length > 0) {
+            for (const member of brand.members) {
+                const memberDoc = doc(membersCollection, managerId);
+                const memberData = {
+                    brandId: brandRef.id,
+                    managerId,
+                    permissions: member.permissions,
+                };
+                await setDoc(memberDoc, memberData);
+
+            }
+        }
+
+        Console.log(`Members for brand ${brand.name} added successfully.`);
     }
-
-    Console.log(`Notifications for brand ${brand.name} added successfully.`);
-
-    const membersCollection = collection(brandRef, "members");
-
-    if (brand.members && brand.members.length > 0) {
-      for (const member of brand.members) {
-        const memberDoc = doc(membersCollection, managerId);
-        const memberData = {
-          brandId: brandRef.id,
-          managerId,
-          permissions: member.permissions,
-        };
-        await setDoc(memberDoc, memberData);
-
-      }
-    }
-
-    Console.log(`Members for brand ${brand.name} added successfully.`);
-  }
 };

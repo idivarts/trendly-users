@@ -8,7 +8,7 @@
       "name": "aws",
       "architecture": "arm64",
       "runtime": "provided.al2",
-      "stage": "dev",
+      "stage": "prod",
       "region": "us-east-1",
       "versionFunctions": true,
       "compiledCloudFormationTemplate": {
@@ -84,11 +84,30 @@
               }
             }
           },
-          "Route53Record": {
+          "Route53DevRecord": {
+            "Condition": "IsDev",
             "Type": "AWS::Route53::RecordSet",
             "Properties": {
-              "HostedZoneId": "Z041635312HLFEY0WZ4F3",
-              "Name": "creators.trendly.pro",
+              "HostedZoneId": "Z02250033690XMWB8LXL7",
+              "Name": "dev.creators.trendly.now",
+              "Type": "A",
+              "AliasTarget": {
+                "HostedZoneId": "Z2FDTNDATAQYW2",
+                "DNSName": {
+                  "Fn::GetAtt": [
+                    "trendlyCreatorsCDN0E432F5E",
+                    "DomainName"
+                  ]
+                }
+              }
+            }
+          },
+          "Route53ProdRecord": {
+            "Condition": "IsProd",
+            "Type": "AWS::Route53::RecordSet",
+            "Properties": {
+              "HostedZoneId": "Z02250033690XMWB8LXL7",
+              "Name": "creators.trendly.now",
               "Type": "A",
               "AliasTarget": {
                 "HostedZoneId": "Z2FDTNDATAQYW2",
@@ -151,10 +170,10 @@
               "AutoPublish": true,
               "FunctionCode": "function handler(event) {\n    var response = event.response;\n    response.headers = Object.assign({}, {\n    \"x-frame-options\": {\n        \"value\": \"SAMEORIGIN\"\n    },\n    \"x-content-type-options\": {\n        \"value\": \"nosniff\"\n    },\n    \"x-xss-protection\": {\n        \"value\": \"1; mode=block\"\n    },\n    \"strict-transport-security\": {\n        \"value\": \"max-age=63072000\"\n    }\n}, response.headers);\n    return response;\n}",
               "FunctionConfig": {
-                "Comment": "trendly-creators-dev-us-east-1-trendlyCreators-response",
+                "Comment": "trendly-creators-prod-us-east-1-trendlyCreators-response",
                 "Runtime": "cloudfront-js-1.0"
               },
-              "Name": "trendly-creators-dev-us-east-1-trendlyCreators-response"
+              "Name": "trendly-creators-prod-us-east-1-trendlyCreators-response"
             }
           },
           "trendlyCreatorsCDNOrigin1S3OriginFD2A379B": {
@@ -170,9 +189,9 @@
             "Properties": {
               "DistributionConfig": {
                 "Aliases": [
-                  "creators.trendly.pro"
+                  "creators.trendly.now"
                 ],
-                "Comment": "trendly-creators-dev trendlyCreators website CDN",
+                "Comment": "trendly-creators-prod trendlyCreators website CDN",
                 "CustomErrorResponses": [
                   {
                     "ErrorCachingMinTTL": 0,
@@ -241,7 +260,7 @@
                   }
                 ],
                 "ViewerCertificate": {
-                  "AcmCertificateArn": "arn:aws:acm:us-east-1:730335628944:certificate/824dbf36-435d-4ca7-a7c7-1e2c0944cf40",
+                  "AcmCertificateArn": "arn:aws:acm:us-east-1:730335628944:certificate/e5111daa-4b27-4de2-a863-123a553f07f9",
                   "MinimumProtocolVersion": "TLSv1.2_2021",
                   "SslSupportMethod": "sni-only"
                 }
@@ -254,10 +273,10 @@
               "AutoPublish": true,
               "FunctionCode": "var REDIRECT_REGEX = /^[^.]+$|\\.(?!(css|gif|ico|jpg|jpeg|js|png|txt|svg|woff|woff2|ttf|map|json|webp|xml|pdf|webmanifest|avif|wasm)$)([^.]+$)/;\n\nfunction handler(event) {\n    var uri = event.request.uri;\n    var request = event.request;\n    var isUriToRedirect = REDIRECT_REGEX.test(uri);\n\n    if (isUriToRedirect) {\n        request.uri = \"/index.html\";\n    }\n\n    return event.request;\n}",
               "FunctionConfig": {
-                "Comment": "trendly-creators-dev-us-east-1-trendlyCreators-request",
+                "Comment": "trendly-creators-prod-us-east-1-trendlyCreators-request",
                 "Runtime": "cloudfront-js-1.0"
               },
-              "Name": "trendly-creators-dev-us-east-1-trendlyCreators-request"
+              "Name": "trendly-creators-prod-us-east-1-trendlyCreators-request"
             }
           }
         },
@@ -267,7 +286,7 @@
               "Ref": "ServerlessDeploymentBucket"
             },
             "Export": {
-              "Name": "sls-trendly-creators-dev-ServerlessDeploymentBucketName"
+              "Name": "sls-trendly-creators-prod-ServerlessDeploymentBucketName"
             }
           },
           "trendlyCreatorsBucketNameE9351617": {
@@ -278,7 +297,7 @@
           },
           "trendlyCreatorsDomain6376538A": {
             "Description": "Website domain name.",
-            "Value": "creators.trendly.pro"
+            "Value": "creators.trendly.now"
           },
           "trendlyCreatorsCloudFrontCName30A3ACF4": {
             "Description": "CloudFront CNAME.",
@@ -294,6 +313,20 @@
             "Value": {
               "Ref": "trendlyCreatorsCDN0E432F5E"
             }
+          }
+        },
+        "Conditions": {
+          "IsDev": {
+            "Fn::Equals": [
+              "prod",
+              "dev"
+            ]
+          },
+          "IsProd": {
+            "Fn::Equals": [
+              "prod",
+              "prod"
+            ]
           }
         }
       },
@@ -380,18 +413,61 @@
         }
       }
     },
+    "custom": {
+      "domains": {
+        "dev": [
+          "dev.creators.trendly.now"
+        ],
+        "prod": [
+          "creators.trendly.now"
+        ]
+      }
+    },
     "plugins": [
       "serverless-lift"
     ],
     "pluginsData": {},
     "functions": {},
     "resources": {
+      "Conditions": {
+        "IsDev": {
+          "Fn::Equals": [
+            "prod",
+            "dev"
+          ]
+        },
+        "IsProd": {
+          "Fn::Equals": [
+            "prod",
+            "prod"
+          ]
+        }
+      },
       "Resources": {
-        "Route53Record": {
+        "Route53DevRecord": {
+          "Condition": "IsDev",
           "Type": "AWS::Route53::RecordSet",
           "Properties": {
-            "HostedZoneId": "Z041635312HLFEY0WZ4F3",
-            "Name": "creators.trendly.pro",
+            "HostedZoneId": "Z02250033690XMWB8LXL7",
+            "Name": "dev.creators.trendly.now",
+            "Type": "A",
+            "AliasTarget": {
+              "HostedZoneId": "Z2FDTNDATAQYW2",
+              "DNSName": {
+                "Fn::GetAtt": [
+                  "trendlyCreatorsCDN0E432F5E",
+                  "DomainName"
+                ]
+              }
+            }
+          }
+        },
+        "Route53ProdRecord": {
+          "Condition": "IsProd",
+          "Type": "AWS::Route53::RecordSet",
+          "Properties": {
+            "HostedZoneId": "Z02250033690XMWB8LXL7",
+            "Name": "creators.trendly.now",
             "Type": "A",
             "AliasTarget": {
               "HostedZoneId": "Z2FDTNDATAQYW2",
@@ -454,10 +530,10 @@
             "AutoPublish": true,
             "FunctionCode": "function handler(event) {\n    var response = event.response;\n    response.headers = Object.assign({}, {\n    \"x-frame-options\": {\n        \"value\": \"SAMEORIGIN\"\n    },\n    \"x-content-type-options\": {\n        \"value\": \"nosniff\"\n    },\n    \"x-xss-protection\": {\n        \"value\": \"1; mode=block\"\n    },\n    \"strict-transport-security\": {\n        \"value\": \"max-age=63072000\"\n    }\n}, response.headers);\n    return response;\n}",
             "FunctionConfig": {
-              "Comment": "trendly-creators-dev-us-east-1-trendlyCreators-response",
+              "Comment": "trendly-creators-prod-us-east-1-trendlyCreators-response",
               "Runtime": "cloudfront-js-1.0"
             },
-            "Name": "trendly-creators-dev-us-east-1-trendlyCreators-response"
+            "Name": "trendly-creators-prod-us-east-1-trendlyCreators-response"
           }
         },
         "trendlyCreatorsCDNOrigin1S3OriginFD2A379B": {
@@ -473,9 +549,9 @@
           "Properties": {
             "DistributionConfig": {
               "Aliases": [
-                "creators.trendly.pro"
+                "creators.trendly.now"
               ],
-              "Comment": "trendly-creators-dev trendlyCreators website CDN",
+              "Comment": "trendly-creators-prod trendlyCreators website CDN",
               "CustomErrorResponses": [
                 {
                   "ErrorCachingMinTTL": 0,
@@ -544,7 +620,7 @@
                 }
               ],
               "ViewerCertificate": {
-                "AcmCertificateArn": "arn:aws:acm:us-east-1:730335628944:certificate/824dbf36-435d-4ca7-a7c7-1e2c0944cf40",
+                "AcmCertificateArn": "arn:aws:acm:us-east-1:730335628944:certificate/e5111daa-4b27-4de2-a863-123a553f07f9",
                 "MinimumProtocolVersion": "TLSv1.2_2021",
                 "SslSupportMethod": "sni-only"
               }
@@ -557,10 +633,10 @@
             "AutoPublish": true,
             "FunctionCode": "var REDIRECT_REGEX = /^[^.]+$|\\.(?!(css|gif|ico|jpg|jpeg|js|png|txt|svg|woff|woff2|ttf|map|json|webp|xml|pdf|webmanifest|avif|wasm)$)([^.]+$)/;\n\nfunction handler(event) {\n    var uri = event.request.uri;\n    var request = event.request;\n    var isUriToRedirect = REDIRECT_REGEX.test(uri);\n\n    if (isUriToRedirect) {\n        request.uri = \"/index.html\";\n    }\n\n    return event.request;\n}",
             "FunctionConfig": {
-              "Comment": "trendly-creators-dev-us-east-1-trendlyCreators-request",
+              "Comment": "trendly-creators-prod-us-east-1-trendlyCreators-request",
               "Runtime": "cloudfront-js-1.0"
             },
-            "Name": "trendly-creators-dev-us-east-1-trendlyCreators-request"
+            "Name": "trendly-creators-prod-us-east-1-trendlyCreators-request"
           }
         }
       },
@@ -573,7 +649,7 @@
         },
         "trendlyCreatorsDomain6376538A": {
           "Description": "Website domain name.",
-          "Value": "creators.trendly.pro"
+          "Value": "creators.trendly.now"
         },
         "trendlyCreatorsCloudFrontCName30A3ACF4": {
           "Description": "CloudFront CNAME.",
@@ -601,9 +677,19 @@
         "name": "aws",
         "architecture": "arm64",
         "runtime": "provided.al2",
-        "stage": "dev",
+        "stage": "prod",
         "region": "us-east-1",
         "versionFunctions": true
+      },
+      "custom": {
+        "domains": {
+          "dev": [
+            "dev.creators.trendly.now"
+          ],
+          "prod": [
+            "creators.trendly.now"
+          ]
+        }
       },
       "plugins": {
         "$ref": "$[\"service\"][\"plugins\"]"
@@ -612,21 +698,49 @@
         "trendlyCreators": {
           "type": "single-page-app",
           "path": "dist",
-          "domain": "creators.trendly.pro",
-          "certificate": "arn:aws:acm:us-east-1:730335628944:certificate/824dbf36-435d-4ca7-a7c7-1e2c0944cf40"
+          "domain": "creators.trendly.now",
+          "certificate": "arn:aws:acm:us-east-1:730335628944:certificate/e5111daa-4b27-4de2-a863-123a553f07f9"
         }
       },
       "resources": {
+        "Conditions": {
+          "IsDev": {
+            "Fn::Equals": [
+              "prod",
+              "dev"
+            ]
+          },
+          "IsProd": {
+            "Fn::Equals": [
+              "prod",
+              "prod"
+            ]
+          }
+        },
         "Resources": {
-          "Route53Record": {
+          "Route53DevRecord": {
+            "Condition": "IsDev",
             "Type": "AWS::Route53::RecordSet",
             "Properties": {
-              "HostedZoneId": "Z041635312HLFEY0WZ4F3",
-              "Name": "creators.trendly.pro",
+              "HostedZoneId": "Z02250033690XMWB8LXL7",
+              "Name": "dev.creators.trendly.now",
               "Type": "A",
               "AliasTarget": {
                 "HostedZoneId": "Z2FDTNDATAQYW2",
-                "DNSName": "${Token[TOKEN.12]}"
+                "DNSName": "${Token[TOKEN.10]}"
+              }
+            }
+          },
+          "Route53ProdRecord": {
+            "Condition": "IsProd",
+            "Type": "AWS::Route53::RecordSet",
+            "Properties": {
+              "HostedZoneId": "Z02250033690XMWB8LXL7",
+              "Name": "creators.trendly.now",
+              "Type": "A",
+              "AliasTarget": {
+                "HostedZoneId": "Z2FDTNDATAQYW2",
+                "DNSName": "${Token[TOKEN.10]}"
               }
             }
           }
@@ -637,7 +751,7 @@
     "isDashboardMonitoringPreconfigured": false
   },
   "package": {
-    "artifactDirectoryName": "serverless/trendly-creators/dev/1722083527010-2024-07-27T12:32:07.010Z",
+    "artifactDirectoryName": "serverless/trendly-creators/prod/1765285733884-2025-12-09T13:08:53.884Z",
     "artifact": ""
   }
 }

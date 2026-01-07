@@ -1,79 +1,69 @@
-import { IS_BETA_ENABLED } from "@/constants/App";
-import { FB_APP_ID as fbid } from "@/constants/Facebook";
+import { IS_INSTA_ENABLED } from "@/constants/App";
 import { useInitialUserData } from "@/constants/User";
+import { useAuthContext, useSocialContext } from "@/contexts";
 import { useInstagramLogin } from "@/hooks/requests";
-import { Console } from "@/shared-libs/utils/console";
+import { ISocials } from "@/shared-libs/firestore/trendly-pro/models/socials";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
-import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import * as WebBrowser from "expo-web-browser";
 import React, { useState } from "react";
-import { Platform, View } from "react-native";
+import { View } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
 import Button from "../ui/button";
-;
-;
-;
-;
 
 WebBrowser.maybeCompleteAuthSession();
 
-const InstagramLoginButton: React.FC = () => {
-  const FB_APP_ID = fbid;
-  const [isLoading, setIsLoading] = useState(false);
-  const user = AuthApp.currentUser;
-  const INITIAL_DATA = useInitialUserData();
+interface IProps {
+    markAsPrimary?: boolean;
+    buttonText?: string
+}
+const InstagramLoginButton: React.FC<IProps> = ({ markAsPrimary, buttonText }) => {
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null)
+    const INITIAL_DATA = useInitialUserData();
+    const { user, updateUser } = useAuthContext()
+    const { resetAndNavigate } = useMyNavigation()
+    const { primarySocial } = useSocialContext()
 
-  const { instagramLogin } = useInstagramLogin(AuthApp, FirestoreDB, INITIAL_DATA, () => { }, () => { }, (code) => {
-    handleAddAccount(code);
-  });
+    const { instagramLogin } = useInstagramLogin(AuthApp, FirestoreDB, INITIAL_DATA, setIsLoading, setError, (social) => {
+        onInstagramLogin(social);
+    });
 
-
-  const handleAddAccount = async (accessToken: string) => {
-    setIsLoading(true);
-    try {
-      const token = await user?.getIdToken();
-      await HttpWrapper.fetch("/api/v2/socials/instagram", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          code: accessToken,
-          redirect_type: Platform.OS === "web" ? "2" : "3",
-        }),
-      })
-      setIsLoading(false);
-    } catch (error) {
-      Console.error(error, "Error adding Instagram account");
-      setIsLoading(false);
+    const onInstagramLogin = async (social: ISocials) => {
+        if (!primarySocial) {
+            updateUser(user?.id || "", { primarySocial: social.id });
+            resetAndNavigate("/questions");
+        } else if (markAsPrimary) {
+            updateUser(user?.id || "", { primarySocial: social.id });
+            resetAndNavigate("/collaborations");
+        }
     }
-  };
 
-  if (!IS_BETA_ENABLED)
-    return null;
+    if (!IS_INSTA_ENABLED)
+        return null;
 
-  return (
-    <View>
-      {isLoading ? (
-        <ActivityIndicator
-          animating={true}
-          size="large"
-          style={{ marginVertical: 10 }}
-        />
-      ) : (
-        <Button
-          mode="contained"
-          style={{ marginVertical: 10, paddingVertical: 5 }}
-          onPress={instagramLogin}
-          icon={"instagram"}
-          labelStyle={{ color: "white", fontSize: 16 }}
-        >
-          Add Instagram Account
-        </Button>
-      )}
-    </View>
-  );
+    return (
+        <View>
+            {isLoading ? (
+                <ActivityIndicator
+                    animating={true}
+                    size="large"
+                    style={{ marginVertical: 10 }}
+                />
+            ) : (
+                <Button
+                    mode="contained"
+                    style={{ marginVertical: 10, paddingVertical: 5 }}
+                    onPress={instagramLogin}
+                    icon={"instagram"}
+                    labelStyle={{ color: "white", fontSize: 16 }}
+                >
+                    {buttonText || "Add Instagram Account"}
+                </Button>
+            )}
+        </View>
+    );
 };
 
 export default InstagramLoginButton;

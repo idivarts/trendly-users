@@ -10,54 +10,54 @@ import { Pressable } from "react-native";
 import Toast from "react-native-toast-message";
 
 const PreferencesScreen = () => {
-  const {
-    user,
-    updateUser,
-  } = useAuthContext();
+    const {
+        user,
+        updateUser,
+    } = useAuthContext();
 
-  if (!user) {
-    return null;
-  }
+    if (!user) {
+        return null;
+    }
 
-  const [updatedUser, setUpdatedUser] = useState(user);
+    const [updatedUser, setUpdatedUser] = useState(user);
 
-  const handleOnSave = (user: User) => {
-    setUpdatedUser(user);
-  }
+    const handleOnSave = (user: User) => {
+        setUpdatedUser(user);
+    }
 
-  const handleSave = async () => {
-    await updateUser(updatedUser.id, {
-      preferences: updatedUser.preferences,
-    }).then(() => {
-      Toaster.success('Saved changes successfully');
-    }).catch((error) => {
-      Console.error(error);
+    const handleSave = async () => {
+        await updateUser(updatedUser.id, {
+            preferences: updatedUser.preferences,
+        }).then(() => {
+            Toaster.success('Saved changes successfully');
+        }).catch((error) => {
+            Console.error(error);
 
-      Toaster.error('Error saving preferences');
-    });
-  }
+            Toaster.error('Error saving preferences');
+        });
+    }
 
-  return (
-    <View style={{ flex: 1 }}>
-      <ScreenHeader
-        title="Preferences"
-        rightAction
-        rightActionButton={
-          <Pressable
-            onPress={handleSave}
-            style={{ padding: 10 }}
-          >
-            <Text>Save</Text>
-          </Pressable>
-        }
-      />
-      <Preferences
-        user={user}
-        onSave={handleOnSave}
-      />
-      <Toast />
-    </View>
-  );
+    return (
+        <View style={{ flex: 1 }}>
+            <ScreenHeader
+                title="Preferences"
+                rightAction
+                rightActionButton={
+                    <Pressable
+                        onPress={handleSave}
+                        style={{ padding: 10 }}
+                    >
+                        <Text>Save</Text>
+                    </Pressable>
+                }
+            />
+            <Preferences
+                user={user}
+                onSave={handleOnSave}
+            />
+            <Toast />
+        </View>
+    );
 };
 
 export default PreferencesScreen;

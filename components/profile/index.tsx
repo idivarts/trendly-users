@@ -4,28 +4,28 @@ import { View } from "../theme/Themed";
 import ProfileItemCard from "./ProfileItemCard";
 
 interface ProfileProps {
-  items: any[];
+    items: any[];
 }
 
 const Profile: React.FC<ProfileProps> = ({
-  items,
+    items,
 }) => {
-  const router = useMyNavigation();
+    const router = useMyNavigation();
 
-  return (
-    <View>
-      <FlatList
-        data={items}
-        renderItem={({ item }) => (
-          <ProfileItemCard
-            item={item}
-            onPress={() => router.push(item.route)}
-          />
-        )}
-        keyExtractor={(item) => item.id}
-      />
-    </View>
-  );
+    return (
+        <View>
+            <FlatList
+                data={items}
+                renderItem={({ item }) => (
+                    <ProfileItemCard
+                        item={item}
+                        onPress={() => router.push(item.route)}
+                    />
+                )}
+                keyExtractor={(item) => item.id}
+            />
+        </View>
+    );
 };
 
 export default Profile;

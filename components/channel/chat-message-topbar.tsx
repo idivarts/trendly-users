@@ -7,41 +7,41 @@ import { useState } from "react";
 import Button from "../ui/button";
 
 interface ChatMessageTopbarProps {
-  contract: Contract;
+    contract: Contract;
 }
 
 const ChatMessageTopbar: React.FC<ChatMessageTopbarProps> = ({
-  contract,
+    contract,
 }) => {
-  const [status, setStatus] = useState(contract.status);
-  const router = useMyNavigation();
+    const [status, setStatus] = useState(contract.status);
+    const router = useMyNavigation();
 
-  if (status === 0 || status == 2) {
-    return <MessageTopbar
-      actions={
-        <View
-          style={{
-            flexDirection: 'row-reverse',
-            gap: 16,
-            justifyContent: 'space-between',
-          }}
-        >
-          <Button
-            size="small"
-            mode="text"
-            onPress={() => {
-              router.push(`/contract-details/${contract.streamChannelId}`)
-            }}
-          >
-            {contract.status == 0 ? "Open Collaboration Application" : "Give Feedback"}
-          </Button>
-        </View>
-      }
-      description={contract.status == 0 ? CHAT_MESSAGE_TOPBAR_DESCRIPTION.first : CHAT_MESSAGE_TOPBAR_DESCRIPTION.third}
-    />
-  } else {
-    return null;
-  }
+    if (status === 0 || status == 2) {
+        return <MessageTopbar
+            actions={
+                <View
+                    style={{
+                        flexDirection: 'row-reverse',
+                        gap: 16,
+                        justifyContent: 'space-between',
+                    }}
+                >
+                    <Button
+                        size="small"
+                        mode="text"
+                        onPress={() => {
+                            router.push(`/contract-details/${contract.streamChannelId}`)
+                        }}
+                    >
+                        {contract.status == 0 ? "Open Collaboration Application" : "Give Feedback"}
+                    </Button>
+                </View>
+            }
+            description={contract.status == 0 ? CHAT_MESSAGE_TOPBAR_DESCRIPTION.first : CHAT_MESSAGE_TOPBAR_DESCRIPTION.third}
+        />
+    } else {
+        return null;
+    }
 }
 
 export default ChatMessageTopbar;

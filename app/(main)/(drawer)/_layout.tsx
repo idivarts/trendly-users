@@ -5,11 +5,11 @@ import CustomDrawerWrapper from "@/shared-uis/components/CustomDrawer";
 import { Stack } from "expo-router";
 
 const DrawerLayout = () => {
-  const { xl } = useBreakpoints();
+    const { xl } = useBreakpoints();
 
-  return (
-    <SocialsProtectedScreen>
-      {/* <Drawer
+    return (
+        <SocialsProtectedScreen>
+            {/* <Drawer
         backBehavior="history"
         drawerContent={() => <DrawerMenuContent />}
         screenOptions={{
@@ -21,28 +21,28 @@ const DrawerLayout = () => {
           headerLeft: () => xl ? null : <BackButton />,
         }}
       > */}
-      <CustomDrawerWrapper DrawerContent={<DrawerMenuContent />} isFixed={xl}>
-        <Stack screenOptions={{
-          animation: "ios",
-          headerShown: false
-        }}>
-          <Stack.Screen
-            name="(tabs)"
-            options={{
-              headerShown: false,
-            }}
-          />
-          <Stack.Screen
-            name="(screens)"
-            options={{
-              headerShown: false,
-            }}
-          />
-        </Stack>
-      </CustomDrawerWrapper>
-      {/* </Drawer> */}
-    </SocialsProtectedScreen>
-  );
+            <CustomDrawerWrapper DrawerContent={<DrawerMenuContent />} isFixed={xl}>
+                <Stack screenOptions={{
+
+                    headerShown: false
+                }}>
+                    <Stack.Screen
+                        name="(tabs)"
+                        options={{
+                            headerShown: false,
+                        }}
+                    />
+                    <Stack.Screen
+                        name="(screens)"
+                        options={{
+                            headerShown: false,
+                        }}
+                    />
+                </Stack>
+            </CustomDrawerWrapper>
+            {/* </Drawer> */}
+        </SocialsProtectedScreen>
+    );
 };
 
 export default DrawerLayout;

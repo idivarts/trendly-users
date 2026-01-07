@@ -4,67 +4,67 @@ import { useTheme } from "@react-navigation/native";
 import { PropsWithChildren } from "react";
 
 interface ContentWrapperProps extends PropsWithChildren {
-  description?: string;
-  rightText?: string;
-  title?: string;
+    description?: string;
+    rightText?: string;
+    title?: string;
 }
 
 const ContentWrapper: React.FC<ContentWrapperProps> = ({
-  children,
-  description,
-  rightText,
-  title,
+    children,
+    description,
+    rightText,
+    title,
 }) => {
-  const theme = useTheme();
+    const theme = useTheme();
 
-  return (
-    <View
-      style={{
-        gap: 12,
-      }}
-    >
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}
-      >
-        {
-          title && (
-            <Text
-              style={{
-                fontSize: 20,
-                fontWeight: 'bold',
-              }}
-            >
-              {title}
-            </Text>
-          )
-        }
-        {
-          rightText && (
-            <Text>
-              {rightText}
-            </Text>
-          )
-        }
-      </View>
-      {children}
-      {
-        description && (
-          <Text
+    return (
+        <View
             style={{
-              fontSize: 14,
-              color: theme.dark ? Colors(theme).text : Colors(theme).gray300,
+                gap: 12,
             }}
-          >
-            {description}
-          </Text>
-        )
-      }
-    </View>
-  );
+        >
+            <View
+                style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                }}
+            >
+                {
+                    title && (
+                        <Text
+                            style={{
+                                fontSize: 20,
+                                fontWeight: 'bold',
+                            }}
+                        >
+                            {title}
+                        </Text>
+                    )
+                }
+                {
+                    rightText && (
+                        <Text>
+                            {rightText}
+                        </Text>
+                    )
+                }
+            </View>
+            {children}
+            {
+                description && (
+                    <Text
+                        style={{
+                            fontSize: 14,
+                            color: theme.dark ? Colors(theme).text : Colors(theme).gray300,
+                        }}
+                    >
+                        {description}
+                    </Text>
+                )
+            }
+        </View>
+    );
 };
 
 export default ContentWrapper;

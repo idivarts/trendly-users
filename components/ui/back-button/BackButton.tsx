@@ -6,45 +6,45 @@ import { useTheme } from "@react-navigation/native";
 import { Pressable, View } from "react-native";
 
 interface BackButtonProps {
-  color?: string;
+    color?: string;
 }
 
 const BackButton: React.FC<BackButtonProps> = ({
-  color,
+    color,
 }) => {
-  const navigation = useMyNavigation();
-  const theme = useTheme();
+    const navigation = useMyNavigation();
+    const theme = useTheme();
 
-  return (
-    <Pressable
-      key={0}
-      onPress={() => navigation.back()}
-    >
-      <View
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          marginLeft: 8,
-        }}
-      >
+    return (
         <Pressable
-          onPress={() => navigation.back()}
+            key={0}
+            onPress={() => navigation.back()}
         >
-          {({ pressed }) => (
-            <FontAwesomeIcon
-              icon={faArrowLeft}
-              size={20}
-              color={color ?? Colors(theme).text}
-              style={{
-                opacity: pressed ? 0.8 : 1,
-              }}
-            />
-          )}
+            <View
+                style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginLeft: 8,
+                }}
+            >
+                <Pressable
+                    onPress={() => navigation.back()}
+                >
+                    {({ pressed }) => (
+                        <FontAwesomeIcon
+                            icon={faArrowLeft}
+                            size={20}
+                            color={color ?? Colors(theme).text}
+                            style={{
+                                opacity: pressed ? 0.8 : 1,
+                            }}
+                        />
+                    )}
+                </Pressable>
+            </View>
         </Pressable>
-      </View>
-    </Pressable>
-  );
+    );
 };
 
 export default BackButton;

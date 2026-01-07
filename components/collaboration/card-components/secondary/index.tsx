@@ -6,25 +6,25 @@ import { View } from '@/components/theme/Themed';
 import Colors from '@/shared-uis/constants/Colors';
 
 type CardProps = {
-  children: React.ReactNode;
+    children: React.ReactNode;
 };
 
 export const Card = ({
-  children,
+    children,
 }: CardProps) => {
-  const theme = useTheme();
-  const styles = stylesFn(theme);
+    const theme = useTheme();
+    const styles = stylesFn(theme);
 
-  return (
-    <View style={styles.card}>{children}</View>
-  );
+    return (
+        <View style={styles.card}>{children}</View>
+    );
 };
 
 const stylesFn = (theme: Theme) => StyleSheet.create({
-  card: {
-    backgroundColor: Colors(theme).card,
-    gap: 16,
-    paddingTop: 16,
-    paddingBottom: 24,
-  },
+    card: {
+        backgroundColor: Colors(theme).card,
+        gap: 16,
+        paddingTop: 16,
+        paddingBottom: 24,
+    },
 });

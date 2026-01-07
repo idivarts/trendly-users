@@ -17,78 +17,78 @@ import { useEffect, useRef, useState } from "react";
 ;
 
 const CollaborationDetailsScreen = () => {
-  const {
-    collaborationId,
-  } = useLocalSearchParams();
-  const pathname = usePathname();
-  const [loading, setLoading] = useState(true)
+    const {
+        collaborationId,
+    } = useLocalSearchParams();
+    const pathname = usePathname();
+    const [loading, setLoading] = useState(true)
 
-  const authModalBottomSheetModalRef = useRef<BottomSheetModal>(null);
+    const authModalBottomSheetModalRef = useRef<BottomSheetModal>(null as any);
 
-  const router = useMyNavigation();
-  const {
-    lg,
-  } = useBreakpoints();
+    const router = useMyNavigation();
+    const {
+        lg,
+    } = useBreakpoints();
 
-  const theme = useTheme();
+    const theme = useTheme();
 
-  useEffect(() => {
-    AuthApp.authStateReady().then(() => {
-      const user = AuthApp.currentUser;
-      if (pathname == "/collaboration" && !user?.isAnonymous)
-        router.resetAndNavigate(`/collaborations`);
+    useEffect(() => {
+        AuthApp.authStateReady().then(() => {
+            const user = AuthApp.currentUser;
+            if (pathname == "/collaboration" && !user?.isAnonymous)
+                router.resetAndNavigate(`/collaborations`);
 
-      if (!pathname.includes("collaboration/") && !collaborationId) return;
+            if (!pathname.includes("collaboration/") && !collaborationId) return;
 
-      if (!user) {
-        signInAnonymously(AuthApp).then(() => { setLoading(false) });
-      } else if (!user.isAnonymous) {
-        router.resetAndNavigate(`/collaboration-details/${collaborationId}`);
-      } else {
-        setLoading(false)
-      }
-    })
-  }, []);
+            if (!user) {
+                signInAnonymously(AuthApp).then(() => { setLoading(false) });
+            } else if (!user.isAnonymous) {
+                router.resetAndNavigate(`/collaboration-details/${collaborationId}`);
+            } else {
+                setLoading(false)
+            }
+        })
+    }, []);
 
-  return (
-    <AppLayout>
-      <Appbar.Header
-        style={{
-          backgroundColor: Colors(theme).background,
-          elevation: 0,
-          marginHorizontal: 16,
-        }}
-        statusBarHeight={0}
-      >
-        <Text
-          style={{
-            color: Colors(theme).text,
-            flex: 1,
-            fontSize: 24,
-            fontWeight: "bold",
-          }}
-        >
-          Trendly
-        </Text>
+    return (
+        <AppLayout>
+            <Appbar.Header
+                style={{
+                    backgroundColor: Colors(theme).background,
+                    elevation: 0,
+                    marginHorizontal: 16,
+                }}
+                statusBarHeight={0}
+            >
+                <Text
+                    style={{
+                        color: Colors(theme).text,
+                        flex: 1,
+                        fontSize: 24,
+                        fontWeight: "bold",
+                    }}
+                >
+                    Trendly
+                </Text>
 
-        <Button
-          onPress={() => {
-            authModalBottomSheetModalRef.current?.present();
-          }}
-        >
-          Register Now
-        </Button>
-      </Appbar.Header>
-      {!loading ? <CollaborationDetails
-        pageID={collaborationId as string}
-        cardType="public-collaboration"
-      /> : <ActivityIndicator size="small" color={Colors(theme).primary} />}
+                <Button
+                    onPress={() => {
+                        authModalBottomSheetModalRef.current?.present();
+                    }}
+                >
+                    Register Now
+                </Button>
+            </Appbar.Header>
+            {!loading ? <CollaborationDetails
+                pageID={collaborationId as string}
+                cardType="public-collaboration"
+            /> : <ActivityIndicator size="small" color={Colors(theme).primary} />}
 
-      <AuthModal
-        bottomSheetModalRef={authModalBottomSheetModalRef}
-      />
-    </AppLayout>
-  );
+            <AuthModal
+                bottomSheetModalRef={authModalBottomSheetModalRef}
+            />
+        </AppLayout>
+    );
 };
 
 export default CollaborationDetailsScreen;
