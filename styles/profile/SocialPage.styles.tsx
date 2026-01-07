@@ -43,6 +43,7 @@ export const stylesFn = (theme: Theme) =>
         title: {
             fontSize: 16,
             fontWeight: "bold",
+            color: Colors(theme).text,
         },
         menuStyle: {
             backgroundColor: Colors(theme).background,
