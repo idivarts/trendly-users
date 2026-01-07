@@ -1,7 +1,6 @@
 import ApplyNowContent from "@/components/collaboration/apply-now/ApplyNowContent";
 import { useApplication } from "@/components/proposals/useApplication";
 import AssetsPreview from "@/components/ui/assets-preview";
-import Button from "@/components/ui/button";
 import ScreenHeader from "@/components/ui/screen-header";
 import AppLayout from "@/layouts/app-layout";
 import { useAWSContext } from "@/shared-libs/contexts/aws-context.provider";
@@ -13,14 +12,13 @@ import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { useMyNavigation } from "@/shared-libs/utils/router";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
-import { stylesFn } from "@/styles/ApplyNow.styles";
 import { AssetItem } from "@/types/Asset";
-import DateTimePicker from "@react-native-community/datetimepicker";
-import { useIsFocused, useTheme } from "@react-navigation/native";
+import { useIsFocused } from "@react-navigation/native";
+import * as MediaPicker from "expo-image-picker";
 import { useLocalSearchParams } from "expo-router";
 import { doc, getDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
-import { Platform, View } from "react-native";
+import { Platform } from "react-native";
 import Toast from "react-native-toast-message";
 
 const EditApplicationScreen = () => {
@@ -69,50 +67,62 @@ const EditApplicationScreen = () => {
         }[]
     >([]);
     const [questions, setQuestions] = useState<any[]>([]);
-    const [fileAttachments, setFileAttachments] = useState<any[]>([]);
-
-    const [timelineData, setTimelineData] = useState<Date | null>(null);
-    const [showDatePicker, setShowDatePicker] = useState(false);
-
     const [answers, setAnswers] = useState<{ [key: string]: string }>(
         params.answers ? JSON.parse(params.answers as string) : {}
     );
 
-    const [totalFiles, setTotalFiles] = useState(0)
-
-    const theme = useTheme();
-    const styles = stylesFn(theme);
-
     const {
-        processMessage,
-        setProcessMessage,
         uploadFileUris,
-        uploadAttachments,
     } = useAWSContext();
 
     const { updateApplication } = useApplication()
 
+    const handleImageUpload = async (id: string, uri: string) => {
+        setFiles([...files, {
+            id: id,
+            type: 'image',
+            localUri: uri,
+            uri: uri,
+        }])
+        console.log("IMAGE ASSET: ", id, uri);
+    }
+
+    const handleVideoUpload = async (id: string, uri: string) => {
+        setFiles([...files, {
+            id: id,
+            type: 'video',
+            localUri: uri,
+            uri: uri,
+        }])
+    }
+    const openGallery = async () => {
+        const { status } = await MediaPicker.getMediaLibraryPermissionsAsync()
+        if (status !== 'granted') {
+            const { status } = await MediaPicker.requestMediaLibraryPermissionsAsync();
+            if (status !== 'granted') {
+                return
+            };
+        }
+
+        const result = await MediaPicker.launchImageLibraryAsync({
+            mediaTypes: MediaPicker.MediaTypeOptions.All,
+            allowsMultipleSelection: false,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+
+        if (!result.canceled && result.assets[0].type === 'video') {
+            handleVideoUpload(result.assets[0].assetId as string, result.assets[0].uri);
+        } else if (!result.canceled) {
+            handleImageUpload(result.assets[0].assetId as string, result.assets[0].uri);
+        }
+    }
+
     // TODO: Use ImagePicker to pick image or Video
     const handleAssetUpload = async () => {
         try {
-            // router.push({
-            //     pathname: "/apply-now/gallery",
-            //     params: {
-            //         ...params,
-            //         pageID,
-            //         note,
-            //         path: "/edit-application/[pageID]",
-            //         quotation,
-            //         //@ts-ignore
-            //         timelineData,
-            //         selectedFiles: params.selectedFiles,
-            //         collaborationId: params.collaborationId,
-            //         profileAttachmentsRoute: params.profileAttachments,
-            //         originalAttachments: JSON.stringify(originalAttachments),
-            //         fileAttachments: JSON.stringify(fileAttachments),
-            //         answers: JSON.stringify(answers),
-            //     },
-            // });
+            openGallery()
         } catch (e) {
             Console.error(e);
             setErrorMessage("Error uploading file");
@@ -128,7 +138,6 @@ const EditApplicationScreen = () => {
 
     const handleUploadFiles = async () => {
         setLoading(true);
-        setTotalFiles(1)
         try {
             var finalFilesToUploadWithoutParsing = [];
             var finalFilesToUploadWithParsing = [];
@@ -156,36 +165,14 @@ const EditApplicationScreen = () => {
                 }
             }
 
-            // setLoading(false);
 
-            var attachmentToUploadWithoutParsing = [];
-            var attachmentToUploadWithParsing = [];
-
-            if (fileAttachments.length > 0) {
-                for (const file of fileAttachments) {
-                    if (!file.uri) {
-                        attachmentToUploadWithoutParsing.push(file);
-                    } else {
-                        attachmentToUploadWithParsing.push(file);
-                    }
-                }
-            }
-
-            setTotalFiles(attachmentToUploadWithParsing.length + finalFilesToUploadWithParsing.length)
-            const [uploadedFiles, uploadedFileUrisResponse] = await Promise.all([
-                uploadAttachments(attachmentToUploadWithParsing),
-                uploadFileUris(finalFilesToUploadWithParsing)
-            ]);
+            const uploadedFileUrisResponse = await uploadFileUris(finalFilesToUploadWithParsing)
 
             const finalProfileAttachments = finalFilesToUploadWithoutParsing.map(
                 //@ts-ignore
                 ({ id, ...rest }) => rest // Exclude the `id` field
             );
 
-            const finalFileAttachment = [
-                ...uploadedFiles,
-                ...attachmentToUploadWithoutParsing,
-            ];
 
             setUploadedFiles([
                 ...uploadedFileUrisResponse,
@@ -216,7 +203,6 @@ const EditApplicationScreen = () => {
 
             Toaster.success("Application updated successfully");
             setLoading(false);
-            setProcessMessage("");
             setTimeout(() => {
                 router.resetAndNavigate("/collaborations");
             }, 1000);
@@ -342,32 +328,27 @@ const EditApplicationScreen = () => {
 
     useEffect(() => {
         if (params.selectedFiles) {
-            //@ts-ignore
-
-            const newFiles = JSON.parse(
-                params.selectedFiles as string
-            ) as AssetItem[];
-            getAssetsData(newFiles);
-            if (params.profileAttachments) {
-                const profileFiles = JSON.parse(params.profileAttachments as string);
-                if (profileFiles.length > 0) {
-                    setProfileAttachments(profileFiles);
-                    getProfileAssetsData(profileFiles);
-                } else {
-                    setProfileAttachments([]);
-                }
-            }
+            setFiles(JSON.parse(params.selectedFiles as string))
         }
+        // if (params.selectedFiles) {
+        //     //@ts-ignore
+
+        //     const newFiles = JSON.parse(
+        //         params.selectedFiles as string
+        //     ) as AssetItem[];
+        //     getAssetsData(newFiles);
+        //     if (params.profileAttachments) {
+        //         const profileFiles = JSON.parse(params.profileAttachments as string);
+        //         if (profileFiles.length > 0) {
+        //             setProfileAttachments(profileFiles);
+        //             getProfileAssetsData(profileFiles);
+        //         } else {
+        //             setProfileAttachments([]);
+        //         }
+        //     }
+        // }
         if (params.quotation) {
             setQuotation(parseInt(params.quotation as string));
-        }
-
-        if (params.timelineData) {
-            setTimelineData(new Date(params.timelineData as string));
-        }
-
-        if (params.fileAttachments) {
-            setFileAttachments(JSON.parse(params.fileAttachments as string));
         }
 
         if (params.originalAttachments) {
@@ -449,16 +430,10 @@ const EditApplicationScreen = () => {
                             title: "Quotation",
                             value: quotation === undefined ? "" : "" + quotation,
                             path: `/edit-application/${pageID}`,
-                            selectedFiles:
-                                params.selectedFiles || JSON.stringify(files),
-                            profileAttachments:
-                                params.profileAttachments ||
-                                JSON.stringify(profileAttachments),
+                            selectedFiles: JSON.stringify(files),
+                            profileAttachments: JSON.stringify(profileAttachments),
                             originalAttachments: JSON.stringify(originalAttachments),
                             placeholder: "Add your quotation",
-                            //@ts-ignore
-                            timelineData: timelineData,
-                            fileAttachments: JSON.stringify(fileAttachments),
                             answers: JSON.stringify(answers),
                             note: note,
                             collaborationId: params.collaborationId,
@@ -471,15 +446,12 @@ const EditApplicationScreen = () => {
                             title: "Question " + (index + 1),
                             value: answers[index] || "",
                             path: `/edit-application/${pageID}`,
-                            selectedFiles: params.selectedFiles,
-                            profileAttachments: params.profileAttachments,
+                            selectedFiles: JSON.stringify(files),
+                            profileAttachments: JSON.stringify(profileAttachments),
                             collaborationId: params.collaborationId,
-                            placeholder: "",
-                            //@ts-ignore
-                            timelineData: timelineData,
-                            actualQuestion: question,
-                            fileAttachments: JSON.stringify(fileAttachments),
                             originalAttachments: JSON.stringify(originalAttachments),
+                            placeholder: "",
+                            actualQuestion: question,
                             answers: JSON.stringify(answers),
                             quotation: quotation,
                             note: note,
@@ -523,48 +495,6 @@ const EditApplicationScreen = () => {
                     }}
                     handleAssetUpload={handleAssetUpload}
                 />} />
-            {showDatePicker && (
-                <View
-                    style={{
-                        position: "absolute",
-                        bottom: 0,
-                        width: "100%",
-                        backgroundColor: theme.colors.background,
-                    }}
-                >
-                    <View
-                        style={{
-                            flexDirection: "row",
-                            justifyContent: "space-between",
-                            padding: 10,
-                        }}
-                    >
-                        <Button onPress={() => setShowDatePicker(false)}>Cancel</Button>
-                        <Button
-                            onPress={() => {
-                                if (!timelineData) {
-                                    setTimelineData(new Date());
-                                }
-                                setShowDatePicker(false);
-                            }}
-                        >
-                            Done
-                        </Button>
-                    </View>
-                    <DateTimePicker
-                        value={timelineData || new Date()}
-                        mode="date"
-                        display={Platform.OS === "ios" ? "spinner" : "default"}
-                        onChange={(event, selectedDate) => {
-                            if (selectedDate) {
-                                setTimelineData(selectedDate);
-                            }
-                        }}
-                        themeVariant={theme.dark ? "dark" : "light"}
-                        minimumDate={new Date()}
-                    />
-                </View>
-            )}
         </AppLayout>
     );
 };
