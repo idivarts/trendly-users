@@ -810,7 +810,7 @@ const CollborationDetailsContent = (
                     description="Are you sure you want to withdraw your application?"
                 />
                 <AuthModal
-                    bottomSheetModalRef={authModalBottomSheetModalRef}
+                    bottomSheetModalRef={authModalBottomSheetModalRef as any}
                     collaborationId={props.pageID}
                 />
             </Portal>
