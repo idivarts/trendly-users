@@ -17,13 +17,11 @@ import { stylesFn } from "@/styles/ApplyNow.styles";
 import { AssetItem } from "@/types/Asset";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useIsFocused, useTheme } from "@react-navigation/native";
-import * as MediaLibrary from "expo-media-library";
 import { useLocalSearchParams } from "expo-router";
 import { doc, getDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { Platform, View } from "react-native";
 import Toast from "react-native-toast-message";
-;
 
 const EditApplicationScreen = () => {
     const params = useLocalSearchParams();
@@ -96,24 +94,24 @@ const EditApplicationScreen = () => {
 
     const handleAssetUpload = async () => {
         try {
-            router.push({
-                pathname: "/apply-now/gallery",
-                params: {
-                    ...params,
-                    pageID,
-                    note,
-                    path: "/edit-application/[pageID]",
-                    quotation,
-                    //@ts-ignore
-                    timelineData,
-                    selectedFiles: params.selectedFiles,
-                    collaborationId: params.collaborationId,
-                    profileAttachmentsRoute: params.profileAttachments,
-                    originalAttachments: JSON.stringify(originalAttachments),
-                    fileAttachments: JSON.stringify(fileAttachments),
-                    answers: JSON.stringify(answers),
-                },
-            });
+            // router.push({
+            //     pathname: "/apply-now/gallery",
+            //     params: {
+            //         ...params,
+            //         pageID,
+            //         note,
+            //         path: "/edit-application/[pageID]",
+            //         quotation,
+            //         //@ts-ignore
+            //         timelineData,
+            //         selectedFiles: params.selectedFiles,
+            //         collaborationId: params.collaborationId,
+            //         profileAttachmentsRoute: params.profileAttachments,
+            //         originalAttachments: JSON.stringify(originalAttachments),
+            //         fileAttachments: JSON.stringify(fileAttachments),
+            //         answers: JSON.stringify(answers),
+            //     },
+            // });
         } catch (e) {
             Console.error(e);
             setErrorMessage("Error uploading file");
@@ -228,10 +226,11 @@ const EditApplicationScreen = () => {
         }
     };
 
-    const getAssetData = async (id: string) => {
-        const asset = await MediaLibrary.getAssetInfoAsync(id);
 
-        return asset;
+    const getAssetData = async (id: string) => {
+        // const asset = await MediaLibrary.getAssetInfoAsync(id);
+
+        return [] as any;
     };
 
     const getAssetsData = async (newFiles: AssetItem[]) => {

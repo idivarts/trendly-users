@@ -14,12 +14,10 @@ import { AssetItem } from "@/types/Asset";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useTheme } from "@react-navigation/native";
 import * as DocumentPicker from "expo-document-picker";
-import * as MediaLibrary from "expo-media-library";
 import { useLocalSearchParams } from "expo-router";
 import { doc, getDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { Platform, View } from "react-native";
-;
 
 const ApplyScreen = () => {
     const params = useLocalSearchParams();
@@ -60,22 +58,22 @@ const ApplyScreen = () => {
 
     const handleAssetUpload = async () => {
         try {
-            router.push({
-                pathname: "/apply-now/gallery",
-                params: {
-                    ...params,
-                    pageID,
-                    note,
-                    quotation,
-                    path: `/apply-now/[pageID]`,
-                    //@ts-ignore
-                    timelineData,
-                    selectedFiles: params.selectedFiles,
-                    profileAttachmentsRoute: params.profileAttachments,
-                    fileAttachments: JSON.stringify(fileAttachments),
-                    answers: JSON.stringify(answers),
-                },
-            });
+            // router.push({
+            //     pathname: "/apply-now/gallery",
+            //     params: {
+            //         ...params,
+            //         pageID,
+            //         note,
+            //         quotation,
+            //         path: `/apply-now/[pageID]`,
+            //         //@ts-ignore
+            //         timelineData,
+            //         selectedFiles: params.selectedFiles,
+            //         profileAttachmentsRoute: params.profileAttachments,
+            //         fileAttachments: JSON.stringify(fileAttachments),
+            //         answers: JSON.stringify(answers),
+            //     },
+            // });
         } catch (e) {
             Console.error(e);
             setErrorMessage("Error uploading file");
@@ -134,9 +132,9 @@ const ApplyScreen = () => {
     };
 
     const getAssetData = async (id: string) => {
-        const asset = await MediaLibrary.getAssetInfoAsync(id);
+        // const asset = await MediaLibrary.getAssetInfoAsync(id);
 
-        return asset;
+        return [] as any;
     };
 
     const getAssetsData = async (newFiles: AssetItem[]) => {
