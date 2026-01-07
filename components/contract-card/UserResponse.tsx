@@ -28,6 +28,7 @@ const UserResponse: FC<UserResponseProps> = ({
                 borderRadius: 5,
                 width: "100%",
                 gap: 16,
+                backgroundColor: "transparent",
             }}
         >
             <View
@@ -35,6 +36,7 @@ const UserResponse: FC<UserResponseProps> = ({
                     flexDirection: "row",
                     justifyContent: "space-between",
                     alignItems: "center",
+                    backgroundColor: "transparent",
                 }}
             >
                 <Text
@@ -50,9 +52,10 @@ const UserResponse: FC<UserResponseProps> = ({
                 style={{
                     width: "100%",
                     gap: 16,
+                    backgroundColor: "transparent",
                 }}
             >
-                <ScrollView horizontal style={{}}>
+                <ScrollView horizontal>
                     {attachmentFiltered?.map((attachment, index) => (
                         <RenderMediaItem
                             key={index}
@@ -64,17 +67,23 @@ const UserResponse: FC<UserResponseProps> = ({
                         />
                     ))}
                 </ScrollView>
-                <Text style={{ fontSize: 16 }}>{application?.message}</Text>
+
+                <View style={{ backgroundColor: "transparent" }}>
+                    <Text style={{ fontSize: 16 }}>{application?.message}</Text>
+                </View>
                 <View
                     style={{
                         flexDirection: "row",
                         gap: 10,
                         justifyContent: "space-between",
+                        backgroundColor: "transparent",
                     }}
                 >
-                    <Text style={{ fontSize: 16 }}>
-                        Quote: {application?.quotation || "Free"}
-                    </Text>
+                    <View style={{ backgroundColor: "transparent" }}>
+                        <Text style={{ fontSize: 16 }}>
+                            Quote: {application?.quotation || "Free"}
+                        </Text>
+                    </View>
                     {/* {application?.timeline && (
             <Text style={{ fontSize: 16 }}>
               Timeline:{" "}
@@ -107,6 +116,7 @@ const UserResponse: FC<UserResponseProps> = ({
                     style={{
                         flexDirection: "column",
                         gap: 10,
+                        backgroundColor: "transparent",
                     }}
                 >
                     {application?.answersFromInfluencer &&

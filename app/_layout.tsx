@@ -6,7 +6,9 @@ import { APP_SCHEME } from "@/constants/App";
 import CustomPaperTheme from "@/constants/Theme";
 import {
     AuthContextProvider,
-    useAuthContext
+    ThemeContextProvider,
+    useAuthContext,
+    useThemeContext,
 } from "@/contexts";
 import UpdateProvider from "@/shared-libs/contexts/update-provider";
 import { Console } from "@/shared-libs/utils/console";
@@ -22,11 +24,17 @@ import {
     useTheme,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Href, Stack, useGlobalSearchParams, usePathname, useSegments } from "expo-router";
+import {
+    Href,
+    Stack,
+    useGlobalSearchParams,
+    usePathname,
+    useSegments,
+} from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import React, { useEffect } from "react";
 import { Linking } from "react-native";
-import { setJSExceptionHandler } from 'react-native-exception-handler';
+import { setJSExceptionHandler } from "react-native-exception-handler";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Provider } from "react-native-paper";
 
@@ -72,11 +80,13 @@ const RootLayout = () => {
     return (
         <UpdateProvider force={true} influencerApp={true}>
             <AuthContextProvider>
-                <GestureHandlerRootView>
-                    <BottomSheetModalProvider>
-                        <RootLayoutStack />
-                    </BottomSheetModalProvider>
-                </GestureHandlerRootView>
+                <ThemeContextProvider>
+                    <GestureHandlerRootView>
+                        <BottomSheetModalProvider>
+                            <RootLayoutStack />
+                        </BottomSheetModalProvider>
+                    </GestureHandlerRootView>
+                </ThemeContextProvider>
             </AuthContextProvider>
         </UpdateProvider>
     );
@@ -84,15 +94,16 @@ const RootLayout = () => {
 
 const RootLayoutStack = () => {
     const colorScheme = useColorScheme();
-    const { resetAndNavigate } = useMyNavigation()
+    const { resetAndNavigate } = useMyNavigation();
     const theme = useTheme();
     const router = useMyNavigation();
     const pathname = usePathname();
     const segments = useSegments();
     const searchParams = useGlobalSearchParams();
     const { isLoading, session, user } = useAuthContext();
+    const { currentTheme } = useThemeContext();
 
-    const appTheme = user?.settings?.theme || colorScheme;
+    const appTheme = currentTheme;
 
     const linkingWorkaround = () => {
         Console.log("Linking workaround initiated", "RootLayout");
@@ -105,8 +116,8 @@ const RootLayoutStack = () => {
 
         return () => {
             subscription.remove();
-        }
-    }
+        };
+    };
 
     useEffect(() => {
         // Console.log("App started", "RootLayout");
@@ -120,16 +131,10 @@ const RootLayoutStack = () => {
 
         if (isLoading) return;
 
-        if (
-            session
-            && (inAuthGroup || pathname === "/")
-        ) {
+        if (session && (inAuthGroup || pathname === "/")) {
             // On boot up, session exist and user is in auth group or /, redirect to collaborations
             resetAndNavigate(`/collaborations${queryParams(searchParams)}` as Href);
-        } else if (
-            !session
-            && (inMainGroup || pathname === "/")
-        ) {
+        } else if (!session && (inMainGroup || pathname === "/")) {
             // On boot up, session doesn't exist and user is in main group or /, redirect to pre-signin
             resetAndNavigate("/pre-signin");
         } else if (inPublicGroup) {
@@ -145,7 +150,6 @@ const RootLayoutStack = () => {
                 <ConfirmationModalProvider>
                     <Stack
                         screenOptions={{
-
                             headerShown: false,
                         }}
                     >

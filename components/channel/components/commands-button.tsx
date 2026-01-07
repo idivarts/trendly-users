@@ -1,27 +1,22 @@
-import Colors from '@/shared-uis/constants/Colors';
-import { faBolt } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import Colors from "@/shared-uis/constants/Colors";
+import { faBolt } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { useTheme as useAppTheme } from "@react-navigation/native";
+import React from "react";
+import { Pressable, PressableProps } from "react-native";
 import {
-    useTheme as useAppTheme,
-} from '@react-navigation/native';
-import React from 'react';
-import type { GestureResponderEvent } from 'react-native';
-import { Pressable } from 'react-native';
-import { DefaultStreamChatGenerics, isSuggestionCommand, SuggestionsContextValue, useSuggestionsContext, useTheme } from 'stream-chat-expo';
+    useTheme,
+} from "stream-chat-expo";
 
-type CommandsButtonPropsWithContext<
-    StreamChatGenerics extends DefaultStreamChatGenerics = DefaultStreamChatGenerics,
-> = Pick<SuggestionsContextValue<StreamChatGenerics>, 'suggestions'> & {
+type CommandsButtonPropsWithContext = {
     /** Function that opens commands selector */
-    handleOnPress?: ((event: GestureResponderEvent) => void) & (() => void);
+    handleOnPress?: PressableProps['onPress'];
 };
 
-const CommandsButtonWithContext = <
-    StreamChatGenerics extends DefaultStreamChatGenerics = DefaultStreamChatGenerics,
->(
-    props: CommandsButtonPropsWithContext<StreamChatGenerics>,
+const CommandsButtonWithContext = (
+    props: CommandsButtonPropsWithContext
 ) => {
-    const { handleOnPress, suggestions } = props;
+    const { handleOnPress } = props;
 
     const {
         theme: {
@@ -32,11 +27,13 @@ const CommandsButtonWithContext = <
     const appTheme = useAppTheme();
 
     return (
-        <Pressable onPress={handleOnPress} style={[commandsButton]} testID='commands-button'>
+        <Pressable
+            onPress={handleOnPress}
+            style={[commandsButton]}
+            testID="commands-button"
+        >
             <FontAwesomeIcon
-                color={suggestions && suggestions.data.some((suggestion) => isSuggestionCommand(suggestion))
-                    ? Colors(appTheme).primary
-                    : Colors(appTheme).primary}
+                color={Colors(appTheme).primary}
                 icon={faBolt}
                 size={22}
                 style={{
@@ -47,39 +44,26 @@ const CommandsButtonWithContext = <
     );
 };
 
-const areEqual = <StreamChatGenerics extends DefaultStreamChatGenerics = DefaultStreamChatGenerics>(
-    prevProps: CommandsButtonPropsWithContext<StreamChatGenerics>,
-    nextProps: CommandsButtonPropsWithContext<StreamChatGenerics>,
+const areEqual = (
+    prevProps: CommandsButtonPropsWithContext,
+    nextProps: CommandsButtonPropsWithContext,
 ) => {
-    const { suggestions: prevSuggestions } = prevProps;
-    const { suggestions: nextSuggestions } = nextProps;
-
-    const suggestionsEqual = !!prevSuggestions === !!nextSuggestions;
-    if (!suggestionsEqual) return false;
-
-    return true;
+    return prevProps.handleOnPress === nextProps.handleOnPress;
 };
+
 
 const MemoizedCommandsButton = React.memo(
     CommandsButtonWithContext,
-    areEqual,
+    areEqual
 ) as typeof CommandsButtonWithContext;
 
-export type CommandsButtonProps<
-    StreamChatGenerics extends DefaultStreamChatGenerics = DefaultStreamChatGenerics,
-> = Partial<CommandsButtonPropsWithContext<StreamChatGenerics>>;
+export type CommandsButtonProps = Partial<CommandsButtonPropsWithContext>;
 
 /**
  * UI Component for attach button in MessageInput component.
  */
-export const CommandsButton = <
-    StreamChatGenerics extends DefaultStreamChatGenerics = DefaultStreamChatGenerics,
->(
-    props: CommandsButtonProps<StreamChatGenerics>,
-) => {
-    const { suggestions } = useSuggestionsContext<StreamChatGenerics>();
-
-    return <MemoizedCommandsButton {...{ suggestions }} {...props} />;
+export const CommandsButton = (props: CommandsButtonProps) => {
+    return <MemoizedCommandsButton {...props} />;
 };
 
-CommandsButton.displayName = 'CommandsButton{messageInput}';
+CommandsButton.displayName = "CommandsButton{messageInput}";

@@ -1,5 +1,8 @@
 import { AWSContextProvider } from "@/shared-libs/contexts/aws-context.provider";
-import { CloudMessagingContextProvider, useCloudMessagingContext } from "@/shared-libs/contexts/cloud-messaging.provider";
+import {
+    CloudMessagingContextProvider,
+    useCloudMessagingContext,
+} from "@/shared-libs/contexts/cloud-messaging.provider";
 import { AuthContextProvider, useAuthContext } from "./auth-context.provider";
 import {
     BrandContextProvider,
@@ -26,6 +29,10 @@ import {
     SocialContextProvider,
     useSocialContext,
 } from "./social-context.provider";
+import {
+    ThemeContextProvider,
+    useThemeContext,
+} from "./theme-context.provider";
 
 export {
     AuthContextProvider,
@@ -38,6 +45,7 @@ export {
     FirebaseStorageContextProvider,
     NotificationContextProvider,
     SocialContextProvider,
+    ThemeContextProvider,
     useAuthContext,
     useBrandContext,
     useChatContext,
@@ -46,6 +54,6 @@ export {
     useContractContext,
     useFirebaseStorageContext,
     useNotificationContext,
-    useSocialContext
+    useSocialContext,
+    useThemeContext
 };
-

@@ -195,6 +195,7 @@ const ContractDetailsContent = (props: CollaborationDetailsContentProps) => {
                             padding: 10,
                             borderRadius: 10,
                             borderColor: Colors(theme).gray300,
+
                         }}
                     >
                         <View
@@ -203,13 +204,14 @@ const ContractDetailsContent = (props: CollaborationDetailsContentProps) => {
                                 alignItems: "center",
                                 gap: 8,
                                 flexGrow: 1,
+
                             }}
                         >
                             <ImageComponent
                                 url={brandData?.image || ""}
                                 altText="Brand Image"
                                 shape="square"
-                                style={{ width: 40, height: 40, borderRadius: 5 }}
+                                style={{ width: 40, height: 40, borderRadius: 5, }}
                             />
                             <View style={{ flex: 1 }}>
                                 <Text

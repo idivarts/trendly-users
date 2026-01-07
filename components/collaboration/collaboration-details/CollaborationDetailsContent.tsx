@@ -1,10 +1,7 @@
 import CreateCollaborationMap from "@/components/create-collaboration/CreateCollaborationMap";
 import AuthModal from "@/components/modals/AuthModal";
 import Button from "@/components/ui/button";
-import {
-    useAuthContext,
-    useContractContext
-} from "@/contexts";
+import { useAuthContext, useContractContext } from "@/contexts";
 import { useBreakpoints } from "@/hooks";
 import { PromotionType } from "@/shared-libs/firestore/trendly-pro/constants/promotion-type";
 import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
@@ -40,7 +37,7 @@ import {
     faLocationDot,
     faPanorama,
     faRecordVinyl,
-    faStarHalfStroke
+    faStarHalfStroke,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
@@ -54,8 +51,6 @@ import ChipCard from "../card-components/ChipComponent";
 import UserResponse from "../UserResponse";
 import BrandModal from "./modal/BrandModal";
 import ManagerModal from "./modal/ManagerModal";
-;
-
 interface ApplicationData extends IApplications {
     id: string;
 }
@@ -75,7 +70,7 @@ const CollborationDetailsContent = (
     props: CollaborationDetailsContentProps
 ) => {
     const theme = useTheme();
-    const router = useMyNavigation()
+    const router = useMyNavigation();
     const styles = stylesFn(theme);
     const [status, setStatus] = React.useState("pending");
     const [managerDetails, setManagerDetails] = React.useState<any>();
@@ -224,7 +219,7 @@ const CollborationDetailsContent = (
     useEffect(() => {
         fetchContracts();
     }, []);
-    const { xl } = useBreakpoints()
+    const { xl } = useBreakpoints();
 
     return (
         <ScrollView
@@ -234,23 +229,28 @@ const CollborationDetailsContent = (
             {/* Collaboration Details */}
             <View style={styles.profileCard}>
                 {props?.collaborationDetail?.attachments &&
-                    props?.collaborationDetail?.attachments.length > 0 && (
-                        (Platform.OS === "web" && xl) ? (<ScrollMedia
-                            media={props?.collaborationDetail?.attachments?.map((attachment) =>
-                                processRawAttachment(attachment)
-                            ) || []}
+                    props?.collaborationDetail?.attachments.length > 0 &&
+                    (Platform.OS === "web" && xl ? (
+                        <ScrollMedia
+                            media={
+                                props?.collaborationDetail?.attachments?.map((attachment) =>
+                                    processRawAttachment(attachment)
+                                ) || []
+                            }
                             MAX_WIDTH_WEB={"100%"}
                             xl={xl}
                             mediaRes={{ width: 300, height: 300 }}
-                        />) : (<Carousel
+                        />
+                    ) : (
+                        <Carousel
                             theme={theme}
                             data={
                                 props?.collaborationDetail?.attachments?.map((attachment) =>
                                     processRawAttachment(attachment)
                                 ) || []
                             }
-                        />)
-                    )}
+                        />
+                    ))}
                 <Card.Content style={styles.profileContent}>
                     {/* About Collaboration */}
                     <View
@@ -290,7 +290,10 @@ const CollborationDetailsContent = (
                                 width: "100%",
                             }}
                         >
-                            <ReadMore text={props.collaborationDetail.description || ""} style={styles.shortDescription} />
+                            <ReadMore
+                                text={props.collaborationDetail.description || ""}
+                                style={styles.shortDescription}
+                            />
                             {/* <Text variant="bodySmall" >
                 {props.collaborationDetail.description}
               </Text> */}
@@ -306,6 +309,7 @@ const CollborationDetailsContent = (
                             paddingVertical: 16,
                             borderRadius: 10,
                             borderColor: Colors(theme).gray300,
+                            backgroundColor: "transparent",
                         }}
                     >
                         <Card.Content>
@@ -328,7 +332,7 @@ const CollborationDetailsContent = (
                                         shape="square"
                                         size="small"
                                     />
-                                    <View style={{ flex: 1 }}>
+                                    <View style={{ flex: 1, backgroundColor: "transparent" }}>
                                         <Text
                                             style={{
                                                 fontSize: 16,
@@ -421,7 +425,8 @@ const CollborationDetailsContent = (
                                         color: Colors(theme).gray100,
                                     }}
                                 >
-                                    Applications are currently closed for this collaboration. {/* placeholder: feel free to rewrite */}
+                                    Applications are currently closed for this collaboration.{" "}
+                                    {/* placeholder: feel free to rewrite */}
                                 </Text>
                             )}
                             <Button
@@ -804,7 +809,10 @@ const CollborationDetailsContent = (
                     title="Withdraw Application"
                     description="Are you sure you want to withdraw your application?"
                 />
-                <AuthModal bottomSheetModalRef={authModalBottomSheetModalRef} collaborationId={props.pageID} />
+                <AuthModal
+                    bottomSheetModalRef={authModalBottomSheetModalRef as any}
+                    collaborationId={props.pageID}
+                />
             </Portal>
         </ScrollView>
     );

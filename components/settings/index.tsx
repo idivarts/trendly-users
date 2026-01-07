@@ -1,8 +1,12 @@
+import { useThemeContext } from "@/contexts";
 import { AccountStatus } from "@/shared-libs/firestore/trendly-pro/models/users";
 import Colors from "@/shared-uis/constants/Colors";
 import stylesFn from "@/styles/settings/Settings.styles";
 import { User } from "@/types/User";
-import { faCalendarXmark, faThumbsUp } from "@fortawesome/free-regular-svg-icons";
+import {
+    faCalendarXmark,
+    faThumbsUp,
+} from "@fortawesome/free-regular-svg-icons";
 import { faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
@@ -34,14 +38,22 @@ const Settings: React.FC<SettingsProps> = ({
 }) => {
     const theme = useTheme();
     const styles = stylesFn(theme);
+    const {
+        currentTheme,
+        setCurrentTheme,
+        savedTheme,
+        setSavedTheme,
+        revertChanges,
+    } = useThemeContext();
     const [settings, setSettings] = useState({
         accountStatus: user?.settings?.accountStatus || AccountStatus.Activated,
-        theme: user?.settings?.theme || 'light',
-        availability: user?.settings?.availability || 'Open to Collaborate',
-        profileVisibility: user?.settings?.profileVisibility || 'Public',
-        dataSharing: user?.settings?.dataSharing || 'Share Insights',
+        theme: currentTheme,
+        availability: user?.settings?.availability || "Open to Collaborate",
+        profileVisibility: user?.settings?.profileVisibility || "Public",
+        dataSharing: user?.settings?.dataSharing || "Share Insights",
     });
-    const [deactivationModalVisible, setDeactivationModalVisible] = useState(false);
+    const [deactivationModalVisible, setDeactivationModalVisible] =
+        useState(false);
     const [deletionModalVisible, setDeletionModalVisible] = useState(false);
 
     const handleOnSave = () => {
@@ -50,15 +62,33 @@ const Settings: React.FC<SettingsProps> = ({
             settings: {
                 ...user.settings,
                 ...settings,
-            }
+            },
         };
 
         onSave(updatedUser);
-    }
+        setSavedTheme(currentTheme);
+    };
 
+    // When user navigates away without saving, revert theme to saved
     useEffect(() => {
-        handleOnSave();
-    }, [settings]);
+        const themeAtMount = currentTheme;
+        const savedThemeAtMount = savedTheme;
+
+        return () => {
+            // Only revert if theme was changed and not saved
+            if (themeAtMount !== savedThemeAtMount) {
+                revertChanges();
+            }
+        };
+    }, [savedTheme, revertChanges]);
+
+    // Update settings when theme changes in context
+    useEffect(() => {
+        setSettings((prev) => ({
+            ...prev,
+            theme: currentTheme,
+        }));
+    }, [currentTheme]);
 
     return (
         <ScrollView
@@ -76,13 +106,13 @@ const Settings: React.FC<SettingsProps> = ({
                     options={[
                         {
                             icon: faThumbsUp,
-                            label: 'Open to Collaborate',
-                            value: 'Open to Collaborate',
+                            label: "Open to Collaborate",
+                            value: "Open to Collaborate",
                         },
                         {
                             icon: faCalendarXmark,
-                            label: 'Not Available',
-                            value: 'Not Available',
+                            label: "Not Available",
+                            value: "Not Available",
                         },
                     ]}
                     onSelect={(value) => {
@@ -100,8 +130,8 @@ const Settings: React.FC<SettingsProps> = ({
             >
                 <SelectGroup
                     items={[
-                        { label: 'Public', value: 'Public' },
-                        { label: 'Private', value: 'Private' },
+                        { label: "Public", value: "Public" },
+                        { label: "Private", value: "Private" },
                     ]}
                     selectedItem={{
                         label: settings.profileVisibility,
@@ -121,18 +151,15 @@ const Settings: React.FC<SettingsProps> = ({
             >
                 <SelectGroup
                     items={[
-                        { label: 'Dark', value: 'dark' },
-                        { label: 'Light', value: 'light' },
+                        { label: "Dark", value: "dark" },
+                        { label: "Light", value: "light" },
                     ]}
                     selectedItem={{
-                        label: settings.theme,
-                        value: settings.theme,
+                        label: currentTheme,
+                        value: currentTheme,
                     }}
                     onValueChange={(item) => {
-                        setSettings({
-                            ...settings,
-                            theme: item.value as 'light' | 'dark',
-                        });
+                        setCurrentTheme(item.value as "light" | "dark");
                     }}
                 />
             </ContentWrapper>
@@ -142,8 +169,8 @@ const Settings: React.FC<SettingsProps> = ({
             >
                 <SelectGroup
                     items={[
-                        { label: 'Share Insights', value: 'Share Insights' },
-                        { label: 'Hide Insights', value: 'Hide Insights' },
+                        { label: "Share Insights", value: "Share Insights" },
+                        { label: "Hide Insights", value: "Hide Insights" },
                     ]}
                     selectedItem={{
                         label: settings.dataSharing,
@@ -162,6 +189,9 @@ const Settings: React.FC<SettingsProps> = ({
                     gap: 16,
                 }}
             >
+                <Button mode="contained" onPress={handleOnSave}>
+                    Save Settings
+                </Button>
                 <Button
                     mode="outlined"
                     onPress={() => {
@@ -177,17 +207,15 @@ const Settings: React.FC<SettingsProps> = ({
                     }}
                     loading={isDeleting}
                 >
-                    {
-                        !isDeleting && (
-                            <FontAwesomeIcon
-                                icon={faTrashCan}
-                                style={{
-                                    marginRight: 8,
-                                }}
-                                color={Colors(theme).white}
-                            />
-                        )
-                    }
+                    {!isDeleting && (
+                        <FontAwesomeIcon
+                            icon={faTrashCan}
+                            style={{
+                                marginRight: 8,
+                            }}
+                            color={Colors(theme).white}
+                        />
+                    )}
                     {isDeleting ? "Deleting" : "Delete"} Account
                 </Button>
             </View>

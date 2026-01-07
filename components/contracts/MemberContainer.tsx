@@ -5,12 +5,9 @@ import Colors from "@/shared-uis/constants/Colors";
 import { useTheme } from "@react-navigation/native";
 import { doc, getDoc } from "firebase/firestore";
 import React, { FC, useEffect } from "react";
-import { FlatList } from "react-native";
 import { ActivityIndicator } from "react-native-paper";
 import { Text, View } from "../theme/Themed";
 import MembersCard from "./members-card";
-;
-
 interface MemberContainerProps {
     channelId: string;
     setMembersFromBrand: (members: any[]) => void;
@@ -60,8 +57,7 @@ const MemberContainer: FC<MemberContainerProps> = ({
     };
 
     useEffect(() => {
-        if (isChatConnected)
-            fetchMembersFromClient();
+        if (isChatConnected) fetchMembersFromClient();
     }, [user?.id, isChatConnected]);
 
     return (
@@ -70,6 +66,7 @@ const MemberContainer: FC<MemberContainerProps> = ({
                 width: "100%",
                 flexDirection: "column",
                 gap: 16,
+                backgroundColor: "transparent",
             }}
         >
             <View
@@ -77,6 +74,7 @@ const MemberContainer: FC<MemberContainerProps> = ({
                     flexDirection: "row",
                     justifyContent: "space-between",
                     alignItems: "center",
+                    backgroundColor: "transparent",
                 }}
             >
                 <Text
@@ -99,13 +97,17 @@ const MemberContainer: FC<MemberContainerProps> = ({
                     <ActivityIndicator size="small" color={Colors(theme).primary} />
                 </View>
             )}
-            <FlatList
-                data={members}
-                renderItem={({ item }) => <MembersCard manager={item} />}
-                contentContainerStyle={{
+            <View
+                style={{
+                    flexDirection: "column",
                     gap: 10,
+                    backgroundColor: "transparent",
                 }}
-            />
+            >
+                {members.map((m: any, i: number) => (
+                    <MembersCard key={m?.managerId || i} manager={m} />
+                ))}
+            </View>
         </View>
     );
 };

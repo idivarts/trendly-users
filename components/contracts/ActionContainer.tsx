@@ -20,8 +20,6 @@ import { doc, getDoc } from "firebase/firestore";
 import React, { FC, useEffect, useState } from "react";
 import { Text, View } from "../theme/Themed";
 import Button from "../ui/button";
-;
-
 interface ActionContainerProps {
     contract: IContracts;
     refreshData: () => void;
@@ -40,7 +38,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
     const theme = useTheme();
     const [manager, setManager] = useState<IManagers>();
     const { fetchChannelCid } = useChatContext();
-    const router = useMyNavigation()
+    const router = useMyNavigation();
 
     const renderStars = (rating: number) => {
         const fullStars = Math.floor(rating);
@@ -89,6 +87,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
                 flex: 1,
                 flexDirection: "column",
                 gap: 16,
+                backgroundColor: "transparent",
             }}
         >
             {contract.status !== 3 && (
@@ -97,6 +96,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
                         flexDirection: "row",
                         justifyContent: "space-between",
                         gap: 16,
+                        backgroundColor: "transparent",
                     }}
                 >
                     {contract.status === 0 && (
@@ -108,12 +108,17 @@ const ActionContainer: FC<ActionContainerProps> = ({
                                 }}
                                 onPress={() => {
                                     try {
-                                        Toaster.success("Successfully informed brand to start the collaboration");
-                                        HttpWrapper.fetch(`/api/collabs/contracts/${contract.streamChannelId}`, {
-                                            method: "POST"
-                                        }).catch(e => {
+                                        Toaster.success(
+                                            "Successfully informed brand to start the collaboration"
+                                        );
+                                        HttpWrapper.fetch(
+                                            `/api/collabs/contracts/${contract.streamChannelId}`,
+                                            {
+                                                method: "POST",
+                                            }
+                                        ).catch((e) => {
                                             Toaster.error("Successfully went wrong!!");
-                                        })
+                                        });
                                     } catch (e: any) {
                                         Console.error(e);
                                     }
@@ -142,12 +147,17 @@ const ActionContainer: FC<ActionContainerProps> = ({
                                 onPress={() => {
                                     {
                                         try {
-                                            Toaster.success("Successfully informed brand to end the collaboration");
-                                            HttpWrapper.fetch(`/api/collabs/contracts/${contract.streamChannelId}/end`, {
-                                                method: "POST"
-                                            }).catch(r => {
+                                            Toaster.success(
+                                                "Successfully informed brand to end the collaboration"
+                                            );
+                                            HttpWrapper.fetch(
+                                                `/api/collabs/contracts/${contract.streamChannelId}/end`,
+                                                {
+                                                    method: "POST",
+                                                }
+                                            ).catch((r) => {
                                                 Toaster.error("Something went wrong");
-                                            })
+                                            });
                                         } catch (e: any) {
                                             Console.log(e);
                                         }
