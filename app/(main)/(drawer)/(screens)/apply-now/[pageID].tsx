@@ -56,6 +56,7 @@ const ApplyScreen = () => {
 
     const [totalFiles, setTotalFiles] = useState(0)
 
+    // TODO: Use ImagePicker to pick image or Video
     const handleAssetUpload = async () => {
         try {
             // router.push({
@@ -131,6 +132,7 @@ const ApplyScreen = () => {
         }
     };
 
+    // TODO: Identify if this is needed at all
     const getAssetData = async (id: string) => {
         // const asset = await MediaLibrary.getAssetInfoAsync(id);
 

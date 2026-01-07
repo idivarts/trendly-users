@@ -92,6 +92,7 @@ const EditApplicationScreen = () => {
 
     const { updateApplication } = useApplication()
 
+    // TODO: Use ImagePicker to pick image or Video
     const handleAssetUpload = async () => {
         try {
             // router.push({
@@ -227,6 +228,7 @@ const EditApplicationScreen = () => {
     };
 
 
+    // TODO: Identify if this is needed at all
     const getAssetData = async (id: string) => {
         // const asset = await MediaLibrary.getAssetInfoAsync(id);
 
