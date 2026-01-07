@@ -2,7 +2,7 @@ export const imageUrl = (image: string | NodeRequire | undefined) => {
     if (
         image &&
         typeof image === "string" &&
-        (image.startsWith("http") || image.startsWith("ph://"))
+        (image.startsWith("http") || image.startsWith("ph://") || image.startsWith("file://"))
     ) {
         return {
             uri: image,
