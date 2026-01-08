@@ -19,7 +19,7 @@
         "build-android-apk": "export $(cat .env.local | xargs) && eas build --platform android --profile production-apk --local --output build/Trendly.apk",
         "submit-ios": "eas submit -p ios --path build/Trendly.ipa --non-interactive",
         "submit-android": "eas submit -p android --path build/Trendly.aab --profile development --non-interactive",
-        "submit-android-prod": "eas submit -p android --path build/Trendly.aab --profile production--non-interactive",
+        "submit-android-prod": "eas submit -p android --path build/Trendly.aab --profile production --non-interactive",
         "postinstall": "node react-native-web-fix.js",
         "populate": "ts-node scripts/populate.ts"
     },
