@@ -20,6 +20,7 @@ import { useTheme } from "@react-navigation/native";
 import { Href } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import { useState } from "react";
+import VerificationCard from "@/components/profile/VerificationCard";
 
 const ProfileScreen = () => {
     const router = useMyNavigation();
@@ -57,7 +58,16 @@ const ProfileScreen = () => {
                         item={user}
                         onPress={() => router.push("/edit-profile")}
                     />
+
+
                 )}
+
+                <VerificationCard
+                    kycStatus={user?.kyc?.status}
+                    onStartVerification={() =>
+                        openExternalLink(INFLUENCER_VERIFY_LINK)
+                    }
+                />
                 {!user?.profile?.completionPercentage ||
                     user?.profile?.completionPercentage < COMPLETION_PERCENTAGE ? (
                     <View
