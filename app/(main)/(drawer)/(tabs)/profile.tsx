@@ -2,6 +2,7 @@ import { ScrollView, StyleSheet, Text } from "react-native";
 
 import ProfileCard from "@/components/profile/ProfileCard";
 import ProfileItemCard from "@/components/profile/ProfileItemCard";
+import VerificationCard from "@/components/profile/VerificationCard";
 import { View } from "@/components/theme/Themed";
 import { COMPLETION_PERCENTAGE } from "@/constants/CompletionPercentage";
 import { PROFILE_ITEMS } from "@/constants/Profile";
@@ -12,6 +13,7 @@ import { useMyNavigation } from "@/shared-libs/utils/router";
 import ConfirmationModal from "@/shared-uis/components/ConfirmationModal";
 import Colors from "@/shared-uis/constants/Colors";
 import {
+    faFile,
     faRightFromBracket,
     faWarning,
 } from "@fortawesome/free-solid-svg-icons";
@@ -20,7 +22,6 @@ import { useTheme } from "@react-navigation/native";
 import { Href } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import { useState } from "react";
-import VerificationCard from "@/components/profile/VerificationCard";
 
 const ProfileScreen = () => {
     const router = useMyNavigation();
@@ -63,10 +64,10 @@ const ProfileScreen = () => {
                 )}
 
                 <VerificationCard
-                    kycStatus={user?.kyc?.status}
-                    onStartVerification={() =>
-                        openExternalLink(INFLUENCER_VERIFY_LINK)
-                    }
+                    kycStatus="approved"
+                    onStartVerification={() => {
+                        router.push("/verification");
+                    }}
                 />
                 {!user?.profile?.completionPercentage ||
                     user?.profile?.completionPercentage < COMPLETION_PERCENTAGE ? (
@@ -97,7 +98,13 @@ const ProfileScreen = () => {
                         </Text>
                     </View>
                 ) : null}
-                {PROFILE_ITEMS.map((item) => (
+                {PROFILE_ITEMS.filter((item) => {
+                    // Only show "My Contracts" if KYC status is approved
+                    if (item.title === "My Contracts" && user?.kyc?.status !== "approved") {
+                        return false;
+                    }
+                    return true;
+                }).map((item) => (
                     <ProfileItemCard
                         key={item.id}
                         item={item}
@@ -116,6 +123,19 @@ const ProfileScreen = () => {
                         }}
                     />
                 ))}
+                {user?.kyc?.status === "approved" && (
+                    <ProfileItemCard
+                        key="bank-shipping"
+                        item={{
+                            id: "8",
+                            title: "Bank and Shipping Address",
+                            icon: faFile,
+                            route: "/bank-shipping-address",
+                            active: false,
+                        }}
+                        onPress={() => router.push("/bank-shipping-address" as Href)}
+                    />
+                )}
                 <ProfileItemCard
                     onPress={() => {
                         setLogoutModalVisible(true);
