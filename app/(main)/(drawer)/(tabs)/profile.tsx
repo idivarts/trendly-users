@@ -1,5 +1,3 @@
-import { ScrollView, StyleSheet, Text } from "react-native";
-
 import ProfileCard from "@/components/profile/ProfileCard";
 import ProfileItemCard from "@/components/profile/ProfileItemCard";
 import VerificationCard from "@/components/profile/VerificationCard";
@@ -18,16 +16,20 @@ import {
     faWarning,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { useTheme } from "@react-navigation/native";
+import { useTheme, useFocusEffect } from "@react-navigation/native";
 import { Href } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
-import { useState } from "react";
+import { useEffect, useCallback, useState } from "react";
+import { ScrollView, StyleSheet, Text, } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import ProfileVerifiedModal from "@/components/profile/ProfileVerifiedModal";
 
 const ProfileScreen = () => {
     const router = useMyNavigation();
     const [logoutModalVisible, setLogoutModalVisible] = useState(false);
     const { signOutUser, user } = useAuthContext();
     const { updatedTokens } = useCloudMessagingContext();
+    const [showVerifiedModal, setShowVerifiedModal] = useState(false);
 
     const theme = useTheme();
 
@@ -41,6 +43,38 @@ const ProfileScreen = () => {
         if (!url) return;
         await WebBrowser.openBrowserAsync(url);
     };
+
+    useFocusEffect(
+        useCallback(() => {
+            const checkAndShowConfetti = async () => {
+                // Check if KYC is approved (not just done)
+                if (user?.kyc?.status !== "approved") return;
+
+                const alreadyShown = await AsyncStorage.getItem(
+                    "PROFILE_VERIFIED_CONFETTI_SHOWN"
+                );
+
+                if (!alreadyShown) {
+                    setShowVerifiedModal(true);
+                    await AsyncStorage.setItem(
+                        "PROFILE_VERIFIED_CONFETTI_SHOWN",
+                        "true"
+                    );
+
+                    // auto-close after 2.5 sec
+                    setTimeout(() => {
+                        setShowVerifiedModal(false);
+                    }, 2500);
+                }
+            };
+
+            checkAndShowConfetti();
+        }, [user?.kyc?.status])
+    );
+
+    useEffect(() => {
+        console.log(user?.isKYCDone);
+    }, [user?.isKYCDone]);
 
     return (
         <AppLayout>
@@ -64,7 +98,7 @@ const ProfileScreen = () => {
                 )}
 
                 <VerificationCard
-                    kycStatus="approved"
+                    kycStatus={user?.kyc?.status}
                     onStartVerification={() => {
                         router.push("/verification");
                     }}
@@ -100,7 +134,7 @@ const ProfileScreen = () => {
                 ) : null}
                 {PROFILE_ITEMS.filter((item) => {
                     // Only show "My Contracts" if KYC status is approved
-                    if (item.title === "My Contracts" && user?.kyc?.status !== "approved") {
+                    if (item.title === "My Contracts" && user?.isKYCDone === false) {
                         return false;
                     }
                     return true;
@@ -115,15 +149,15 @@ const ProfileScreen = () => {
                                 );
                                 return;
                             }
-                            if (item.title === "Verify Profile") {
-                                await openExternalLink(INFLUENCER_VERIFY_LINK);
-                                return;
-                            }
+                            // if (item.title === "Verify Profile") {
+                            //     await openExternalLink(INFLUENCER_VERIFY_LINK);
+                            //     return;
+                            // }
                             router.push(item.route as Href);
                         }}
                     />
                 ))}
-                {user?.kyc?.status === "approved" && (
+                {user?.isKYCDone && (
                     <ProfileItemCard
                         key="bank-shipping"
                         item={{
@@ -154,6 +188,11 @@ const ProfileScreen = () => {
                     description="Are you sure you want to logout?"
                     setVisible={setLogoutModalVisible}
                     visible={logoutModalVisible}
+                />
+
+                <ProfileVerifiedModal
+                    visible={showVerifiedModal}
+                    onClose={() => setShowVerifiedModal(false)}
                 />
             </ScrollView>
         </AppLayout>

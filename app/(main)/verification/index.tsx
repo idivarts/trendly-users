@@ -11,35 +11,85 @@ import {
     TouchableOpacity,
 } from "react-native";
 
+const PAN_REGEX = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+
 const VerificationPANScreen = () => {
     const router = useMyNavigation();
+
+    const [panName, setPanName] = useState("");
+    const [panNumber, setPanNumber] = useState("");
     const [agreed, setAgreed] = useState(false);
+    const [errors, setErrors] = useState<{
+        panName?: string;
+        panNumber?: string;
+    }>({});
+
+    const validate = () => {
+        const newErrors: typeof errors = {};
+
+        if (!panName.trim()) {
+            newErrors.panName = "Name is required";
+        }
+
+        if (!panNumber.trim()) {
+            newErrors.panNumber = "PAN number is required";
+        } else if (!PAN_REGEX.test(panNumber)) {
+            newErrors.panNumber = "Invalid PAN number";
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+    const handleSubmit = () => {
+        if (!validate()) return;
+
+        router.push("/verification/address");
+    };
+
+    const isButtonDisabled =
+        !agreed || !panName.trim() || !panNumber.trim();
 
     return (
         <AppLayout>
             <ScreenHeader title="Influencer Verification" />
-            {/* FORM */}
+
             <ScrollView contentContainerStyle={styles.container}>
                 <View style={styles.field}>
                     <TextInput
                         label="Name (As per your PAN)"
                         placeholder="Eg. Rahul Sinha"
+                        value={panName}
+                        onChangeText={setPanName}
                         mode="outlined"
+                        error={!!errors.panName}
                     />
+                    {errors.panName && (
+                        <Text style={styles.error}>{errors.panName}</Text>
+                    )}
                     <Text style={styles.helper}>
                         Enter your name as per your PAN Card
                     </Text>
                 </View>
 
                 <View style={styles.field}>
-
                     <TextInput
                         label="PAN Number"
                         placeholder="Eg. INXXX0000X"
+                        value={panNumber}
+                        onChangeText={(text) =>
+                            setPanNumber(text.toUpperCase())
+                        }
                         autoCapitalize="characters"
                         mode="outlined"
+                        error={!!errors.panNumber}
                     />
-                    <Text style={styles.helper}>Your PAN number</Text>
+                    {errors.panNumber && (
+                        <Text style={styles.error}>{errors.panNumber}</Text>
+                    )}
+                    <Text style={styles.helper}>
+                        Your PAN number (ABCDE1234F)
+                    </Text>
                 </View>
             </ScrollView>
 
@@ -56,12 +106,12 @@ const VerificationPANScreen = () => {
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                    disabled={!agreed}
+                    disabled={isButtonDisabled}
                     style={[
                         styles.button,
-                        !agreed && styles.buttonDisabled,
+                        isButtonDisabled && styles.buttonDisabled,
                     ]}
-                    onPress={() => router.push("/verification/address")}
+                    onPress={handleSubmit}
                 >
                     <Text style={styles.buttonText}>
                         Verify your Account
@@ -83,14 +133,14 @@ const styles = StyleSheet.create({
         gap: 6,
     },
 
-    label: {
-        fontSize: 14,
-        fontWeight: "500",
-    },
-
     helper: {
         fontSize: 12,
         color: "#6B7280",
+    },
+
+    error: {
+        fontSize: 12,
+        color: "#DC2626",
     },
 
     bottomContainer: {

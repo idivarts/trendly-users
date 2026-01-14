@@ -37,13 +37,13 @@ export const PROFILE_ITEMS = [
         route: "/connected-socials",
         active: false,
     },
-    {
-        id: "6",
-        title: "Verify Profile",
-        active: false,
-        icon: faCertificate,
-        route: "/",
-    },
+    // {
+    //     id: "6",
+    //     title: "Verify Profile",
+    //     active: false,
+    //     icon: faCertificate,
+    //     route: "/",
+    // },
     {
         id: "7",
         title: "Help and Support",
