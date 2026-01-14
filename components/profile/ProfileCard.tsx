@@ -6,7 +6,7 @@ import ImageComponent from "@/shared-uis/components/image-component";
 import Colors from "@/shared-uis/constants/Colors";
 import stylesFn from "@/styles/profile/ProfileCard.styles";
 import { User } from "@/types/User";
-import { faChevronRight, faPen } from "@fortawesome/free-solid-svg-icons";
+import { faPen } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
 import { ResizeMode, Video } from "expo-av";
@@ -15,6 +15,7 @@ import { Pressable } from "react-native";
 import { Text, View } from "../theme/Themed";
 import Button from "../ui/button";
 import ImageUploadModal from "../ui/modal/ImageUploadModal";
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 interface ProfileCardProps {
     item: User;
@@ -170,10 +171,13 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ item, onPress }) => {
                     </Text>
                 </Pressable>
             </View>
-            <Pressable style={styles.textContainer} onPress={onPress}>
+            <View style={styles.textContainer}>
                 <Text style={styles.titleText}>{item.name}</Text>
-                <FontAwesomeIcon icon={faChevronRight} size={18} style={{ marginLeft: 6 }} />
-            </Pressable>
+                {user?.isKYCDone &&
+
+                    <MaterialIcons name="verified" size={20} color="#3B82F6" />
+                }
+            </View>
             <Button
                 onPress={onPress}
                 style={{

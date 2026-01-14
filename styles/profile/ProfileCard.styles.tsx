@@ -30,6 +30,7 @@ const styles = (theme: Theme) =>
             justifyContent: "center",
             flexDirection: "row",
             alignItems: "center",
+            columnGap: 6
         },
         titleText: {
             fontSize: 22,
