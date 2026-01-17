@@ -23,7 +23,6 @@ const DownloadPlayModal: React.FC<DownloadPlayModalProps> = ({ }) => {
     const styles = stylesFn(theme);
     const [isVisible, setIsVisible] = useState(false);
     const { user } = useAuthContext()
-    const [displayedOnce, setDisplayedOnce] = useState(false)
 
     const pathname = usePathname()
     const [isAppInstalled, setIsAppInstalled] = useState(false)
@@ -47,10 +46,6 @@ const DownloadPlayModal: React.FC<DownloadPlayModalProps> = ({ }) => {
     }
 
     useEffect(() => {
-        if (!user || !user.primarySocial || displayedOnce)
-            return
-
-        setDisplayedOnce(true)
         setTimeout(() => {
             setIsVisible(true);
         }, 5000);
