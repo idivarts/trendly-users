@@ -1,28 +1,26 @@
 import ProfileCard from "@/components/profile/ProfileCard";
 import ProfileItemCard from "@/components/profile/ProfileItemCard";
+import ProfileVerifiedModal from "@/components/profile/ProfileVerifiedModal";
 import VerificationCard from "@/components/profile/VerificationCard";
 import { View } from "@/components/theme/Themed";
 import { COMPLETION_PERCENTAGE } from "@/constants/CompletionPercentage";
 import { PROFILE_ITEMS } from "@/constants/Profile";
 import { useAuthContext, useCloudMessagingContext } from "@/contexts";
 import AppLayout from "@/layouts/app-layout";
-import { INFLUENCER_VERIFY_LINK } from "@/shared-constants/app";
 import { useMyNavigation } from "@/shared-libs/utils/router";
 import ConfirmationModal from "@/shared-uis/components/ConfirmationModal";
 import Colors from "@/shared-uis/constants/Colors";
 import {
-    faFile,
     faRightFromBracket,
-    faWarning,
+    faWarning
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { useTheme, useFocusEffect } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect, useTheme } from "@react-navigation/native";
 import { Href } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
-import { useEffect, useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import ProfileVerifiedModal from "@/components/profile/ProfileVerifiedModal";
 
 const ProfileScreen = () => {
     const router = useMyNavigation();
@@ -133,8 +131,7 @@ const ProfileScreen = () => {
                     </View>
                 ) : null}
                 {PROFILE_ITEMS.filter((item) => {
-                    // Only show "My Contracts" if KYC status is approved
-                    if (item.title === "My Contracts" && user?.isKYCDone === false) {
+                    if (item.requiresKYC && user?.isKYCDone === false) {
                         return false;
                     }
                     return true;
@@ -157,19 +154,6 @@ const ProfileScreen = () => {
                         }}
                     />
                 ))}
-                {user?.isKYCDone && (
-                    <ProfileItemCard
-                        key="bank-shipping"
-                        item={{
-                            id: "8",
-                            title: "Bank and Shipping Address",
-                            icon: faFile,
-                            route: "/bank-shipping-address",
-                            active: false,
-                        }}
-                        onPress={() => router.push("/bank-shipping-address" as Href)}
-                    />
-                )}
                 <ProfileItemCard
                     onPress={() => {
                         setLogoutModalVisible(true);
