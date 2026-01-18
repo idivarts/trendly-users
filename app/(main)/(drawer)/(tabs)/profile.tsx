@@ -1,6 +1,5 @@
 import ProfileCard from "@/components/profile/ProfileCard";
 import ProfileItemCard from "@/components/profile/ProfileItemCard";
-import ProfileVerifiedModal from "@/components/profile/ProfileVerifiedModal";
 import VerificationCard from "@/components/profile/VerificationCard";
 import { View } from "@/components/theme/Themed";
 import { COMPLETION_PERCENTAGE } from "@/constants/CompletionPercentage";
@@ -19,8 +18,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect, useTheme } from "@react-navigation/native";
 import { Href } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
-import { useCallback, useEffect, useState } from "react";
-import { ScrollView, StyleSheet, Text, } from "react-native";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { View as RNView, ScrollView, StyleSheet, Text } from "react-native";
+import ConfettiCannon from "react-native-confetti-cannon";
 
 const ProfileScreen = () => {
     const router = useMyNavigation();
@@ -28,6 +28,8 @@ const ProfileScreen = () => {
     const { signOutUser, user } = useAuthContext();
     const { updatedTokens } = useCloudMessagingContext();
     const [showVerifiedModal, setShowVerifiedModal] = useState(false);
+    const [showConfetti, setShowConfetti] = useState(false);
+    const confettiRef = useRef<ConfettiCannon>(null);
 
     const theme = useTheme();
 
@@ -45,29 +47,63 @@ const ProfileScreen = () => {
     useFocusEffect(
         useCallback(() => {
             const checkAndShowConfetti = async () => {
-                // Check if KYC is approved (not just done)
-                if (user?.kyc?.status !== "approved") return;
+                console.log("🔍 Profile focused - checking KYC status");
+                console.log("📊 isKYCDone:", user?.isKYCDone);
+                console.log("📊 User KYC status:", user?.kyc?.status);
+
+                // If KYC is not done, reset the flag
+                if (!user?.isKYCDone) {
+                    console.log("❌ KYC not done - resetting confetti flag");
+                    await AsyncStorage.removeItem("PROFILE_VERIFIED_CONFETTI_SHOWN");
+                    return;
+                }
+
+                console.log("✓ KYC is done, checking if confetti was shown before...");
 
                 const alreadyShown = await AsyncStorage.getItem(
                     "PROFILE_VERIFIED_CONFETTI_SHOWN"
                 );
 
+                console.log("📱 Already shown flag:", alreadyShown);
+
                 if (!alreadyShown) {
+                    console.log("🎉 Showing confetti and verification modal!");
                     setShowVerifiedModal(true);
+                    setShowConfetti(true);
                     await AsyncStorage.setItem(
                         "PROFILE_VERIFIED_CONFETTI_SHOWN",
                         "true"
                     );
 
-                    // auto-close after 2.5 sec
+                    // Trigger confetti
+                    console.log("🚀 Starting confetti animation...");
+                    console.log("Confetti ref:", confettiRef.current);
+
+                    if (confettiRef.current) {
+                        confettiRef.current.start();
+                        console.log("✨ Confetti started!");
+                    } else {
+                        console.log("⚠️ Confetti ref is null!");
+                    }
+
+                    // auto-close modal after 2.5 sec
                     setTimeout(() => {
+                        console.log("⏱️ Auto-closing verification modal");
                         setShowVerifiedModal(false);
-                    }, 2500);
+                    }, 2300);
+
+                    // Unmount confetti after animation finishes (fallSpeed + buffer)
+                    setTimeout(() => {
+                        console.log("🧹 Unmounting confetti component");
+                        setShowConfetti(false);
+                    }, 3000);
+                } else {
+                    console.log("⏭️ Confetti already shown before, skipping...");
                 }
             };
 
             checkAndShowConfetti();
-        }, [user?.kyc?.status])
+        }, [user?.isKYCDone])
     );
 
     useEffect(() => {
@@ -76,6 +112,18 @@ const ProfileScreen = () => {
 
     return (
         <AppLayout>
+            {showConfetti && (
+                <RNView style={styles.confettiContainer}>
+                    <ConfettiCannon
+                        ref={confettiRef}
+                        count={200}
+                        origin={{ x: 200, y: -50 }}
+                        fallSpeed={2500}
+                        autoStart={false}
+                        explosionSpeed={350}
+                    />
+                </RNView>
+            )}
             <ScrollView
                 style={{
                     ...styles.container,
@@ -173,11 +221,6 @@ const ProfileScreen = () => {
                     setVisible={setLogoutModalVisible}
                     visible={logoutModalVisible}
                 />
-
-                <ProfileVerifiedModal
-                    visible={showVerifiedModal}
-                    onClose={() => setShowVerifiedModal(false)}
-                />
             </ScrollView>
         </AppLayout>
     );
@@ -189,6 +232,15 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         gap: 6,
         paddingBottom: 6,
+    },
+    confettiContainer: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        height: "100%",
+        pointerEvents: "none",
+        zIndex: 999,
     },
 });
 
