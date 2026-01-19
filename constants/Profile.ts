@@ -1,6 +1,5 @@
 import { faDiscord } from "@fortawesome/free-brands-svg-icons";
 import {
-    faCertificate,
     faChartSimple,
     faFile,
     faGears,
@@ -16,12 +15,21 @@ export const PROFILE_ITEMS = [
         route: "/preferences",
         active: true,
     },
+     {
+        id: "8",
+        title: "Bank and Shipping Address",
+        icon: faFile,
+        route: "/bank-shipping-address",
+        active: false,
+        requiresKYC: true,
+    },
     {
         id: "2",
         title: "My Contracts",
         icon: faFile,
         route: "/contracts",
         active: false,
+        requiresKYC: true,
     },
     {
         id: "4",
@@ -37,13 +45,13 @@ export const PROFILE_ITEMS = [
         route: "/connected-socials",
         active: false,
     },
-    {
-        id: "6",
-        title: "Verify Profile",
-        active: false,
-        icon: faCertificate,
-        route: "/",
-    },
+    // {
+    //     id: "6",
+    //     title: "Verify Profile",
+    //     active: false,
+    //     icon: faCertificate,
+    //     route: "/",
+    // },
     {
         id: "7",
         title: "Help and Support",
@@ -51,6 +59,7 @@ export const PROFILE_ITEMS = [
         icon: faHeadset,
         route: "/help-and-support",
     },
+   
 ];
 
 export const PROFILE_BOTTOM_ITEMS = [
