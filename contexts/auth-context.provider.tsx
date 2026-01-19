@@ -108,11 +108,7 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
                     };
 
                     if (userData.isKYCDone === undefined) {
-                        if (userData.kyc?.status === "approved") {
-                            userData.isKYCDone = true;
-                        } else {
-                            userData.isKYCDone = false;
-                        }
+                        userData.isKYCDone = userData.kyc?.status === "approved"
                     }
 
                     setIsLoggedIn(true);
