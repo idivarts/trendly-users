@@ -107,10 +107,12 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
                         id: userSnap.id as string,
                     };
 
-                    if (userData.kyc?.status === "approved") {
-                        userData.isKYCDone = true;
-                    } else {
-                        userData.isKYCDone = false;
+                    if (userData.isKYCDone === undefined) {
+                        if (userData.kyc?.status === "approved") {
+                            userData.isKYCDone = true;
+                        } else {
+                            userData.isKYCDone = false;
+                        }
                     }
 
                     setIsLoggedIn(true);
