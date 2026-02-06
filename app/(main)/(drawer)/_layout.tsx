@@ -21,7 +21,7 @@ const DrawerLayout = () => {
           headerLeft: () => xl ? null : <BackButton />,
         }}
       > */}
-            <CustomDrawerWrapper DrawerContent={<DrawerMenuContent />} isFixed={xl}>
+            <CustomDrawerWrapper DrawerContent={<DrawerMenuContent />} isFixed={false}>
                 <Stack screenOptions={{
 
                     headerShown: false

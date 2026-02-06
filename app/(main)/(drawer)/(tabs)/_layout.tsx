@@ -45,10 +45,10 @@ const TabLayout = () => {
                 // Disable the static render of the header on web
                 // to prevent a hydration error in React Navigation v6.
                 headerShown: useClientOnlyValue(false, true),
-                tabBarShowLabel: !xl,
+                tabBarShowLabel: true,
                 tabBarHideOnKeyboard: true,
                 tabBarStyle: {
-                    display: xl ? "none" : "flex", // Hide the tab bar on desktop screens
+                    display: "flex", 
                 },
                 headerTitleAlign: "left",
                 headerTitleStyle: {

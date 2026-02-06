@@ -25,7 +25,8 @@ import React, { useEffect, useState } from "react";
 import {
     ActivityIndicator,
     Dimensions,
-    Pressable
+    Pressable,
+    Platform
 } from "react-native";
 import BottomSheetActions from "../BottomSheetActions";
 import { View } from "../theme/Themed";
@@ -259,7 +260,7 @@ const Collaboration = () => {
                                 <CarouselScroller
                                     data={filteredList}
                                     height={APPROX_CARD_HEIGHT}
-                                    width={xl ? MAX_WIDTH_WEB : Dimensions.get("window").width}
+                                    width={Platform.OS === 'web' ? MAX_WIDTH_WEB : (xl ? MAX_WIDTH_WEB : Dimensions.get("window").width)}
                                     objectKey="id"
                                     renderItem={({ item }) => (
                                         <View

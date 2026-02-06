@@ -1,6 +1,7 @@
 import "react-native-reanimated";
 
 import DownloadApp from "@/components/download";
+import WebLayoutWrapper from "@/components/WebLayoutWrapper";
 import { useColorScheme } from "@/components/theme/useColorScheme";
 import { APP_SCHEME } from "@/constants/App";
 import CustomPaperTheme from "@/constants/Theme";
@@ -145,23 +146,25 @@ const RootLayoutStack = () => {
 
     return (
         <ThemeProvider value={appTheme === "dark" ? DarkTheme : ExpoDefaultTheme}>
-            <Provider theme={CustomPaperTheme(theme)}>
-                <DownloadApp />
-                <ConfirmationModalProvider>
-                    <Stack
-                        screenOptions={{
-                            headerShown: false,
-                        }}
-                    >
-                        {/* <Stack.Screen name="(main)" options={{ headerShown: false }} />
-          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-          <Stack.Screen name="(public)" options={{ headerShown: false }} /> */}
-                        <Stack.Screen name="index" />
-                        <Stack.Screen name="+not-found" />
-                        {/* <Stack.Screen name="modal" options={{ presentation: "modal" }} /> */}
-                    </Stack>
-                </ConfirmationModalProvider>
-            </Provider>
+            <WebLayoutWrapper>
+                <Provider theme={CustomPaperTheme(theme)}>
+                    <DownloadApp />
+                    <ConfirmationModalProvider>
+                        <Stack
+                            screenOptions={{
+                                headerShown: false,
+                            }}
+                        >
+                            {/* <Stack.Screen name="(main)" options={{ headerShown: false }} />
+              <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+              <Stack.Screen name="(public)" options={{ headerShown: false }} /> */}
+                            <Stack.Screen name="index" />
+                            <Stack.Screen name="+not-found" />
+                            {/* <Stack.Screen name="modal" options={{ presentation: "modal" }} /> */}
+                        </Stack>
+                    </ConfirmationModalProvider>
+                </Provider>
+            </WebLayoutWrapper>
         </ThemeProvider>
     );
 };
