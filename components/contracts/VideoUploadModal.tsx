@@ -152,112 +152,104 @@ const VideoUploadModal: React.FC<VideoUploadModalProps> = ({
                     backgroundColor: Colors(theme).background,
                     borderRadius: 10,
                     padding: 20,
-                    marginHorizontal: 20,
+                    paddingBottom: 32,
                     maxWidth: 600,
                     alignSelf: "center",
+                    width: Platform.OS === "web" ? "90%" : "100%",
                 }}
             >
                 <KeyboardAvoidingView
                     behavior={Platform.OS === "ios" ? "padding" : "height"}
                     style={styles.keyboardAvoidingView}
                 >
-                    <ScrollView
-                        keyboardShouldPersistTaps="handled"
-                        contentContainerStyle={styles.scrollContent}
-                        showsVerticalScrollIndicator={false}
-                    >
-                        <Pressable
-                            style={styles.modal}
-                            onPress={() => Platform.OS !== "web" && Keyboard.dismiss()}
-                        >
-                            <View style={styles.modalHeader}>
-                                <Text style={styles.modalTitle}>
-                                    {isReupload ? "Reupload Video" : "Upload Video"}
-                                </Text>
-                                {!loading && (
-                                    <Pressable onPress={() => setVisibility(false)}>
-                                        <FontAwesomeIcon
-                                            icon={faClose}
-                                            size={24}
-                                            color={Colors(theme).text}
-                                        />
-                                    </Pressable>
-                                )}
-                            </View>
+                    <View style={styles.modal}>
+                        <View style={styles.modalHeader}>
+                            <Text style={styles.modalTitle}>
+                                {isReupload ? "Reupload Video" : "Upload Video"}
+                            </Text>
+                            {!loading && (
+                                <Pressable onPress={() => setVisibility(false)}>
+                                    <FontAwesomeIcon
+                                        icon={faClose}
+                                        size={24}
+                                        color={Colors(theme).text}
+                                    />
+                                </Pressable>
+                            )}
+                        </View>
 
-                            <View style={styles.content}>
-                                {videoUri ? (
-                                    <View style={styles.videoInfo}>
-                                        <View style={styles.videoIconContainer}>
-                                            <FontAwesomeIcon
-                                                icon={faVideo}
-                                                size={48}
-                                                color={Colors(theme).primary}
-                                            />
-                                        </View>
-                                        <Text style={styles.videoSelected}>Video Selected</Text>
-                                        <Text style={styles.videoSize}>
-                                            Size: {formatFileSize(videoSize)}
-                                        </Text>
-                                        {!loading && (
-                                            <Pressable
-                                                style={styles.changeVideoButton}
-                                                onPress={pickVideo}
-                                            >
-                                                <Text style={styles.changeVideoText}>
-                                                    Select Different Video
-                                                </Text>
-                                            </Pressable>
-                                        )}
-                                    </View>
-                                ) : (
-                                    <Pressable style={styles.uploadButton} onPress={pickVideo}>
+                        <View style={styles.content}>
+                            {videoUri ? (
+                                <View style={styles.videoInfo}>
+                                    <View style={styles.videoIconContainer}>
                                         <FontAwesomeIcon
                                             icon={faVideo}
-                                            size={64}
+                                            size={48}
                                             color={Colors(theme).primary}
                                         />
-                                        <Text style={styles.uploadText}>Select Video</Text>
-                                        <Text style={styles.uploadSubtext}>
-                                            Maximum file size: 500MB
-                                        </Text>
-                                    </Pressable>
-                                )}
-
-                                {loading && (
-                                    <View style={styles.progressContainer}>
-                                        <ActivityIndicator
-                                            size="large"
-                                            color={Colors(theme).primary}
-                                        />
-                                        <Text style={styles.progressText}>
-                                            Uploading... {uploadProgress}%
-                                        </Text>
                                     </View>
-                                )}
-                            </View>
+                                    <Text style={styles.videoSelected}>Video Selected</Text>
+                                    <Text style={styles.videoSize}>
+                                        Size: {formatFileSize(videoSize)}
+                                    </Text>
+                                    {!loading && (
+                                        <Pressable
+                                            style={styles.changeVideoButton}
+                                            onPress={pickVideo}
+                                        >
+                                            <Text style={styles.changeVideoText}>
+                                                Select Different Video
+                                            </Text>
+                                        </Pressable>
+                                    )}
+                                </View>
+                            ) : (
+                                <Pressable style={styles.uploadButton} onPress={pickVideo}>
+                                    <FontAwesomeIcon
+                                        icon={faVideo}
+                                        size={64}
+                                        color={Colors(theme).primary}
+                                    />
+                                    <Text style={styles.uploadText}>Select Video</Text>
+                                    <Text style={styles.uploadSubtext}>
+                                        Maximum file size: 500MB
+                                    </Text>
+                                </Pressable>
+                            )}
 
-                            <View style={styles.buttonContainer}>
-                                <Button
-                                    mode="outlined"
-                                    onPress={() => setVisibility(false)}
-                                    style={styles.button}
-                                    disabled={loading}
-                                >
-                                    Cancel
-                                </Button>
-                                <Button
-                                    mode="contained"
-                                    onPress={handleUploadVideo}
-                                    style={styles.button}
-                                    loading={loading}
-                                    disabled={loading || !videoUri}
-                                >
-                                    Upload
-                                </Button>
-                            </View>
-                        </Pressable>
-                    </ScrollView>
+                            {loading && (
+                                <View style={styles.progressContainer}>
+                                    <ActivityIndicator
+                                        size="large"
+                                        color={Colors(theme).primary}
+                                    />
+                                    <Text style={styles.progressText}>
+                                        Uploading... {uploadProgress}%
+                                    </Text>
+                                </View>
+                            )}
+                        </View>
+
+                        <View style={styles.buttonContainer}>
+                            <Button
+                                mode="outlined"
+                                onPress={() => setVisibility(false)}
+                                style={styles.button}
+                                disabled={loading}
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                mode="contained"
+                                onPress={handleUploadVideo}
+                                style={styles.button}
+                                loading={loading}
+                                disabled={loading || !videoUri}
+                            >
+                                Upload
+                            </Button>
+                        </View>
+                    </View>
                 </KeyboardAvoidingView>
             </Modal>
         </Portal>
@@ -266,7 +258,7 @@ const VideoUploadModal: React.FC<VideoUploadModalProps> = ({
 
 const styles = StyleSheet.create({
     keyboardAvoidingView: {
-        flex: 1,
+        maxHeight: "90%",
     },
     scrollContent: {
         flexGrow: 1,
@@ -345,7 +337,7 @@ const styles = StyleSheet.create({
     buttonContainer: {
         flexDirection: "row",
         gap: 12,
-        marginTop: 8,
+        marginTop: 24,
     },
     button: {
         flex: 1,

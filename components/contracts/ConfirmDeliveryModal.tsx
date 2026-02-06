@@ -113,132 +113,128 @@ const ConfirmDeliveryModal: React.FC<ConfirmDeliveryModalProps> = ({
                     backgroundColor: Colors(theme).background,
                     borderRadius: 10,
                     padding: 20,
-                    marginHorizontal: 20,
+                    paddingBottom: 32,
+                    // marginHorizontal: 20,
                     maxWidth: 600,
                     alignSelf: "center",
+                    width: Platform.OS === "web" ? "90%" : "100%",
                 }}
             >
                 <KeyboardAvoidingView
                     behavior={Platform.OS === "ios" ? "padding" : "height"}
                     style={styles.keyboardAvoidingView}
                 >
-                    <ScrollView
-                        keyboardShouldPersistTaps="handled"
-                        contentContainerStyle={styles.scrollContent}
-                        showsVerticalScrollIndicator={false}
-                    >
-                        <View style={styles.modal}>
-                            <View style={styles.modalHeader}>
-                                <Text style={[styles.modalTitle, { color: Colors(theme).text }]}>
-                                    Confirm Delivery
+                    <View style={styles.modal}>
+                        <View style={styles.modalHeader}>
+                            <Text style={[styles.modalTitle, { color: Colors(theme).text }]}>
+                                Confirm Delivery
+                            </Text>
+                            <Pressable onPress={() => setVisibility(false)}>
+                                <FontAwesomeIcon
+                                    icon={faClose}
+                                    size={24}
+                                    color={Colors(theme).text}
+                                />
+                            </Pressable>
+                        </View>
+
+                        <View style={styles.formContainer}>
+                            <View style={styles.uploadSection}>
+                                <Text style={[styles.label, { color: Colors(theme).text }]}>
+                                    Delivery Proof (Optional)
                                 </Text>
-                                <Pressable onPress={() => setVisibility(false)}>
-                                    <FontAwesomeIcon
-                                        icon={faClose}
-                                        size={24}
-                                        color={Colors(theme).text}
-                                    />
-                                </Pressable>
+                                {imageUri ? (
+                                    <View style={styles.imageContainer}>
+                                        <Image source={{ uri: imageUri }} style={styles.image} />
+                                        <Pressable
+                                            style={styles.removeButton}
+                                            onPress={() => setImageUri(null)}
+                                        >
+                                            <FontAwesomeIcon icon={faClose} size={16} color="#fff" />
+                                        </Pressable>
+                                    </View>
+                                ) : (
+                                    <Pressable
+                                        style={[
+                                            styles.uploadButton,
+                                            { borderColor: Colors(theme).primary },
+                                        ]}
+                                        onPress={pickImage}
+                                    >
+                                        <FontAwesomeIcon
+                                            icon={faImage}
+                                            size={32}
+                                            color={Colors(theme).primary}
+                                        />
+                                        <Text
+                                            style={[
+                                                styles.uploadText,
+                                                { color: Colors(theme).text },
+                                            ]}
+                                        >
+                                            Upload delivery photo
+                                        </Text>
+                                    </Pressable>
+                                )}
                             </View>
 
-                            <View style={styles.formContainer}>
-                                <View style={styles.uploadSection}>
-                                    <Text style={[styles.label, { color: Colors(theme).text }]}>
-                                        Delivery Proof (Optional)
-                                    </Text>
-                                    {imageUri ? (
-                                        <View style={styles.imageContainer}>
-                                            <Image source={{ uri: imageUri }} style={styles.image} />
-                                            <Pressable
-                                                style={styles.removeButton}
-                                                onPress={() => setImageUri(null)}
-                                            >
-                                                <FontAwesomeIcon icon={faClose} size={16} color="#fff" />
-                                            </Pressable>
-                                        </View>
-                                    ) : (
-                                        <Pressable
-                                            style={[
-                                                styles.uploadButton,
-                                                { borderColor: Colors(theme).primary },
-                                            ]}
-                                            onPress={pickImage}
-                                        >
-                                            <FontAwesomeIcon
-                                                icon={faImage}
-                                                size={32}
-                                                color={Colors(theme).primary}
-                                            />
-                                            <Text
-                                                style={[
-                                                    styles.uploadText,
-                                                    { color: Colors(theme).text },
-                                                ]}
-                                            >
-                                                Upload delivery photo
-                                            </Text>
-                                        </Pressable>
+                            <TextInput
+                                label="Notes (Optional)"
+                                value={notes}
+                                onChangeText={setNotes}
+                                placeholder="Add any notes about the delivery"
+                                multiline
+                                numberOfLines={4}
+                                style={styles.textArea}
+                            />
+
+                            <Pressable
+                                style={styles.checkboxContainer}
+                                onPress={() => setConfirmed(!confirmed)}
+                            >
+                                <View
+                                    style={[
+                                        styles.checkbox,
+                                        {
+                                            borderColor: Colors(theme).text,
+                                            backgroundColor: confirmed
+                                                ? Colors(theme).primary
+                                                : "transparent",
+                                        },
+                                    ]}
+                                >
+                                    {confirmed && (
+                                        <FontAwesomeIcon icon={faCheck} size={12} color="#fff" />
                                     )}
                                 </View>
-
-                                <TextInput
-                                    label="Notes (Optional)"
-                                    value={notes}
-                                    onChangeText={setNotes}
-                                    placeholder="Add any notes about the delivery"
-                                    multiline
-                                    numberOfLines={4}
-                                    style={styles.textArea}
-                                />
-
-                                <Pressable
-                                    style={styles.checkboxContainer}
-                                    onPress={() => setConfirmed(!confirmed)}
+                                <Text
+                                    style={[styles.checkboxLabel, { color: Colors(theme).text }]}
                                 >
-                                    <View
-                                        style={[
-                                            styles.checkbox,
-                                            {
-                                                borderColor: Colors(theme).text,
-                                                backgroundColor: confirmed
-                                                    ? Colors(theme).primary
-                                                    : "transparent",
-                                            },
-                                        ]}
-                                    >
-                                        {confirmed && (
-                                            <FontAwesomeIcon icon={faCheck} size={12} color="#fff" />
-                                        )}
-                                    </View>
-                                    <Text
-                                        style={[styles.checkboxLabel, { color: Colors(theme).text }]}
-                                    >
-                                        I confirm that I have received the product
-                                    </Text>
-                                </Pressable>
-                            </View>
-
-                            <View style={styles.buttonContainer}>
-                                <Button
-                                    mode="outlined"
-                                    onPress={() => setVisibility(false)}
-                                    style={styles.button}
-                                    disabled={loading}
-                                >
-                                    Cancel
-                                </Button>
-                                <Button
-                                    mode="contained"
-                                    onPress={handleConfirmDelivery}
-                                    style={styles.button}
-                                    loading={loading || uploading}
-                                    disabled={loading || uploading || !confirmed}
-                                >
-                                    Confirm Delivery
-                                </Button>
-                            </View>
+                                    I confirm that I have received the product
+                                </Text>
+                            </Pressable>
                         </View>
-                    </ScrollView>
+
+                        <View style={styles.buttonContainer}>
+                            <Button
+                                mode="outlined"
+                                onPress={() => setVisibility(false)}
+                                style={styles.button}
+                                disabled={loading}
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                mode="contained"
+                                onPress={handleConfirmDelivery}
+                                style={styles.button}
+                                loading={loading || uploading}
+                                disabled={loading || uploading || !confirmed}
+                            >
+                                Confirm Delivery
+                            </Button>
+                        </View>
+                    </View>
                 </KeyboardAvoidingView>
             </Modal>
         </Portal>
@@ -247,7 +243,7 @@ const ConfirmDeliveryModal: React.FC<ConfirmDeliveryModalProps> = ({
 
 const styles = StyleSheet.create({
     keyboardAvoidingView: {
-        flex: 1,
+        maxHeight: "90%",
     },
     scrollContent: {
         flexGrow: 1,
@@ -261,8 +257,8 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
         paddingBottom: 12,
-        borderBottomWidth: 1,
-        borderBottomColor: "rgba(0, 0, 0, 0.1)",
+        // borderBottomWidth: 1,
+        // borderBottomColor: "rgba(0, 0, 0, 0.1)",
     },
     modalTitle: {
         fontSize: 20,
@@ -339,7 +335,7 @@ const styles = StyleSheet.create({
     buttonContainer: {
         flexDirection: "row",
         gap: 12,
-        marginTop: 8,
+        marginTop: 24,
     },
     button: {
         flex: 1,
