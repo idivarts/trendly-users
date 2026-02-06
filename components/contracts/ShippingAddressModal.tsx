@@ -91,12 +91,13 @@ const ShippingAddressModal: React.FC<ShippingAddressModalProps> = ({
                 onDismiss={() => setVisibility(false)}
                 contentContainerStyle={{
                     backgroundColor: Colors(theme).background,
-                    borderRadius: 10,
+                    // borderRadius: 10,
+                    borderWidth: 0,
                     padding: 20,
-                    marginHorizontal: 20,
+                    paddingBottom: 32,
                     maxWidth: 600,
-                    width: "100%",
                     alignSelf: "center",
+                    width: Platform.OS === "web" ? "90%" : "90%",
                 }}
             >
                 <KeyboardAvoidingView
@@ -221,7 +222,7 @@ const styles = StyleSheet.create({
     buttonContainer: {
         flexDirection: "row",
         gap: 12,
-        marginTop: 8,
+        marginTop: 24,
     },
     button: {
         flex: 1,
