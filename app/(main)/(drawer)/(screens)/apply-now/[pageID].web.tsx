@@ -15,7 +15,7 @@ import { handleModalOrInputPage } from "@/utils/TextInput";
 import { useTheme } from "@react-navigation/native";
 import { useLocalSearchParams } from "expo-router";
 import { doc, getDoc } from "firebase/firestore";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Platform } from "react-native";
 ;
 
@@ -29,7 +29,7 @@ const ApplyScreenWeb = () => {
     const router = useMyNavigation()
     const [errorMessage, setErrorMessage] = useState("");
     const [loading, setLoading] = useState(false);
-    const dateRef = useRef<HTMLInputElement>()
+    // const dateRef = useRef<HTMLInputElement>()
     // const [showDatePicker, setShowDatePicker] = useState(false);
     const [timelineData, setTimelineData] = useState<Date | null>(null);
     const [quotation, setQuotation] = useState<number | undefined>(undefined);
