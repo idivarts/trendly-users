@@ -29,7 +29,6 @@ const ScreenHeader: React.FC<ScreenHeaderProps> = ({
         if (action) {
             action();
         } else if (router.canGoBack()) {
-            console.log("Going back Check passed");
             router.back()
         } else if ((user?.profile?.completionPercentage || 0) < 60) {
             router.resetAndNavigate("/profile");
