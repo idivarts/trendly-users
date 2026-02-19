@@ -44,8 +44,7 @@ export {
 } from "expo-router";
 
 export const unstable_settings = {
-    // Ensure that reloading on `/modal` keeps a back button present.
-    initialRouteName: "(public)",
+    initialRouteName: "index",
 };
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
@@ -127,7 +126,7 @@ const RootLayoutStack = () => {
     useEffect(() => {
         const inAuthGroup = segments[0] === "(auth)";
         const inMainGroup = segments[0] === "(main)";
-        const inPublicGroup = segments[0] === "(public)";
+        // const inPublicGroup = segments[0] === "(public)";
 
         if (isLoading) return;
 
@@ -137,9 +136,10 @@ const RootLayoutStack = () => {
         } else if (!session && (inMainGroup || pathname === "/")) {
             // On boot up, session doesn't exist and user is in main group or /, redirect to pre-signin
             resetAndNavigate("/pre-signin");
-        } else if (inPublicGroup) {
-            resetAndNavigate(`${pathname}${queryParams(searchParams)}` as Href);
         }
+        // else if (inPublicGroup) {
+        //     resetAndNavigate(`${pathname}${queryParams(searchParams)}` as Href);
+        // }
         // Redirect user to respective screen
     }, [session, isLoading]);
 
