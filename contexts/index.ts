@@ -30,6 +30,13 @@ import {
     useSocialContext,
 } from "./social-context.provider";
 import {
+    getConstrainedHeight,
+    getConstrainedWidth,
+    MOBILE_MAX_WIDTH,
+    MobileLayoutProvider,
+    useMobileLayout,
+} from "./mobile-layout-context.provider";
+import {
     ThemeContextProvider,
     useThemeContext,
 } from "./theme-context.provider";
@@ -43,9 +50,13 @@ export {
     CollaborationContextProvider,
     ContractContextProvider,
     FirebaseStorageContextProvider,
+    getConstrainedHeight,
+    getConstrainedWidth,
+    MOBILE_MAX_WIDTH,
     NotificationContextProvider,
     SocialContextProvider,
     ThemeContextProvider,
+    MobileLayoutProvider,
     useAuthContext,
     useBrandContext,
     useChatContext,
@@ -53,6 +64,7 @@ export {
     useCollaborationContext,
     useContractContext,
     useFirebaseStorageContext,
+    useMobileLayout,
     useNotificationContext,
     useSocialContext,
     useThemeContext
