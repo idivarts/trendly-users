@@ -8,7 +8,7 @@ import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { useMyNavigation } from "@/shared-libs/utils/router";
 import { AssetItem } from "@/types/Asset";
-import * as MediaPicker from "expo-image-picker";
+import { promptAndPickMedia } from "@/shared-libs/utils/media-picker";
 import { useLocalSearchParams } from "expo-router";
 import { doc, getDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
@@ -57,38 +57,20 @@ const ApplyScreen = () => {
             uri: uri,
         }])
     }
-    const openGallery = async () => {
-        const { status } = await MediaPicker.getMediaLibraryPermissionsAsync()
-        if (status !== 'granted') {
-            const { status } = await MediaPicker.requestMediaLibraryPermissionsAsync();
-            if (status !== 'granted') {
-                return
-            };
-        }
-
-        const result = await MediaPicker.launchImageLibraryAsync({
-            mediaTypes: MediaPicker.MediaTypeOptions.All,
-            allowsMultipleSelection: false,
-            allowsEditing: true,
-            aspect: [4, 3],
-            quality: 1,
-        });
-
-        if (!result.canceled && result.assets[0].type === 'video') {
-            handleVideoUpload(result.assets[0].assetId as string, result.assets[0].uri);
-        } else if (!result.canceled) {
-            handleImageUpload(result.assets[0].assetId as string, result.assets[0].uri);
-        }
-    }
-
-    // TODO: Use ImagePicker to pick image or Video
-    const handleAssetUpload = async () => {
-        try {
-            openGallery()
-        } catch (e) {
-            Console.error(e);
-            setErrorMessage("Error uploading file");
-        }
+    const handleAssetUpload = () => {
+        promptAndPickMedia(
+            (asset) => {
+                if (asset.type === 'video') {
+                    handleVideoUpload(asset.assetId as string, asset.uri);
+                } else {
+                    handleImageUpload(asset.assetId as string, asset.uri);
+                }
+            },
+            (e) => {
+                Console.error(e);
+                setErrorMessage("Error uploading file");
+            }
+        );
     };
 
     const handleUploadFiles = async () => {
