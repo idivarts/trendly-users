@@ -30,6 +30,10 @@ import {
     useSocialContext,
 } from "./social-context.provider";
 import {
+    MobileLayoutProvider,
+    useMobileLayout,
+} from "./mobile-layout-context.provider";
+import {
     ThemeContextProvider,
     useThemeContext,
 } from "./theme-context.provider";
@@ -46,6 +50,7 @@ export {
     NotificationContextProvider,
     SocialContextProvider,
     ThemeContextProvider,
+    MobileLayoutProvider,
     useAuthContext,
     useBrandContext,
     useChatContext,
@@ -53,6 +58,7 @@ export {
     useCollaborationContext,
     useContractContext,
     useFirebaseStorageContext,
+    useMobileLayout,
     useNotificationContext,
     useSocialContext,
     useThemeContext
