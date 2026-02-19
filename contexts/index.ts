@@ -30,6 +30,9 @@ import {
     useSocialContext,
 } from "./social-context.provider";
 import {
+    getConstrainedHeight,
+    getConstrainedWidth,
+    MOBILE_MAX_WIDTH,
     MobileLayoutProvider,
     useMobileLayout,
 } from "./mobile-layout-context.provider";
@@ -47,6 +50,9 @@ export {
     CollaborationContextProvider,
     ContractContextProvider,
     FirebaseStorageContextProvider,
+    getConstrainedHeight,
+    getConstrainedWidth,
+    MOBILE_MAX_WIDTH,
     NotificationContextProvider,
     SocialContextProvider,
     ThemeContextProvider,

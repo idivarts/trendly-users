@@ -1,8 +1,9 @@
+import { getConstrainedWidth } from "@/contexts";
 import Colors from "@/shared-uis/constants/Colors";
 import { Theme } from "@react-navigation/native";
-import { Dimensions, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 
-const { width } = Dimensions.get("window");
+const width = getConstrainedWidth();
 const SPACING = 8;
 const COLUMNS = 3;
 const ITEM_WIDTH = (width - SPACING * (COLUMNS + 1)) / COLUMNS;

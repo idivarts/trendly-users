@@ -24,7 +24,6 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import {
     ActivityIndicator,
-    Dimensions,
     Pressable
 } from "react-native";
 import BottomSheetActions from "../BottomSheetActions";
@@ -71,7 +70,7 @@ const Collaboration = () => {
     // const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
 
-    const { xl } = useBreakpoints();
+    const { xl, width: screenWidth } = useBreakpoints();
 
     const collabRef = collection(FirestoreDB, "collaborations");
 
@@ -259,7 +258,7 @@ const Collaboration = () => {
                                 <CarouselScroller
                                     data={filteredList}
                                     height={APPROX_CARD_HEIGHT}
-                                    width={xl ? MAX_WIDTH_WEB : Dimensions.get("window").width}
+                                    width={xl ? MAX_WIDTH_WEB : screenWidth}
                                     objectKey="id"
                                     renderItem={({ item }) => (
                                         <View
@@ -308,7 +307,7 @@ const Collaboration = () => {
                                                         ) || []
                                                     }
                                                     carouselWidth={
-                                                        xl ? MAX_WIDTH_WEB : Dimensions.get("window").width
+                                                        xl ? MAX_WIDTH_WEB : screenWidth
                                                     }
                                                 />
                                             )}

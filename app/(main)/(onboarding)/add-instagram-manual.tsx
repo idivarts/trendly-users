@@ -20,7 +20,6 @@ import { useLocalSearchParams } from 'expo-router';
 import { doc, getDoc } from 'firebase/firestore';
 import React, { useEffect, useRef, useState } from 'react';
 import {
-    Dimensions,
     Image,
     Modal,
     Platform,
@@ -31,9 +30,10 @@ import {
     TouchableOpacity,
 } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
-;
 
-const { width } = Dimensions.get('window');
+import { getConstrainedWidth } from "@/contexts";
+
+const width = getConstrainedWidth();
 
 const AddInstagramManual = () => {
     const theme = useTheme();
@@ -45,8 +45,8 @@ const AddInstagramManual = () => {
     const [modalVisible, setModalVisible] = useState(false);
     const [activeImage, setActiveImage] = useState<any>(null);
     const { uploadFileUri, uploadFile } = useAWSContext();
-    const pRef = useRef<any>()
-    const dRef = useRef<any>()
+    const pRef = useRef<any>(null)
+    const dRef = useRef<any>(null)
     const { primarySocial } = useSocialContext()
     const router = useMyNavigation();
     const { socialId } = useLocalSearchParams()
