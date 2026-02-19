@@ -47,7 +47,7 @@ const ExploreInfluencers = () => {
     const { user } = useAuthContext()
     const theme = useTheme();
 
-    const { xl } = useBreakpoints();
+    const { xl, width: screenWidth } = useBreakpoints();
 
     const influencersRef = collection(FirestoreDB, "users");
     const q = query(
@@ -121,7 +121,6 @@ const ExploreInfluencers = () => {
         );
     }
 
-    const { width: screenWidth } = useBreakpoints();
     const width = Math.min(MAX_WIDTH_WEB, screenWidth);
     const height = APPROX_CARD_HEIGHT;
 
