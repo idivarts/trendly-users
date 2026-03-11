@@ -15,137 +15,58 @@ import { doc, updateDoc } from "firebase/firestore";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { useAuthContext } from "@/contexts";
 
+// VERIFICATION_FLOW_DISABLED
+/*
 const AGREEMENT_TEXT = `
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-Vestibulum euismod, nisi vel consectetur interdum, nisl nisi aliquet nunc, vitae egestas nunc nisl eu lectus.
-Mauris non tempor quam, et lacinia sapien.
-Mauris accumsan eros eget libero posuere vulputate.
-Etiam elit elit, elementum sed varius at, adipiscing vitae est.
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.
+Lorem ipsum dolor sit amet...
 `;
+*/
 
 const VerificationAgreementScreen = () => {
     const router = useMyNavigation();
 
+    // VERIFICATION_FLOW_DISABLED - agreement state, handleScroll, handleSubmit (Firestore write), and UI
+    /*
     const [hasScrolledToEnd, setHasScrolledToEnd] = useState(false);
     const [agreePan, setAgreePan] = useState(false);
     const [agreeTerms, setAgreeTerms] = useState(false);
     const { user } = useAuthContext();
-
-    const handleScroll = (
-        event: NativeSyntheticEvent<NativeScrollEvent>
-    ) => {
-        const { layoutMeasurement, contentOffset, contentSize } =
-            event.nativeEvent;
-
-        const isBottomReached =
-            layoutMeasurement.height + contentOffset.y >=
-            contentSize.height - 20;
-
-        if (isBottomReached) {
-            setHasScrolledToEnd(true);
-        }
-    };
-
-
-
-    const canProceed =
-        hasScrolledToEnd && agreePan && agreeTerms;
-
+    const handleScroll = (event) => { ... };
+    const canProceed = hasScrolledToEnd && agreePan && agreeTerms;
     const handleSubmit = async () => {
-        if (!canProceed || !user?.id) return;
-
-        try {
-            await updateDoc(doc(FirestoreDB, "users", user.id), {
-                isKYCDone: false,
-                kyc: {
-                    status: "in_progress",
-                    updatedAt: Date.now(),
-                },
-            });
-
-            // Redirect to profile
-            router.replace("/profile");
-        } catch (error) {
-            console.error("Failed to submit verification", error);
-        }
+        await updateDoc(doc(FirestoreDB, "users", user.id), { isKYCDone: false, kyc: { status: "in_progress", updatedAt: Date.now() } });
+        router.replace("/profile");
     };
+    */
 
     return (
         <AppLayout>
             <ScreenHeader title="Agreement" />
-
-            {/* AGREEMENT CONTENT */}
-            <View style={styles.agreementContainer}>
-                <ScrollView
-                    onScroll={handleScroll}
-                    scrollEventThrottle={16}
-                    showsVerticalScrollIndicator
-                >
-                    <Text style={styles.agreementText}>
-                        {AGREEMENT_TEXT}
-                    </Text>
-                </ScrollView>
+            {/* VERIFICATION_FLOW_DISABLED - placeholder when flow is disabled */}
+            <View style={styles.placeholder}>
+                <Text style={styles.placeholderText}>
+                    Verification is temporarily unavailable.
+                </Text>
             </View>
+            {/* END VERIFICATION_FLOW_DISABLED */}
 
-            {/* CHECKBOXES + BUTTON */}
-            <View style={styles.bottomContainer}>
-                <TouchableOpacity
-                    style={styles.checkboxRow}
-                    onPress={() => setAgreePan(!agreePan)}
-                >
-                    <View
-                        style={[
-                            styles.checkbox,
-                            agreePan && styles.checked,
-                        ]}
-                    />
-                    <Text style={styles.checkboxText}>
-                        I agree to use PAN for my verification
-                    </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                    style={styles.checkboxRow}
-                    onPress={() => setAgreeTerms(!agreeTerms)}
-                >
-                    <View
-                        style={[
-                            styles.checkbox,
-                            agreeTerms && styles.checked,
-                        ]}
-                    />
-                    <Text style={styles.checkboxText}>
-                        I agree to the Terms & Conditions
-                    </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                    disabled={!canProceed}
-                    style={[
-                        styles.button,
-                        !canProceed && styles.buttonDisabled,
-                    ]}
-                    onPress={handleSubmit}
-                >
-                    <Text style={styles.buttonText}>
-                        Proceed
-                    </Text>
-                </TouchableOpacity>
-            </View>
+            {/* VERIFICATION_FLOW_DISABLED - original agreement UI (ScrollView, checkboxes, Proceed button) */}
+            {/* END VERIFICATION_FLOW_DISABLED */}
         </AppLayout>
     );
 };
 
 const styles = StyleSheet.create({
+    // VERIFICATION_FLOW_DISABLED - placeholder when flow disabled
+    placeholder: {
+        padding: 16,
+        paddingBottom: 120,
+    },
+    placeholderText: {
+        fontSize: 16,
+        color: "#6B7280",
+    },
+    // END VERIFICATION_FLOW_DISABLED
     agreementContainer: {
         margin: 16,
         backgroundColor: "#E5E7EB",
