@@ -11,11 +11,16 @@ import {
     TouchableOpacity,
 } from "react-native";
 
+// VERIFICATION_FLOW_DISABLED
+/*
 const PAN_REGEX = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
+*/
 
 const VerificationPANScreen = () => {
     const router = useMyNavigation();
 
+    // VERIFICATION_FLOW_DISABLED
+    /*
     const [panName, setPanName] = useState("");
     const [panNumber, setPanNumber] = useState("");
     const [agreed, setAgreed] = useState(false);
@@ -26,103 +31,61 @@ const VerificationPANScreen = () => {
 
     const validate = () => {
         const newErrors: typeof errors = {};
-
         if (!panName.trim()) {
             newErrors.panName = "Name is required";
         }
-
         if (!panNumber.trim()) {
             newErrors.panNumber = "PAN number is required";
         } else if (!PAN_REGEX.test(panNumber)) {
             newErrors.panNumber = "Invalid PAN number";
         }
-
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
     const handleSubmit = () => {
         if (!validate()) return;
-
         router.push("/verification/address");
     };
 
     const isButtonDisabled =
         !agreed || !panName.trim() || !panNumber.trim();
+    */
 
     return (
         <AppLayout>
             <ScreenHeader title="Influencer Verification" />
-
-            <ScrollView contentContainerStyle={styles.container}>
-                <View style={styles.field}>
-                    <TextInput
-                        label="Name (As per your PAN)"
-                        placeholder="Eg. Rahul Sinha"
-                        value={panName}
-                        onChangeText={setPanName}
-                        mode="outlined"
-                        error={!!errors.panName}
-                    />
-                    {errors.panName && (
-                        <Text style={styles.error}>{errors.panName}</Text>
-                    )}
-                    <Text style={styles.helper}>
-                        Enter your name as per your PAN Card
-                    </Text>
-                </View>
-
-                <View style={styles.field}>
-                    <TextInput
-                        label="PAN Number"
-                        placeholder="Eg. INXXX0000X"
-                        value={panNumber}
-                        onChangeText={(text) =>
-                            setPanNumber(text.toUpperCase())
-                        }
-                        autoCapitalize="characters"
-                        mode="outlined"
-                        error={!!errors.panNumber}
-                    />
-                    {errors.panNumber && (
-                        <Text style={styles.error}>{errors.panNumber}</Text>
-                    )}
-                    <Text style={styles.helper}>
-                        Your PAN number (ABCDE1234F)
-                    </Text>
-                </View>
-            </ScrollView>
-
-            {/* FIXED BOTTOM */}
-            <View style={styles.bottomContainer}>
-                <TouchableOpacity
-                    style={styles.checkboxRow}
-                    onPress={() => setAgreed(!agreed)}
-                >
-                    <View style={[styles.checkbox, agreed && styles.checked]} />
-                    <Text style={styles.checkboxText}>
-                        I agree to use PAN for my verification
-                    </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                    disabled={isButtonDisabled}
-                    style={[
-                        styles.button,
-                        isButtonDisabled && styles.buttonDisabled,
-                    ]}
-                    onPress={handleSubmit}
-                >
-                    <Text style={styles.buttonText}>
-                        Verify your Account
-                    </Text>
-                </TouchableOpacity>
+            {/* VERIFICATION_FLOW_DISABLED - placeholder when flow is disabled */}
+            <View style={styles.placeholder}>
+                <Text style={styles.placeholderText}>
+                    Verification is temporarily unavailable.
+                </Text>
             </View>
+            {/* END VERIFICATION_FLOW_DISABLED */}
+
+            {/* VERIFICATION_FLOW_DISABLED - original PAN form
+            <ScrollView contentContainerStyle={styles.container}>
+                ...
+            </ScrollView>
+            <View style={styles.bottomContainer}>
+                ...
+            </View>
+            END VERIFICATION_FLOW_DISABLED */}
         </AppLayout>
     );
 };
 
 const styles = StyleSheet.create({
+    // VERIFICATION_FLOW_DISABLED - placeholder when flow disabled
+    placeholder: {
+        padding: 16,
+        paddingBottom: 120,
+    },
+    placeholderText: {
+        fontSize: 16,
+        color: "#6B7280",
+    },
+    // END VERIFICATION_FLOW_DISABLED
     container: {
         padding: 16,
         paddingBottom: 120,
