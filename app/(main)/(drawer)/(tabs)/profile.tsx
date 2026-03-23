@@ -1,8 +1,6 @@
 import ProfileCard from "@/components/profile/ProfileCard";
 import ProfileItemCard from "@/components/profile/ProfileItemCard";
-// VERIFICATION_FLOW_DISABLED
-// import VerificationCard from "@/components/profile/VerificationCard";
-// END VERIFICATION_FLOW_DISABLED
+import VerificationCard from "@/components/profile/VerificationCard";
 import { View } from "@/components/theme/Themed";
 import { COMPLETION_PERCENTAGE } from "@/constants/CompletionPercentage";
 import { PROFILE_ITEMS } from "@/constants/Profile";
@@ -16,25 +14,22 @@ import {
     faWarning
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-// VERIFICATION_FLOW_DISABLED - AsyncStorage and useFocusEffect used only for verification confetti
-// import AsyncStorage from "@react-native-async-storage/async-storage";
-// END VERIFICATION_FLOW_DISABLED
-import { useTheme } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect, useTheme } from "@react-navigation/native";
 import { Href } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
-import { useState } from "react";
-import { ScrollView, StyleSheet, Text } from "react-native";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { View as RNView, ScrollView, StyleSheet, Text } from "react-native";
+import ConfettiCannon from "react-native-confetti-cannon";
 
 const ProfileScreen = () => {
     const router = useMyNavigation();
     const [logoutModalVisible, setLogoutModalVisible] = useState(false);
     const { signOutUser, user } = useAuthContext();
     const { updatedTokens } = useCloudMessagingContext();
-    // VERIFICATION_FLOW_DISABLED
-    // const [showVerifiedModal, setShowVerifiedModal] = useState(false);
-    // const [showConfetti, setShowConfetti] = useState(false);
-    // const confettiRef = useRef<ConfettiCannon>(null);
-    // END VERIFICATION_FLOW_DISABLED
+    const [showVerifiedModal, setShowVerifiedModal] = useState(false);
+    const [showConfetti, setShowConfetti] = useState(false);
+    const confettiRef = useRef<ConfettiCannon>(null);
 
     const theme = useTheme();
 
@@ -49,50 +44,37 @@ const ProfileScreen = () => {
         await WebBrowser.openBrowserAsync(url);
     };
 
-    // VERIFICATION_FLOW_DISABLED
-    // useFocusEffect(
-    //     useCallback(() => {
-    //         const checkAndShowConfetti = async () => {
-    //             console.log("🔍 Profile focused - checking KYC status");
-    //             console.log("📊 isKYCDone:", user?.isKYCDone);
-    //             console.log("📊 User KYC status:", user?.kyc?.status);
-    //             if (!user?.isKYCDone) {
-    //                 console.log("❌ KYC not done - resetting confetti flag");
-    //                 await AsyncStorage.removeItem("PROFILE_VERIFIED_CONFETTI_SHOWN");
-    //                 return;
-    //             }
-    //             console.log("✓ KYC is done, checking if confetti was shown before...");
-    //             const alreadyShown = await AsyncStorage.getItem(
-    //                 "PROFILE_VERIFIED_CONFETTI_SHOWN"
-    //             );
-    //             console.log("📱 Already shown flag:", alreadyShown);
-    //             if (!alreadyShown) {
-    //                 console.log("🎉 Showing confetti and verification modal!");
-    //                 setShowVerifiedModal(true);
-    //                 setShowConfetti(true);
-    //                 await AsyncStorage.setItem(
-    //                     "PROFILE_VERIFIED_CONFETTI_SHOWN",
-    //                     "true"
-    //                 );
-    //                 if (confettiRef.current) {
-    //                     confettiRef.current.start();
-    //                 }
-    //                 setTimeout(() => setShowVerifiedModal(false), 2300);
-    //                 setTimeout(() => setShowConfetti(false), 3000);
-    //             }
-    //         };
-    //         checkAndShowConfetti();
-    //     }, [user?.isKYCDone])
-    // );
-    // useEffect(() => {
-    //     console.log(user?.isKYCDone);
-    // }, [user?.isKYCDone]);
-    // END VERIFICATION_FLOW_DISABLED
+    useFocusEffect(
+        useCallback(() => {
+            const checkAndShowConfetti = async () => {
+                if (!user?.isKYCDone) {
+                    await AsyncStorage.removeItem("PROFILE_VERIFIED_CONFETTI_SHOWN");
+                    return;
+                }
+                const alreadyShown = await AsyncStorage.getItem(
+                    "PROFILE_VERIFIED_CONFETTI_SHOWN"
+                );
+                if (!alreadyShown) {
+                    setShowVerifiedModal(true);
+                    setShowConfetti(true);
+                    await AsyncStorage.setItem(
+                        "PROFILE_VERIFIED_CONFETTI_SHOWN",
+                        "true"
+                    );
+                    if (confettiRef.current) {
+                        confettiRef.current.start();
+                    }
+                    setTimeout(() => setShowVerifiedModal(false), 2300);
+                    setTimeout(() => setShowConfetti(false), 3000);
+                }
+            };
+            checkAndShowConfetti();
+        }, [user?.isKYCDone])
+    );
 
     return (
         <AppLayout>
-            {/* VERIFICATION_FLOW_DISABLED */}
-            {/* {showConfetti && (
+            {showConfetti && (
                 <RNView style={styles.confettiContainer}>
                     <ConfettiCannon
                         ref={confettiRef}
@@ -103,8 +85,7 @@ const ProfileScreen = () => {
                         explosionSpeed={350}
                     />
                 </RNView>
-            )} */}
-            {/* END VERIFICATION_FLOW_DISABLED */}
+            )}
             <ScrollView
                 style={{
                     ...styles.container,
@@ -124,14 +105,12 @@ const ProfileScreen = () => {
 
                 )}
 
-                {/* VERIFICATION_FLOW_DISABLED */}
-                {/* <VerificationCard
+                <VerificationCard
                     kycStatus={user?.kyc?.status}
                     onStartVerification={() => {
                         router.push("/verification");
                     }}
-                /> */}
-                {/* END VERIFICATION_FLOW_DISABLED */}
+                />
                 {!user?.profile?.completionPercentage ||
                     user?.profile?.completionPercentage < COMPLETION_PERCENTAGE ? (
                     <View
@@ -216,17 +195,15 @@ const styles = StyleSheet.create({
         gap: 6,
         paddingBottom: 6,
     },
-    // VERIFICATION_FLOW_DISABLED
-    // confettiContainer: {
-    //     position: "absolute",
-    //     top: 0,
-    //     left: 0,
-    //     right: 0,
-    //     height: "100%",
-    //     pointerEvents: "none",
-    //     zIndex: 999,
-    // },
-    // END VERIFICATION_FLOW_DISABLED
+    confettiContainer: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        height: "100%",
+        pointerEvents: "none",
+        zIndex: 999,
+    },
 });
 
 export default ProfileScreen;

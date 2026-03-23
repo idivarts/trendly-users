@@ -28,7 +28,6 @@ import { ActivityIndicator, FlatList, Pressable, RefreshControl } from "react-na
 import CollaborationHeader from "../collaboration/card-components/CollaborationHeader";
 import ContractDetails from "../contract-card/ContractDetails";
 import EmptyState from "../ui/empty-state";
-;
 
 interface ICollaborationCard extends IContracts {
     brandData: IBrands;

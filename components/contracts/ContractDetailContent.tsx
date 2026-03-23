@@ -25,11 +25,10 @@ import { doc, getDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { View } from "react-native";
 import { Card, Portal, Text } from "react-native-paper";
-import ActionContainer from "./ActionContainer";
 import FeedbackModal from "./FeedbackModal";
+import InfluencerContractActions from "./InfluencerContractActions";
 import MemberContainer from "./MemberContainer";
 import ReviseQuotationModal from "./ReviseQuotationModal";
-;
 
 export interface Application extends IApplications {
     id: string;
@@ -168,12 +167,13 @@ const ContractDetailsContent = (props: CollaborationDetailsContentProps) => {
                         </View>
                     </View>
 
-                    <ActionContainer
+                    <InfluencerContractActions
                         contract={props.contractData}
+                        collaborationData={props.collaborationDetail}
+                        userData={props.userData}
                         refreshData={props.refreshData}
                         showQuotationModal={() => setShowQuotationModal(true)}
                         feedbackModalVisible={() => setFeedbackModalVisible(true)}
-                        userData={props.userData}
                     />
 
                     <MemberContainer
@@ -252,9 +252,8 @@ const ContractDetailsContent = (props: CollaborationDetailsContentProps) => {
                 contractId={props.contractData.streamChannelId}
                 refreshData={props.refreshData}
             />
-            {props.contractData.status === 2 && (
-                <Portal>
-                    <FeedbackModal
+            <Portal>
+                <FeedbackModal
                         feedbackGiven={
                             props.contractData.feedbackFromInfluencer?.feedbackReview
                                 ? true
@@ -266,8 +265,7 @@ const ContractDetailsContent = (props: CollaborationDetailsContentProps) => {
                         contract={props.contractData}
                         refreshData={props.refreshData}
                     />
-                </Portal>
-            )}
+            </Portal>
         </IOScroll>
     );
 };

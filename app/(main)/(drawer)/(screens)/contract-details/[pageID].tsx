@@ -1,5 +1,5 @@
 import { useLocalSearchParams } from "expo-router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { IconButton } from "react-native-paper";
 
 import ContractDetailsContent, {
@@ -24,7 +24,8 @@ import { useTheme } from "@react-navigation/native";
 import {
     collection,
     doc,
-    getDoc
+    getDoc,
+    onSnapshot,
 } from "firebase/firestore";
 import { ActivityIndicator } from "react-native";
 
@@ -44,63 +45,78 @@ const ContractDetailsScreen = () => {
     const [contract, setContract] = useState<ICollaborationCard>();
     const { user } = useAuthContext();
 
-    const fetchProposals = async () => {
-        try {
-            if (!user?.id) {
-                throw new Error("User not authenticated");
-            }
+    const fetchCollaborationAndUser = async (
+        contractData: IContracts
+    ): Promise<Omit<ICollaborationCard, keyof IContracts>> => {
+        const collaborationRef = doc(
+            FirestoreDB,
+            "collaborations",
+            contractData.collaborationId
+        );
+        const collaborationSnapshot = await getDoc(collaborationRef);
+        const collaborationData = collaborationSnapshot.data() as ICollaboration;
 
-            const contractsCol = doc(FirestoreDB, "contracts", pageID as string);
-            const contractsSnapshot = await getDoc(contractsCol);
+        const userDataRef = doc(FirestoreDB, "users", contractData.userId);
+        const userSnapshot = await getDoc(userDataRef);
+        const userData = userSnapshot.data() as IUsers;
 
-            const contract = contractsSnapshot.data() as IContracts;
-            const collaborationId = contract.collaborationId;
+        const applicationDoc = await getDoc(
+            doc(
+                collection(FirestoreDB, "collaborations", contractData.collaborationId, "applications"),
+                user!.id
+            )
+        );
+        const application = applicationDoc.exists()
+            ? (applicationDoc.data() as Application)
+            : null;
 
-            const userDataRef = doc(FirestoreDB, "users", contract.userId);
-            const userSnapshot = await getDoc(userDataRef);
-            const userData = userSnapshot.data() as IUsers;
-
-            const applicationDoc = await getDoc(doc(collection(FirestoreDB, "collaborations", collaborationId, "applications"), user.id));
-            const application = applicationDoc.exists() ? applicationDoc.data() as Application : null;
-
-            // const hasAppliedQuery = query(
-            //   collectionGroup(FirestoreDB, "applications"),
-            //   where("userId", "==", user.id),
-            //   where("collaborationId", "==", collaborationId)
-            // );
-
-            // const hasAppliedSnapshot = await getDocs(hasAppliedQuery);
-
-            //@ts-ignore
-            // const applications = hasAppliedSnapshot.docs.map((appDoc) => ({
-            //   id: appDoc.id,
-            //   ...appDoc.data(),
-            // })) as Application[];
-
-            const collaborationRef = doc(
-                FirestoreDB,
-                "collaborations",
-                collaborationId
-            );
-            const collaborationSnapshot = await getDoc(collaborationRef);
-            const collaborationData = collaborationSnapshot.data() as ICollaboration;
-
-            setContract({
-                ...contract,
-                userData,
-                applications: application ? [application] : [],
-                collaborationData,
-            });
-        } catch (error) {
-            Console.error(error);
-        }
+        return {
+            userData,
+            applications: application ? [application] : [],
+            collaborationData,
+        };
     };
 
     useEffect(() => {
-        if (!user)
-            return;
-        fetchProposals();
-    }, [user]);
+        if (!user?.id || !pageID || typeof pageID !== "string") return;
+
+        const contractRef = doc(FirestoreDB, "contracts", pageID);
+        const unsubscribe = onSnapshot(
+            contractRef,
+            async (snapshot) => {
+                if (!snapshot.exists()) {
+                    setContract(undefined);
+                    return;
+                }
+                const contractData = snapshot.data() as IContracts;
+                try {
+                    const rest = await fetchCollaborationAndUser(contractData);
+                    setContract({
+                        ...contractData,
+                        ...rest,
+                    });
+                } catch (error) {
+                    Console.error(error);
+                }
+            },
+            (error) => Console.error(error)
+        );
+        return () => unsubscribe();
+    }, [user?.id, pageID]);
+
+    const refreshData = useCallback(async () => {
+        if (!user?.id || !pageID || typeof pageID !== "string") return;
+        const contractRef = doc(FirestoreDB, "contracts", pageID);
+        const snap = await getDoc(contractRef);
+        if (!snap.exists()) return;
+        const contractData = snap.data() as IContracts;
+        try {
+            const rest = await fetchCollaborationAndUser(contractData);
+            setContract({ ...contractData, ...rest });
+        } catch (error) {
+            Console.error(error);
+        }
+    }, [user?.id, pageID]);
 
     if (isLoading || !contract) {
         return (
@@ -145,7 +161,7 @@ const ContractDetailsScreen = () => {
                 collaborationDetail={contract?.collaborationData}
                 userData={contract.userData}
                 contractData={contract}
-                refreshData={fetchProposals}
+                refreshData={refreshData}
             />
         </AppLayout>
     );
