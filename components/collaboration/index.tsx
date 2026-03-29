@@ -181,6 +181,9 @@ const Collaboration = () => {
     // const [scHeight, setScHeight] = useState(0)
     const styles = stylesFn(theme);
 
+    const width = Math.min(MAX_WIDTH_WEB, screenWidth);
+    const height = APPROX_CARD_HEIGHT;
+
     if (loading && collabs.length == 0) {
         return (
             <AppLayout>
@@ -253,12 +256,19 @@ const Collaboration = () => {
                     />
                 ) : (
                     <>
-                        <View style={{ flex: 1, width: "100%", height: "100%" }}>
+                        <View
+                            style={{
+                                flex: 1,
+                                marginHorizontal: "auto",
+                                width: "100%",
+                            }}
+                        >
+                            <View style={{ alignSelf: "stretch", flex: 1, minHeight: 0 }}>
                             <CarouselInViewProvider>
                                 <CarouselScroller
                                     data={filteredList}
-                                    height={APPROX_CARD_HEIGHT}
-                                    width={xl ? MAX_WIDTH_WEB : screenWidth}
+                                    height={height}
+                                    width={width}
                                     objectKey="id"
                                     renderItem={({ item }) => (
                                         <View
@@ -306,9 +316,7 @@ const Collaboration = () => {
                                                             processRawAttachment(attachment)
                                                         ) || []
                                                     }
-                                                    carouselWidth={
-                                                        xl ? MAX_WIDTH_WEB : screenWidth
-                                                    }
+                                                    carouselWidth={width}
                                                 />
                                             )}
                                             <Pressable
@@ -340,7 +348,7 @@ const Collaboration = () => {
                                             </Pressable>
                                         </View>
                                     )}
-                                    vertical={false}
+                                    vertical={true}
                                     onLoadMore={() => { loadMore() }}
                                     onPressView={(item) => {
                                         router.push({
@@ -353,6 +361,7 @@ const Collaboration = () => {
                                     }}
                                 />
                             </CarouselInViewProvider>
+                            </View>
                         </View>
                         {loading && <ActivityIndicator size={"small"} />}
                     </>

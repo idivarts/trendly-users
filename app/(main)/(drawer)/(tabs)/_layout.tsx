@@ -29,7 +29,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
 import { TouchableOpacity } from "react-native";
 import { Badge } from "react-native-paper";
-import GlassTabBar from "@/shared-uis/components/glass/GlassTabBar";
 
 const TabLayout = () => {
     const { xl } = useBreakpoints();
@@ -40,9 +39,9 @@ const TabLayout = () => {
     const router = useMyNavigation()
     return (
         <Tabs
-            tabBar={(props) =>
-                xl ? null : <GlassTabBar {...props} />
-            }
+            // tabBar={(props) =>
+            //     xl ? null : <GlassTabBar {...props} />
+            // }
             screenOptions={{
                 tabBarActiveTintColor: Colors(theme).primary,
                 tabBarInactiveTintColor: Colors(theme).text,
