@@ -4,7 +4,7 @@ import Button from "@/components/ui/button";
 import { useAuthContext, useContractContext } from "@/contexts";
 import { useBreakpoints } from "@/hooks";
 import { PromotionType } from "@/shared-libs/firestore/trendly-pro/constants/promotion-type";
-import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
+import { CollaborationLocationType, IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { IManagers } from "@/shared-libs/firestore/trendly-pro/models/managers";
 import { processRawAttachment } from "@/shared-libs/utils/attachments";
 import { Console } from "@/shared-libs/utils/console";
@@ -594,7 +594,7 @@ const CollborationDetailsContent = (
                         <ChipCard
                             chipText={props.collaborationDetail.location.type}
                             chipIcon={
-                                props.collaborationDetail.location.type === "On-Site"
+                                props.collaborationDetail.location.type === CollaborationLocationType.OnSite
                                     ? faLocationDot
                                     : faHouseLaptop
                             }
@@ -639,7 +639,7 @@ const CollborationDetailsContent = (
                             ))}
                     </View>
 
-                    {props.collaborationDetail.location.type === "On-Site" && (
+                    {props.collaborationDetail.location.type === CollaborationLocationType.OnSite && (
                         <View
                             style={{
                                 width: "100%",
