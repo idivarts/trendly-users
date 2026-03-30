@@ -15,7 +15,7 @@ export const PROFILE_ITEMS = [
         route: "/preferences",
         active: true,
     },
-     {
+    {
         id: "8",
         title: "Bank and Shipping Address",
         icon: faFile,
@@ -29,7 +29,7 @@ export const PROFILE_ITEMS = [
         icon: faFile,
         route: "/contracts",
         active: false,
-        requiresKYC: true,
+        // requiresKYC: true,
     },
     {
         id: "4",
@@ -59,7 +59,7 @@ export const PROFILE_ITEMS = [
         icon: faHeadset,
         route: "/help-and-support",
     },
-   
+
 ];
 
 export const PROFILE_BOTTOM_ITEMS = [
