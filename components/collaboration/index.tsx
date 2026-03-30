@@ -5,34 +5,25 @@ import { useBreakpoints } from "@/hooks";
 import AppLayout from "@/layouts/app-layout";
 import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
 import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
-import { processRawAttachment } from "@/shared-libs/utils/attachments";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import { useInfiniteIdScroll } from "@/shared-libs/utils/infinite-id-scroll";
 import { PersistentStorage } from "@/shared-libs/utils/persistent-storage";
 import { useMyNavigation } from "@/shared-libs/utils/router";
-import Carousel from "@/shared-uis/components/carousel/carousel";
 import { APPROX_CARD_HEIGHT } from "@/shared-uis/components/carousel/carousel-util";
 import { CarouselInViewProvider } from "@/shared-uis/components/scroller/CarouselInViewContext";
 import CarouselScroller from "@/shared-uis/components/scroller/CarouselScroller";
 import SlowLoader from "@/shared-uis/components/SlowLoader";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
-import Colors from "@/shared-uis/constants/Colors";
 import { stylesFn } from "@/styles/Collections.styles";
 import { useTheme } from "@react-navigation/native";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
-import {
-    ActivityIndicator,
-    Pressable
-} from "react-native";
+import { ActivityIndicator } from "react-native";
 import BottomSheetActions from "../BottomSheetActions";
 import { View } from "../theme/Themed";
 import EmptyState from "../ui/empty-state";
-import CollaborationDetails from "./card-components/CollaborationDetails";
-import CollaborationHeader from "./card-components/CollaborationHeader";
-import CollaborationStats from "./card-components/CollaborationStats";
-;
+import CollaborationCard from "./card-components/CollaborationCard";
 
 interface ICollaborationAddCardProps extends ICollaboration {
     name: string;
@@ -271,82 +262,12 @@ const Collaboration = () => {
                                     width={width}
                                     objectKey="id"
                                     renderItem={({ item }) => (
-                                        <View
+                                        <CollaborationCard
                                             key={item.id}
-                                            style={{
-                                                width: "100%",
-                                                borderWidth: 0.3,
-                                                borderColor: Colors(theme).gray300,
-                                                gap: 8,
-                                                borderRadius: 5,
-                                                paddingBottom: 16,
-                                                overflow: "hidden",
-                                            }}
-                                        >
-                                            <CollaborationHeader
-                                                cardId={item.id}
-                                                cardType="collaboration"
-                                                brand={{
-                                                    image: item.brandImage || "",
-                                                    name: item.brandName,
-                                                    paymentVerified: item.paymentVerified || false,
-                                                }}
-                                                collaboration={{
-                                                    collabId: item.id,
-                                                    collabName: item.name,
-                                                    timePosted: item.timeStamp,
-                                                }}
-                                                onOpenBottomSheet={() => openBottomSheet(item.id)}
-                                            />
-                                            {item.attachments && item.attachments.length > 0 && (
-                                                <Carousel
-                                                    theme={theme}
-                                                    parentId={item.id}
-                                                    onImagePress={() => {
-                                                        router.push({
-                                                            // @ts-ignore
-                                                            pathname: `/collaboration-details/${item.id}`,
-                                                            params: {
-                                                                cardType: "collaboration",
-                                                            },
-                                                        });
-                                                    }}
-                                                    data={
-                                                        item.attachments?.map((attachment: any) =>
-                                                            processRawAttachment(attachment)
-                                                        ) || []
-                                                    }
-                                                    carouselWidth={width}
-                                                />
-                                            )}
-                                            <Pressable
-                                                onPress={() => {
-                                                    router.push({
-                                                        // @ts-ignore
-                                                        pathname: `/collaboration-details/${item.id}`,
-                                                        params: {
-                                                            cardType: "collaboration",
-                                                        },
-                                                    });
-                                                }}
-                                            >
-                                                <CollaborationDetails
-                                                    collaborationDetails={{
-                                                        collabDescription: item.description || "",
-                                                        promotionType: item.promotionType,
-                                                        location: item.location,
-                                                        platform: item.platform,
-                                                        contentType: item.contentFormat,
-                                                    }}
-                                                />
-                                                <CollaborationStats
-                                                    influencerCount={item.numberOfInfluencersNeeded}
-                                                    collabID={item.id}
-                                                    budget={item.budget ? item.budget : { min: 0, max: 0 }}
-                                                    brandHireRate={item.brandHireRate || ""}
-                                                />
-                                            </Pressable>
-                                        </View>
+                                            item={item}
+                                            carouselWidth={width}
+                                            onOpenBottomSheet={openBottomSheet}
+                                        />
                                     )}
                                     vertical={true}
                                     onLoadMore={() => { loadMore() }}
