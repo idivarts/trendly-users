@@ -1,4 +1,4 @@
-import UserResponse from "@/components/contract-card/UserResponse";
+import ApplicationResponse from "@/components/application/ApplicationResponse";
 import { useBreakpoints } from "@/hooks";
 import { IOScroll } from "@/shared-libs/contexts/scroll-context";
 import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
@@ -181,12 +181,13 @@ const ContractDetailsContent = (props: CollaborationDetailsContentProps) => {
                         setMembersFromBrand={setMembersInContract}
                     />
 
-                    <UserResponse
+                    <ApplicationResponse
+                        variant="plain"
+                        title="Application"
                         application={props.applicationData}
                         influencerQuestions={
                             props?.collaborationDetail?.questionsToInfluencers
                         }
-                        setConfirmationModalVisible={() => { }}
                     />
                     <View
                         style={{

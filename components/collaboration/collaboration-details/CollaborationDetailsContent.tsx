@@ -48,9 +48,9 @@ import { Linking, Platform, Pressable, ScrollView, View } from "react-native";
 import { Card, Portal, Text } from "react-native-paper";
 import { CollaborationDetail } from ".";
 import ChipCard from "../card-components/ChipComponent";
-import UserResponse from "../UserResponse";
 import BrandModal from "./modal/BrandModal";
 import ManagerModal from "./modal/ManagerModal";
+import ApplicationResponse from "@/components/application/ApplicationResponse";
 interface ApplicationData extends IApplications {
     id: string;
 }
@@ -475,12 +475,25 @@ const CollborationDetailsContent = (
                             </View>
                         )}
                     {cardType === "application" && (
-                        <UserResponse
+                        <ApplicationResponse
+                            variant="collaboration"
+                            title="Your Application"
                             application={props.applicationData}
                             influencerQuestions={
                                 props?.collaborationDetail?.questionsToInfluencers
                             }
-                            setConfirmationModalVisible={setConfirmationModalVisible}
+                            onWithdrawPress={() => setConfirmationModalVisible(true)}
+                            onEditPress={() => {
+                                if (!props.applicationData?.id) return;
+                                router.push({
+                                    // @ts-ignore
+                                    pathname: `/edit-application/${props.applicationData.id}`,
+                                    params: {
+                                        collaborationId:
+                                            props.applicationData?.collaborationId,
+                                    },
+                                });
+                            }}
                         />
                     )}
 
