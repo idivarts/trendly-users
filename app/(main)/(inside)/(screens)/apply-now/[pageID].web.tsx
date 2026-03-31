@@ -1,4 +1,5 @@
 import ApplyNowContent from "@/components/collaboration/apply-now/ApplyNowContent";
+import { createHiddenFileInputWebStyles } from "@/components/collaboration/apply-now/hidden-file-input.web.styles";
 import { TextModal } from "@/components/TextInputModal/TextModal.web";
 import AssetsPreview from "@/components/ui/assets-preview";
 import ScreenHeader from "@/components/ui/screen-header";
@@ -9,15 +10,13 @@ import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { useMyNavigation } from "@/shared-libs/utils/router";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
-import { stylesFn } from "@/styles/ApplyNow.styles";
+import Colors from "@/shared-uis/constants/Colors";
 import { handleModalOrInputPage } from "@/utils/TextInput";
-// import DateTimePicker from "@react-native-community/datetimepicker";
 import { useTheme } from "@react-navigation/native";
 import { useLocalSearchParams } from "expo-router";
 import { doc, getDoc } from "firebase/firestore";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Platform } from "react-native";
-;
 
 const ApplyScreenWeb = () => {
     const params = useLocalSearchParams();
@@ -67,8 +66,11 @@ const ApplyScreenWeb = () => {
     const [fileAttachments, setFileAttachments] = useState<any[]>([]);
 
     const inputRef = React.useRef<HTMLInputElement>(null);
-    const theme = useTheme();
-    const styles = stylesFn(theme);
+    const colors = Colors(useTheme());
+    const styles = useMemo(
+        () => createHiddenFileInputWebStyles(colors),
+        [colors]
+    );
 
     const {
         setProcessMessage,
@@ -179,10 +181,7 @@ const ApplyScreenWeb = () => {
             <input
                 ref={inputRef}
                 type="file"
-                style={{
-                    backgroundColor: "transparent",
-                    visibility: "hidden",
-                }}
+                style={styles.hiddenFileInput}
                 multiple
                 onChange={handleFileSelection}
                 accept="image/*, video/*"
