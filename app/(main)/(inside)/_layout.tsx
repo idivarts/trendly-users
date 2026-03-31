@@ -1,10 +1,7 @@
-import { useBreakpoints } from "@/hooks";
 import { SocialsProtectedScreen } from "@/layouts/protected";
 import { Stack } from "expo-router";
 
 const DrawerLayout = () => {
-    const { xl } = useBreakpoints();
-
     return (
         <SocialsProtectedScreen>
             <Stack screenOptions={{
