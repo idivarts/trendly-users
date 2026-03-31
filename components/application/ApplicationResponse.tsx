@@ -8,8 +8,8 @@ import { useTheme } from "@react-navigation/native";
 import React, { FC, useMemo } from "react";
 import { Pressable, StyleSheet } from "react-native";
 
-import Button from "../ui/button";
 import { Text, View } from "../theme/Themed";
+import Button from "../ui/button";
 
 export type ApplicationResponseVariant = "collaboration" | "plain";
 
@@ -91,21 +91,21 @@ const ApplicationResponse: FC<ApplicationResponseProps> = ({
 
             {answers && influencerQuestions
                 ? answers.map((answer, index) => {
-                      const questionText = influencerQuestions[answer.question];
+                    const questionText = influencerQuestions[answer.question];
 
-                      if (!questionText) return null;
+                    if (!questionText) return null;
 
-                      return (
-                          <View key={index} style={styles.answerBlock}>
-                              <Text style={styles.questionText}>
-                                  Q) {questionText}
-                              </Text>
-                              <Text style={styles.answerText}>
-                                  A) {answer.answer}
-                              </Text>
-                          </View>
-                      );
-                  })
+                    return (
+                        <View key={index} style={styles.answerBlock}>
+                            <Text style={styles.questionText}>
+                                Q) {questionText}
+                            </Text>
+                            <Text style={styles.answerText}>
+                                A) {answer.answer}
+                            </Text>
+                        </View>
+                    );
+                })
                 : null}
         </View>
     );
@@ -131,6 +131,7 @@ const createStyles = (colors: ReturnType<typeof Colors>) =>
             flexDirection: "row",
             justifyContent: "space-between",
             alignItems: "center",
+            backgroundColor: "transparent"
         },
         titleText: {
             fontSize: 16,
@@ -158,6 +159,7 @@ const createStyles = (colors: ReturnType<typeof Colors>) =>
         answerBlock: {
             flexDirection: "column",
             gap: 10,
+            backgroundColor: "transparent"
         },
         questionText: {
             fontSize: 16,
