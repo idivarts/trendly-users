@@ -6,6 +6,8 @@ import { ChannelList } from "stream-chat-expo";
 
 import { View } from "@/components/theme/Themed";
 import { useAuthContext, useChatContext } from "@/contexts";
+import { useBreakpoints } from "@/hooks";
+import { useFloatingTabChromePad } from "@/hooks/use-floating-tab-chrome-pad";
 import { Console } from "@/shared-libs/utils/console";
 import { useMyNavigation } from "@/shared-libs/utils/router";
 import Colors from "@/shared-uis/constants/Colors";
@@ -19,7 +21,11 @@ const ChannelListNative = () => {
     const [searchInput, setSearchInput] = useState("");
     const theme = useTheme();
     const styles = stylesFn(theme);
-    const router = useMyNavigation()
+    const router = useMyNavigation();
+    const { xl } = useBreakpoints();
+    const tabChrome = useFloatingTabChromePad({
+        parentHandlesSafeAreaTop: false,
+    });
 
     const {
         user,
@@ -60,7 +66,15 @@ const ChannelListNative = () => {
 
     if (loading) {
         return (
-            <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+            <View
+                style={{
+                    flex: 1,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    paddingTop: xl ? 0 : tabChrome.top,
+                    paddingBottom: xl ? 0 : tabChrome.bottom,
+                }}
+            >
                 <ActivityIndicator color={Colors(theme).primary} />
             </View>
         );
@@ -71,7 +85,7 @@ const ChannelListNative = () => {
             <View
                 style={{
                     padding: 16,
-                    paddingTop: 16,
+                    paddingTop: xl ? 16 : tabChrome.top,
                     flexDirection: "row",
                 }}
             >
@@ -93,7 +107,14 @@ const ChannelListNative = () => {
                 />
             </View>
             {hasError ? <EmptyMessageState listType="channel" /> :
-                <View style={{ flex: 1, paddingRight: 16, paddingLeft: 12 }}>
+                <View
+                    style={{
+                        flex: 1,
+                        paddingRight: 16,
+                        paddingLeft: 12,
+                        paddingBottom: xl ? 0 : tabChrome.bottom,
+                    }}
+                >
                     <ChannelList
                         EmptyStateIndicator={EmptyMessageState}
                         // LoadingErrorIndicator={EmptyMessageState}

@@ -111,7 +111,7 @@ const BankAndShippingScreen = () => {
             {/* BANK MODAL */}
             <Modal visible={bankModal} animationType="slide">
                 <View style={styles.modal}>
-                    <ScreenHeader title="Edit Bank Details" />
+                    <ScreenHeader applyTopSafeArea title="Edit Bank Details" />
 
                     <TextInput
                         style={styles.input}
@@ -163,7 +163,7 @@ const BankAndShippingScreen = () => {
             {/* ADDRESS MODAL */}
             <Modal visible={addressModal} animationType="slide">
                 <View style={styles.modal}>
-                    <ScreenHeader title="Edit Shipping Address" />
+                    <ScreenHeader applyTopSafeArea title="Edit Shipping Address" />
 
                     <TextInput
                         style={styles.input}

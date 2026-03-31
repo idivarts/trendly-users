@@ -30,33 +30,42 @@ import { useTheme } from "@react-navigation/native";
 import { TouchableOpacity } from "react-native";
 import { Badge } from "react-native-paper";
 
+import GlassTabBar from "@/shared-uis/components/glass/GlassTabBar";
+import GlassTabScreenHeader from "@/shared-uis/components/glass/GlassTabScreenHeader";
+
 const TabLayout = () => {
     const { xl } = useBreakpoints();
     const theme = useTheme();
     const { user } = useAuthContext();
     const { unreadCount } = useChatContext();
     const { brandCount, influencerCount } = useInviteContext()
-    const router = useMyNavigation()
+    const router = useMyNavigation();
+
     return (
         <Tabs
-            // tabBar={(props) =>
-            //     xl ? null : <GlassTabBar {...props} />
-            // }
+            tabBar={(props) => (xl ? null : <GlassTabBar {...props} />)}
             screenOptions={{
                 tabBarActiveTintColor: Colors(theme).primary,
                 tabBarInactiveTintColor: Colors(theme).text,
                 // Disable the static render of the header on web
                 // to prevent a hydration error in React Navigation v6.
                 headerShown: useClientOnlyValue(false, true),
+                header: (headerProps) => <GlassTabScreenHeader {...headerProps} />,
+                headerTransparent: useClientOnlyValue(false, true),
+                headerShadowVisible: false,
+                headerStyle: {
+                    backgroundColor: Colors(theme).transparent,
+                },
                 tabBarShowLabel: !xl,
                 tabBarHideOnKeyboard: true,
                 tabBarStyle: {
-                    display: xl ? "none" : "flex", // Hide the tab bar on desktop screens
-                },
-                headerTitleAlign: "left",
-                headerTitleStyle: {
-                    fontSize: 24,
-                    fontWeight: "bold",
+                    display: xl ? "none" : "flex",
+                    position: "absolute",
+                    height: 0,
+                    minHeight: 0,
+                    backgroundColor: Colors(theme).transparent,
+                    borderTopWidth: 0,
+                    elevation: 0,
                 },
             }}
         >

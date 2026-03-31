@@ -2,6 +2,7 @@ import SearchComponent from "@/components/SearchComponent";
 import { MAX_WIDTH_WEB } from "@/constants/Container";
 import { useAuthContext } from "@/contexts";
 import { useBreakpoints } from "@/hooks";
+import { useFloatingTabChromePad } from "@/hooks/use-floating-tab-chrome-pad";
 import AppLayout from "@/layouts/app-layout";
 import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
 import { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
@@ -62,6 +63,7 @@ const Collaboration = () => {
     const [refreshing, setRefreshing] = useState(false);
 
     const { xl, width: screenWidth } = useBreakpoints();
+    const tabChrome = useFloatingTabChromePad();
 
     const collabRef = collection(FirestoreDB, "collaborations");
 
@@ -183,6 +185,8 @@ const Collaboration = () => {
                         styles.container,
                         {
                             width: xl ? MAX_WIDTH_WEB : "100%",
+                            paddingTop: xl ? 0 : tabChrome.top,
+                            paddingBottom: xl ? 0 : tabChrome.bottom,
                         },
                     ]}
                 >
@@ -218,7 +222,12 @@ const Collaboration = () => {
             <View
                 style={[
                     styles.container,
-                    { width: "100%", height: "100%" },
+                    {
+                        width: "100%",
+                        height: "100%",
+                        paddingTop: xl ? 0 : tabChrome.top,
+                        paddingBottom: xl ? 0 : tabChrome.bottom,
+                    },
                 ]}
             >
                 {/* <View

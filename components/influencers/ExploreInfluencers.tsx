@@ -1,4 +1,5 @@
 import { useBreakpoints } from "@/hooks";
+import { useFloatingTabChromePad } from "@/hooks/use-floating-tab-chrome-pad";
 import AppLayout from "@/layouts/app-layout";
 import { User } from "@/types/User";
 import { useTheme } from "@react-navigation/native";
@@ -48,6 +49,7 @@ const ExploreInfluencers = () => {
     const theme = useTheme();
 
     const { xl, width: screenWidth } = useBreakpoints();
+    const tabChrome = useFloatingTabChromePad();
 
     const influencersRef = collection(FirestoreDB, "users");
     const q = query(
@@ -130,7 +132,9 @@ const ExploreInfluencers = () => {
                 style={{
                     flex: 1,
                     marginHorizontal: "auto",
-                    width: "100%", //xl ? MAX_WIDTH_WEB :
+                    width: "100%",
+                    paddingTop: xl ? 0 : tabChrome.top,
+                    paddingBottom: xl ? 0 : tabChrome.bottom,
                 }}
             >
                 <View style={{ alignSelf: "stretch", flex: 1, minHeight: 0 }}>

@@ -7,6 +7,8 @@ import { View } from "@/components/theme/Themed";
 import { COMPLETION_PERCENTAGE } from "@/constants/CompletionPercentage";
 import { PROFILE_ITEMS } from "@/constants/Profile";
 import { useAuthContext, useCloudMessagingContext } from "@/contexts";
+import { useBreakpoints } from "@/hooks";
+import { useFloatingTabChromePad } from "@/hooks/use-floating-tab-chrome-pad";
 import AppLayout from "@/layouts/app-layout";
 import { useMyNavigation } from "@/shared-libs/utils/router";
 import ConfirmationModal from "@/shared-uis/components/ConfirmationModal";
@@ -37,6 +39,8 @@ const ProfileScreen = () => {
     // END VERIFICATION_FLOW_DISABLED
 
     const theme = useTheme();
+    const { xl } = useBreakpoints();
+    const tabChrome = useFloatingTabChromePad();
 
     const handleSignOut = async () => {
         setLogoutModalVisible(false);
@@ -109,10 +113,11 @@ const ProfileScreen = () => {
                 style={{
                     ...styles.container,
                     backgroundColor: Colors(theme).background,
-                    padding: 16,
                 }}
                 contentContainerStyle={{
-                    paddingBottom: 16,
+                    paddingHorizontal: 16,
+                    paddingTop: xl ? 16 : tabChrome.top + 16,
+                    paddingBottom: xl ? 16 : tabChrome.bottom + 16,
                 }}
             >
                 {user && (
