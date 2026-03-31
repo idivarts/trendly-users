@@ -83,7 +83,9 @@ const RootLayout = () => {
                 <AuthContextProvider>
                     <ThemeContextProvider>
                         <GestureHandlerRootView>
-                            <RootLayoutStack />
+                            <BottomSheetModalProvider>
+                                <RootLayoutStack />
+                            </BottomSheetModalProvider>
                         </GestureHandlerRootView>
                     </ThemeContextProvider>
                 </AuthContextProvider>
@@ -147,23 +149,21 @@ const RootLayoutStack = () => {
     return (
         <ThemeProvider value={appTheme === "dark" ? DarkTheme : ExpoDefaultTheme}>
             <Provider theme={CustomPaperTheme(theme)}>
-                <BottomSheetModalProvider>
-                    <DownloadApp />
-                    <ConfirmationModalProvider>
-                        <Stack
-                            screenOptions={{
-                                headerShown: false,
-                            }}
-                        >
-                            {/* <Stack.Screen name="(main)" options={{ headerShown: false }} />
+                <DownloadApp />
+                <ConfirmationModalProvider>
+                    <Stack
+                        screenOptions={{
+                            headerShown: false,
+                        }}
+                    >
+                        {/* <Stack.Screen name="(main)" options={{ headerShown: false }} />
           <Stack.Screen name="(auth)" options={{ headerShown: false }} />
           <Stack.Screen name="(public)" options={{ headerShown: false }} /> */}
-                            <Stack.Screen name="index" />
-                            <Stack.Screen name="+not-found" />
-                            {/* <Stack.Screen name="modal" options={{ presentation: "modal" }} /> */}
-                        </Stack>
-                    </ConfirmationModalProvider>
-                </BottomSheetModalProvider>
+                        <Stack.Screen name="index" />
+                        <Stack.Screen name="+not-found" />
+                        {/* <Stack.Screen name="modal" options={{ presentation: "modal" }} /> */}
+                    </Stack>
+                </ConfirmationModalProvider>
             </Provider>
         </ThemeProvider>
     );
