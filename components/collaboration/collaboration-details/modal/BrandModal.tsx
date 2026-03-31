@@ -1,17 +1,16 @@
-import { useTheme } from "@react-navigation/native";
-import { Linking } from "react-native";
-
 import { Text, View } from "@/components/theme/Themed";
 import Button from "@/components/ui/button";
 import ImageComponent from "@/shared-uis/components/image-component";
 import Colors from "@/shared-uis/constants/Colors";
-import stylesFn from "@/styles/modal/UploadModal.styles";
 import {
     faCheck,
     faCheckCircle,
-    faLink
+    faLink,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { useTheme } from "@react-navigation/native";
+import React, { useMemo } from "react";
+import { Linking, StyleSheet } from "react-native";
 import { Chip, Modal } from "react-native-paper";
 
 interface BrandModalProps {
@@ -33,7 +32,8 @@ const BrandModal: React.FC<BrandModalProps> = ({
     setVisibility,
 }) => {
     const theme = useTheme();
-    const styles = stylesFn(theme);
+    const colors = Colors(theme);
+    const styles = useMemo(() => createStyles(colors), [colors]);
 
     const getLinkMessage = (url: string): string => {
         try {
@@ -42,91 +42,55 @@ const BrandModal: React.FC<BrandModalProps> = ({
 
             if (hostname.includes("instagram.com")) {
                 return "Visit Instagram";
-            } else if (hostname.includes("facebook.com")) {
-                return "Visit Facebook";
-            } else {
-                return "Visit Website";
             }
-        } catch (error) {
+            if (hostname.includes("facebook.com")) {
+                return "Visit Facebook";
+            }
+            return "Visit Website";
+        } catch {
             return "Visit Website";
         }
-    }
+    };
+
     return (
         <Modal
             visible={visible}
             onDismiss={() => setVisibility(false)}
-            contentContainerStyle={{
-                backgroundColor: Colors(theme).background,
-                borderRadius: 10,
-                padding: 20,
-                marginHorizontal: 20,
-            }}
+            contentContainerStyle={styles.modalContainer}
         >
-            <View style={{ alignItems: "center", gap: 20 }}>
-                {/* Brand Image */}
+            <View style={styles.inner}>
                 <ImageComponent
                     url={brand.image}
                     altText="Brand Image"
                     shape="square"
-                    style={{
-                        width: 120,
-                        height: 120,
-                        borderRadius: 10,
-                    }}
+                    style={styles.brandImage}
                 />
 
-                {/* Brand Name */}
-                <Text
-                    style={{
-                        fontSize: 24,
-                        fontWeight: "bold",
-                        color: Colors(theme).text,
-                        textAlign: "center",
-                    }}
-                >
+                <Text style={styles.brandName}>
                     {brand.name}{" "}
                     {brand.verified && (
                         <FontAwesomeIcon
                             icon={faCheckCircle}
-                            color={Colors(theme).primary}
+                            color={colors.primary}
                             size={22}
                         />
                     )}
                 </Text>
 
-                {/* Brand Description */}
                 {brand.description && (
-                    <Text
-                        style={{
-                            fontSize: 16,
-                            color: Colors(theme).text,
-                            textAlign: "center",
-                        }}
-                    >
-                        {brand.description}
-                    </Text>
+                    <Text style={styles.description}>{brand.description}</Text>
                 )}
 
-                <View
-                    style={{
-                        flexDirection: "row",
-                        flexWrap: "wrap",
-                        justifyContent: "center",
-                        gap: 10,
-                    }}
-                >
+                <View style={styles.chipRow}>
                     {brand.category.map((cat, index) => (
                         <Chip
                             key={index}
-                            style={{
-                                margin: 5,
-                                alignItems: "center",
-                            }}
+                            style={styles.chip}
                             mode="outlined"
                             icon={() => (
                                 <FontAwesomeIcon
                                     icon={faCheck}
-                                    color={Colors(theme).primary}
+                                    color={colors.primary}
                                     size={16}
                                 />
                             )}
@@ -136,20 +100,13 @@ const BrandModal: React.FC<BrandModalProps> = ({
                     ))}
                 </View>
 
-                {/* Brand Website */}
                 <Button onPress={() => Linking.openURL(brand.website)}>
-                    <Text
-                        style={{
-                            fontSize: 16,
-                            color: Colors(theme).white,
-                            fontWeight: "bold",
-                        }}
-                    >
+                    <Text style={styles.linkButtonLabel}>
                         <FontAwesomeIcon
                             icon={faLink}
-                            color={Colors(theme).white}
+                            color={colors.onPrimary}
                             size={16}
-                            style={{ marginRight: 16 }}
+                            style={styles.linkIcon}
                         />
                         {getLinkMessage(brand.website)}
                     </Text>
@@ -158,5 +115,54 @@ const BrandModal: React.FC<BrandModalProps> = ({
         </Modal>
     );
 };
+
+function createStyles(c: ReturnType<typeof Colors>) {
+    return StyleSheet.create({
+        modalContainer: {
+            backgroundColor: c.background,
+            borderRadius: 10,
+            padding: 20,
+            marginHorizontal: 20,
+        },
+        inner: {
+            alignItems: "center",
+            gap: 20,
+        },
+        brandImage: {
+            width: 120,
+            height: 120,
+            borderRadius: 10,
+        },
+        brandName: {
+            fontSize: 24,
+            fontWeight: "bold",
+            color: c.text,
+            textAlign: "center",
+        },
+        description: {
+            fontSize: 16,
+            color: c.text,
+            textAlign: "center",
+        },
+        chipRow: {
+            flexDirection: "row",
+            flexWrap: "wrap",
+            justifyContent: "center",
+            gap: 10,
+        },
+        chip: {
+            margin: 5,
+            alignItems: "center",
+        },
+        linkButtonLabel: {
+            fontSize: 16,
+            color: c.onPrimary,
+            fontWeight: "bold",
+        },
+        linkIcon: {
+            marginRight: 16,
+        },
+    });
+}
 
 export default BrandModal;
