@@ -1,18 +1,19 @@
 import { Text, View } from "@/components/theme/Themed";
 import TextInput from "@/components/ui/text-input";
+import ScreenHeader from "@/components/ui/screen-header";
 import AppLayout from "@/layouts/app-layout";
 import { useMyNavigation } from "@/shared-libs/utils/router";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import Colors from "@/shared-uis/constants/Colors";
 import { useTheme } from "@react-navigation/native";
 import { useLocalSearchParams } from "expo-router";
-import React, { useState } from "react";
-import { Pressable } from "react-native";
-import { Appbar } from "react-native-paper";
+import React, { useMemo, useState } from "react";
+import { Pressable, StyleSheet } from "react-native";
 import Toast from "react-native-toast-message";
 
 const Quotation: React.FC = () => {
-    const theme = useTheme();
+    const colors = Colors(useTheme());
+    const styles = useMemo(() => createStyles(colors), [colors]);
 
     const {
         title,
@@ -28,9 +29,15 @@ const Quotation: React.FC = () => {
         collaborationId,
         answers,
     } = useLocalSearchParams();
-    const router = useMyNavigation()
 
-    const [value, setValue] = useState(initialValue || "");
+    const router = useMyNavigation();
+
+    const [value, setValue] = useState(
+        (Array.isArray(initialValue) ? initialValue[0] : initialValue) || ""
+    );
+
+    const headerTitleRaw = Array.isArray(title) ? title[0] : title;
+    const headerTitle = headerTitleRaw ? String(headerTitleRaw) : "Quotation";
 
     const handleSubmit = () => {
         if (!value) {
@@ -67,45 +74,39 @@ const Quotation: React.FC = () => {
         router.back();
     };
 
+    const fieldLabel = headerTitleRaw ? String(headerTitleRaw) : "Quotation";
+    const placeholderText = Array.isArray(placeholder)
+        ? placeholder[0]
+        : placeholder;
+
     return (
         <AppLayout>
-            <Appbar.Header
-                style={{ backgroundColor: Colors(theme).background }}
-                statusBarHeight={0}
-            >
-                <Appbar.BackAction onPress={handleGoBack} />
-                <Appbar.Content title={title} />
-                <Pressable
-                    onPress={handleSubmit}
-                    style={{
-                        paddingRight: 20,
-                    }}
-                >
-                    <Text style={{ color: Colors(theme).primary, fontSize: 16 }}>
-                        Done
-                    </Text>
-                </Pressable>
-            </Appbar.Header>
+            <ScreenHeader
+                title={headerTitle}
+                action={handleGoBack}
+                rightAction
+                rightActionButton={
+                    <Pressable
+                        onPress={handleSubmit}
+                        hitSlop={8}
+                        style={styles.donePressable}
+                    >
+                        <Text style={styles.doneLabel}>Done</Text>
+                    </Pressable>
+                }
+            />
             <Toast />
-            <View
-                style={{
-                    padding: 20,
-                    justifyContent: "space-between",
-                    flex: 1,
-                }}
-            >
-                <View
-                    style={{
-                        flex: 1,
-                    }}
-                >
-                    <Text>{title}</Text>
+            <View style={styles.screenBody}>
+                <View style={styles.formBlock}>
+                    <Text style={styles.fieldLabel}>{fieldLabel}</Text>
                     <TextInput
-                        value={value as string}
+                        value={value}
                         onChangeText={setValue}
+                        style={styles.textInput}
                         autoFocus
-                        placeholder={placeholder as string}
+                        placeholder={placeholderText as string}
                         keyboardType="numeric"
+                        placeholderTextColor={colors.textSecondary}
                     />
                 </View>
             </View>
@@ -114,3 +115,34 @@ const Quotation: React.FC = () => {
 };
 
 export default Quotation;
+
+function createStyles(c: ReturnType<typeof Colors>) {
+    return StyleSheet.create({
+        donePressable: {
+            paddingRight: 20,
+            paddingVertical: 4,
+        },
+        doneLabel: {
+            color: c.primary,
+            fontSize: 16,
+        },
+        screenBody: {
+            paddingHorizontal: 20,
+            paddingTop: 16,
+            justifyContent: "space-between",
+            flex: 1,
+        },
+        formBlock: {
+            flex: 1,
+            gap: 16,
+        },
+        fieldLabel: {
+            fontSize: 16,
+            lineHeight: 22,
+            color: c.text,
+        },
+        textInput: {
+            minHeight: 48,
+        },
+    });
+}
