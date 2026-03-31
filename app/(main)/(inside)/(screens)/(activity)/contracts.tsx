@@ -1,6 +1,5 @@
 
-import ActiveContracts from "@/components/contracts/active";
-import PastContracts from "@/components/contracts/past";
+import ContractsTabContent from "@/components/contracts/contracts-tab-content";
 import { View } from "@/components/theme/Themed";
 import ScreenHeader from "@/components/ui/screen-header";
 import TopTabNavigation from "@/components/ui/top-tab-navigation";
@@ -10,12 +9,12 @@ const tabs = [
     {
         id: "Active",
         title: "Active",
-        component: <ActiveContracts />,
+        component: <ContractsTabContent scope="active" />,
     },
     {
         id: "Past",
         title: "Past",
-        component: <PastContracts />,
+        component: <ContractsTabContent scope="past" />,
     },
 ];
 
