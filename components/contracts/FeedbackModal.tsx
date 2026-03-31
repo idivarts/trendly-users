@@ -9,7 +9,7 @@ import { faClose, faStar } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
 import { doc, updateDoc } from "firebase/firestore";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
     Keyboard,
     KeyboardAvoidingView,
@@ -19,7 +19,6 @@ import {
 } from "react-native";
 import { Modal } from "react-native-paper";
 import TextInput from "../ui/text-input";
-;
 
 interface FeedbackModalProps {
     star: number;
@@ -39,6 +38,8 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
     refreshData,
 }) => {
     const theme = useTheme();
+    const colors = Colors(theme);
+    const styles = useMemo(() => createStyles(colors), [colors]);
     const [selectedStar, setSelectedStar] = useState(star);
     const [textFeedback, setTextFeedback] = useState("");
 
@@ -50,10 +51,14 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
                 contract.streamChannelId
             );
             if (contract.status != 2) {
-                Toaster.error("The contract has still not ended. You cant rate it still")
+                Toaster.error(
+                    "The contract has still not ended. You cant rate it still"
+                );
             }
             if (textFeedback === "" || selectedStar === 0) {
-                Toaster.error("Please provide feedback and rating before submitting")
+                Toaster.error(
+                    "Please provide feedback and rating before submitting"
+                );
                 return;
             }
             const date = new Date();
@@ -64,10 +69,13 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
                     timeSubmitted: date.getTime(),
                 },
                 status: 3,
-            })
-            HttpWrapper.fetch(`/api/collabs/contracts/${contract.streamChannelId}/feedback`, {
-                method: "POST"
-            })
+            });
+            HttpWrapper.fetch(
+                `/api/collabs/contracts/${contract.streamChannelId}/feedback`,
+                {
+                    method: "POST",
+                }
+            );
 
             setVisibility(false);
             refreshData();
@@ -80,27 +88,22 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
         <Modal
             visible={visible}
             onDismiss={() => setVisibility(false)}
-            contentContainerStyle={{
-                backgroundColor: Colors(theme).background,
-                borderRadius: 10,
-                padding: 20,
-                marginHorizontal: 20,
-                width: "100%",
-                maxWidth: 600,
-                alignSelf: "center"
-            }}
+            contentContainerStyle={styles.modalContainer}
         >
             <KeyboardAvoidingView
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
                 style={styles.keyboardAvoidingView}
             >
-                <Pressable style={styles.modal} onPress={() => Platform.OS != "web" && Keyboard.dismiss()}>
+                <Pressable
+                    style={styles.modal}
+                    onPress={() => Platform.OS != "web" && Keyboard.dismiss()}
+                >
                     <View style={styles.modalHeader}>
                         <Text style={styles.modalTitle}>Feedback</Text>
                         <Pressable onPress={() => setVisibility(false)}>
                             <FontAwesomeIcon
                                 icon={faClose}
-                                color={Colors(theme).primary}
+                                color={colors.primary}
                                 size={30}
                             />
                         </Pressable>
@@ -114,13 +117,16 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
                         {star === 0 && (
                             <View style={styles.modalRating}>
                                 {[1, 2, 3, 4, 5].map((i) => (
-                                    <Pressable key={i} onPress={() => setSelectedStar(i)}>
+                                    <Pressable
+                                        key={i}
+                                        onPress={() => setSelectedStar(i)}
+                                    >
                                         <FontAwesomeIcon
                                             icon={faStar}
                                             color={
                                                 i <= selectedStar
-                                                    ? Colors(theme).yellow
-                                                    : Colors(theme).text
+                                                    ? colors.yellow
+                                                    : colors.text
                                             }
                                             size={30}
                                         />
@@ -141,44 +147,22 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
                         )}
                         {!feedbackGiven && (
                             <Pressable
-                                style={{
-                                    backgroundColor: Colors(theme).primary,
-                                    paddingVertical: 10,
-                                    paddingHorizontal: 20,
-                                    borderRadius: 5,
-                                    marginVertical: 10,
-                                }}
+                                style={styles.primaryButton}
                                 onPress={() => {
                                     provideFeedback();
                                 }}
                             >
-                                <Text
-                                    style={{
-                                        fontSize: 16,
-                                        color: Colors(theme).white,
-                                    }}
-                                >
+                                <Text style={styles.primaryButtonLabel}>
                                     Submit Feedback
                                 </Text>
                             </Pressable>
                         )}
                         {feedbackGiven && (
                             <Pressable
-                                style={{
-                                    backgroundColor: Colors(theme).primary,
-                                    paddingVertical: 10,
-                                    paddingHorizontal: 20,
-                                    borderRadius: 5,
-                                    marginVertical: 10,
-                                }}
+                                style={styles.primaryButton}
                                 onPress={() => setVisibility(false)}
                             >
-                                <Text
-                                    style={{
-                                        fontSize: 16,
-                                        color: Colors(theme).white,
-                                    }}
-                                >
+                                <Text style={styles.primaryButtonLabel}>
                                     Close
                                 </Text>
                             </Pressable>
@@ -190,44 +174,70 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
     );
 };
 
-const styles = StyleSheet.create({
-    modal: {
-        width: "100%",
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    modalHeader: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        width: "100%",
-    },
-    keyboardAvoidingView: {},
-    modalTitle: {
-        fontSize: 20,
-        fontWeight: "bold",
-    },
-    modalContent: {
-        width: "100%",
-        alignItems: "center",
-    },
-    modalText: {
-        fontSize: 16,
-        marginVertical: 10,
-    },
-    modalRating: {
-        flexDirection: "row",
-        marginVertical: 10,
-    },
-    textInput: {
-        width: "100%",
-        height: 100,
-        borderWidth: 1,
-        borderRadius: 5,
-        padding: 10,
-        fontSize: 16,
-        marginVertical: 10,
-    },
-});
+function createStyles(c: ReturnType<typeof Colors>) {
+    return StyleSheet.create({
+        modalContainer: {
+            backgroundColor: c.background,
+            borderRadius: 10,
+            padding: 20,
+            marginHorizontal: 20,
+            width: "100%",
+            maxWidth: 600,
+            alignSelf: "center",
+        },
+        modal: {
+            width: "100%",
+            justifyContent: "center",
+            alignItems: "center",
+        },
+        modalHeader: {
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            width: "100%",
+        },
+        keyboardAvoidingView: {},
+        modalTitle: {
+            fontSize: 20,
+            fontWeight: "bold",
+            color: c.text,
+        },
+        modalContent: {
+            width: "100%",
+            alignItems: "center",
+        },
+        modalText: {
+            fontSize: 16,
+            marginVertical: 10,
+            color: c.text,
+        },
+        modalRating: {
+            flexDirection: "row",
+            marginVertical: 10,
+        },
+        textInput: {
+            width: "100%",
+            height: 100,
+            borderWidth: 1,
+            borderRadius: 5,
+            borderColor: c.outline,
+            padding: 10,
+            fontSize: 16,
+            marginVertical: 10,
+            color: c.text,
+        },
+        primaryButton: {
+            backgroundColor: c.primary,
+            paddingVertical: 10,
+            paddingHorizontal: 20,
+            borderRadius: 5,
+            marginVertical: 10,
+        },
+        primaryButtonLabel: {
+            fontSize: 16,
+            color: c.onPrimary,
+        },
+    });
+}
 
 export default FeedbackModal;

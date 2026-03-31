@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { ActivityIndicator } from "react-native";
 
 import {
     collection,
@@ -8,7 +7,7 @@ import {
     getDocs
 } from "firebase/firestore";
 
-import { View } from "@/components/theme/Themed";
+import DetailScreenCenteredLoader from "@/components/detail-screens/DetailScreenCenteredLoader";
 import { useAuthContext } from "@/contexts";
 import { IOScroll } from "@/shared-libs/contexts/scroll-context";
 import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
@@ -21,8 +20,6 @@ import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { Invitation } from "@/types/Collaboration";
 import { useIsFocused } from "@react-navigation/native";
 import CollaborationDetailsContent from "./CollaborationDetailsContent";
-;
-;
 
 export interface CollaborationDetail extends ICollaboration {
     id: string;
@@ -151,17 +148,7 @@ const CollaborationDetails: React.FC<CollaborationDetailsProps> = ({
     }, [cardType, pageID, cardId]);
 
     if (loading) {
-        return (
-            <View
-                style={{
-                    flex: 1,
-                    justifyContent: "center",
-                    alignItems: "center",
-                }}
-            >
-                <ActivityIndicator size="large" />
-            </View>
-        );
+        return <DetailScreenCenteredLoader />;
     }
 
     if (!collaboration) return null;
