@@ -1,4 +1,9 @@
+import ApplicationResponse from "@/components/application/ApplicationResponse";
 import CreateCollaborationMap from "@/components/create-collaboration/CreateCollaborationMap";
+import BrandInfoBorderedCard from "@/components/detail-screens/BrandInfoBorderedCard";
+import CollaborationDetailMedia from "@/components/detail-screens/CollaborationDetailMedia";
+import CollaborationDetailTitleBlock from "@/components/detail-screens/CollaborationDetailTitleBlock";
+import { useCollaborationDetailSurfaceStyles } from "@/components/detail-screens/useCollaborationDetailSurfaceStyles";
 import AuthModal from "@/components/modals/AuthModal";
 import Button from "@/components/ui/button";
 import { useAuthContext, useContractContext } from "@/contexts";
@@ -8,10 +13,6 @@ import { IManagers } from "@/shared-libs/firestore/trendly-pro/models/managers";
 import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { useMyNavigation } from "@/shared-libs/utils/router";
-import BrandInfoBorderedCard from "@/components/detail-screens/BrandInfoBorderedCard";
-import CollaborationDetailMedia from "@/components/detail-screens/CollaborationDetailMedia";
-import CollaborationDetailTitleBlock from "@/components/detail-screens/CollaborationDetailTitleBlock";
-import { useCollaborationDetailSurfaceStyles } from "@/components/detail-screens/useCollaborationDetailSurfaceStyles";
 import ConfirmationModal from "@/shared-uis/components/ConfirmationModal";
 import ImageComponent from "@/shared-uis/components/image-component";
 import RatingSection from "@/shared-uis/components/rating-section";
@@ -45,7 +46,6 @@ import { CollaborationDetail } from ".";
 import ChipCard from "../card-components/ChipComponent";
 import BrandModal from "./modal/BrandModal";
 import ManagerModal from "./modal/ManagerModal";
-import ApplicationResponse from "@/components/application/ApplicationResponse";
 interface ApplicationData extends IApplications {
     id: string;
 }
@@ -255,31 +255,6 @@ const CollaborationDetailsContent = (
                             >
                                 Register Now
                             </Button>
-                            {/* <View
-                style={{
-                  alignItems: "center",
-                  backgroundColor: Colors(theme).gold,
-                  borderRadius: 5,
-                  flexDirection: "row",
-                  gap: 10,
-                  padding: 16,
-                }}
-              >
-                <FontAwesomeIcon
-                  icon={faCircleInfo}
-                  size={20}
-                  color={Colors(theme).primary}
-                />
-                <Text
-                  style={{
-                    fontSize: 16,
-                    width: "95%",
-                  }}
-                >
-                  Please make sure to use this chat to first understand the
-                  influencer. Post that, you can start your collaboration here
-                </Text>
-              </View> */}
                         </View>
                     )}
 
