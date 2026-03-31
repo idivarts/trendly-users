@@ -4,13 +4,13 @@ import { useMyNavigation } from "@/shared-libs/utils/router";
 import Carousel from "@/shared-uis/components/carousel/carousel";
 import Colors from "@/shared-uis/constants/Colors";
 import { useTheme } from "@react-navigation/native";
-import React, { FC, useMemo } from "react";
-import { Pressable, StyleSheet } from "react-native";
+import React, { FC, useCallback, useMemo, useState } from "react";
+import { LayoutChangeEvent, Pressable, StyleSheet } from "react-native";
 
+import { View } from "@/components/theme/Themed";
 import CollaborationDetails from "./CollaborationDetails";
 import CollaborationHeader from "./CollaborationHeader";
 import CollaborationStats from "./CollaborationStats";
-import { View } from "@/components/theme/Themed";
 
 export interface CollaborationCardItem extends ICollaboration {
     id: string;
@@ -35,6 +35,14 @@ const CollaborationCard: FC<CollaborationCardProps> = ({
     const colors = Colors(theme);
     const styles = useMemo(() => createStyles(colors), [colors]);
     const router = useMyNavigation();
+    const [carouselRegionHeight, setCarouselRegionHeight] = useState(0);
+
+    const onCarouselRegionLayout = useCallback((e: LayoutChangeEvent) => {
+        const h = e.nativeEvent.layout.height;
+        setCarouselRegionHeight((prev) =>
+            Math.abs(prev - h) < 1 ? prev : h
+        );
+    }, []);
 
     return (
         <View style={styles.card}>
@@ -55,25 +63,34 @@ const CollaborationCard: FC<CollaborationCardProps> = ({
             />
 
             {item.attachments && item.attachments.length > 0 && (
-                <Carousel
-                    theme={theme}
-                    parentId={item.id}
-                    onImagePress={() => {
-                        router.push({
-                            // @ts-ignore
-                            pathname: `/collaboration-details/${item.id}`,
-                            params: {
-                                cardType: "collaboration",
-                            },
-                        });
-                    }}
-                    data={
-                        item.attachments?.map((attachment: any) =>
-                            processRawAttachment(attachment)
-                        ) || []
-                    }
-                    carouselWidth={carouselWidth}
-                />
+                <View
+                    style={styles.carouselRegion}
+                    onLayout={onCarouselRegionLayout}
+                >
+                    {carouselRegionHeight > 0 && (
+                        <Carousel
+                            theme={theme}
+                            parentId={item.id}
+                            width={carouselWidth}
+                            onImagePress={() => {
+                                router.push({
+                                    // @ts-ignore
+                                    pathname: `/collaboration-details/${item.id}`,
+                                    params: {
+                                        cardType: "collaboration",
+                                    },
+                                });
+                            }}
+                            data={
+                                item.attachments?.map((attachment: any) =>
+                                    processRawAttachment(attachment)
+                                ) || []
+                            }
+                            carouselWidth={carouselWidth}
+                            containerHeight={carouselRegionHeight}
+                        />
+                    )}
+                </View>
             )}
 
             <Pressable
@@ -113,12 +130,20 @@ const createStyles = (colors: ReturnType<typeof Colors>) =>
     StyleSheet.create({
         card: {
             width: "100%",
-            borderWidth: 0.3,
-            borderColor: colors.gray300,
+            height: "100%",
+            flex: 1,
+            minHeight: 0,
             gap: 8,
-            borderRadius: 5,
             paddingBottom: 16,
             overflow: "hidden",
+            // borderWidth: 0.3,
+            // borderColor: colors.gray300,
+            // borderRadius: 5,
+        },
+        carouselRegion: {
+            flex: 1,
+            minHeight: 0,
+            width: "100%",
         },
     });
 
