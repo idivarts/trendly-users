@@ -1,9 +1,9 @@
-import { useTheme } from "@react-navigation/native";
-
 import { Text, View } from "@/components/theme/Themed";
 import ImageComponent from "@/shared-uis/components/image-component";
 import Colors from "@/shared-uis/constants/Colors";
-import stylesFn from "@/styles/modal/UploadModal.styles";
+import { useTheme } from "@react-navigation/native";
+import React, { useMemo } from "react";
+import { StyleSheet } from "react-native";
 import { Modal } from "react-native-paper";
 
 interface ManagerModalProps {
@@ -24,77 +24,74 @@ const ManagerModal: React.FC<ManagerModalProps> = ({
     setVisibility,
 }) => {
     const theme = useTheme();
-    const styles = stylesFn(theme);
+    const colors = Colors(theme);
+    const styles = useMemo(() => createStyles(colors), [colors]);
 
     return (
         <Modal
             visible={visible}
             onDismiss={() => setVisibility(false)}
-            contentContainerStyle={{
-                backgroundColor: Colors(theme).background,
-                borderRadius: 10,
-                padding: 20,
-                marginHorizontal: 20,
-            }}
+            contentContainerStyle={styles.modalContainer}
         >
-            <View style={{ alignItems: "center", gap: 20 }}>
-                {/* Brand Image */}
+            <View style={styles.inner}>
                 <ImageComponent
                     url={manager.image}
                     initials={manager.name}
                     initialsSize={40}
                     altText="Manager Image"
-                    style={{
-                        width: 120,
-                        height: 120,
-                        borderRadius: 240,
-                    }}
+                    style={styles.avatar}
                 />
 
-                {/* Brand Name */}
-                <Text
-                    style={{
-                        fontSize: 24,
-                        fontWeight: "bold",
-                        color: Colors(theme).text,
-                        textAlign: "center",
-                    }}
-                >
-                    {manager.name}
-                </Text>
+                <Text style={styles.name}>{manager.name}</Text>
 
-                {/* Brand Description */}
-                <Text
-                    style={{
-                        fontSize: 16,
-                        color: Colors(theme).text,
-                        textAlign: "center",
-                    }}
-                >
-                    {brandDescription}
-                </Text>
+                <Text style={styles.description}>{brandDescription}</Text>
 
-                <View
-                    style={{
-                        flexDirection: "row",
-                        justifyContent: "center",
-                        gap: 10,
-                    }}
-                >
-                    <Text
-                        style={{
-                            fontSize: 16,
-                            color: Colors(theme).text,
-                        }}
-                    >
-                        Email: {manager.email}
-                    </Text>
+                <View style={styles.emailRow}>
+                    <Text style={styles.emailText}>Email: {manager.email}</Text>
                 </View>
-
-                {/* Brand Website */}
             </View>
         </Modal>
     );
 };
+
+function createStyles(c: ReturnType<typeof Colors>) {
+    return StyleSheet.create({
+        modalContainer: {
+            backgroundColor: c.background,
+            borderRadius: 10,
+            padding: 20,
+            marginHorizontal: 20,
+        },
+        inner: {
+            alignItems: "center",
+            gap: 20,
+        },
+        avatar: {
+            width: 120,
+            height: 120,
+            borderRadius: 240,
+        },
+        name: {
+            fontSize: 24,
+            fontWeight: "bold",
+            color: c.text,
+            textAlign: "center",
+        },
+        description: {
+            fontSize: 16,
+            color: c.text,
+            textAlign: "center",
+        },
+        emailRow: {
+            flexDirection: "row",
+            justifyContent: "center",
+            gap: 10,
+        },
+        emailText: {
+            fontSize: 16,
+            color: c.text,
+        },
+    });
+}
 
 export default ManagerModal;

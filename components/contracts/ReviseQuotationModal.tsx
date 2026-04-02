@@ -3,23 +3,15 @@ import { Console } from "@/shared-libs/utils/console";
 import { useMyNavigation } from "@/shared-libs/utils/router";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import Colors from "@/shared-uis/constants/Colors";
-import {
-    faDollarSign
-} from "@fortawesome/free-solid-svg-icons";
+import { faDollarSign } from "@fortawesome/free-solid-svg-icons";
 import { useTheme } from "@react-navigation/native";
 import { useLocalSearchParams } from "expo-router";
-import React, { FC, useEffect, useState } from "react";
-import {
-    Modal,
-    StyleSheet,
-    TouchableOpacity,
-    View,
-} from "react-native";
+import React, { FC, useEffect, useMemo, useState } from "react";
+import { Modal, StyleSheet, TouchableOpacity, View } from "react-native";
 import { Text } from "react-native-paper";
 import { useApplication } from "../proposals/useApplication";
 import Button from "../ui/button";
 import ListItem from "../ui/list-item/ListItem";
-;
 
 interface Application extends IApplications {
     id: string;
@@ -41,19 +33,19 @@ const ReviseQuotationModal: FC<ReviseQuotationModalProps> = ({
     refreshData,
 }) => {
     const theme = useTheme();
-    // const [showDatePicker, setShowDatePicker] = useState(false);
-    // const [timeline, setTimeline] = useState<Date | null>();
+    const colors = Colors(theme);
+    const styles = useMemo(() => createStyles(colors), [colors]);
     const [quotation, setQuotation] = useState<number | undefined>(undefined);
     const params = useLocalSearchParams();
-    const router = useMyNavigation()
-    const { updateApplication } = useApplication()
+    const router = useMyNavigation();
+    const { updateApplication } = useApplication();
+
     const updateMyApplication = async () => {
         try {
             if (!application) return;
             await updateApplication(application.collaborationId, {
                 quotation: quotation,
-                // timeline: timeline?.getTime(),
-            })
+            });
 
             Toaster.success("Quotation updated successfully");
             onDismiss();
@@ -66,8 +58,6 @@ const ReviseQuotationModal: FC<ReviseQuotationModalProps> = ({
 
     useEffect(() => {
         if (application) {
-            // const date = new Date(application.timeline);
-            // setTimeline(date);
             setQuotation(application.quotation);
         }
     }, [application]);
@@ -91,11 +81,9 @@ const ReviseQuotationModal: FC<ReviseQuotationModalProps> = ({
             onRequestClose={onDismiss}
         >
             <TouchableOpacity
-                style={{
-                    flex: 1,
-                    backgroundColor: Colors(theme).backdrop,
-                }}
+                style={styles.backdrop}
                 onPress={onDismiss}
+                activeOpacity={1}
             />
             <View style={styles.modalContainer}>
                 <Text style={styles.modalTitle}>Your Quotation</Text>
@@ -103,7 +91,9 @@ const ReviseQuotationModal: FC<ReviseQuotationModalProps> = ({
                     title="Your Quote"
                     leftIcon={faDollarSign}
                     rightContent
-                    content={quotation === undefined ? "(Required)" : "Rs. " + quotation}
+                    content={
+                        quotation === undefined ? "(Required)" : "Rs. " + quotation
+                    }
                     onAction={() => {
                         onDismiss();
                         router.push({
@@ -117,86 +107,46 @@ const ReviseQuotationModal: FC<ReviseQuotationModalProps> = ({
                         });
                     }}
                 />
-                {/* <ListItem
-          title="Timeline"
-          leftIcon={faClockRotateLeft}
-          rightContent
-          content={timeline ? timeline.toLocaleDateString() : ""}
-          onAction={() => setShowDatePicker(true)}
-        /> */}
-                <Button mode="contained" style={{}} onPress={updateMyApplication}>
+                <Button
+                    mode="contained"
+                    style={styles.submitButton}
+                    onPress={updateMyApplication}
+                >
                     Revise Quotation
                 </Button>
             </View>
-            {/* {showDatePicker && (
-        <View
-          style={{
-            backgroundColor: "white",
-            borderTopLeftRadius: 16,
-            borderTopRightRadius: 16,
-            position: "absolute",
-            bottom: 0,
-            left: 0,
-            right: 0,
-          }}
-        >
-          <DateTimePicker
-            value={timeline || new Date()} // Use the selected date or current date
-            mode="date" // Show the date picker
-            display="spinner" // Use spinner for iOS
-            onChange={(event: any, selectedDate?: Date) => {
-              setShowDatePicker(false);
-              if (selectedDate) {
-                setTimeline(selectedDate);
-              }
-            }} // Handle date changes
-            themeVariant={theme.dark ? "dark" : "light"}
-          />
-        </View>
-      )} */}
         </Modal>
     );
 };
 
-const styles = StyleSheet.create({
-    modalContainer: {
-        backgroundColor: "white",
-        padding: 16,
-        borderTopLeftRadius: 16,
-        borderTopRightRadius: 16,
-        gap: 16,
-        position: "absolute",
-        paddingBottom: 24,
-        bottom: 0,
-        left: 0,
-        right: 0,
-    },
-    modalTitle: {
-        fontSize: 18,
-        fontWeight: "bold",
-        marginBottom: 8,
-    },
-    modalSubtitle: {
-        fontSize: 16,
-        marginBottom: 16,
-        color: "gray",
-    },
-    card: {
-        marginBottom: 12,
-        elevation: 1,
-    },
-    cardContent: {
-        flexDirection: "row",
-        alignItems: "center",
-        padding: 8,
-    },
-    textContainer: {
-        flex: 1,
-        marginLeft: 12,
-    },
-    addButton: {
-        alignSelf: "center",
-    },
-});
+function createStyles(c: ReturnType<typeof Colors>) {
+    return StyleSheet.create({
+        backdrop: {
+            flex: 1,
+            backgroundColor: c.backdrop,
+        },
+        modalContainer: {
+            backgroundColor: c.card,
+            padding: 16,
+            borderTopLeftRadius: 16,
+            borderTopRightRadius: 16,
+            gap: 16,
+            position: "absolute",
+            paddingBottom: 24,
+            bottom: 0,
+            left: 0,
+            right: 0,
+        },
+        modalTitle: {
+            fontSize: 18,
+            fontWeight: "bold",
+            marginBottom: 8,
+            color: c.text,
+        },
+        submitButton: {
+            alignSelf: "stretch",
+        },
+    });
+}
 
 export default ReviseQuotationModal;

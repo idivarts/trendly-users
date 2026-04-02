@@ -6,6 +6,7 @@ import { APP_SCHEME } from "@/constants/App";
 import CustomPaperTheme from "@/constants/Theme";
 import {
     AuthContextProvider,
+    MobileLayoutProvider,
     ThemeContextProvider,
     useAuthContext,
     useThemeContext,
@@ -77,17 +78,19 @@ const RootLayout = () => {
     }
 
     return (
-        <UpdateProvider force={true} influencerApp={true}>
-            <AuthContextProvider>
-                <ThemeContextProvider>
-                    <GestureHandlerRootView>
-                        <BottomSheetModalProvider>
-                            <RootLayoutStack />
-                        </BottomSheetModalProvider>
-                    </GestureHandlerRootView>
-                </ThemeContextProvider>
-            </AuthContextProvider>
-        </UpdateProvider>
+        <MobileLayoutProvider>
+            <UpdateProvider force={true} influencerApp={true}>
+                <AuthContextProvider>
+                    <ThemeContextProvider>
+                        <GestureHandlerRootView>
+                            <BottomSheetModalProvider>
+                                <RootLayoutStack />
+                            </BottomSheetModalProvider>
+                        </GestureHandlerRootView>
+                    </ThemeContextProvider>
+                </AuthContextProvider>
+            </UpdateProvider>
+        </MobileLayoutProvider>
     );
 };
 

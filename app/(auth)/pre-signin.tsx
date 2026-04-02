@@ -15,7 +15,7 @@ import {
     Platform,
     Pressable,
     Text,
-    View
+    View,
 } from "react-native";
 import { Portal } from "react-native-paper";
 import Carousel, {
@@ -59,15 +59,17 @@ const PreSignIn = () => {
             animated: true,
         });
     };
-    const { xl } = useBreakpoints();
+    const { xl, width: screenWidth } = useBreakpoints();
+    const screenHeight = Dimensions.get("window").height;
+    const screenScale = Dimensions.get("window").scale;
 
     return (
         <AppLayout>
             <View style={{ flex: 1, alignSelf: "center" }}>
                 <Carousel
                     data={slides}
-                    width={xl ? Dimensions.get("window").width - 120 * 4 : Dimensions.get("window").width}
-                    height={Dimensions.get("window").height - 36 * Dimensions.get("window").scale}
+                    width={xl ? screenWidth - 120 * 4 : screenWidth}
+                    height={screenHeight - 36 * screenScale}
                     pagingEnabled
                     ref={swiperRef}
                     loop={false}

@@ -6,8 +6,9 @@ import {
     faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { useBreakpoints } from "@/hooks";
 import { useTheme } from "@react-navigation/native";
-import { Dimensions, Pressable } from "react-native";
+import { Pressable } from "react-native";
 import { List } from "react-native-paper";
 
 interface ContentItemProps {
@@ -34,6 +35,7 @@ const ListItem: React.FC<ContentItemProps> = ({
     small
 }) => {
     const theme = useTheme();
+    const { width: screenWidth } = useBreakpoints();
 
     return (
         <Pressable
@@ -75,8 +77,8 @@ const ListItem: React.FC<ContentItemProps> = ({
                         <Text
                             style={{
                                 fontSize: small ? 16 : 20,
-                                minWidth: Dimensions.get("window").width / 3,
-                                maxWidth: Dimensions.get("window").width * 0.7,
+                                minWidth: screenWidth / 3,
+                                maxWidth: screenWidth * 0.7,
                             }}
                         >
                             {title}

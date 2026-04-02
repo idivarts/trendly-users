@@ -106,11 +106,16 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
                         ...(userSnap.data() as User),
                         id: userSnap.id as string,
                     };
+
+                    if (userData.isKYCDone === undefined) {
+                        userData.isKYCDone = userData.kyc?.status === "approved"
+                    }
+
                     setIsLoggedIn(true);
                     setUser(userData);
                 } else {
                     Console.log("User not found");
-                    setIsLoggedIn(false)
+                    setIsLoggedIn(false);
                 }
                 setIsUserLoading(false);
             })

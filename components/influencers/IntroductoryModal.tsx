@@ -1,4 +1,4 @@
-import useBreakpoints from '@/shared-libs/utils/use-breakpoints'
+import { useBreakpoints } from '@/hooks'
 import { Text, View } from '@/shared-uis/components/theme/Themed'
 import Colors from '@/shared-uis/constants/Colors'
 import { useTheme } from '@react-navigation/native'

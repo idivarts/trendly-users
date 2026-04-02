@@ -3,7 +3,6 @@ import AppLayout from "@/layouts/app-layout";
 import { User } from "@/types/User";
 import { useTheme } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
-import { Dimensions } from "react-native";
 // import InfluencerCard from "../InfluencerCard";
 import { Text, View } from "../theme/Themed";
 
@@ -48,7 +47,7 @@ const ExploreInfluencers = () => {
     const { user } = useAuthContext()
     const theme = useTheme();
 
-    const { xl } = useBreakpoints();
+    const { xl, width: screenWidth } = useBreakpoints();
 
     const influencersRef = collection(FirestoreDB, "users");
     const q = query(
@@ -122,8 +121,8 @@ const ExploreInfluencers = () => {
         );
     }
 
-    const width = Math.min(MAX_WIDTH_WEB, Dimensions.get('window').width);
-    const height = Math.min(APPROX_CARD_HEIGHT, Dimensions.get('window').height);
+    const width = Math.min(MAX_WIDTH_WEB, screenWidth);
+    const height = APPROX_CARD_HEIGHT;
 
     return (
         <AppLayout>

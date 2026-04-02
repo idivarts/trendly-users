@@ -2,8 +2,9 @@ import { Text, View } from "@/components/theme/Themed";
 import Colors from "@/shared-uis/constants/Colors";
 import { faChevronRight, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { useBreakpoints } from "@/hooks";
 import { useTheme } from "@react-navigation/native";
-import { Dimensions, Pressable } from "react-native";
+import { Pressable } from "react-native";
 import { IconButton } from "react-native-paper";
 import RenderHTML from "react-native-render-html";
 
@@ -21,7 +22,7 @@ const ContentItem: React.FC<ContentItemProps> = ({
     title,
 }) => {
     const theme = useTheme();
-    const screenWidth = Dimensions.get("window").width;
+    const { width: screenWidth } = useBreakpoints();
 
     return (
         <Pressable
