@@ -15,7 +15,7 @@ import { handleModalOrInputPage } from "@/utils/TextInput";
 import { useTheme } from "@react-navigation/native";
 import { useLocalSearchParams } from "expo-router";
 import { doc, getDoc } from "firebase/firestore";
-import React, { useEffect, useMemo, useState } from "react";
+import { default as React, useEffect, useMemo, useState } from "react";
 import { Platform } from "react-native";
 
 const ApplyScreenWeb = () => {
