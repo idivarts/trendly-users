@@ -1,7 +1,6 @@
 import { View } from "@/components/theme/Themed";
 import ScreenHeader from "@/components/ui/screen-header";
 import AppLayout from "@/layouts/app-layout";
-import { useState } from "react";
 import {
     ScrollView,
     StyleSheet,
@@ -18,6 +17,14 @@ import {
     updateRazorpayBankDetails,
 } from "@/shared-libs/utils/kyc-api";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
+import { useEffect, useState } from "react";
+
+function splitStreetForForm(street?: string) {
+    if (!street) return { line1: "", line2: "" };
+    const i = street.indexOf(", ");
+    if (i === -1) return { line1: street, line2: "" };
+    return { line1: street.slice(0, i), line2: street.slice(i + 2) };
+}
 
 const BankAndShippingScreen = () => {
     const { user } = useAuthContext();
@@ -25,8 +32,37 @@ const BankAndShippingScreen = () => {
     const [bankModal, setBankModal] = useState(false);
     const [addressModal, setAddressModal] = useState(false);
 
-    const [bankForm, setBankForm] = useState(user?.bankDetails);
-    const [addressForm, setAddressForm] = useState(user?.currentAddress);
+    const [bankForm, setBankForm] = useState({
+        accountNumber: "",
+        ifsc: "",
+        beneficiaryName: "",
+    });
+    const [addressForm, setAddressForm] = useState({
+        line1: "",
+        line2: "",
+        city: "",
+        state: "",
+        postalCode: "",
+    });
+
+    useEffect(() => {
+        if (!user) return;
+        const b = user.kyc?.bankDetails;
+        setBankForm({
+            accountNumber: b?.accountNumber ?? "",
+            ifsc: b?.ifsc ?? "",
+            beneficiaryName: b?.beneficiaryName ?? "",
+        });
+        const ca = user.kyc?.currentAddress;
+        const { line1, line2 } = splitStreetForForm(ca?.street);
+        setAddressForm({
+            line1,
+            line2,
+            city: ca?.city ?? "",
+            state: ca?.state ?? "",
+            postalCode: ca?.postalCode ?? "",
+        });
+    }, [user]);
 
     if (!user) return null;
 
@@ -47,10 +83,10 @@ const BankAndShippingScreen = () => {
                 <View style={styles.card}>
                     <Text style={styles.cardTitle}>Verification Details</Text>
                     <Text style={styles.valueText}>
-                        {user.panDetails?.nameAsPerPAN}
+                        {user.kyc?.panDetails?.nameAsPerPAN}
                     </Text>
                     <Text style={styles.subText}>
-                        {user.panDetails?.panNumber}
+                        {user.kyc?.panDetails?.panNumber}
                     </Text>
 
                     <View style={styles.badge}>
@@ -66,13 +102,15 @@ const BankAndShippingScreen = () => {
                     </Text>
 
                     <Text style={styles.subText}>
-                        Account - {maskAccount(user.bankDetails?.accountNumber)}
+                        Account -{" "}
+                        {maskAccount(user.kyc?.bankDetails?.accountNumber)}
                     </Text>
                     <Text style={styles.subText}>
-                        IFSC - {user.bankDetails?.ifsc}
+                        IFSC - {user.kyc?.bankDetails?.ifsc}
                     </Text>
                     <Text style={styles.subText}>
-                        Account Holder - {user.bankDetails?.accountHolderName}
+                        Account Holder -{" "}
+                        {user.kyc?.bankDetails?.beneficiaryName}
                     </Text>
 
                     <TouchableOpacity
@@ -92,16 +130,22 @@ const BankAndShippingScreen = () => {
                     </Text>
 
                     <Text style={styles.subText}>
-                        {user.currentAddress?.line1}
+                        {
+                            splitStreetForForm(user.kyc?.currentAddress?.street)
+                                .line1
+                        }
                     </Text>
                     <Text style={styles.subText}>
-                        {user.currentAddress?.line2}
+                        {
+                            splitStreetForForm(user.kyc?.currentAddress?.street)
+                                .line2
+                        }
                     </Text>
                     <Text style={styles.subText}>
-                        {user.currentAddress?.city}
+                        {user.kyc?.currentAddress?.city}
                     </Text>
                     <Text style={styles.subText}>
-                        {user.currentAddress?.postalCode}
+                        {user.kyc?.currentAddress?.postalCode}
                     </Text>
 
                     <TouchableOpacity
@@ -122,28 +166,31 @@ const BankAndShippingScreen = () => {
                         style={styles.input}
                         placeholder="Account Number"
                         keyboardType="number-pad"
-                        value={bankForm?.accountNumber}
+                        value={bankForm.accountNumber}
                         onChangeText={(v) =>
-                            setBankForm({ ...bankForm!, accountNumber: v })
+                            setBankForm((prev) => ({
+                                ...prev,
+                                accountNumber: v,
+                            }))
                         }
                     />
                     <TextInput
                         style={styles.input}
                         placeholder="IFSC"
-                        value={bankForm?.ifsc}
+                        value={bankForm.ifsc}
                         onChangeText={(v) =>
-                            setBankForm({ ...bankForm!, ifsc: v })
+                            setBankForm((prev) => ({ ...prev, ifsc: v }))
                         }
                     />
                     <TextInput
                         style={styles.input}
                         placeholder="Account Holder Name"
-                        value={bankForm?.accountHolderName}
+                        value={bankForm.beneficiaryName}
                         onChangeText={(v) =>
-                            setBankForm({
-                                ...bankForm!,
-                                accountHolderName: v,
-                            })
+                            setBankForm((prev) => ({
+                                ...prev,
+                                beneficiaryName: v,
+                            }))
                         }
                     />
 
@@ -152,9 +199,9 @@ const BankAndShippingScreen = () => {
                         onPress={async () => {
                             try {
                                 if (
-                                    !bankForm?.accountNumber ||
-                                    !bankForm?.ifsc ||
-                                    !bankForm?.accountHolderName
+                                    !bankForm.accountNumber ||
+                                    !bankForm.ifsc ||
+                                    !bankForm.beneficiaryName
                                 ) {
                                     throw new Error("Please fill all bank fields.");
                                 }
@@ -162,13 +209,18 @@ const BankAndShippingScreen = () => {
                                 await updateRazorpayBankDetails({
                                     account_number: bankForm.accountNumber,
                                     ifsc: bankForm.ifsc,
-                                    beneficiary_name: bankForm.accountHolderName,
+                                    beneficiary_name: bankForm.beneficiaryName,
                                 });
 
                                 await updateUser({
-                                    bankDetails: {
-                                        ...bankForm,
-                                        isVerified: false,
+                                    kyc: {
+                                        ...user.kyc,
+                                        bankDetails: {
+                                            accountNumber: bankForm.accountNumber,
+                                            ifsc: bankForm.ifsc,
+                                            beneficiaryName:
+                                                bankForm.beneficiaryName,
+                                        },
                                         updatedAt: Date.now(),
                                     },
                                 });
@@ -195,45 +247,45 @@ const BankAndShippingScreen = () => {
                     <TextInput
                         style={styles.input}
                         placeholder="Address Line 1"
-                        value={addressForm?.line1}
+                        value={addressForm.line1}
                         onChangeText={(v) =>
-                            setAddressForm({ ...addressForm!, line1: v })
+                            setAddressForm((prev) => ({ ...prev, line1: v }))
                         }
                     />
                     <TextInput
                         style={styles.input}
                         placeholder="Address Line 2"
-                        value={addressForm?.line2}
+                        value={addressForm.line2}
                         onChangeText={(v) =>
-                            setAddressForm({ ...addressForm!, line2: v })
+                            setAddressForm((prev) => ({ ...prev, line2: v }))
                         }
                     />
                     <TextInput
                         style={styles.input}
                         placeholder="City"
-                        value={addressForm?.city}
+                        value={addressForm.city}
                         onChangeText={(v) =>
-                            setAddressForm({ ...addressForm!, city: v })
+                            setAddressForm((prev) => ({ ...prev, city: v }))
                         }
                     />
                     <TextInput
                         style={styles.input}
                         placeholder="State"
-                        value={addressForm?.state}
+                        value={addressForm.state}
                         onChangeText={(v) =>
-                            setAddressForm({ ...addressForm!, state: v })
+                            setAddressForm((prev) => ({ ...prev, state: v }))
                         }
                     />
                     <TextInput
                         style={styles.input}
                         placeholder="Postal Code"
                         keyboardType="number-pad"
-                        value={addressForm?.postalCode}
+                        value={addressForm.postalCode}
                         onChangeText={(v) =>
-                            setAddressForm({
-                                ...addressForm!,
+                            setAddressForm((prev) => ({
+                                ...prev,
                                 postalCode: v,
-                            })
+                            }))
                         }
                     />
 
@@ -242,28 +294,39 @@ const BankAndShippingScreen = () => {
                         onPress={async () => {
                             try {
                                 if (
-                                    !addressForm?.line1 ||
-                                    !addressForm?.city ||
-                                    !addressForm?.state ||
-                                    !addressForm?.postalCode
+                                    !addressForm.line1 ||
+                                    !addressForm.city ||
+                                    !addressForm.state ||
+                                    !addressForm.postalCode
                                 ) {
                                     throw new Error(
                                         "Please fill all required address fields."
                                     );
                                 }
 
+                                const streetMerged = [
+                                    addressForm.line1,
+                                    addressForm.line2,
+                                ]
+                                    .filter(Boolean)
+                                    .join(", ");
+
                                 await updateRazorpayAddress({
-                                    street: [addressForm.line1, addressForm.line2]
-                                        .filter(Boolean)
-                                        .join(", "),
+                                    street: streetMerged,
                                     city: addressForm.city,
                                     state: addressForm.state,
                                     postal_code: addressForm.postalCode,
                                 });
 
                                 await updateUser({
-                                    currentAddress: {
-                                        ...addressForm,
+                                    kyc: {
+                                        ...user.kyc,
+                                        currentAddress: {
+                                            street: streetMerged,
+                                            city: addressForm.city,
+                                            state: addressForm.state,
+                                            postalCode: addressForm.postalCode,
+                                        },
                                         updatedAt: Date.now(),
                                     },
                                 });

@@ -21,22 +21,22 @@ const VerificationBankScreen = () => {
     const { draft, setBank } = useKYCFlowContext();
 
     const [confirmAccountNumber, setConfirmAccountNumber] = useState(
-        draft.bankDetails.account_number
+        draft.bankDetails.accountNumber
     );
     useEffect(() => {
         if (!confirmAccountNumber) {
-            setConfirmAccountNumber(draft.bankDetails.account_number);
+            setConfirmAccountNumber(draft.bankDetails.accountNumber);
         }
-    }, [draft.bankDetails.account_number, confirmAccountNumber]);
+    }, [draft.bankDetails.accountNumber, confirmAccountNumber]);
 
     const [errors, setErrors] = useState<Record<string, string>>({});
 
     const validate = () => {
         const newErrors: Record<string, string> = {};
 
-        if (!draft.bankDetails.account_number.trim()) {
+        if (!draft.bankDetails.accountNumber.trim()) {
             newErrors.accountNumber = "Account number is required";
-        } else if (!ACCOUNT_REGEX.test(draft.bankDetails.account_number)) {
+        } else if (!ACCOUNT_REGEX.test(draft.bankDetails.accountNumber)) {
             newErrors.accountNumber =
                 "Enter a valid account number (9–18 digits)";
         }
@@ -45,7 +45,7 @@ const VerificationBankScreen = () => {
             newErrors.confirmAccountNumber =
                 "Please re-enter account number";
         } else if (
-            draft.bankDetails.account_number !== confirmAccountNumber
+            draft.bankDetails.accountNumber !== confirmAccountNumber
         ) {
             newErrors.confirmAccountNumber =
                 "Account numbers do not match";
@@ -57,10 +57,10 @@ const VerificationBankScreen = () => {
             newErrors.ifsc = "Enter a valid IFSC code";
         }
 
-        if (!draft.bankDetails.beneficiary_name.trim()) {
+        if (!draft.bankDetails.beneficiaryName.trim()) {
             newErrors.accountHolderName =
                 "Account holder name is required";
-        } else if (!NAME_REGEX.test(draft.bankDetails.beneficiary_name)) {
+        } else if (!NAME_REGEX.test(draft.bankDetails.beneficiaryName)) {
             newErrors.accountHolderName =
                 "Enter a valid name";
         }
@@ -76,10 +76,10 @@ const VerificationBankScreen = () => {
     };
 
     const isDisabled =
-        !draft.bankDetails.account_number ||
+        !draft.bankDetails.accountNumber ||
         !confirmAccountNumber ||
         !draft.bankDetails.ifsc ||
-        !draft.bankDetails.beneficiary_name;
+        !draft.bankDetails.beneficiaryName;
 
     return (
         <AppLayout>
@@ -91,10 +91,10 @@ const VerificationBankScreen = () => {
                         label="Account Number"
                         placeholder="14 digit Account Number"
                         keyboardType="number-pad"
-                        value={draft.bankDetails.account_number}
+                        value={draft.bankDetails.accountNumber}
                         onChangeText={(v) =>
                             setBank({
-                                account_number: v.replace(/[^0-9]/g, ""),
+                                accountNumber: v.replace(/[^0-9]/g, ""),
                             })
                         }
                         error={!!errors.accountNumber}
@@ -155,9 +155,9 @@ const VerificationBankScreen = () => {
                     <TextInput
                         label="Account Holder Name"
                         placeholder="Your Name..."
-                        value={draft.bankDetails.beneficiary_name}
+                        value={draft.bankDetails.beneficiaryName}
                         onChangeText={(v) =>
-                            setBank({ beneficiary_name: v })
+                            setBank({ beneficiaryName: v })
                         }
                         error={!!errors.accountHolderName}
                     />

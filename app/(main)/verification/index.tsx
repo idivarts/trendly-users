@@ -25,12 +25,12 @@ const VerificationPANScreen = () => {
 
     const validate = () => {
         const newErrors: typeof errors = {};
-        if (!draft.panDetails.name.trim()) {
+        if (!draft.panDetails.nameAsPerPAN.trim()) {
             newErrors.panName = "Name is required";
         }
-        if (!draft.panDetails.pan.trim()) {
+        if (!draft.panDetails.panNumber.trim()) {
             newErrors.panNumber = "PAN number is required";
-        } else if (!PAN_REGEX.test(draft.panDetails.pan)) {
+        } else if (!PAN_REGEX.test(draft.panDetails.panNumber)) {
             newErrors.panNumber = "Invalid PAN number";
         }
         setErrors(newErrors);
@@ -44,8 +44,8 @@ const VerificationPANScreen = () => {
 
     const isButtonDisabled =
         !draft.agreements.panConsent ||
-        !draft.panDetails.name.trim() ||
-        !draft.panDetails.pan.trim();
+        !draft.panDetails.nameAsPerPAN.trim() ||
+        !draft.panDetails.panNumber.trim();
 
     return (
         <AppLayout>
@@ -56,8 +56,10 @@ const VerificationPANScreen = () => {
                     <TextInput
                         label="Name (As per your PAN)"
                         placeholder="Eg. Rahul Sinha"
-                        value={draft.panDetails.name}
-                        onChangeText={(value) => setPan({ name: value })}
+                        value={draft.panDetails.nameAsPerPAN}
+                        onChangeText={(value) =>
+                            setPan({ nameAsPerPAN: value })
+                        }
                         mode="outlined"
                         error={!!errors.panName}
                     />
@@ -73,9 +75,9 @@ const VerificationPANScreen = () => {
                     <TextInput
                         label="PAN Number"
                         placeholder="Eg. INXXX0000X"
-                        value={draft.panDetails.pan}
+                        value={draft.panDetails.panNumber}
                         onChangeText={(text) =>
-                            setPan({ pan: text.toUpperCase() })
+                            setPan({ panNumber: text.toUpperCase() })
                         }
                         autoCapitalize="characters"
                         mode="outlined"

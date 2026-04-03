@@ -64,21 +64,24 @@ const VerificationAgreementScreen = () => {
         !submitting;
 
     const validateDraft = () => {
-        if (!draft.panDetails.name.trim() || !draft.panDetails.pan.trim()) {
+        if (
+            !draft.panDetails.nameAsPerPAN.trim() ||
+            !draft.panDetails.panNumber.trim()
+        ) {
             throw new Error("Please complete PAN details before proceeding.");
         }
         if (
             !draft.currentAddress.street.trim() ||
             !draft.currentAddress.city.trim() ||
             !draft.currentAddress.state.trim() ||
-            !draft.currentAddress.postal_code.trim()
+            !draft.currentAddress.postalCode.trim()
         ) {
             throw new Error("Please complete address details before proceeding.");
         }
         if (
-            !draft.bankDetails.account_number.trim() ||
+            !draft.bankDetails.accountNumber.trim() ||
             !draft.bankDetails.ifsc.trim() ||
-            !draft.bankDetails.beneficiary_name.trim()
+            !draft.bankDetails.beneficiaryName.trim()
         ) {
             throw new Error("Please complete bank details before proceeding.");
         }
@@ -91,61 +94,66 @@ const VerificationAgreementScreen = () => {
             setSubmitting(true);
             validateDraft();
 
+            const streetCombined = [
+                draft.currentAddress.street.trim(),
+                draft.currentAddress.line2?.trim(),
+            ]
+                .filter(Boolean)
+                .join(", ");
+
             const routeAccountResponse = await createRazorpayRouteAccount({
-                name: draft.panDetails.name.trim(),
-                pan: draft.panDetails.pan.trim(),
+                name: draft.panDetails.nameAsPerPAN.trim(),
+                pan: draft.panDetails.panNumber.trim(),
                 address: {
-                    street: [
-                        draft.currentAddress.street.trim(),
-                        draft.currentAddress.line2?.trim(),
-                    ]
-                        .filter(Boolean)
-                        .join(", "),
+                    street: streetCombined,
                     city: draft.currentAddress.city.trim(),
                     state: draft.currentAddress.state.trim(),
-                    postal_code: draft.currentAddress.postal_code.trim(),
+                    postal_code: draft.currentAddress.postalCode.trim(),
                 },
                 bank: {
-                    account_number: draft.bankDetails.account_number.trim(),
+                    account_number: draft.bankDetails.accountNumber.trim(),
                     ifsc: draft.bankDetails.ifsc.trim(),
-                    beneficiary_name: draft.bankDetails.beneficiary_name.trim(),
+                    beneficiary_name: draft.bankDetails.beneficiaryName.trim(),
                 },
                 reCreateAccount: user.kyc?.status === "failed",
             });
 
+            const accountId = String(
+                routeAccountResponse.accountId ?? user.kyc?.accountId ?? ""
+            );
+            const stakeHolderId = String(
+                routeAccountResponse.stakeholderId ??
+                    user.kyc?.stakeHolderId ??
+                    ""
+            );
+            const productId = String(
+                routeAccountResponse.productId ?? user.kyc?.productId ?? ""
+            );
+
             await updateDoc(doc(FirestoreDB, "users", user.id), {
                 isKYCDone: false,
                 kyc: {
+                    ...user.kyc,
+                    accountId,
+                    stakeHolderId,
+                    productId,
                     status: "in_progress",
                     updatedAt: Date.now(),
-                    provider: "razorpay_route",
-                    accountId:
-                        (routeAccountResponse.accountId as string | undefined) ||
-                        null,
-                    stakeholderId:
-                        (routeAccountResponse.stakeholderId as string | undefined) ||
-                        null,
-                    providerMeta: routeAccountResponse,
-                },
-                panDetails: {
-                    panNumber: draft.panDetails.pan.trim(),
-                    nameAsPerPAN: draft.panDetails.name.trim(),
-                    updatedAt: Date.now(),
-                },
-                currentAddress: {
-                    line1: draft.currentAddress.street.trim(),
-                    line2: draft.currentAddress.line2?.trim() || "",
-                    city: draft.currentAddress.city.trim(),
-                    state: draft.currentAddress.state.trim(),
-                    postalCode: draft.currentAddress.postal_code.trim(),
-                    updatedAt: Date.now(),
-                },
-                bankDetails: {
-                    accountNumber: draft.bankDetails.account_number.trim(),
-                    ifsc: draft.bankDetails.ifsc.trim(),
-                    accountHolderName: draft.bankDetails.beneficiary_name.trim(),
-                    isVerified: false,
-                    updatedAt: Date.now(),
+                    panDetails: {
+                        panNumber: draft.panDetails.panNumber.trim(),
+                        nameAsPerPAN: draft.panDetails.nameAsPerPAN.trim(),
+                    },
+                    currentAddress: {
+                        street: streetCombined,
+                        city: draft.currentAddress.city.trim(),
+                        state: draft.currentAddress.state.trim(),
+                        postalCode: draft.currentAddress.postalCode.trim(),
+                    },
+                    bankDetails: {
+                        accountNumber: draft.bankDetails.accountNumber.trim(),
+                        ifsc: draft.bankDetails.ifsc.trim(),
+                        beneficiaryName: draft.bankDetails.beneficiaryName.trim(),
+                    },
                 },
             });
 

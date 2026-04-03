@@ -94,10 +94,23 @@ const ProfileScreen = () => {
                         isKYCDone: isApproved,
                         kyc: {
                             ...user.kyc,
+                            accountId: String(
+                                statusResponse.accountId ??
+                                    user.kyc?.accountId ??
+                                    ""
+                            ),
+                            stakeHolderId: String(
+                                statusResponse.stakeholderId ??
+                                    user.kyc?.stakeHolderId ??
+                                    ""
+                            ),
+                            productId: String(
+                                statusResponse.productId ??
+                                    user.kyc?.productId ??
+                                    ""
+                            ),
                             status: isApproved ? "approved" : "in_progress",
                             updatedAt: Date.now(),
-                            providerStatus,
-                            providerMeta: statusResponse,
                         },
                     });
                 } catch (error) {

@@ -75,9 +75,9 @@ const VerificationAddressScreen = () => {
             newErrors.state = "Enter a valid state name";
         }
 
-        if (!draft.currentAddress.postal_code.trim()) {
+        if (!draft.currentAddress.postalCode.trim()) {
             newErrors.pincode = "Postal Code is required";
-        } else if (!PINCODE_REGEX.test(draft.currentAddress.postal_code)) {
+        } else if (!PINCODE_REGEX.test(draft.currentAddress.postalCode)) {
             newErrors.pincode = "Enter a valid 6-digit postal code";
         }
 
@@ -95,7 +95,7 @@ const VerificationAddressScreen = () => {
         !draft.currentAddress.street ||
         !draft.currentAddress.city ||
         !draft.currentAddress.state ||
-        !draft.currentAddress.postal_code;
+        !draft.currentAddress.postalCode;
 
     return (
         <AppLayout>
@@ -180,10 +180,10 @@ const VerificationAddressScreen = () => {
                         label="Postal Code"
                         placeholder="Postal Code here..."
                         keyboardType="number-pad"
-                        value={draft.currentAddress.postal_code}
+                        value={draft.currentAddress.postalCode}
                         onChangeText={(v) =>
                             setAddress({
-                                postal_code: v.replace(/[^0-9]/g, ""),
+                                postalCode: v.replace(/[^0-9]/g, ""),
                             })
                         }
                         error={!!errors.pincode}

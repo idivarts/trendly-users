@@ -1,26 +1,20 @@
+import type { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { PersistentStorage } from "@/shared-libs/utils/persistent-storage";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type PropsWithChildren } from "react";
 
-const KYC_DRAFT_STORAGE_KEY = "KYC_FLOW_DRAFT_V1";
+const KYC_DRAFT_STORAGE_KEY = "KYC_FLOW_DRAFT_V2";
+const KYC_DRAFT_STORAGE_KEY_LEGACY = "KYC_FLOW_DRAFT_V1";
 
-export interface KYCPanDraft {
-    name: string;
-    pan: string;
-}
+/** Matches `IUsers.kyc.panDetails` field names; used as multi-step form draft before submit. */
+export type KYCPanDraft = NonNullable<NonNullable<IUsers["kyc"]>["panDetails"]>;
 
-export interface KYCAddressDraft {
-    street: string;
+/** Matches `IUsers.kyc.currentAddress` plus optional `line2` merged into `street` on submit. */
+export interface KYCAddressDraft
+    extends NonNullable<NonNullable<IUsers["kyc"]>["currentAddress"]> {
     line2?: string;
-    city: string;
-    state: string;
-    postal_code: string;
 }
 
-export interface KYCBankDraft {
-    account_number: string;
-    ifsc: string;
-    beneficiary_name: string;
-}
+export type KYCBankDraft = NonNullable<NonNullable<IUsers["kyc"]>["bankDetails"]>;
 
 export interface KYCAgreementDraft {
     panConsent: boolean;
@@ -36,20 +30,20 @@ export interface KYCFlowDraft {
 
 const DEFAULT_DRAFT: KYCFlowDraft = {
     panDetails: {
-        name: "",
-        pan: "",
+        nameAsPerPAN: "",
+        panNumber: "",
     },
     currentAddress: {
         street: "",
         line2: "",
         city: "",
         state: "",
-        postal_code: "",
+        postalCode: "",
     },
     bankDetails: {
-        account_number: "",
+        accountNumber: "",
         ifsc: "",
-        beneficiary_name: "",
+        beneficiaryName: "",
     },
     agreements: {
         panConsent: false,
@@ -86,21 +80,61 @@ export const KYCFlowProvider: React.FC<PropsWithChildren> = ({ children }) => {
     useEffect(() => {
         const hydrate = async () => {
             try {
-                const stored = await PersistentStorage.get(KYC_DRAFT_STORAGE_KEY);
+                const stored =
+                    (await PersistentStorage.get(KYC_DRAFT_STORAGE_KEY)) ||
+                    (await PersistentStorage.get(KYC_DRAFT_STORAGE_KEY_LEGACY));
                 if (stored) {
-                    const parsed = JSON.parse(stored) as Partial<KYCFlowDraft>;
+                    const parsed = JSON.parse(stored) as Partial<KYCFlowDraft> & {
+                        panDetails?: Partial<KYCPanDraft> & { name?: string; pan?: string };
+                        currentAddress?: Partial<KYCAddressDraft> & {
+                            postal_code?: string;
+                        };
+                        bankDetails?: Partial<KYCBankDraft> & {
+                            account_number?: string;
+                            beneficiary_name?: string;
+                        };
+                    };
+                    const pan = parsed.panDetails || {};
+                    const addr = parsed.currentAddress || {};
+                    const bank = parsed.bankDetails || {};
                     setDraft({
                         panDetails: {
                             ...DEFAULT_DRAFT.panDetails,
-                            ...(parsed.panDetails || {}),
+                            nameAsPerPAN:
+                                pan.nameAsPerPAN ??
+                                ("name" in pan ? pan.name : "") ??
+                                "",
+                            panNumber:
+                                pan.panNumber ??
+                                ("pan" in pan ? pan.pan : "") ??
+                                "",
                         },
                         currentAddress: {
                             ...DEFAULT_DRAFT.currentAddress,
-                            ...(parsed.currentAddress || {}),
+                            street: addr.street ?? "",
+                            line2: addr.line2 ?? "",
+                            city: addr.city ?? "",
+                            state: addr.state ?? "",
+                            postalCode:
+                                addr.postalCode ??
+                                ("postal_code" in addr ? addr.postal_code : "") ??
+                                "",
                         },
                         bankDetails: {
                             ...DEFAULT_DRAFT.bankDetails,
-                            ...(parsed.bankDetails || {}),
+                            accountNumber:
+                                bank.accountNumber ??
+                                ("account_number" in bank
+                                    ? bank.account_number
+                                    : "") ??
+                                "",
+                            ifsc: bank.ifsc ?? "",
+                            beneficiaryName:
+                                bank.beneficiaryName ??
+                                ("beneficiary_name" in bank
+                                    ? bank.beneficiary_name
+                                    : "") ??
+                                "",
                         },
                         agreements: {
                             ...DEFAULT_DRAFT.agreements,
