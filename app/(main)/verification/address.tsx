@@ -1,6 +1,7 @@
 import { View } from "@/components/theme/Themed";
 import ScreenHeader from "@/components/ui/screen-header";
 import TextInput from "@/components/ui/text-input";
+import { useKYCFlowContext } from "@/contexts";
 import AppLayout from "@/layouts/app-layout";
 import { useMyNavigation } from "@/shared-libs/utils/router";
 import { useState } from "react";
@@ -48,45 +49,35 @@ const INDIAN_STATES = [
 
 const VerificationAddressScreen = () => {
     const router = useMyNavigation();
+    const { draft, setAddress } = useKYCFlowContext();
     const [stateMenuVisible, setStateMenuVisible] = useState(false);
-    const [form, setForm] = useState({
-        address1: "",
-        address2: "",
-        city: "",
-        state: "",
-        pincode: "",
-    });
 
     const [errors, setErrors] = useState<Record<string, string>>({});
-
-    const handleChange = (key: string, value: string) => {
-        setForm((prev) => ({ ...prev, [key]: value }));
-    };
 
     const validate = () => {
         const newErrors: Record<string, string> = {};
 
-        if (!form.address1.trim()) {
+        if (!draft.currentAddress.street.trim()) {
             newErrors.address1 = "Address Line 1 is required";
-        } else if (form.address1.trim().length < 5) {
+        } else if (draft.currentAddress.street.trim().length < 5) {
             newErrors.address1 = "Address is too short";
         }
 
-        if (!form.city.trim()) {
+        if (!draft.currentAddress.city.trim()) {
             newErrors.city = "City is required";
-        } else if (!CITY_STATE_REGEX.test(form.city)) {
+        } else if (!CITY_STATE_REGEX.test(draft.currentAddress.city)) {
             newErrors.city = "Enter a valid city name";
         }
 
-        if (!form.state.trim()) {
+        if (!draft.currentAddress.state.trim()) {
             newErrors.state = "State is required";
-        } else if (!CITY_STATE_REGEX.test(form.state)) {
+        } else if (!CITY_STATE_REGEX.test(draft.currentAddress.state)) {
             newErrors.state = "Enter a valid state name";
         }
 
-        if (!form.pincode.trim()) {
+        if (!draft.currentAddress.postal_code.trim()) {
             newErrors.pincode = "Postal Code is required";
-        } else if (!PINCODE_REGEX.test(form.pincode)) {
+        } else if (!PINCODE_REGEX.test(draft.currentAddress.postal_code)) {
             newErrors.pincode = "Enter a valid 6-digit postal code";
         }
 
@@ -101,10 +92,10 @@ const VerificationAddressScreen = () => {
     };
 
     const isDisabled =
-        !form.address1 ||
-        !form.city ||
-        !form.state ||
-        !form.pincode;
+        !draft.currentAddress.street ||
+        !draft.currentAddress.city ||
+        !draft.currentAddress.state ||
+        !draft.currentAddress.postal_code;
 
     return (
         <AppLayout>
@@ -115,8 +106,8 @@ const VerificationAddressScreen = () => {
                     <TextInput
                         label="Address Line 1"
                         placeholder="Flat No., Street Name, Locality"
-                        value={form.address1}
-                        onChangeText={(v) => handleChange("address1", v)}
+                        value={draft.currentAddress.street}
+                        onChangeText={(v) => setAddress({ street: v })}
                         error={!!errors.address1}
                     />
                     {errors.address1 && (
@@ -129,8 +120,8 @@ const VerificationAddressScreen = () => {
                     <TextInput
                         label="Address Line 2 (Optional)"
                         placeholder="Locality or Landmark"
-                        value={form.address2}
-                        onChangeText={(v) => handleChange("address2", v)}
+                        value={draft.currentAddress.line2 || ""}
+                        onChangeText={(v) => setAddress({ line2: v })}
                     />
                     <Text style={styles.helper}>Enter your Address Line 2</Text>
                 </View>
@@ -139,8 +130,8 @@ const VerificationAddressScreen = () => {
                     <TextInput
                         label="City"
                         placeholder="Your City name here..."
-                        value={form.city}
-                        onChangeText={(v) => handleChange("city", v)}
+                        value={draft.currentAddress.city}
+                        onChangeText={(v) => setAddress({ city: v })}
                         error={!!errors.city}
                     />
                     {errors.city && (
@@ -158,7 +149,7 @@ const VerificationAddressScreen = () => {
                             <TextInput
                                 label="State"
                                 placeholder="Select your State"
-                                value={form.state}
+                                value={draft.currentAddress.state}
                                 mode="outlined"
                                 editable={false}
                                 error={!!errors.state}
@@ -171,7 +162,7 @@ const VerificationAddressScreen = () => {
                                 key={state}
                                 title={state}
                                 onPress={() => {
-                                    handleChange("state", state);
+                                    setAddress({ state });
                                     setStateMenuVisible(false);
                                 }}
                             />
@@ -189,9 +180,11 @@ const VerificationAddressScreen = () => {
                         label="Postal Code"
                         placeholder="Postal Code here..."
                         keyboardType="number-pad"
-                        value={form.pincode}
+                        value={draft.currentAddress.postal_code}
                         onChangeText={(v) =>
-                            handleChange("pincode", v.replace(/[^0-9]/g, ""))
+                            setAddress({
+                                postal_code: v.replace(/[^0-9]/g, ""),
+                            })
                         }
                         error={!!errors.pincode}
                     />

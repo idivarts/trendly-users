@@ -13,6 +13,11 @@ import {
 import { useAuthContext } from "@/contexts";
 import { doc, updateDoc } from "firebase/firestore";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
+import {
+    updateRazorpayAddress,
+    updateRazorpayBankDetails,
+} from "@/shared-libs/utils/kyc-api";
+import Toaster from "@/shared-uis/components/toaster/Toaster";
 
 const BankAndShippingScreen = () => {
     const { user } = useAuthContext();
@@ -145,14 +150,36 @@ const BankAndShippingScreen = () => {
                     <TouchableOpacity
                         style={styles.saveButton}
                         onPress={async () => {
-                            await updateUser({
-                                bankDetails: {
-                                    ...bankForm,
-                                    isVerified: false,
-                                    updatedAt: Date.now(),
-                                },
-                            });
-                            setBankModal(false);
+                            try {
+                                if (
+                                    !bankForm?.accountNumber ||
+                                    !bankForm?.ifsc ||
+                                    !bankForm?.accountHolderName
+                                ) {
+                                    throw new Error("Please fill all bank fields.");
+                                }
+
+                                await updateRazorpayBankDetails({
+                                    account_number: bankForm.accountNumber,
+                                    ifsc: bankForm.ifsc,
+                                    beneficiary_name: bankForm.accountHolderName,
+                                });
+
+                                await updateUser({
+                                    bankDetails: {
+                                        ...bankForm,
+                                        isVerified: false,
+                                        updatedAt: Date.now(),
+                                    },
+                                });
+                                setBankModal(false);
+                                Toaster.success("Bank details updated successfully.");
+                            } catch (error: any) {
+                                Toaster.error(
+                                    error?.message ||
+                                        "Failed to update bank details."
+                                );
+                            }
                         }}
                     >
                         <Text style={styles.saveText}>Save</Text>
@@ -213,13 +240,43 @@ const BankAndShippingScreen = () => {
                     <TouchableOpacity
                         style={styles.saveButton}
                         onPress={async () => {
-                            await updateUser({
-                                currentAddress: {
-                                    ...addressForm,
-                                    updatedAt: Date.now(),
-                                },
-                            });
-                            setAddressModal(false);
+                            try {
+                                if (
+                                    !addressForm?.line1 ||
+                                    !addressForm?.city ||
+                                    !addressForm?.state ||
+                                    !addressForm?.postalCode
+                                ) {
+                                    throw new Error(
+                                        "Please fill all required address fields."
+                                    );
+                                }
+
+                                await updateRazorpayAddress({
+                                    street: [addressForm.line1, addressForm.line2]
+                                        .filter(Boolean)
+                                        .join(", "),
+                                    city: addressForm.city,
+                                    state: addressForm.state,
+                                    postal_code: addressForm.postalCode,
+                                });
+
+                                await updateUser({
+                                    currentAddress: {
+                                        ...addressForm,
+                                        updatedAt: Date.now(),
+                                    },
+                                });
+                                setAddressModal(false);
+                                Toaster.success(
+                                    "Shipping address updated successfully."
+                                );
+                            } catch (error: any) {
+                                Toaster.error(
+                                    error?.message ||
+                                        "Failed to update shipping address."
+                                );
+                            }
                         }}
                     >
                         <Text style={styles.saveText}>Save</Text>

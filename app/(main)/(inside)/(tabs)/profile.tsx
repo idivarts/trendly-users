@@ -6,6 +6,8 @@ import { COMPLETION_PERCENTAGE } from "@/constants/CompletionPercentage";
 import { PROFILE_ITEMS } from "@/constants/Profile";
 import { useAuthContext, useCloudMessagingContext } from "@/contexts";
 import AppLayout from "@/layouts/app-layout";
+import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
+import { getRazorpayAccountStatus } from "@/shared-libs/utils/kyc-api";
 import { useMyNavigation } from "@/shared-libs/utils/router";
 import ConfirmationModal from "@/shared-uis/components/ConfirmationModal";
 import Colors from "@/shared-uis/constants/Colors";
@@ -21,6 +23,7 @@ import * as WebBrowser from "expo-web-browser";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { View as RNView, ScrollView, StyleSheet, Text } from "react-native";
 import ConfettiCannon from "react-native-confetti-cannon";
+import { doc, updateDoc } from "firebase/firestore";
 
 const ProfileScreen = () => {
     const router = useMyNavigation();
@@ -70,6 +73,40 @@ const ProfileScreen = () => {
             };
             checkAndShowConfetti();
         }, [user?.isKYCDone])
+    );
+
+    useFocusEffect(
+        useCallback(() => {
+            const syncKycStatus = async () => {
+                if (!user?.id) return;
+                if (user?.kyc?.status !== "in_progress") return;
+
+                try {
+                    const statusResponse = await getRazorpayAccountStatus();
+                    const providerStatus =
+                        (statusResponse.status as string | undefined) ||
+                        (statusResponse.account?.status as string | undefined) ||
+                        "in_progress";
+                    const isApproved =
+                        providerStatus.toLowerCase() === "approved";
+
+                    await updateDoc(doc(FirestoreDB, "users", user.id), {
+                        isKYCDone: isApproved,
+                        kyc: {
+                            ...user.kyc,
+                            status: isApproved ? "approved" : "in_progress",
+                            updatedAt: Date.now(),
+                            providerStatus,
+                            providerMeta: statusResponse,
+                        },
+                    });
+                } catch (error) {
+                    console.error("Failed to sync KYC status", error);
+                }
+            };
+
+            syncKycStatus();
+        }, [user?.id, user?.kyc?.status])
     );
 
     return (

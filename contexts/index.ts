@@ -40,6 +40,10 @@ import {
     ThemeContextProvider,
     useThemeContext,
 } from "./theme-context.provider";
+import {
+    KYCFlowProvider,
+    useKYCFlowContext,
+} from "./kyc-flow-context.provider";
 
 export {
     AuthContextProvider,
@@ -54,6 +58,7 @@ export {
     getConstrainedWidth,
     MOBILE_MAX_WIDTH,
     NotificationContextProvider,
+    KYCFlowProvider,
     SocialContextProvider,
     ThemeContextProvider,
     MobileLayoutProvider,
@@ -67,5 +72,6 @@ export {
     useMobileLayout,
     useNotificationContext,
     useSocialContext,
-    useThemeContext
+    useThemeContext,
+    useKYCFlowContext
 };

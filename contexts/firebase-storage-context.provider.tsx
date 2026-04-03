@@ -11,6 +11,7 @@ import {
     uploadBytes,
     uploadString,
 } from "firebase/storage";
+import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 ;
 
 interface FirebaseStorageContextProps {
@@ -42,7 +43,17 @@ export const FirebaseStorageContextProvider: React.FC<PropsWithChildren> = ({
         path: string,
     ): Promise<string> => {
         const storageRef = ref(StorageApp, path);
-        await uploadBytes(storageRef, blob);
+        try {
+            await uploadBytes(storageRef, blob);
+        } catch (error) {
+            const parsed = await HttpWrapper.extractErrorMessage(error);
+            console.log("[FirebaseStorage] uploadBytes failed", {
+                path,
+                error: parsed,
+                raw: error,
+            });
+            throw new Error(parsed || "You don't have permission to upload to Firebase Storage.");
+        }
 
         const downloadURL = await getDownloadURL(storageRef);
         return downloadURL;

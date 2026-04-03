@@ -1,7 +1,10 @@
 import { View } from "@/components/theme/Themed";
 import ScreenHeader from "@/components/ui/screen-header";
+import { useAuthContext, useKYCFlowContext } from "@/contexts";
 import AppLayout from "@/layouts/app-layout";
+import { createRazorpayRouteAccount } from "@/shared-libs/utils/kyc-api";
 import { useMyNavigation } from "@/shared-libs/utils/router";
+import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { useState } from "react";
 import {
     ScrollView,
@@ -13,7 +16,6 @@ import {
 } from "react-native";
 import { doc, updateDoc } from "firebase/firestore";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
-import { useAuthContext } from "@/contexts";
 
 const AGREEMENT_TEXT = `
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
@@ -36,9 +38,9 @@ const VerificationAgreementScreen = () => {
     const router = useMyNavigation();
 
     const [hasScrolledToEnd, setHasScrolledToEnd] = useState(false);
-    const [agreePan, setAgreePan] = useState(false);
-    const [agreeTerms, setAgreeTerms] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
     const { user } = useAuthContext();
+    const { draft, setAgreements, reset } = useKYCFlowContext();
 
     const handleScroll = (
         event: NativeSyntheticEvent<NativeScrollEvent>
@@ -56,23 +58,104 @@ const VerificationAgreementScreen = () => {
     };
 
     const canProceed =
-        hasScrolledToEnd && agreePan && agreeTerms;
+        hasScrolledToEnd &&
+        draft.agreements.panConsent &&
+        draft.agreements.termsConsent &&
+        !submitting;
+
+    const validateDraft = () => {
+        if (!draft.panDetails.name.trim() || !draft.panDetails.pan.trim()) {
+            throw new Error("Please complete PAN details before proceeding.");
+        }
+        if (
+            !draft.currentAddress.street.trim() ||
+            !draft.currentAddress.city.trim() ||
+            !draft.currentAddress.state.trim() ||
+            !draft.currentAddress.postal_code.trim()
+        ) {
+            throw new Error("Please complete address details before proceeding.");
+        }
+        if (
+            !draft.bankDetails.account_number.trim() ||
+            !draft.bankDetails.ifsc.trim() ||
+            !draft.bankDetails.beneficiary_name.trim()
+        ) {
+            throw new Error("Please complete bank details before proceeding.");
+        }
+    };
 
     const handleSubmit = async () => {
         if (!canProceed || !user?.id) return;
 
         try {
+            setSubmitting(true);
+            validateDraft();
+
+            const routeAccountResponse = await createRazorpayRouteAccount({
+                name: draft.panDetails.name.trim(),
+                pan: draft.panDetails.pan.trim(),
+                address: {
+                    street: [
+                        draft.currentAddress.street.trim(),
+                        draft.currentAddress.line2?.trim(),
+                    ]
+                        .filter(Boolean)
+                        .join(", "),
+                    city: draft.currentAddress.city.trim(),
+                    state: draft.currentAddress.state.trim(),
+                    postal_code: draft.currentAddress.postal_code.trim(),
+                },
+                bank: {
+                    account_number: draft.bankDetails.account_number.trim(),
+                    ifsc: draft.bankDetails.ifsc.trim(),
+                    beneficiary_name: draft.bankDetails.beneficiary_name.trim(),
+                },
+                reCreateAccount: user.kyc?.status === "failed",
+            });
+
             await updateDoc(doc(FirestoreDB, "users", user.id), {
                 isKYCDone: false,
                 kyc: {
                     status: "in_progress",
                     updatedAt: Date.now(),
+                    provider: "razorpay_route",
+                    accountId:
+                        (routeAccountResponse.accountId as string | undefined) ||
+                        null,
+                    stakeholderId:
+                        (routeAccountResponse.stakeholderId as string | undefined) ||
+                        null,
+                    providerMeta: routeAccountResponse,
+                },
+                panDetails: {
+                    panNumber: draft.panDetails.pan.trim(),
+                    nameAsPerPAN: draft.panDetails.name.trim(),
+                    updatedAt: Date.now(),
+                },
+                currentAddress: {
+                    line1: draft.currentAddress.street.trim(),
+                    line2: draft.currentAddress.line2?.trim() || "",
+                    city: draft.currentAddress.city.trim(),
+                    state: draft.currentAddress.state.trim(),
+                    postalCode: draft.currentAddress.postal_code.trim(),
+                    updatedAt: Date.now(),
+                },
+                bankDetails: {
+                    accountNumber: draft.bankDetails.account_number.trim(),
+                    ifsc: draft.bankDetails.ifsc.trim(),
+                    accountHolderName: draft.bankDetails.beneficiary_name.trim(),
+                    isVerified: false,
+                    updatedAt: Date.now(),
                 },
             });
 
+            await reset();
             router.replace("/profile");
         } catch (error) {
             console.error("Failed to submit verification", error);
+            Toaster.error((error as Error)?.message || "Failed to submit verification.");
+        } finally {
+            setSubmitting(false);
         }
     };
 
@@ -95,12 +178,16 @@ const VerificationAgreementScreen = () => {
             <View style={styles.bottomContainer}>
                 <TouchableOpacity
                     style={styles.checkboxRow}
-                    onPress={() => setAgreePan(!agreePan)}
+                    onPress={() =>
+                        setAgreements({
+                            panConsent: !draft.agreements.panConsent,
+                        })
+                    }
                 >
                     <View
                         style={[
                             styles.checkbox,
-                            agreePan && styles.checked,
+                            draft.agreements.panConsent && styles.checked,
                         ]}
                     />
                     <Text style={styles.checkboxText}>
@@ -110,12 +197,16 @@ const VerificationAgreementScreen = () => {
 
                 <TouchableOpacity
                     style={styles.checkboxRow}
-                    onPress={() => setAgreeTerms(!agreeTerms)}
+                    onPress={() =>
+                        setAgreements({
+                            termsConsent: !draft.agreements.termsConsent,
+                        })
+                    }
                 >
                     <View
                         style={[
                             styles.checkbox,
-                            agreeTerms && styles.checked,
+                            draft.agreements.termsConsent && styles.checked,
                         ]}
                     />
                     <Text style={styles.checkboxText}>
@@ -132,7 +223,7 @@ const VerificationAgreementScreen = () => {
                     onPress={handleSubmit}
                 >
                     <Text style={styles.buttonText}>
-                        Proceed
+                        {submitting ? "Submitting..." : "Proceed"}
                     </Text>
                 </TouchableOpacity>
             </View>

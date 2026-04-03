@@ -19,8 +19,8 @@ import { doc, getDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { View } from "react-native";
 import { Card, Portal } from "react-native-paper";
+import ActionContainer from "./ActionContainer";
 import FeedbackModal from "./FeedbackModal";
-import InfluencerContractActions from "./InfluencerContractActions";
 import MemberContainer from "./MemberContainer";
 import ReviseQuotationModal from "./ReviseQuotationModal";
 
@@ -91,13 +91,13 @@ const ContractDetailsContent = (props: ContractDetailViewProps) => {
                         formatTimeToNow={formatTimeToNow}
                     />
 
-                    <InfluencerContractActions
+                    <ActionContainer
                         contract={props.contractData}
-                        collaborationData={props.collaborationDetail}
-                        userData={props.userData}
                         refreshData={props.refreshData}
                         showQuotationModal={() => setShowQuotationModal(true)}
                         feedbackModalVisible={() => setFeedbackModalVisible(true)}
+                        userData={props.userData}
+                        collaborationData={props.collaborationDetail}
                     />
 
                     <MemberContainer

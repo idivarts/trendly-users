@@ -1,6 +1,7 @@
 import { View } from "@/components/theme/Themed";
 import ScreenHeader from "@/components/ui/screen-header";
 import TextInput from "@/components/ui/text-input";
+import { useKYCFlowContext } from "@/contexts";
 import AppLayout from "@/layouts/app-layout";
 import { useMyNavigation } from "@/shared-libs/utils/router";
 import { useState } from "react";
@@ -15,10 +16,8 @@ const PAN_REGEX = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
 
 const VerificationPANScreen = () => {
     const router = useMyNavigation();
+    const { draft, setPan, setAgreements } = useKYCFlowContext();
 
-    const [panName, setPanName] = useState("");
-    const [panNumber, setPanNumber] = useState("");
-    const [agreed, setAgreed] = useState(false);
     const [errors, setErrors] = useState<{
         panName?: string;
         panNumber?: string;
@@ -26,12 +25,12 @@ const VerificationPANScreen = () => {
 
     const validate = () => {
         const newErrors: typeof errors = {};
-        if (!panName.trim()) {
+        if (!draft.panDetails.name.trim()) {
             newErrors.panName = "Name is required";
         }
-        if (!panNumber.trim()) {
+        if (!draft.panDetails.pan.trim()) {
             newErrors.panNumber = "PAN number is required";
-        } else if (!PAN_REGEX.test(panNumber)) {
+        } else if (!PAN_REGEX.test(draft.panDetails.pan)) {
             newErrors.panNumber = "Invalid PAN number";
         }
         setErrors(newErrors);
@@ -44,7 +43,9 @@ const VerificationPANScreen = () => {
     };
 
     const isButtonDisabled =
-        !agreed || !panName.trim() || !panNumber.trim();
+        !draft.agreements.panConsent ||
+        !draft.panDetails.name.trim() ||
+        !draft.panDetails.pan.trim();
 
     return (
         <AppLayout>
@@ -55,8 +56,8 @@ const VerificationPANScreen = () => {
                     <TextInput
                         label="Name (As per your PAN)"
                         placeholder="Eg. Rahul Sinha"
-                        value={panName}
-                        onChangeText={setPanName}
+                        value={draft.panDetails.name}
+                        onChangeText={(value) => setPan({ name: value })}
                         mode="outlined"
                         error={!!errors.panName}
                     />
@@ -72,9 +73,9 @@ const VerificationPANScreen = () => {
                     <TextInput
                         label="PAN Number"
                         placeholder="Eg. INXXX0000X"
-                        value={panNumber}
+                        value={draft.panDetails.pan}
                         onChangeText={(text) =>
-                            setPanNumber(text.toUpperCase())
+                            setPan({ pan: text.toUpperCase() })
                         }
                         autoCapitalize="characters"
                         mode="outlined"
@@ -92,9 +93,18 @@ const VerificationPANScreen = () => {
             <View style={styles.bottomContainer}>
                 <TouchableOpacity
                     style={styles.checkboxRow}
-                    onPress={() => setAgreed(!agreed)}
+                    onPress={() =>
+                        setAgreements({
+                            panConsent: !draft.agreements.panConsent,
+                        })
+                    }
                 >
-                    <View style={[styles.checkbox, agreed && styles.checked]} />
+                    <View
+                        style={[
+                            styles.checkbox,
+                            draft.agreements.panConsent && styles.checked,
+                        ]}
+                    />
                     <Text style={styles.checkboxText}>
                         I agree to use PAN for my verification
                     </Text>

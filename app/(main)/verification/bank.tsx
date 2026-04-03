@@ -1,9 +1,10 @@
 import { View } from "@/components/theme/Themed";
 import ScreenHeader from "@/components/ui/screen-header";
 import TextInput from "@/components/ui/text-input";
+import { useKYCFlowContext } from "@/contexts";
 import AppLayout from "@/layouts/app-layout";
 import { useMyNavigation } from "@/shared-libs/utils/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     ScrollView,
     StyleSheet,
@@ -17,50 +18,49 @@ const NAME_REGEX = /^[A-Za-z\s]{2,}$/;
 
 const VerificationBankScreen = () => {
     const router = useMyNavigation();
+    const { draft, setBank } = useKYCFlowContext();
 
-    const [form, setForm] = useState({
-        accountNumber: "",
-        confirmAccountNumber: "",
-        ifsc: "",
-        accountHolderName: "",
-    });
+    const [confirmAccountNumber, setConfirmAccountNumber] = useState(
+        draft.bankDetails.account_number
+    );
+    useEffect(() => {
+        if (!confirmAccountNumber) {
+            setConfirmAccountNumber(draft.bankDetails.account_number);
+        }
+    }, [draft.bankDetails.account_number, confirmAccountNumber]);
 
     const [errors, setErrors] = useState<Record<string, string>>({});
-
-    const handleChange = (key: string, value: string) => {
-        setForm((prev) => ({ ...prev, [key]: value }));
-    };
 
     const validate = () => {
         const newErrors: Record<string, string> = {};
 
-        if (!form.accountNumber.trim()) {
+        if (!draft.bankDetails.account_number.trim()) {
             newErrors.accountNumber = "Account number is required";
-        } else if (!ACCOUNT_REGEX.test(form.accountNumber)) {
+        } else if (!ACCOUNT_REGEX.test(draft.bankDetails.account_number)) {
             newErrors.accountNumber =
                 "Enter a valid account number (9–18 digits)";
         }
 
-        if (!form.confirmAccountNumber.trim()) {
+        if (!confirmAccountNumber.trim()) {
             newErrors.confirmAccountNumber =
                 "Please re-enter account number";
         } else if (
-            form.accountNumber !== form.confirmAccountNumber
+            draft.bankDetails.account_number !== confirmAccountNumber
         ) {
             newErrors.confirmAccountNumber =
                 "Account numbers do not match";
         }
 
-        if (!form.ifsc.trim()) {
+        if (!draft.bankDetails.ifsc.trim()) {
             newErrors.ifsc = "IFSC code is required";
-        } else if (!IFSC_REGEX.test(form.ifsc)) {
+        } else if (!IFSC_REGEX.test(draft.bankDetails.ifsc)) {
             newErrors.ifsc = "Enter a valid IFSC code";
         }
 
-        if (!form.accountHolderName.trim()) {
+        if (!draft.bankDetails.beneficiary_name.trim()) {
             newErrors.accountHolderName =
                 "Account holder name is required";
-        } else if (!NAME_REGEX.test(form.accountHolderName)) {
+        } else if (!NAME_REGEX.test(draft.bankDetails.beneficiary_name)) {
             newErrors.accountHolderName =
                 "Enter a valid name";
         }
@@ -76,10 +76,10 @@ const VerificationBankScreen = () => {
     };
 
     const isDisabled =
-        !form.accountNumber ||
-        !form.confirmAccountNumber ||
-        !form.ifsc ||
-        !form.accountHolderName;
+        !draft.bankDetails.account_number ||
+        !confirmAccountNumber ||
+        !draft.bankDetails.ifsc ||
+        !draft.bankDetails.beneficiary_name;
 
     return (
         <AppLayout>
@@ -91,12 +91,11 @@ const VerificationBankScreen = () => {
                         label="Account Number"
                         placeholder="14 digit Account Number"
                         keyboardType="number-pad"
-                        value={form.accountNumber}
+                        value={draft.bankDetails.account_number}
                         onChangeText={(v) =>
-                            handleChange(
-                                "accountNumber",
-                                v.replace(/[^0-9]/g, "")
-                            )
+                            setBank({
+                                account_number: v.replace(/[^0-9]/g, ""),
+                            })
                         }
                         error={!!errors.accountNumber}
                     />
@@ -115,10 +114,9 @@ const VerificationBankScreen = () => {
                         label="Re-enter Account Number"
                         placeholder="Same Account Number here"
                         keyboardType="number-pad"
-                        value={form.confirmAccountNumber}
+                        value={confirmAccountNumber}
                         onChangeText={(v) =>
-                            handleChange(
-                                "confirmAccountNumber",
+                            setConfirmAccountNumber(
                                 v.replace(/[^0-9]/g, "")
                             )
                         }
@@ -138,10 +136,10 @@ const VerificationBankScreen = () => {
                     <TextInput
                         label="IFSC Code"
                         placeholder="IFSC Code here"
-                        value={form.ifsc}
+                        value={draft.bankDetails.ifsc}
                         autoCapitalize="characters"
                         onChangeText={(v) =>
-                            handleChange("ifsc", v.toUpperCase())
+                            setBank({ ifsc: v.toUpperCase() })
                         }
                         error={!!errors.ifsc}
                     />
@@ -157,9 +155,9 @@ const VerificationBankScreen = () => {
                     <TextInput
                         label="Account Holder Name"
                         placeholder="Your Name..."
-                        value={form.accountHolderName}
+                        value={draft.bankDetails.beneficiary_name}
                         onChangeText={(v) =>
-                            handleChange("accountHolderName", v)
+                            setBank({ beneficiary_name: v })
                         }
                         error={!!errors.accountHolderName}
                     />

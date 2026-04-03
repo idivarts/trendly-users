@@ -8,16 +8,17 @@ import type { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/
 import type { IContracts } from "@/shared-libs/firestore/trendly-pro/models/contracts";
 import type { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { Console } from "@/shared-libs/utils/console";
-import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { useMyNavigation } from "@/shared-libs/utils/router";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { useTheme } from "@react-navigation/native";
-import { doc, updateDoc } from "firebase/firestore";
 import React, { useMemo, useState } from "react";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import { Text as ThemedText } from "../theme/Themed";
 import Button from "../ui/button";
 import Colors from "@/shared-uis/constants/Colors";
+import { state4MarkProductReceived } from "./api/State_4_api";
+import { state5SubmitDeliverable } from "./api/State_5_api";
+import { state6MarkVideoReuploaded } from "./api/State_6_api";
 
 const NUDGE_PAYMENT_MESSAGE = "Hi! Just a friendly reminder to complete the payment for our collaboration. Thank you.";
 const NUDGE_SHIPMENT_MESSAGE = "Hi! Could you please share the shipment details when the product is shipped? Thank you.";
@@ -52,10 +53,6 @@ const InfluencerContractActions: React.FC<InfluencerContractActionsProps> = ({
     );
     const isProductCollaboration =
         collaborationData?.promotionSubject === "physical_product";
-    const contractRef = useMemo(
-        () => doc(FirestoreDB, "contracts", contract.streamChannelId),
-        [contract.streamChannelId]
-    );
 
     const handleRefresh = async () => {
         try {
@@ -100,8 +97,14 @@ const InfluencerContractActions: React.FC<InfluencerContractActionsProps> = ({
     const handleMarkAsReceived = async () => {
         setUpdating(true);
         try {
-            await updateDoc(contractRef, {
-                status: ContractStatus.VIDEO_PENDING,
+            const proofPhotoUrl = contract.shipment?.proofOfDeliveryUrl;
+            if (!proofPhotoUrl?.trim()) {
+                throw new Error("Proof image is missing. Please mark product received from contract details flow.");
+            }
+            await state4MarkProductReceived({
+                contractId: contract.streamChannelId,
+                photoUrl: proofPhotoUrl,
+                notes: MARKED_RECEIVED_MESSAGE,
             });
             try {
                 await sendMessageToChannel(
@@ -113,7 +116,7 @@ const InfluencerContractActions: React.FC<InfluencerContractActionsProps> = ({
             await handleRefresh();
         } catch (e) {
             Console.error(e);
-            Toaster.error("Failed to update.");
+            Toaster.error((e as Error)?.message || "Failed to update.");
         } finally {
             setUpdating(false);
         }
@@ -122,14 +125,19 @@ const InfluencerContractActions: React.FC<InfluencerContractActionsProps> = ({
     const handleUploadVideoComplete = async () => {
         setUpdating(true);
         try {
-            await updateDoc(contractRef, {
-                status: ContractStatus.REVIEW_PENDING,
+            const existingVideoUrl = contract.deliverable?.deliverableLinks?.[0];
+            if (!existingVideoUrl?.trim()) {
+                throw new Error("No uploaded video found. Please upload video from contract details flow.");
+            }
+            await state5SubmitDeliverable({
+                contractId: contract.streamChannelId,
+                videoUrl: existingVideoUrl,
             });
             Toaster.success("Video submitted for review.");
             await handleRefresh();
         } catch (e) {
             Console.error(e);
-            Toaster.error("Failed to update.");
+            Toaster.error((e as Error)?.message || "Failed to update.");
         } finally {
             setUpdating(false);
         }
@@ -138,14 +146,19 @@ const InfluencerContractActions: React.FC<InfluencerContractActionsProps> = ({
     const handleReuploadVideoComplete = async () => {
         setUpdating(true);
         try {
-            await updateDoc(contractRef, {
-                status: ContractStatus.REVIEW_PENDING,
+            const existingVideoUrl = contract.deliverable?.deliverableLinks?.[0];
+            if (!existingVideoUrl?.trim()) {
+                throw new Error("No uploaded video found. Please re-upload from contract details flow.");
+            }
+            await state6MarkVideoReuploaded({
+                contractId: contract.streamChannelId,
+                videoUrl: existingVideoUrl,
             });
             Toaster.success("Video re-submitted for review.");
             await handleRefresh();
         } catch (e) {
             Console.error(e);
-            Toaster.error("Failed to update.");
+            Toaster.error((e as Error)?.message || "Failed to update.");
         } finally {
             setUpdating(false);
         }
