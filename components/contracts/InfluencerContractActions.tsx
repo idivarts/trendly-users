@@ -52,7 +52,17 @@ const InfluencerContractActions: React.FC<InfluencerContractActionsProps> = ({
         [contract.status]
     );
     const isProductCollaboration =
-        collaborationData?.promotionSubject === "physical_product";
+        collaborationData?.promotionSubject === "physical-product";
+    const hasRevisionRequest =
+        (contract.deliverable?.revisionCount || 0) > 0 ||
+        (contract.deliverable?.revisionNotes?.length || 0) > 0;
+    const scheduledReleaseAt =
+        contract.posting?.scheduledDate ??
+        (
+            contract as IContracts & {
+                releasePlan?: { scheduledReleaseAt?: number };
+            }
+        ).releasePlan?.scheduledReleaseAt;
 
     const handleRefresh = async () => {
         try {
@@ -175,7 +185,7 @@ const InfluencerContractActions: React.FC<InfluencerContractActionsProps> = ({
 
     const styles = useMemo(() => createStyles(colors), [colors]);
 
-    if (normalizedStatus === ContractStatus.PAYMENT_FAILED) {
+    if (normalizedStatus === ContractStatus.PaymentFailed) {
         return null;
     }
 
@@ -184,7 +194,7 @@ const InfluencerContractActions: React.FC<InfluencerContractActionsProps> = ({
             <ContractStatusView
                 status={normalizedStatus}
                 actor="influencer"
-                scheduledReleaseAt={contract.releasePlan?.scheduledReleaseAt}
+                scheduledReleaseAt={scheduledReleaseAt}
                 showDescription
             />
 
@@ -198,50 +208,47 @@ const InfluencerContractActions: React.FC<InfluencerContractActionsProps> = ({
             )}
 
             <View style={styles.actions}>
-                {normalizedStatus === ContractStatus.KYC_VERIFICATION && (
-                    <Button
-                        mode="contained"
-                        style={styles.button}
-                        onPress={() => router.push("/verification")}
-                        disabled={updating}
-                    >
-                        Complete KYC
-                    </Button>
-                )}
-
-                {normalizedStatus === ContractStatus.CONTRACT_PENDING && (
-                    <ThemedText style={styles.infoText}>
-                        Waiting for brand to confirm.
-                    </ThemedText>
-                )}
-
-                {normalizedStatus === ContractStatus.PAYMENT_PENDING && (
-                    <>
+                {normalizedStatus === ContractStatus.Pending &&
+                    !userData?.isKYCDone && (
                         <Button
                             mode="contained"
                             style={styles.button}
-                            onPress={handleNudgePayment}
-                            disabled={nudging}
+                            onPress={() => router.push("/verification")}
+                            disabled={updating}
                         >
-                            Nudge Brand for Payment
+                            Complete KYC
                         </Button>
-                        <Button
-                            mode="outlined"
-                            style={styles.button}
-                            onPress={handleGoToMessages}
-                        >
-                            Go to Messages
-                        </Button>
-                    </>
-                )}
+                    )}
 
-                {normalizedStatus === ContractStatus.PAYMENT_SUCCESSFUL && (
+                {normalizedStatus === ContractStatus.Pending &&
+                    userData?.isKYCDone && (
+                        <>
+                            <Button
+                                mode="contained"
+                                style={styles.button}
+                                onPress={handleNudgePayment}
+                                disabled={nudging}
+                            >
+                                Nudge Brand for Payment
+                            </Button>
+                            <Button
+                                mode="outlined"
+                                style={styles.button}
+                                onPress={handleGoToMessages}
+                            >
+                                Go to Messages
+                            </Button>
+                        </>
+                    )}
+
+                {normalizedStatus === ContractStatus.Started && (
                     <ThemedText style={styles.infoText}>
-                        Payment received. Next steps will appear here.
+                        Contract is active. Payment or onboarding is complete;
+                        next steps will follow from the brand.
                     </ThemedText>
                 )}
 
-                {normalizedStatus === ContractStatus.SHIPPING_PENDING && (
+                {normalizedStatus === ContractStatus.ShipmentPending && (
                     <>
                         <ThemedText style={styles.infoText}>
                             Shipment is pending from the brand.
@@ -257,7 +264,22 @@ const InfluencerContractActions: React.FC<InfluencerContractActionsProps> = ({
                     </>
                 )}
 
-                {normalizedStatus === ContractStatus.DELIVERY_PENDING &&
+                {normalizedStatus === ContractStatus.DeliveryPending &&
+                    isProductCollaboration && (
+                        <ThemedText style={styles.infoText}>
+                            Your shipment is on the way. You can confirm receipt
+                            once the product arrives.
+                        </ThemedText>
+                    )}
+
+                {normalizedStatus === ContractStatus.DeliveryPending &&
+                    !isProductCollaboration && (
+                        <ThemedText style={styles.infoText}>
+                            Waiting for the next step from the brand.
+                        </ThemedText>
+                    )}
+
+                {normalizedStatus === ContractStatus.DeliveryAcknowledgementPending &&
                     isProductCollaboration && (
                         <>
                             <Button
@@ -278,14 +300,14 @@ const InfluencerContractActions: React.FC<InfluencerContractActionsProps> = ({
                         </>
                     )}
 
-                {normalizedStatus === ContractStatus.DELIVERY_PENDING &&
+                {normalizedStatus === ContractStatus.DeliveryAcknowledgementPending &&
                     !isProductCollaboration && (
                         <ThemedText style={styles.infoText}>
-                            Delivery pending. Complete the required steps.
+                            Waiting for the next operational step.
                         </ThemedText>
                     )}
 
-                {normalizedStatus === ContractStatus.VIDEO_PENDING && (
+                {normalizedStatus === ContractStatus.VideoPending && (
                     <>
                         <Button
                             mode="contained"
@@ -302,10 +324,54 @@ const InfluencerContractActions: React.FC<InfluencerContractActionsProps> = ({
                     </>
                 )}
 
-                {normalizedStatus === ContractStatus.REVIEW_PENDING && (
+                {normalizedStatus === ContractStatus.ReviewPending &&
+                    hasRevisionRequest && (
+                        <>
+                            <Button
+                                mode="contained"
+                                style={styles.button}
+                                onPress={handleReuploadVideoComplete}
+                                disabled={updating}
+                            >
+                                Re-upload Video
+                            </Button>
+                            <ThemedText style={styles.helperText}>
+                                Re-upload with the requested changes, then click
+                                above to submit for review.
+                            </ThemedText>
+                        </>
+                    )}
+
+                {normalizedStatus === ContractStatus.ReviewPending &&
+                    !hasRevisionRequest && (
+                        <>
+                            <ThemedText style={styles.infoText}>
+                                Video is under review.
+                            </ThemedText>
+                            {feedbackModalVisible && (
+                                <Button
+                                    mode="outlined"
+                                    style={styles.button}
+                                    onPress={feedbackModalVisible}
+                                >
+                                    Give Feedback
+                                </Button>
+                            )}
+                        </>
+                    )}
+
+                {normalizedStatus === ContractStatus.PostingPending && (
+                    <ThemedText style={styles.infoText}>
+                        {scheduledReleaseAt
+                            ? "Video scheduled for release. See date above."
+                            : "Posting or release is in progress. Complete steps from contract details when the brand is ready."}
+                    </ThemedText>
+                )}
+
+                {normalizedStatus === ContractStatus.SettlementPending && (
                     <>
                         <ThemedText style={styles.infoText}>
-                            Video is under review.
+                            Video has been posted. Share feedback when ready.
                         </ThemedText>
                         {feedbackModalVisible && (
                             <Button
@@ -319,42 +385,7 @@ const InfluencerContractActions: React.FC<InfluencerContractActionsProps> = ({
                     </>
                 )}
 
-                {normalizedStatus === ContractStatus.REVISION_PENDING && (
-                    <>
-                        <Button
-                            mode="contained"
-                            style={styles.button}
-                            onPress={handleReuploadVideoComplete}
-                            disabled={updating}
-                        >
-                            Re-upload Video
-                        </Button>
-                        <ThemedText style={styles.helperText}>
-                            Re-upload with the requested changes, then click
-                            above to submit for review.
-                        </ThemedText>
-                    </>
-                )}
-
-                {normalizedStatus === ContractStatus.RELEASE_PLANNING && (
-                    <ThemedText style={styles.infoText}>
-                        Release will be scheduled by the brand.
-                    </ThemedText>
-                )}
-
-                {normalizedStatus === ContractStatus.RELEASE_SCHEDULED && (
-                    <ThemedText style={styles.infoText}>
-                        Video scheduled for release. See date above.
-                    </ThemedText>
-                )}
-
-                {normalizedStatus === ContractStatus.VIDEO_POSTED && (
-                    <ThemedText style={styles.infoText}>
-                        Video has been posted.
-                    </ThemedText>
-                )}
-
-                {normalizedStatus === ContractStatus.SETTLEMENT_DONE && (
+                {normalizedStatus === ContractStatus.Settled && (
                     <>
                         <ThemedText style={styles.infoText}>
                             Contract closed. Settlement complete.

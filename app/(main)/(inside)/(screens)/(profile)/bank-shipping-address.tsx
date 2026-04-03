@@ -10,8 +10,6 @@ import {
     TextInput,
 } from "react-native";
 import { useAuthContext } from "@/contexts";
-import { doc, updateDoc } from "firebase/firestore";
-import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import {
     updateRazorpayAddress,
     updateRazorpayBankDetails,
@@ -68,11 +66,6 @@ const BankAndShippingScreen = () => {
 
     const maskAccount = (num?: string) =>
         num ? `XXXXXX${num.slice(-4)}` : "";
-
-    const updateUser = async (data: any) => {
-        if (!user.id) return;
-        await updateDoc(doc(FirestoreDB, "users", user.id), data);
-    };
 
     return (
         <AppLayout>
@@ -212,18 +205,6 @@ const BankAndShippingScreen = () => {
                                     beneficiary_name: bankForm.beneficiaryName,
                                 });
 
-                                await updateUser({
-                                    kyc: {
-                                        ...user.kyc,
-                                        bankDetails: {
-                                            accountNumber: bankForm.accountNumber,
-                                            ifsc: bankForm.ifsc,
-                                            beneficiaryName:
-                                                bankForm.beneficiaryName,
-                                        },
-                                        updatedAt: Date.now(),
-                                    },
-                                });
                                 setBankModal(false);
                                 Toaster.success("Bank details updated successfully.");
                             } catch (error: any) {
@@ -318,18 +299,6 @@ const BankAndShippingScreen = () => {
                                     postal_code: addressForm.postalCode,
                                 });
 
-                                await updateUser({
-                                    kyc: {
-                                        ...user.kyc,
-                                        currentAddress: {
-                                            street: streetMerged,
-                                            city: addressForm.city,
-                                            state: addressForm.state,
-                                            postalCode: addressForm.postalCode,
-                                        },
-                                        updatedAt: Date.now(),
-                                    },
-                                });
                                 setAddressModal(false);
                                 Toaster.success(
                                     "Shipping address updated successfully."

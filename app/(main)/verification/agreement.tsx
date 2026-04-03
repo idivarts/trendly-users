@@ -14,8 +14,6 @@ import {
     NativeScrollEvent,
     NativeSyntheticEvent,
 } from "react-native";
-import { doc, updateDoc } from "firebase/firestore";
-import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 
 const AGREEMENT_TEXT = `
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
@@ -130,32 +128,9 @@ const VerificationAgreementScreen = () => {
                 routeAccountResponse.productId ?? user.kyc?.productId ?? ""
             );
 
-            await updateDoc(doc(FirestoreDB, "users", user.id), {
-                isKYCDone: false,
-                kyc: {
-                    ...user.kyc,
-                    accountId,
-                    stakeHolderId,
-                    productId,
-                    status: "in_progress",
-                    updatedAt: Date.now(),
-                    panDetails: {
-                        panNumber: draft.panDetails.panNumber.trim(),
-                        nameAsPerPAN: draft.panDetails.nameAsPerPAN.trim(),
-                    },
-                    currentAddress: {
-                        street: streetCombined,
-                        city: draft.currentAddress.city.trim(),
-                        state: draft.currentAddress.state.trim(),
-                        postalCode: draft.currentAddress.postalCode.trim(),
-                    },
-                    bankDetails: {
-                        accountNumber: draft.bankDetails.accountNumber.trim(),
-                        ifsc: draft.bankDetails.ifsc.trim(),
-                        beneficiaryName: draft.bankDetails.beneficiaryName.trim(),
-                    },
-                },
-            });
+            // Firestore user document is now updated only by backend
+            // after KYC account creation. Frontend no longer writes
+            // any KYC data directly.
 
             await reset();
             router.replace("/profile");

@@ -11,7 +11,7 @@ export interface State8SubmitPostingPayload {
 export async function state8SubmitPosting(payload: State8SubmitPostingPayload) {
     try {
         console.log(
-            `[ContractFlow] State ${ContractStatus.PostScheduled} (${CONTRACT_STATUS_LABELS[ContractStatus.PostScheduled]}) - state8SubmitPosting - POST /monetize/influencers/contracts/:contractId/posting | ${JSON.stringify(
+            `[ContractFlow] State ${ContractStatus.PostingPending} (${CONTRACT_STATUS_LABELS[ContractStatus.PostingPending]}) - state8SubmitPosting - POST /monetize/influencers/contracts/:contractId/posting | ${JSON.stringify(
                 { contractId: payload.contractId }
             )}`
         );
@@ -43,7 +43,7 @@ export interface State8RequestReschedulePayload {
 export async function state8RequestReschedule(payload: State8RequestReschedulePayload) {
     try {
         console.log(
-            `[ContractFlow] State ${ContractStatus.PostScheduled} (${CONTRACT_STATUS_LABELS[ContractStatus.PostScheduled]}) - state8RequestReschedule - POST /monetize/influencers/contracts/:contractId/posting/request-reschedule | ${JSON.stringify(
+            `[ContractFlow] State ${ContractStatus.PostingPending} (${CONTRACT_STATUS_LABELS[ContractStatus.PostingPending]}) - state8RequestReschedule - POST /monetize/influencers/contracts/:contractId/posting/request-reschedule | ${JSON.stringify(
                 { contractId: payload.contractId }
             )}`
         );

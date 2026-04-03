@@ -4,14 +4,17 @@ import TextInput from "@/components/ui/text-input";
 import { useKYCFlowContext } from "@/contexts";
 import AppLayout from "@/layouts/app-layout";
 import { useMyNavigation } from "@/shared-libs/utils/router";
-import { useState } from "react";
+import Colors from "@/shared-uis/constants/Colors";
+import { useTheme } from "@react-navigation/native";
+import { useMemo, useState } from "react";
 import {
+    Modal,
+    Pressable,
     ScrollView,
     StyleSheet,
     Text,
     TouchableOpacity,
 } from "react-native";
-import { Menu } from "react-native-paper";
 
 const CITY_STATE_REGEX = /^[A-Za-z\s]{2,}$/;
 const PINCODE_REGEX = /^[1-9][0-9]{5}$/;
@@ -49,6 +52,9 @@ const INDIAN_STATES = [
 
 const VerificationAddressScreen = () => {
     const router = useMyNavigation();
+    const theme = useTheme();
+    const colors = Colors(theme);
+    const modalStyles = useMemo(() => createStateModalStyles(colors), [colors]);
     const { draft, setAddress } = useKYCFlowContext();
     const [stateMenuVisible, setStateMenuVisible] = useState(false);
 
@@ -141,33 +147,21 @@ const VerificationAddressScreen = () => {
                 </View>
 
                 <View style={styles.field}>
-                    <Menu
-                        visible={stateMenuVisible}
-                        onDismiss={() => setStateMenuVisible(false)}
-                        style={{ width: '100%', paddingLeft:32, paddingVertical:56 }}
-                        anchor={
-                            <TextInput
-                                label="State"
-                                placeholder="Select your State"
-                                value={draft.currentAddress.state}
-                                mode="outlined"
-                                editable={false}
-                                error={!!errors.state}
-                                onPressIn={() => setStateMenuVisible(true)}
-                            />
-                        }
+                    <Pressable
+                        onPress={() => setStateMenuVisible(true)}
+                        accessibilityRole="button"
+                        accessibilityLabel="Select state"
+                        accessibilityHint="Opens a list of states"
                     >
-                        {INDIAN_STATES.map((state) => (
-                            <Menu.Item
-                                key={state}
-                                title={state}
-                                onPress={() => {
-                                    setAddress({ state });
-                                    setStateMenuVisible(false);
-                                }}
-                            />
-                        ))}
-                    </Menu>
+                        <TextInput
+                            label="State"
+                            placeholder="Select your State"
+                            value={draft.currentAddress.state}
+                            editable={false}
+                            error={!!errors.state}
+                            pointerEvents="none"
+                        />
+                    </Pressable>
 
                     {errors.state && (
                         <Text style={styles.error}>{errors.state}</Text>
@@ -209,9 +203,124 @@ const VerificationAddressScreen = () => {
                     </Text>
                 </TouchableOpacity>
             </View>
+
+            <Modal
+                visible={stateMenuVisible}
+                transparent
+                animationType="fade"
+                onRequestClose={() => setStateMenuVisible(false)}
+            >
+                <View style={modalStyles.modalRoot}>
+                    <Pressable
+                        style={modalStyles.modalBackdrop}
+                        onPress={() => setStateMenuVisible(false)}
+                        accessibilityLabel="Dismiss state list"
+                    />
+                    <View style={modalStyles.modalCard}>
+                        <Text style={modalStyles.modalTitle}>Select state</Text>
+                        <ScrollView
+                            style={modalStyles.stateScroll}
+                            contentContainerStyle={modalStyles.stateScrollContent}
+                            keyboardShouldPersistTaps="handled"
+                            showsVerticalScrollIndicator
+                            nestedScrollEnabled
+                        >
+                            {INDIAN_STATES.map((stateName) => (
+                                <Pressable
+                                    key={stateName}
+                                    style={({ pressed }) => [
+                                        modalStyles.stateRow,
+                                        pressed && modalStyles.stateRowPressed,
+                                    ]}
+                                    onPress={() => {
+                                        setAddress({ state: stateName });
+                                        setStateMenuVisible(false);
+                                    }}
+                                >
+                                    <Text style={modalStyles.stateRowText}>
+                                        {stateName}
+                                    </Text>
+                                </Pressable>
+                            ))}
+                        </ScrollView>
+                        <Pressable
+                            style={modalStyles.cancelButton}
+                            onPress={() => setStateMenuVisible(false)}
+                        >
+                            <Text style={modalStyles.cancelButtonText}>
+                                Cancel
+                            </Text>
+                        </Pressable>
+                    </View>
+                </View>
+            </Modal>
         </AppLayout>
     );
 };
+
+function createStateModalStyles(colors: ReturnType<typeof Colors>) {
+    return StyleSheet.create({
+        modalRoot: {
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            paddingHorizontal: 24,
+        },
+        modalBackdrop: {
+            ...StyleSheet.absoluteFillObject,
+            backgroundColor: colors.backdrop,
+        },
+        modalCard: {
+            width: "100%",
+            maxWidth: 400,
+            maxHeight: "75%",
+            borderRadius: 16,
+            backgroundColor: colors.modalBackground,
+            overflow: "hidden",
+            zIndex: 1,
+            elevation: 12,
+        },
+        modalTitle: {
+            fontSize: 18,
+            fontWeight: "600",
+            color: colors.text,
+            paddingHorizontal: 20,
+            paddingTop: 18,
+            paddingBottom: 12,
+        },
+        stateScroll: {
+            flexGrow: 0,
+            maxHeight: 360,
+        },
+        stateScrollContent: {
+            paddingBottom: 8,
+        },
+        stateRow: {
+            paddingVertical: 14,
+            paddingHorizontal: 20,
+            borderTopWidth: StyleSheet.hairlineWidth,
+            borderTopColor: colors.lightgray,
+        },
+        stateRowPressed: {
+            backgroundColor: colors.tag,
+        },
+        stateRowText: {
+            fontSize: 16,
+            color: colors.text,
+        },
+        cancelButton: {
+            paddingVertical: 14,
+            alignItems: "center",
+            borderTopWidth: StyleSheet.hairlineWidth,
+            borderTopColor: colors.lightgray,
+        },
+        cancelButtonText: {
+            fontSize: 16,
+            fontWeight: "600",
+            color: colors.primary,
+        },
+    });
+}
 
 const styles = StyleSheet.create({
     container: {

@@ -3,11 +3,11 @@ import ProfileItemCard from "@/components/profile/ProfileItemCard";
 import VerificationCard from "@/components/profile/VerificationCard";
 import { View } from "@/components/theme/Themed";
 import { COMPLETION_PERCENTAGE } from "@/constants/CompletionPercentage";
+import { userHasPhoneForKyc } from "@/utils/profile";
 import { PROFILE_ITEMS } from "@/constants/Profile";
 import { useAuthContext, useCloudMessagingContext } from "@/contexts";
 import AppLayout from "@/layouts/app-layout";
-import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
-import { getRazorpayAccountStatus } from "@/shared-libs/utils/kyc-api";
+import type { KYCStatus } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { useMyNavigation } from "@/shared-libs/utils/router";
 import ConfirmationModal from "@/shared-uis/components/ConfirmationModal";
 import Colors from "@/shared-uis/constants/Colors";
@@ -23,7 +23,6 @@ import * as WebBrowser from "expo-web-browser";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { View as RNView, ScrollView, StyleSheet, Text } from "react-native";
 import ConfettiCannon from "react-native-confetti-cannon";
-import { doc, updateDoc } from "firebase/firestore";
 
 const ProfileScreen = () => {
     const router = useMyNavigation();
@@ -34,7 +33,30 @@ const ProfileScreen = () => {
     const [showConfetti, setShowConfetti] = useState(false);
     const confettiRef = useRef<ConfettiCannon>(null);
 
+    /** Holds last known KYC status so VerificationCard does not flash `not_started` between snapshots. */
+    const [kycStatusSticky, setKycStatusSticky] = useState<KYCStatus | undefined>(
+        undefined
+    );
+
     const theme = useTheme();
+
+    useEffect(() => {
+        if (!user?.kyc) {
+            setKycStatusSticky(undefined);
+            return;
+        }
+        const s = user.kyc.status;
+        if (
+            s === "not_started" ||
+            s === "in_progress" ||
+            s === "failed" ||
+            s === "approved"
+        ) {
+            setKycStatusSticky(s);
+        }
+    }, [user?.kyc, user?.kyc?.status]);
+
+    const verificationKycStatus = user?.kyc?.status ?? kycStatusSticky;
 
     const handleSignOut = async () => {
         setLogoutModalVisible(false);
@@ -75,53 +97,6 @@ const ProfileScreen = () => {
         }, [user?.isKYCDone])
     );
 
-    useFocusEffect(
-        useCallback(() => {
-            const syncKycStatus = async () => {
-                if (!user?.id) return;
-                if (user?.kyc?.status !== "in_progress") return;
-
-                try {
-                    const statusResponse = await getRazorpayAccountStatus();
-                    const providerStatus =
-                        (statusResponse.status as string | undefined) ||
-                        (statusResponse.account?.status as string | undefined) ||
-                        "in_progress";
-                    const isApproved =
-                        providerStatus.toLowerCase() === "approved";
-
-                    await updateDoc(doc(FirestoreDB, "users", user.id), {
-                        isKYCDone: isApproved,
-                        kyc: {
-                            ...user.kyc,
-                            accountId: String(
-                                statusResponse.accountId ??
-                                    user.kyc?.accountId ??
-                                    ""
-                            ),
-                            stakeHolderId: String(
-                                statusResponse.stakeholderId ??
-                                    user.kyc?.stakeHolderId ??
-                                    ""
-                            ),
-                            productId: String(
-                                statusResponse.productId ??
-                                    user.kyc?.productId ??
-                                    ""
-                            ),
-                            status: isApproved ? "approved" : "in_progress",
-                            updatedAt: Date.now(),
-                        },
-                    });
-                } catch (error) {
-                    console.error("Failed to sync KYC status", error);
-                }
-            };
-
-            syncKycStatus();
-        }, [user?.id, user?.kyc?.status])
-    );
-
     return (
         <AppLayout>
             {showConfetti && (
@@ -155,12 +130,18 @@ const ProfileScreen = () => {
 
                 )}
 
-                <VerificationCard
-                    kycStatus={user?.kyc?.status}
-                    onStartVerification={() => {
-                        router.push("/verification");
-                    }}
-                />
+                {/* Profile ≥60% and phone on file (phone is one completion field but is not required for 60% alone). */}
+                {user != null &&
+                    (user.profile?.completionPercentage ?? 0) >=
+                        COMPLETION_PERCENTAGE &&
+                    userHasPhoneForKyc(user) && (
+                        <VerificationCard
+                            kycStatus={verificationKycStatus}
+                            onStartVerification={() => {
+                                router.push("/verification");
+                            }}
+                        />
+                    )}
                 {!user?.profile?.completionPercentage ||
                     user?.profile?.completionPercentage < COMPLETION_PERCENTAGE ? (
                     <View

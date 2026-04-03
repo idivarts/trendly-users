@@ -10,7 +10,7 @@ export interface State9SubmitUserFeedbackPayload {
 export async function state9SubmitUserFeedback(payload: State9SubmitUserFeedbackPayload) {
     try {
         console.log(
-            `[ContractFlow] State ${ContractStatus.PostDone} (${CONTRACT_STATUS_LABELS[ContractStatus.PostDone]}) - state9SubmitUserFeedback - POST /api/collabs/contracts/:contractId/user-feedback | ${JSON.stringify(
+            `[ContractFlow] State ${ContractStatus.SettlementPending} (${CONTRACT_STATUS_LABELS[ContractStatus.SettlementPending]}) - state9SubmitUserFeedback - POST /api/collabs/contracts/:contractId/user-feedback | ${JSON.stringify(
                 { contractId: payload.contractId }
             )}`
         );

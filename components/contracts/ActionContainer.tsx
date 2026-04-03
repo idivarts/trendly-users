@@ -39,12 +39,6 @@ interface ActionContainerProps {
     collaborationData: ICollaboration;
 }
 
-const toParityState = (rawStatus: number): number => {
-    const normalized = normalizeStatus(rawStatus);
-    if (normalized >= 0 && normalized <= 10) return normalized;
-    return 0;
-};
-
 const ActionContainer: FC<ActionContainerProps> = ({
     contract,
     refreshData,
@@ -86,7 +80,8 @@ const ActionContainer: FC<ActionContainerProps> = ({
     const rescheduleInFlightRef = useRef(false);
 
     const normalizedStatus = normalizeStatus(contract.status);
-    const parityState = toParityState(contract.status);
+    const isProductCollaboration =
+        collaborationData?.promotionSubject === "physical-product";
     const isKycBlocked = !userData?.isKYCDone;
     const hasRevisionRequest =
         (contract.deliverable?.revisionCount || 0) > 0 ||
@@ -438,8 +433,8 @@ const ActionContainer: FC<ActionContainerProps> = ({
             };
         }
 
-        switch (parityState) {
-            case 0:
+        switch (normalizedStatus) {
+            case ContractStatus.Pending:
                 return {
                     buttons: [
                         {
@@ -464,7 +459,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
                         text: "The contract is still not funded. Don’t start working on the requirement till the contract is funded",
                     },
                 };
-            case 1:
+            case ContractStatus.Started:
                 return {
                     buttons: [
                         {
@@ -479,7 +474,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
                         text: "Contract is active. Please wait for the next operational step from the brand.",
                     },
                 };
-            case 2:
+            case ContractStatus.PaymentFailed:
                 return {
                     buttons: [
                         {
@@ -498,7 +493,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
                         text: "Payment could not be completed. Ask the brand to retry payment so the contract can proceed.",
                     },
                 };
-            case 3:
+            case ContractStatus.ShipmentPending:
                 return {
                     buttons: [
                         {
@@ -519,7 +514,60 @@ const ActionContainer: FC<ActionContainerProps> = ({
                         text: "Congratulations! Your contract is funded. The brand would now be shipping the product to you",
                     },
                 };
-            case 4:
+            case ContractStatus.DeliveryPending:
+                if (!isProductCollaboration) {
+                    return {
+                        buttons: [
+                            {
+                                label: "Go to Messages",
+                                onPress: openMessages,
+                                variant: "contained",
+                                disabled: loading,
+                            },
+                        ],
+                        message: {
+                            variant: "info",
+                            text: "Contract is active. Please wait for the next step from the brand.",
+                        },
+                    };
+                }
+                return {
+                    buttons: [
+                        {
+                            label: "View Shipping Details",
+                            onPress: () => Toaster.info(getShippingDetailsMessage()),
+                            variant: "outlined",
+                            disabled: loading,
+                        },
+                        {
+                            label: "Go to Messages",
+                            onPress: openMessages,
+                            variant: "contained",
+                            disabled: loading,
+                        },
+                    ],
+                    message: {
+                        variant: "info",
+                        text: "Your shipment is on the way. View tracking details above; you can confirm receipt once the product arrives.",
+                    },
+                };
+            case ContractStatus.DeliveryAcknowledgementPending:
+                if (!isProductCollaboration) {
+                    return {
+                        buttons: [
+                            {
+                                label: "Go to Messages",
+                                onPress: openMessages,
+                                variant: "contained",
+                                disabled: loading,
+                            },
+                        ],
+                        message: {
+                            variant: "info",
+                            text: "Contract is active. Please wait for the next operational step.",
+                        },
+                    };
+                }
                 return {
                     buttons: [
                         {
@@ -540,7 +588,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
                         text: "Congratulations! Shipping has been done. Please mark above once you receive the product",
                     },
                 };
-            case 5:
+            case ContractStatus.VideoPending:
                 return {
                     buttons: [
                         {
@@ -561,7 +609,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
                         text: "Contract is in progress! Please deliver the video at your earliest given time",
                     },
                 };
-            case 6:
+            case ContractStatus.ReviewPending:
                 return {
                     buttons: [
                         {
@@ -591,15 +639,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
                             : "The brand is reviewing your video. Please wait before they approve it. You can request for approval to again notify the brand",
                     },
                 };
-            case 7:
-                return {
-                    buttons: [],
-                    message: {
-                        variant: "info",
-                        text: "Release is being planned by the brand. You will be updated once scheduled.",
-                    },
-                };
-            case 8:
+            case ContractStatus.PostingPending:
                 return {
                     buttons: [
                         {
@@ -617,10 +657,12 @@ const ActionContainer: FC<ActionContainerProps> = ({
                     ],
                     message: {
                         variant: "info",
-                        text: getPostScheduledMessage(),
+                        text: scheduledReleaseAt
+                            ? getPostScheduledMessage()
+                            : "Release may still be planned by the brand. Mark the video as posted when it is live, or ask for a reschedule.",
                     },
                 };
-            case 9:
+            case ContractStatus.SettlementPending:
                 return {
                     buttons: [
                         {
@@ -635,7 +677,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
                         text: "Video is posted. Please complete your feedback to close the collaboration loop.",
                     },
                 };
-            case 10:
+            case ContractStatus.Settled:
             default:
                 return {
                     buttons: [],
@@ -647,8 +689,9 @@ const ActionContainer: FC<ActionContainerProps> = ({
         }
     }, [
         isKycBlocked,
-        parityState,
+        isProductCollaboration,
         normalizedStatus,
+        scheduledReleaseAt,
         loading,
         contract.streamChannelId,
         contract.status,

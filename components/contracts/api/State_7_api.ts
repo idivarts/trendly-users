@@ -11,7 +11,7 @@ export interface State7ReadOnlyPayload {
 
 export async function state7ReadReleasePlan(_payload: State7ReadOnlyPayload) {
     console.log(
-        `[ContractFlow] State ${ContractStatus.PlanRelease} (${CONTRACT_STATUS_LABELS[ContractStatus.PlanRelease]}) - state7ReadReleasePlan - No API (read-only for influencer)`
+        `[ContractFlow] State ${ContractStatus.PostingPending} (${CONTRACT_STATUS_LABELS[ContractStatus.PostingPending]}) - state7ReadReleasePlan - No API (read-only for influencer)`
     );
     return;
 }

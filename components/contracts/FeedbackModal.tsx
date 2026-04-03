@@ -45,7 +45,7 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
         if (submitting) return;
         try {
             const normalizedStatus = normalizeStatus(contract.status);
-            if (normalizedStatus !== ContractStatus.PostDone) {
+            if (normalizedStatus !== ContractStatus.SettlementPending) {
                 Toaster.error("The contract has still not ended. You can't rate it yet.");
                 return;
             }
