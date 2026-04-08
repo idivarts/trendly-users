@@ -15,4 +15,3 @@ export async function state7ReadReleasePlan(_payload: State7ReadOnlyPayload) {
     );
     return;
 }
-

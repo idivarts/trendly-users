@@ -1,7 +1,7 @@
 import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 import { ContractStatus, CONTRACT_STATUS_LABELS } from "@/shared-constants/contract-status";
 
-export { state5SubmitDeliverable as state6MarkVideoReuploaded } from "./State_5_api";
+export { state5SubmitDeliverable as state6MarkVideoReuploaded } from "./VideoPending_api";
 
 export interface State6RequestApprovalPayload {
     contractId: string;
@@ -29,4 +29,3 @@ export async function state6RequestApproval(payload: State6RequestApprovalPayloa
         throw new Error(parsed || "Failed to request approval.");
     }
 }
-

@@ -17,7 +17,7 @@ import {
 } from "react-native";
 import { Modal } from "react-native-paper";
 import TextInput from "../ui/text-input";
-import { state9SubmitUserFeedback } from "./api/State_9_api";
+import { state9SubmitUserFeedback } from "./api/SettlementPending_api";
 
 interface FeedbackModalProps {
     star: number;

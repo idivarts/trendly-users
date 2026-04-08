@@ -16,9 +16,9 @@ import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import { Text as ThemedText } from "../theme/Themed";
 import Button from "../ui/button";
 import Colors from "@/shared-uis/constants/Colors";
-import { state4MarkProductReceived } from "./api/State_4_api";
-import { state5SubmitDeliverable } from "./api/State_5_api";
-import { state6MarkVideoReuploaded } from "./api/State_6_api";
+import { state4MarkProductReceived } from "./api/DeliveryPending_api";
+import { state5SubmitDeliverable } from "./api/VideoPending_api";
+import { state6MarkVideoReuploaded } from "./api/ReviewPending_api";
 
 const NUDGE_PAYMENT_MESSAGE = "Hi! Just a friendly reminder to complete the payment for our collaboration. Thank you.";
 const NUDGE_SHIPMENT_MESSAGE = "Hi! Could you please share the shipment details when the product is shipped? Thank you.";

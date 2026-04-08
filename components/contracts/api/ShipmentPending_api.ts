@@ -85,4 +85,3 @@ export async function state0AskToStartContract(payload: State3NudgePayload) {
 export async function state2AskRetryPayment(payload: State3NudgePayload) {
     return sendChannelNudge(ContractStatus.PaymentFailed, "state2AskRetryPayment", payload, RETRY_PAYMENT_MESSAGE);
 }
-

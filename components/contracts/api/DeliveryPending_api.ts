@@ -32,4 +32,3 @@ export async function state4MarkProductReceived(payload: State4MarkReceivedPaylo
         throw new Error(parsed || "Failed to submit product received details.");
     }
 }
-
