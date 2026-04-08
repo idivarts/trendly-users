@@ -1,6 +1,7 @@
+import { state8RequestReschedule } from "./api/PostingPending_api";
 import Colors from "@/shared-uis/constants/Colors";
 import { useTheme } from "@react-navigation/native";
-import React, { useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
     Keyboard,
     KeyboardAvoidingView,
@@ -154,4 +155,72 @@ function createStyles(colors: ReturnType<typeof Colors>) {
 }
 
 export default RequestRescheduleModal;
+
+export type RequestRescheduleModalRunWithRefresh = (
+    fn: () => Promise<void>,
+    successMessage: string
+) => Promise<void>;
+
+export function useRequestRescheduleModal(options: {
+    contractId: string;
+    runWithRefresh: RequestRescheduleModalRunWithRefresh;
+}) {
+    const { contractId, runWithRefresh } = options;
+    const [visible, setVisible] = useState(false);
+    const [rescheduleNote, setRescheduleNote] = useState("");
+    const rescheduleDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const rescheduleInFlightRef = useRef(false);
+
+    const open = useCallback(() => setVisible(true), []);
+
+    const close = useCallback(() => {
+        setVisible(false);
+        setRescheduleNote("");
+    }, []);
+
+    useEffect(() => {
+        return () => {
+            if (rescheduleDebounceRef.current) {
+                clearTimeout(rescheduleDebounceRef.current);
+            }
+        };
+    }, []);
+
+    const requestRescheduleWithDebounce = useCallback(async () => {
+        if (rescheduleInFlightRef.current || rescheduleDebounceRef.current) return;
+        rescheduleInFlightRef.current = true;
+        rescheduleDebounceRef.current = setTimeout(() => {
+            rescheduleDebounceRef.current = null;
+        }, 1500);
+        try {
+            await runWithRefresh(
+                async () => {
+                    const trimmed = rescheduleNote.trim();
+                    if (!trimmed) throw new Error("Please add a reason for reschedule.");
+                    await state8RequestReschedule({
+                        contractId,
+                        note: trimmed,
+                    });
+                    close();
+                },
+                "Reschedule request sent."
+            );
+        } finally {
+            rescheduleInFlightRef.current = false;
+        }
+    }, [contractId, rescheduleNote, runWithRefresh, close]);
+
+    const requestRescheduleModalProps = useMemo(
+        () => ({
+            visible,
+            note: rescheduleNote,
+            onClose: close,
+            onChangeNote: setRescheduleNote,
+            onSubmit: requestRescheduleWithDebounce,
+        }),
+        [visible, rescheduleNote, close, requestRescheduleWithDebounce]
+    );
+
+    return { open, requestRescheduleModalProps };
+}
 

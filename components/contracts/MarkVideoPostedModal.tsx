@@ -1,8 +1,12 @@
+import { state8SubmitPosting } from "./api/PostingPending_api";
+import type { AssetItem } from "@/shared-libs/types/Asset";
 import Colors from "@/shared-uis/constants/Colors";
+import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { faArrowUpFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
-import React, { useMemo, useRef } from "react";
+import * as ImagePicker from "expo-image-picker";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
     Image,
     Keyboard,
@@ -271,3 +275,188 @@ function createStyles(colors: ReturnType<typeof Colors>) {
 }
 
 export default MarkVideoPostedModal;
+
+export type MarkVideoPostedModalRunWithRefresh = (
+    fn: () => Promise<void>,
+    successMessage: string
+) => Promise<void>;
+
+export function useMarkVideoPostedModal(options: {
+    contractId: string;
+    uploadFile: (file: File) => Promise<{ imageUrl?: string }>;
+    uploadFileUri: (fileUri: AssetItem) => Promise<{ imageUrl?: string }>;
+    runWithRefresh: MarkVideoPostedModalRunWithRefresh;
+    setActionLoading: (loading: boolean) => void;
+}) {
+    const { contractId, uploadFile, uploadFileUri, runWithRefresh, setActionLoading } = options;
+    const [visible, setVisible] = useState(false);
+    const [postedVideoLink, setPostedVideoLink] = useState("");
+    const [postedProofScreenshot, setPostedProofScreenshot] = useState("");
+    const [postedProofScreenshotPreviewUri, setPostedProofScreenshotPreviewUri] = useState("");
+    const [postedProofScreenshotName, setPostedProofScreenshotName] = useState("");
+    const [postedNotes, setPostedNotes] = useState("");
+    const postingDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const postingInFlightRef = useRef(false);
+
+    const open = useCallback(() => setVisible(true), []);
+
+    const close = useCallback(() => {
+        setVisible(false);
+        setPostedVideoLink("");
+        setPostedProofScreenshot("");
+        setPostedProofScreenshotPreviewUri("");
+        setPostedProofScreenshotName("");
+        setPostedNotes("");
+    }, []);
+
+    useEffect(() => {
+        return () => {
+            if (postedProofScreenshotPreviewUri && postedProofScreenshotPreviewUri.startsWith("blob:")) {
+                URL.revokeObjectURL(postedProofScreenshotPreviewUri);
+            }
+        };
+    }, [postedProofScreenshotPreviewUri]);
+
+    useEffect(() => {
+        return () => {
+            if (postingDebounceRef.current) {
+                clearTimeout(postingDebounceRef.current);
+            }
+        };
+    }, []);
+
+    const pickProofScreenshotImage = useCallback(async () => {
+        const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (permission.status !== "granted") {
+            Toaster.error("Please allow media permissions to upload image.");
+            return;
+        }
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            quality: 0.85,
+            allowsEditing: false,
+        });
+        if (!result.canceled && result.assets[0]?.uri) {
+            const localUri = result.assets[0].uri;
+            setPostedProofScreenshotPreviewUri(localUri);
+            setPostedProofScreenshotName(result.assets[0].fileName || "Screenshot selected");
+            setActionLoading(true);
+            try {
+                const uploadedImage = await uploadFileUri({
+                    id: localUri,
+                    localUri,
+                    uri: localUri,
+                    type: "image",
+                } as AssetItem);
+                const imageUrl = uploadedImage.imageUrl;
+                if (!imageUrl) {
+                    throw new Error("Image upload failed. Please try again.");
+                }
+                setPostedProofScreenshot(imageUrl);
+            } catch (error: unknown) {
+                const message = error instanceof Error ? error.message : "Failed to upload proof screenshot.";
+                setPostedProofScreenshot("");
+                setPostedProofScreenshotPreviewUri("");
+                setPostedProofScreenshotName("");
+                Toaster.error(message);
+            } finally {
+                setActionLoading(false);
+            }
+        }
+    }, [uploadFileUri, setActionLoading]);
+
+    const pickProofScreenshotWeb = useCallback(
+        async (file: File) => {
+            const objectUrl = URL.createObjectURL(file);
+            setPostedProofScreenshotPreviewUri((prev) => {
+                if (prev.startsWith("blob:")) {
+                    URL.revokeObjectURL(prev);
+                }
+                return objectUrl;
+            });
+            setPostedProofScreenshotName(file.name || "Screenshot selected");
+            setPostedProofScreenshot("");
+            setActionLoading(true);
+            try {
+                const uploadedImage = await uploadFile(file);
+                const imageUrl = uploadedImage.imageUrl;
+                if (!imageUrl) {
+                    throw new Error("Image upload failed. Please try again.");
+                }
+                setPostedProofScreenshot(imageUrl);
+            } catch (error: unknown) {
+                const message = error instanceof Error ? error.message : "Failed to upload proof screenshot.";
+                setPostedProofScreenshot("");
+                setPostedProofScreenshotPreviewUri("");
+                setPostedProofScreenshotName("");
+                Toaster.error(message);
+            } finally {
+                setActionLoading(false);
+            }
+        },
+        [uploadFile, setActionLoading]
+    );
+
+    const handleMarkPostedSubmit = useCallback(
+        () =>
+            runWithRefresh(
+                async () => {
+                    if (!postedVideoLink.trim()) throw new Error("Please add the posted video link.");
+                    if (!postedProofScreenshot.trim()) throw new Error("Please add the proof screenshot.");
+                    await state8SubmitPosting({
+                        contractId,
+                        proofScreenshot: postedProofScreenshot.trim(),
+                        postUrl: postedVideoLink.trim(),
+                        notes: postedNotes.trim() || undefined,
+                    });
+                    close();
+                },
+                "Marked as posted."
+            ),
+        [postedVideoLink, postedProofScreenshot, postedNotes, contractId, runWithRefresh, close]
+    );
+
+    const submitPostingWithDebounce = useCallback(async () => {
+        if (postingInFlightRef.current || postingDebounceRef.current) return;
+        postingInFlightRef.current = true;
+        postingDebounceRef.current = setTimeout(() => {
+            postingDebounceRef.current = null;
+        }, 1500);
+        try {
+            await handleMarkPostedSubmit();
+        } finally {
+            postingInFlightRef.current = false;
+        }
+    }, [handleMarkPostedSubmit]);
+
+    const markVideoPostedModalProps = useMemo(
+        () => ({
+            visible,
+            proofScreenshot: postedProofScreenshot,
+            proofScreenshotPreviewUri: postedProofScreenshotPreviewUri,
+            proofScreenshotName: postedProofScreenshotName,
+            postUrl: postedVideoLink,
+            notes: postedNotes,
+            onClose: close,
+            onPickProofScreenshot: pickProofScreenshotImage,
+            onPickProofScreenshotWeb: pickProofScreenshotWeb,
+            onChangePostUrl: setPostedVideoLink,
+            onChangeNotes: setPostedNotes,
+            onSubmit: submitPostingWithDebounce,
+        }),
+        [
+            visible,
+            postedProofScreenshot,
+            postedProofScreenshotPreviewUri,
+            postedProofScreenshotName,
+            postedVideoLink,
+            postedNotes,
+            close,
+            pickProofScreenshotImage,
+            pickProofScreenshotWeb,
+            submitPostingWithDebounce,
+        ]
+    );
+
+    return { open, markVideoPostedModalProps };
+}

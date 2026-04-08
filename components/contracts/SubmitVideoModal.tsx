@@ -1,8 +1,12 @@
+import { state5SubmitDeliverable } from "./api/VideoPending_api";
+import type { AssetItem } from "@/shared-libs/types/Asset";
 import Colors from "@/shared-uis/constants/Colors";
+import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { faArrowUpFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
-import React, { useMemo, useRef } from "react";
+import * as ImagePicker from "expo-image-picker";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import {
     Keyboard,
     KeyboardAvoidingView,
@@ -232,3 +236,120 @@ function createStyles(colors: ReturnType<typeof Colors>) {
 }
 
 export default SubmitVideoModal;
+
+export type SubmitVideoModalRunWithRefresh = (
+    fn: () => Promise<void>,
+    successMessage: string
+) => Promise<void>;
+
+export function useSubmitVideoModal(options: {
+    contractId: string;
+    uploadFile: (file: File) => Promise<{ playUrl?: string; appleUrl?: string }>;
+    uploadFileUri: (fileUri: AssetItem) => Promise<{ playUrl?: string; appleUrl?: string }>;
+    runWithRefresh: SubmitVideoModalRunWithRefresh;
+}) {
+    const { contractId, uploadFile, uploadFileUri, runWithRefresh } = options;
+    const [visible, setVisible] = useState(false);
+    const [submitVideoNote, setSubmitVideoNote] = useState("");
+    const [selectedVideoName, setSelectedVideoName] = useState("");
+    const [selectedVideoUri, setSelectedVideoUri] = useState("");
+    const [selectedVideoFile, setSelectedVideoFile] = useState<File | null>(null);
+
+    const open = useCallback(() => setVisible(true), []);
+
+    const close = useCallback(() => {
+        setVisible(false);
+        setSubmitVideoNote("");
+        setSelectedVideoName("");
+        setSelectedVideoUri("");
+        setSelectedVideoFile(null);
+    }, []);
+
+    const pickSubmitVideo = useCallback(async () => {
+        const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (permission.status !== "granted") {
+            Toaster.error("Please allow media permissions to upload video.");
+            return;
+        }
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Videos,
+            quality: 1,
+            allowsEditing: false,
+        });
+        if (!result.canceled && result.assets[0]) {
+            const pickedName = result.assets[0].fileName || "Video selected";
+            setSelectedVideoName(pickedName);
+            setSelectedVideoUri(result.assets[0].uri || "");
+        }
+    }, []);
+
+    const onPickVideoWeb = useCallback((file: File) => {
+        setSelectedVideoFile(file);
+        setSelectedVideoName(file.name || "Video selected");
+        setSelectedVideoUri("");
+    }, []);
+
+    const handleSubmit = useCallback(
+        () =>
+            runWithRefresh(
+                async () => {
+                    const isWeb = Platform.OS === "web";
+                    if (isWeb) {
+                        if (!selectedVideoFile) {
+                            throw new Error("Please select a video before submitting.");
+                        }
+                    } else {
+                        if (!selectedVideoUri) {
+                            throw new Error("Please select a video before submitting.");
+                        }
+                    }
+
+                    const uploadedVideo = isWeb
+                        ? await uploadFile(selectedVideoFile as File)
+                        : await uploadFileUri({
+                              id: selectedVideoUri,
+                              localUri: selectedVideoUri,
+                              uri: selectedVideoUri,
+                              type: "video",
+                          } as AssetItem);
+                    const videoUrl = uploadedVideo.playUrl || uploadedVideo.appleUrl;
+                    if (!videoUrl) {
+                        throw new Error("Video upload failed. Please try again.");
+                    }
+                    await state5SubmitDeliverable({
+                        contractId,
+                        videoUrl,
+                        note: submitVideoNote.trim() || undefined,
+                    });
+                    close();
+                },
+                "Video submitted for review."
+            ),
+        [
+            selectedVideoFile,
+            selectedVideoUri,
+            submitVideoNote,
+            contractId,
+            uploadFile,
+            uploadFileUri,
+            runWithRefresh,
+            close,
+        ]
+    );
+
+    const submitVideoModalProps = useMemo(
+        () => ({
+            visible,
+            selectedVideoName,
+            note: submitVideoNote,
+            onClose: close,
+            onPickVideo: pickSubmitVideo,
+            onPickVideoWeb,
+            onChangeNote: setSubmitVideoNote,
+            onSubmit: handleSubmit,
+        }),
+        [visible, selectedVideoName, submitVideoNote, close, pickSubmitVideo, onPickVideoWeb, handleSubmit]
+    );
+
+    return { open, submitVideoModalProps };
+}

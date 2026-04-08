@@ -1,8 +1,12 @@
+import { state4MarkProductReceived } from "./api/DeliveryPending_api";
+import type { AssetItem } from "@/shared-libs/types/Asset";
 import Colors from "@/shared-uis/constants/Colors";
+import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { faArrowUpFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
-import React, { useMemo } from "react";
+import * as ImagePicker from "expo-image-picker";
+import React, { useCallback, useMemo, useState } from "react";
 import {
     Image,
     Keyboard,
@@ -233,3 +237,102 @@ function createStyles(colors: ReturnType<typeof Colors>) {
 }
 
 export default ProductReceivedModal;
+
+export type ProductReceivedModalRunWithRefresh = (
+    fn: () => Promise<void>,
+    successMessage: string
+) => Promise<void>;
+
+export function useProductReceivedModal(options: {
+    contractId: string;
+    uploadFileUri: (fileUri: AssetItem) => Promise<{ imageUrl?: string }>;
+    runWithRefresh: ProductReceivedModalRunWithRefresh;
+}) {
+    const { contractId, uploadFileUri, runWithRefresh } = options;
+    const [visible, setVisible] = useState(false);
+    const [receivedImageUri, setReceivedImageUri] = useState("");
+    const [receivedNote, setReceivedNote] = useState("");
+    const [receivedConfirmed, setReceivedConfirmed] = useState(false);
+
+    const open = useCallback(() => setVisible(true), []);
+
+    const close = useCallback(() => {
+        setVisible(false);
+        setReceivedImageUri("");
+        setReceivedNote("");
+        setReceivedConfirmed(false);
+    }, []);
+
+    const pickReceivedProductImage = useCallback(async () => {
+        const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (permission.status !== "granted") {
+            Toaster.error("Please allow media permissions to upload image.");
+            return;
+        }
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            quality: 0.8,
+            allowsEditing: true,
+        });
+        if (!result.canceled && result.assets[0]?.uri) {
+            setReceivedImageUri(result.assets[0].uri);
+        }
+    }, []);
+
+    const handleSubmit = useCallback(
+        () =>
+            runWithRefresh(
+                async () => {
+                    if (!receivedImageUri) {
+                        throw new Error("Please attach a product image before confirming.");
+                    }
+                    if (!receivedConfirmed) {
+                        throw new Error("Please confirm that the product is received.");
+                    }
+                    const uploadedImage = await uploadFileUri({
+                        id: receivedImageUri,
+                        localUri: receivedImageUri,
+                        uri: receivedImageUri,
+                        type: "image",
+                    } as AssetItem);
+                    const photoUrl = uploadedImage.imageUrl;
+                    if (!photoUrl) {
+                        throw new Error("Image upload failed. Please try again.");
+                    }
+                    await state4MarkProductReceived({
+                        contractId,
+                        photoUrl,
+                        notes: receivedNote.trim() || undefined,
+                    });
+                    close();
+                },
+                "Marked as product received."
+            ),
+        [receivedImageUri, receivedConfirmed, receivedNote, contractId, uploadFileUri, runWithRefresh, close]
+    );
+
+    const productReceivedModalProps = useMemo(
+        () => ({
+            visible,
+            imageUri: receivedImageUri,
+            note: receivedNote,
+            isConfirmed: receivedConfirmed,
+            onClose: close,
+            onPickImage: pickReceivedProductImage,
+            onChangeNote: setReceivedNote,
+            onToggleConfirm: () => setReceivedConfirmed((prev) => !prev),
+            onSubmit: handleSubmit,
+        }),
+        [
+            visible,
+            receivedImageUri,
+            receivedNote,
+            receivedConfirmed,
+            close,
+            pickReceivedProductImage,
+            handleSubmit,
+        ]
+    );
+
+    return { open, productReceivedModalProps };
+}
