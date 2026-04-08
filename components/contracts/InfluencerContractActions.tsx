@@ -36,6 +36,7 @@ export interface InfluencerContractActionsProps {
 const InfluencerContractActions: React.FC<InfluencerContractActionsProps> = ({
     contract,
     collaborationData,
+    userData,
     refreshData,
     showQuotationModal,
     feedbackModalVisible,
@@ -107,9 +108,11 @@ const InfluencerContractActions: React.FC<InfluencerContractActionsProps> = ({
     const handleMarkAsReceived = async () => {
         setUpdating(true);
         try {
-            const proofPhotoUrl = contract.shipment?.proofOfDeliveryUrl;
+            const proofPhotoUrl = contract.shipment?.packageScreenshots?.[0];
             if (!proofPhotoUrl?.trim()) {
-                throw new Error("Proof image is missing. Please mark product received from contract details flow.");
+                throw new Error(
+                    "No package photo on file for this shipment. Please confirm receipt from contract details with your photo."
+                );
             }
             await state4MarkProductReceived({
                 contractId: contract.streamChannelId,
