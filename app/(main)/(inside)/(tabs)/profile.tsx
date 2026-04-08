@@ -50,7 +50,7 @@ const ProfileScreen = () => {
             s === "not_started" ||
             s === "in_progress" ||
             s === "failed" ||
-            s === "approved"
+            s === "activated"
         ) {
             setKycStatusSticky(s);
         }

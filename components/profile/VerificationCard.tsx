@@ -18,7 +18,7 @@ const VerificationCard = ({
 }: VerificationCardProps) => {
     const status: KYCStatus = kycStatus ?? "not_started";
 
-    if (status === "approved") {
+    if (status === "activated") {
         return null;
     }
     const theme = useTheme();
