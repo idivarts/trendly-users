@@ -11,17 +11,17 @@ import {
     Image,
     Keyboard,
     KeyboardAvoidingView,
-    Modal as RNModal,
     Platform,
     Pressable,
     ScrollView,
     StyleSheet,
     View,
 } from "react-native";
-import { Checkbox, Modal as PaperModal, Portal } from "react-native-paper";
+import { Checkbox } from "react-native-paper";
 import { Text } from "../theme/Themed";
 import Button from "../ui/button";
 import TextInput from "../ui/text-input";
+import ContractActionOverlay from "./ContractActionOverlay";
 
 interface ProductReceivedModalProps {
     visible: boolean;
@@ -58,7 +58,7 @@ const ProductReceivedModal: React.FC<ProductReceivedModalProps> = ({
             style={styles.keyboardView}
         >
             <Pressable
-                style={styles.sheet}
+                style={styles.inner}
                 onPress={() => Platform.OS !== "web" && Keyboard.dismiss()}
             >
                 <Text style={styles.title}>Congratulation</Text>
@@ -122,59 +122,34 @@ const ProductReceivedModal: React.FC<ProductReceivedModalProps> = ({
         </KeyboardAvoidingView>
     );
 
-    if (Platform.OS !== "web") {
-        return (
-            <RNModal
-                visible={visible}
-                transparent
-                animationType="slide"
-                onRequestClose={onClose}
-            >
-                <View style={styles.overlay}>{modalContent}</View>
-            </RNModal>
-        );
-    }
-
     return (
-        <Portal>
-            <PaperModal
-                visible={visible}
-                onDismiss={onClose}
-                contentContainerStyle={styles.modalContainer}
-            >
-                {modalContent}
-            </PaperModal>
-        </Portal>
+        <ContractActionOverlay
+            visible={visible}
+            onClose={onClose}
+            mode="auto"
+            snapPointsRange={["50%", "90%"]}
+            modalMaxWidth={520}
+        >
+            <View style={styles.contentShell}>{modalContent}</View>
+        </ContractActionOverlay>
     );
 };
 
 function createStyles(colors: ReturnType<typeof Colors>) {
-    const isNative = Platform.OS !== "web";
     return StyleSheet.create({
-        overlay: {
+        contentShell: {
             flex: 1,
-            backgroundColor: colors.backdrop,
-            justifyContent: "flex-end",
-        },
-        modalContainer: {
             backgroundColor: colors.background,
-            borderRadius: 20,
-            marginHorizontal: 12,
-            maxWidth: 560,
-            alignSelf: "center",
-            width: "95%",
+            paddingHorizontal: 20,
+            paddingTop: 16,
+            paddingBottom: 28,
         },
         keyboardView: {
+            flex: 1,
             width: "100%",
-            ...(isNative ? { maxHeight: "90%" } : {}),
         },
-        sheet: {
-            backgroundColor: colors.background,
-            borderTopLeftRadius: isNative ? 28 : 20,
-            borderTopRightRadius: isNative ? 28 : 20,
-            paddingHorizontal: 20,
-            paddingTop: 24,
-            paddingBottom: 20,
+        inner: {
+            flex: 1,
             width: "100%",
         },
         scrollView: { width: "100%" },

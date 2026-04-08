@@ -7,7 +7,7 @@ import Colors from "@/shared-uis/constants/Colors";
 import { faClose, faStar } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
     Keyboard,
     KeyboardAvoidingView,
@@ -15,9 +15,9 @@ import {
     Pressable,
     StyleSheet,
 } from "react-native";
-import { Modal } from "react-native-paper";
 import TextInput from "../ui/text-input";
 import { state9SubmitUserFeedback } from "./api/SettlementPending_api";
+import ContractActionOverlay from "./ContractActionOverlay";
 
 interface FeedbackModalProps {
     star: number;
@@ -37,9 +37,13 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
     refreshData,
 }) => {
     const theme = useTheme();
+    const colors = Colors(theme);
+    const styles = useMemo(() => createStyles(colors), [colors]);
     const [selectedStar, setSelectedStar] = useState(star);
     const [textFeedback, setTextFeedback] = useState("");
     const [submitting, setSubmitting] = useState(false);
+
+    const handleClose = () => setVisibility(false);
 
     const provideFeedback = async () => {
         if (submitting) return;
@@ -63,167 +67,153 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
             setVisibility(false);
             await Promise.resolve(refreshData());
             Toaster.success("Feedback submitted.");
-        } catch (e: any) {
+        } catch (e: unknown) {
             Console.error(e);
-            Toaster.error(e?.message || "Failed to submit feedback.");
+            const message = e instanceof Error ? e.message : "Failed to submit feedback.";
+            Toaster.error(message);
         } finally {
             setSubmitting(false);
         }
     };
 
     return (
-        <Modal
+        <ContractActionOverlay
             visible={visible}
-            onDismiss={() => setVisibility(false)}
-            contentContainerStyle={{
-                backgroundColor: Colors(theme).background,
-                borderRadius: 10,
-                padding: 20,
-                marginHorizontal: 20,
-                width: "100%",
-                maxWidth: 600,
-                alignSelf: "center"
-            }}
+            onClose={handleClose}
+            mode="auto"
+            snapPointsRange={["50%", "88%"]}
+            modalMaxWidth={600}
         >
             <KeyboardAvoidingView
                 behavior={Platform.OS === "ios" ? "padding" : "height"}
                 style={styles.keyboardAvoidingView}
             >
-                <Pressable style={styles.modal} onPress={() => Platform.OS != "web" && Keyboard.dismiss()}>
-                    <View style={styles.modalHeader}>
-                        <Text style={styles.modalTitle}>Feedback</Text>
-                        <Pressable onPress={() => setVisibility(false)}>
-                            <FontAwesomeIcon
-                                icon={faClose}
-                                color={Colors(theme).primary}
-                                size={30}
-                            />
-                        </Pressable>
-                    </View>
-                    <View style={styles.modalContent}>
-                        <Text style={styles.modalText}>
-                            {feedbackGiven
-                                ? "Thank you for your feedback!"
-                                : "Please provide your feedback"}
-                        </Text>
-                        {star === 0 && (
-                            <View style={styles.modalRating}>
-                                {[1, 2, 3, 4, 5].map((i) => (
-                                    <Pressable key={i} onPress={() => setSelectedStar(i)}>
-                                        <FontAwesomeIcon
-                                            icon={faStar}
-                                            color={
-                                                i <= selectedStar
-                                                    ? Colors(theme).yellow
-                                                    : Colors(theme).text
-                                            }
-                                            size={30}
-                                        />
-                                    </Pressable>
-                                ))}
-                            </View>
-                        )}
-                        {!feedbackGiven && (
-                            <TextInput
-                                style={styles.textInput}
-                                autoFocus
-                                placeholder="Write your feedback here"
-                                value={textFeedback}
-                                onChangeText={setTextFeedback}
-                                numberOfLines={5}
-                                multiline
-                            />
-                        )}
-                        {!feedbackGiven && (
-                            <Pressable
-                                style={{
-                                    backgroundColor: Colors(theme).primary,
-                                    paddingVertical: 10,
-                                    paddingHorizontal: 20,
-                                    borderRadius: 5,
-                                    marginVertical: 10,
-                                }}
-                                onPress={() => {
-                                    provideFeedback();
-                                }}
-                                disabled={submitting}
-                            >
-                                <Text
-                                    style={{
-                                        fontSize: 16,
-                                        color: Colors(theme).white,
-                                    }}
-                                >
-                                    {submitting ? "Submitting..." : "Submit Feedback"}
-                                </Text>
+                <Pressable style={styles.inner} onPress={() => Platform.OS !== "web" && Keyboard.dismiss()}>
+                    <View style={styles.contentShell}>
+                        <View style={styles.modalHeader}>
+                            <Text style={styles.modalTitle}>Feedback</Text>
+                            <Pressable onPress={handleClose} accessibilityRole="button">
+                                <FontAwesomeIcon icon={faClose} color={colors.primary} size={30} />
                             </Pressable>
-                        )}
-                        {feedbackGiven && (
-                            <Pressable
-                                style={{
-                                    backgroundColor: Colors(theme).primary,
-                                    paddingVertical: 10,
-                                    paddingHorizontal: 20,
-                                    borderRadius: 5,
-                                    marginVertical: 10,
-                                }}
-                                onPress={() => setVisibility(false)}
-                            >
-                                <Text
-                                    style={{
-                                        fontSize: 16,
-                                        color: Colors(theme).white,
+                        </View>
+                        <View style={styles.modalContent}>
+                            <Text style={styles.modalText}>
+                                {feedbackGiven
+                                    ? "Thank you for your feedback!"
+                                    : "Please provide your feedback"}
+                            </Text>
+                            {star === 0 && (
+                                <View style={styles.modalRating}>
+                                    {[1, 2, 3, 4, 5].map((i) => (
+                                        <Pressable key={i} onPress={() => setSelectedStar(i)}>
+                                            <FontAwesomeIcon
+                                                icon={faStar}
+                                                color={i <= selectedStar ? colors.yellow : colors.text}
+                                                size={30}
+                                            />
+                                        </Pressable>
+                                    ))}
+                                </View>
+                            )}
+                            {!feedbackGiven && (
+                                <TextInput
+                                    style={styles.textInput}
+                                    autoFocus
+                                    placeholder="Write your feedback here"
+                                    value={textFeedback}
+                                    onChangeText={setTextFeedback}
+                                    numberOfLines={5}
+                                    multiline
+                                />
+                            )}
+                            {!feedbackGiven && (
+                                <Pressable
+                                    style={styles.primaryButton}
+                                    onPress={() => {
+                                        void provideFeedback();
                                     }}
+                                    disabled={submitting}
                                 >
-                                    Close
-                                </Text>
-                            </Pressable>
-                        )}
+                                    <Text style={styles.primaryButtonLabel}>
+                                        {submitting ? "Submitting..." : "Submit Feedback"}
+                                    </Text>
+                                </Pressable>
+                            )}
+                            {feedbackGiven && (
+                                <Pressable style={styles.primaryButton} onPress={handleClose}>
+                                    <Text style={styles.primaryButtonLabel}>Close</Text>
+                                </Pressable>
+                            )}
+                        </View>
                     </View>
                 </Pressable>
             </KeyboardAvoidingView>
-        </Modal>
+        </ContractActionOverlay>
     );
 };
 
-const styles = StyleSheet.create({
-    modal: {
-        width: "100%",
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    modalHeader: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        width: "100%",
-    },
-    keyboardAvoidingView: {},
-    modalTitle: {
-        fontSize: 20,
-        fontWeight: "bold",
-    },
-    modalContent: {
-        width: "100%",
-        alignItems: "center",
-    },
-    modalText: {
-        fontSize: 16,
-        marginVertical: 10,
-    },
-    modalRating: {
-        flexDirection: "row",
-        marginVertical: 10,
-    },
-    textInput: {
-        width: "100%",
-        height: 100,
-        borderWidth: 1,
-        borderRadius: 5,
-        padding: 10,
-        fontSize: 16,
-        marginVertical: 10,
-    },
-});
+function createStyles(colors: ReturnType<typeof Colors>) {
+    return StyleSheet.create({
+        keyboardAvoidingView: {
+            flex: 1,
+            width: "100%",
+        },
+        inner: {
+            flex: 1,
+            width: "100%",
+        },
+        contentShell: {
+            flex: 1,
+            width: "100%",
+            backgroundColor: colors.background,
+            padding: 20,
+        },
+        modalHeader: {
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            width: "100%",
+        },
+        modalTitle: {
+            fontSize: 20,
+            fontWeight: "bold",
+            color: colors.text,
+        },
+        modalContent: {
+            width: "100%",
+            alignItems: "center",
+        },
+        modalText: {
+            fontSize: 16,
+            marginVertical: 10,
+            color: colors.text,
+        },
+        modalRating: {
+            flexDirection: "row",
+            marginVertical: 10,
+        },
+        textInput: {
+            width: "100%",
+            height: 100,
+            borderWidth: 1,
+            borderRadius: 5,
+            borderColor: colors.gray300,
+            padding: 10,
+            fontSize: 16,
+            marginVertical: 10,
+        },
+        primaryButton: {
+            backgroundColor: colors.primary,
+            paddingVertical: 10,
+            paddingHorizontal: 20,
+            borderRadius: 5,
+            marginVertical: 10,
+        },
+        primaryButtonLabel: {
+            fontSize: 16,
+            color: colors.white,
+        },
+    });
+}
 
 export default FeedbackModal;
