@@ -18,10 +18,6 @@ import {
     useContractContext,
 } from "./contract-context.provider";
 import {
-    FirebaseStorageContextProvider,
-    useFirebaseStorageContext,
-} from "./firebase-storage-context.provider";
-import {
     NotificationContextProvider,
     useNotificationContext,
 } from "./notification-context.provider";
@@ -53,7 +49,6 @@ export {
     CloudMessagingContextProvider,
     CollaborationContextProvider,
     ContractContextProvider,
-    FirebaseStorageContextProvider,
     getConstrainedHeight,
     getConstrainedWidth,
     MOBILE_MAX_WIDTH,
@@ -68,7 +63,6 @@ export {
     useCloudMessagingContext,
     useCollaborationContext,
     useContractContext,
-    useFirebaseStorageContext,
     useMobileLayout,
     useNotificationContext,
     useSocialContext,
