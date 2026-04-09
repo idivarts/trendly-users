@@ -3,6 +3,7 @@ import ScreenHeader from "@/components/ui/screen-header";
 import TextInput from "@/components/ui/text-input";
 import { useKYCFlowContext } from "@/contexts";
 import AppLayout from "@/layouts/app-layout";
+import { INDIAN_STATES } from "@/shared-constants/preferences/locations";
 import { useMyNavigation } from "@/shared-libs/utils/router";
 import Colors from "@/shared-uis/constants/Colors";
 import { useTheme } from "@react-navigation/native";
@@ -18,37 +19,6 @@ import {
 
 const CITY_STATE_REGEX = /^[A-Za-z\s]{2,}$/;
 const PINCODE_REGEX = /^[1-9][0-9]{5}$/;
-const INDIAN_STATES = [
-    "Andhra Pradesh",
-    "Arunachal Pradesh",
-    "Assam",
-    "Bihar",
-    "Chhattisgarh",
-    "Goa",
-    "Gujarat",
-    "Haryana",
-    "Himachal Pradesh",
-    "Jharkhand",
-    "Karnataka",
-    "Kerala",
-    "Madhya Pradesh",
-    "Maharashtra",
-    "Manipur",
-    "Meghalaya",
-    "Mizoram",
-    "Nagaland",
-    "Odisha",
-    "Punjab",
-    "Rajasthan",
-    "Sikkim",
-    "Tamil Nadu",
-    "Telangana",
-    "Tripura",
-    "Uttar Pradesh",
-    "Uttarakhand",
-    "West Bengal",
-    "Delhi",
-];
 
 const VerificationAddressScreen = () => {
     const router = useMyNavigation();
