@@ -16,24 +16,10 @@ import {
     TouchableOpacity,
 } from "react-native";
 
+import { ROUTE_AGREEMENT_TEXT } from "@/shared-constants/route-agreement";
 import { createVerificationFormStyles } from "./verificationFormStyles";
 
-const AGREEMENT_TEXT = `
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-Vestibulum euismod, nisi vel consectetur interdum, nisl nisi aliquet nunc, vitae egestas nunc nisl eu lectus.
-Mauris non tempor quam, et lacinia sapien.
-Mauris accumsan eros eget libero posuere vulputate.
-Etiam elit elit, elementum sed varius at, adipiscing vitae est.
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.
-`;
+const AGREEMENT_TEXT = ROUTE_AGREEMENT_TEXT;
 
 function createAgreementAreaStyles(colors: ReturnType<typeof Colors>) {
     return StyleSheet.create({
