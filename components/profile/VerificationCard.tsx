@@ -3,7 +3,7 @@ import Colors from "@/shared-uis/constants/Colors";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useTheme } from "@react-navigation/native";
 import { StyleSheet, Text, TouchableOpacity } from "react-native";
-import type { KYCStatus } from "../../shared-libs/firestore/trendly-pro/models/users"; 
+import { KYCStatus } from "../../shared-libs/firestore/trendly-pro/models/users";
 
 
 
@@ -16,28 +16,35 @@ const VerificationCard = ({
     kycStatus,
     onStartVerification,
 }: VerificationCardProps) => {
-    const status: KYCStatus = kycStatus ?? "not_started";
+    const status: KYCStatus = kycStatus ?? KYCStatus.NotStarted;
 
-    if (status === "activated") {
+    if (status === KYCStatus.Activated) {
         return null;
     }
     const theme = useTheme();
     const colors = Colors(theme);
 
-    const isDisabled = status === "in_progress";
-    const isFailed = status === "failed";
+    const isDisabled =
+        status === KYCStatus.InProgress || status === KYCStatus.UnderReview;
+    const needsResubmit =
+        status === KYCStatus.Rejected || status === KYCStatus.NeedsClarification;
 
     const getButtonText = () => {
-        if (status === "failed") return "Resubmit Verification";
-        if (status === "in_progress") return "Verification in Progress";
+        if (needsResubmit) return "Resubmit Verification";
+        if (status === KYCStatus.InProgress) return "Verification in Progress";
+        if (status === KYCStatus.UnderReview) return "Verification Under Review";
         return "Start your Profile Verification";
     };
 
     const getSubtitle = () => {
-        if (status === "failed")
-            return "Your verification failed. Please resubmit your details.";
-        if (status === "in_progress")
-            return "Your profile verification is currently under review.";
+        if (status === KYCStatus.Rejected)
+            return "Your verification was rejected. Please resubmit your details.";
+        if (status === KYCStatus.NeedsClarification)
+            return "We need additional information. Please update your details.";
+        if (status === KYCStatus.InProgress)
+            return "Your profile verification is currently in progress.";
+        if (status === KYCStatus.UnderReview)
+            return "Your profile verification is under review.";
         return "You can only start contract if you are verified.";
     };
 

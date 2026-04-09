@@ -1,5 +1,6 @@
 import { View } from "@/components/theme/Themed";
 import { useAuthContext, useKYCFlowContext } from "@/contexts";
+import { KYCStatus } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { createRazorpayRouteAccount } from "@/shared-libs/utils/kyc-api";
 import { useMyNavigation } from "@/shared-libs/utils/router";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
@@ -146,7 +147,9 @@ const VerificationAgreementContent = () => {
                     ifsc: draft.bankDetails.ifsc.trim(),
                     beneficiary_name: draft.bankDetails.beneficiaryName.trim(),
                 },
-                reCreateAccount: user.kyc?.status === "failed",
+                reCreateAccount:
+                    user.kyc?.status === KYCStatus.Rejected ||
+                    user.kyc?.status === KYCStatus.NeedsClarification,
             });
 
             await reset();

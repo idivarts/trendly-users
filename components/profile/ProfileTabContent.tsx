@@ -6,7 +6,7 @@ import { COMPLETION_PERCENTAGE } from "@/constants/CompletionPercentage";
 import { PROFILE_ITEMS } from "@/constants/Profile";
 import { useAuthContext, useCloudMessagingContext } from "@/contexts";
 import { userHasPhoneForKyc } from "@/utils/profile";
-import type { KYCStatus } from "@/shared-libs/firestore/trendly-pro/models/users";
+import { KYCStatus } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { useMyNavigation } from "@/shared-libs/utils/router";
 import ConfirmationModal from "@/shared-uis/components/ConfirmationModal";
 import Colors from "@/shared-uis/constants/Colors";
@@ -91,12 +91,7 @@ const ProfileTabContent = () => {
             return;
         }
         const s = user.kyc.status;
-        if (
-            s === "not_started" ||
-            s === "in_progress" ||
-            s === "failed" ||
-            s === "activated"
-        ) {
+        if (Object.values(KYCStatus).includes(s)) {
             setKycStatusSticky(s);
         }
     }, [user?.kyc, user?.kyc?.status]);

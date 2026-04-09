@@ -1,6 +1,9 @@
 import { useInitialUserData } from "@/constants/User";
 import { useStorageState } from "@/hooks";
-import { AccountStatus } from "@/shared-libs/firestore/trendly-pro/models/users";
+import {
+    AccountStatus,
+    KYCStatus,
+} from "@/shared-libs/firestore/trendly-pro/models/users";
 import { Console } from "@/shared-libs/utils/console";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
@@ -108,7 +111,8 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
                     };
 
                     if (userData.isKYCDone === undefined) {
-                        userData.isKYCDone = userData.kyc?.status === "activated"
+                        userData.isKYCDone =
+                            userData.kyc?.status === KYCStatus.Activated
                     }
 
                     setIsLoggedIn(true);
