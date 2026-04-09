@@ -28,6 +28,14 @@ export interface KYCFlowDraft {
     agreements: KYCAgreementDraft;
 }
 
+/** Parsed local-storage shape: `IUsers.kyc` field names plus legacy snake_case keys. */
+type KYCStoredDraftPan = Partial<KYCPanDraft> & { name?: string; pan?: string };
+type KYCStoredDraftAddress = Partial<KYCAddressDraft> & { postal_code?: string };
+type KYCStoredDraftBank = Partial<KYCBankDraft> & {
+    account_number?: string;
+    beneficiary_name?: string;
+};
+
 const DEFAULT_DRAFT: KYCFlowDraft = {
     panDetails: {
         nameAsPerPAN: "",
@@ -85,18 +93,14 @@ export const KYCFlowProvider: React.FC<PropsWithChildren> = ({ children }) => {
                     (await PersistentStorage.get(KYC_DRAFT_STORAGE_KEY_LEGACY));
                 if (stored) {
                     const parsed = JSON.parse(stored) as Partial<KYCFlowDraft> & {
-                        panDetails?: Partial<KYCPanDraft> & { name?: string; pan?: string };
-                        currentAddress?: Partial<KYCAddressDraft> & {
-                            postal_code?: string;
-                        };
-                        bankDetails?: Partial<KYCBankDraft> & {
-                            account_number?: string;
-                            beneficiary_name?: string;
-                        };
+                        panDetails?: KYCStoredDraftPan;
+                        currentAddress?: KYCStoredDraftAddress;
+                        bankDetails?: KYCStoredDraftBank;
                     };
-                    const pan = parsed.panDetails || {};
-                    const addr = parsed.currentAddress || {};
-                    const bank = parsed.bankDetails || {};
+                    const pan: KYCStoredDraftPan = parsed.panDetails ?? {};
+                    const addr: KYCStoredDraftAddress =
+                        parsed.currentAddress ?? {};
+                    const bank: KYCStoredDraftBank = parsed.bankDetails ?? {};
                     setDraft({
                         panDetails: {
                             ...DEFAULT_DRAFT.panDetails,
