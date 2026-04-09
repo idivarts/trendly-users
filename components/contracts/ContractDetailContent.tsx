@@ -18,7 +18,7 @@ import { useLocalSearchParams } from "expo-router";
 import { doc, getDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { View } from "react-native";
-import { Card, Portal } from "react-native-paper";
+import { Card } from "react-native-paper";
 import ActionContainer from "./ActionContainer";
 import FeedbackModal from "./FeedbackModal";
 import MemberContainer from "./MemberContainer";
@@ -93,9 +93,11 @@ const ContractDetailsContent = (props: ContractDetailViewProps) => {
 
                     <ActionContainer
                         contract={props.contractData}
+                        refreshData={props.refreshData}
                         showQuotationModal={() => setShowQuotationModal(true)}
                         feedbackModalVisible={() => setFeedbackModalVisible(true)}
                         userData={props.userData}
+                        collaborationData={props.collaborationDetail}
                     />
 
                     <MemberContainer
@@ -128,22 +130,16 @@ const ContractDetailsContent = (props: ContractDetailViewProps) => {
                 contractId={props.contractData.streamChannelId}
                 refreshData={props.refreshData}
             />
-            {props.contractData.status === 2 && (
-                <Portal>
-                    <FeedbackModal
-                        feedbackGiven={
-                            props.contractData.feedbackFromInfluencer?.feedbackReview
-                                ? true
-                                : false
-                        }
-                        setVisibility={() => setFeedbackModalVisible(false)}
-                        star={props.contractData.feedbackFromInfluencer?.ratings || 0}
-                        visible={feedbackModalVisible}
-                        contract={props.contractData}
-                        refreshData={props.refreshData}
-                    />
-                </Portal>
-            )}
+            <FeedbackModal
+                feedbackGiven={
+                    props.contractData.feedbackFromInfluencer?.feedbackReview ? true : false
+                }
+                setVisibility={() => setFeedbackModalVisible(false)}
+                star={props.contractData.feedbackFromInfluencer?.ratings || 0}
+                visible={feedbackModalVisible}
+                contract={props.contractData}
+                refreshData={props.refreshData}
+            />
         </IOScroll>
     );
 };

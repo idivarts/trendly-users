@@ -18,10 +18,6 @@ import {
     useContractContext,
 } from "./contract-context.provider";
 import {
-    FirebaseStorageContextProvider,
-    useFirebaseStorageContext,
-} from "./firebase-storage-context.provider";
-import {
     NotificationContextProvider,
     useNotificationContext,
 } from "./notification-context.provider";
@@ -40,6 +36,10 @@ import {
     ThemeContextProvider,
     useThemeContext,
 } from "./theme-context.provider";
+import {
+    KYCFlowProvider,
+    useKYCFlowContext,
+} from "./kyc-flow-context.provider";
 
 export {
     AuthContextProvider,
@@ -49,11 +49,11 @@ export {
     CloudMessagingContextProvider,
     CollaborationContextProvider,
     ContractContextProvider,
-    FirebaseStorageContextProvider,
     getConstrainedHeight,
     getConstrainedWidth,
     MOBILE_MAX_WIDTH,
     NotificationContextProvider,
+    KYCFlowProvider,
     SocialContextProvider,
     ThemeContextProvider,
     MobileLayoutProvider,
@@ -63,9 +63,9 @@ export {
     useCloudMessagingContext,
     useCollaborationContext,
     useContractContext,
-    useFirebaseStorageContext,
     useMobileLayout,
     useNotificationContext,
     useSocialContext,
-    useThemeContext
+    useThemeContext,
+    useKYCFlowContext
 };

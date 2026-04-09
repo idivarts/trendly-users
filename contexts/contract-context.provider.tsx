@@ -1,5 +1,5 @@
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
-import { collection, doc, getDoc, getDocs, query, updateDoc, where } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
 import {
     createContext,
     useContext,
@@ -54,11 +54,23 @@ export const ContractContextProvider: React.FC<PropsWithChildren> = ({
         contractId: string,
         contract: Partial<IContracts>,
     ) => {
-        const contractRef = doc(FirestoreDB, "contracts", contractId);
+        const prohibitedFields: Array<keyof IContracts> = [
+            "status",
+            "contractTimestamp",
+            "deliverable",
+        ];
+        const requestedFields = Object.keys(contract) as Array<keyof IContracts>;
+        const blockedField = requestedFields.find((field) => prohibitedFields.includes(field));
 
-        await updateDoc(contractRef, {
-            ...contract,
-        });
+        if (blockedField) {
+            throw new Error(
+                `Direct frontend contract lifecycle writes are disabled. Blocked field: ${String(blockedField)}`
+            );
+        }
+
+        throw new Error(
+            "Direct frontend contract writes are disabled. Use backend contract state APIs instead."
+        );
     }
 
     return (

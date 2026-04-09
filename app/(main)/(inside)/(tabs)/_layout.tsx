@@ -8,7 +8,6 @@ import { COMPLETION_PERCENTAGE } from "@/constants/CompletionPercentage";
 import { useAuthContext, useChatContext } from "@/contexts";
 import { useInviteContext } from "@/contexts/use-invite";
 import { useBreakpoints } from "@/hooks";
-import { useMyNavigation } from "@/shared-libs/utils/router";
 import Colors from "@/shared-uis/constants/Colors";
 import {
     faComment,
@@ -20,14 +19,12 @@ import {
 import {
     faComment as faCommentSolid,
     faFileLines as faFileLinesSolid,
-    faGears,
     faHandshake as faHandshakeSolid,
     faStar as faStarSolid,
     faUser as faUserSolid,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
-import { TouchableOpacity } from "react-native";
 import { Badge } from "react-native-paper";
 
 const TabLayout = () => {
@@ -36,7 +33,6 @@ const TabLayout = () => {
     const { user } = useAuthContext();
     const { unreadCount } = useChatContext();
     const { brandCount, influencerCount } = useInviteContext()
-    const router = useMyNavigation()
     return (
         <Tabs
             // tabBar={(props) =>
@@ -160,6 +156,7 @@ const TabLayout = () => {
             <Tabs.Screen
                 name="profile"
                 options={{
+                    headerShown: false,
                     title: "Profile",
                     tabBarLabel: "Profile",
                     tabBarIcon: ({ color, focused }) => (
@@ -184,23 +181,6 @@ const TabLayout = () => {
                                     />
                                 )}
                         </>
-                    ),
-
-                    headerRight: () => (
-                        <TouchableOpacity
-                            style={{
-                                paddingRight: 20,
-                            }}
-                            onPress={() => {
-                                router.push("/settings");
-                            }}
-                        >
-                            <FontAwesomeIcon
-                                icon={faGears}
-                                size={32}
-                                color={Colors(theme).text}
-                            />
-                        </TouchableOpacity>
                     ),
                 }}
             />
