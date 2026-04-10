@@ -2,6 +2,12 @@ import { View } from "@/components/theme/Themed";
 import { useAuthContext } from "@/contexts";
 import { useBreakpoints } from "@/hooks";
 import AppLayout from "@/layouts/app-layout";
+import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
+import {
+    IApplications,
+    ICollaboration,
+} from "@/shared-libs/firestore/trendly-pro/models/collaborations";
+import { ContractStatus, IContracts } from "@/shared-libs/firestore/trendly-pro/models/contracts";
 import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { useMyNavigation } from "@/shared-libs/utils/router";
@@ -26,12 +32,6 @@ import {
 } from "react-native";
 import EmptyState from "../ui/empty-state";
 import ContractCardRow, { type ICollaborationCard } from "./contract-card";
-import {
-    IApplications,
-    ICollaboration,
-} from "@/shared-libs/firestore/trendly-pro/models/collaborations";
-import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
-import { IContracts } from "@/shared-libs/firestore/trendly-pro/models/contracts";
 
 export type ContractsTabScope = "active" | "past";
 
@@ -49,11 +49,11 @@ const SCOPE_CONFIG: Record<
     }
 > = {
     active: {
-        filter: (proposal) => proposal.status !== 0 && proposal.status !== 3,
+        filter: (proposal) => proposal.status !== ContractStatus.Pending && proposal.status < ContractStatus.Settled,
         emptyTitle: "No Contracts yet",
     },
     past: {
-        filter: (proposal) => proposal.status === 3,
+        filter: (proposal) => proposal.status >= ContractStatus.Settled,
         emptyTitle: "No Contract yet",
     },
 };
