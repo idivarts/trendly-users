@@ -8,8 +8,10 @@ import { useAuthContext, useCloudMessagingContext } from "@/contexts";
 import { userHasPhoneForKyc } from "@/utils/profile";
 import { KYCStatus } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { useMyNavigation } from "@/shared-libs/utils/router";
+import { getRazorpayAccountStatus } from "@/shared-libs/utils/kyc-api";
 import ConfirmationModal from "@/shared-uis/components/ConfirmationModal";
 import Colors from "@/shared-uis/constants/Colors";
+import Toaster from "@/shared-uis/components/toaster/Toaster";
 import {
     faRightFromBracket,
     faWarning,
@@ -72,7 +74,7 @@ function useProfileTabStyles(colors: ReturnType<typeof Colors>) {
 const ProfileTabContent = () => {
     const router = useMyNavigation();
     const [logoutModalVisible, setLogoutModalVisible] = useState(false);
-    const { signOutUser, user } = useAuthContext();
+    const { signOutUser, updateUser, user } = useAuthContext();
     const { updatedTokens } = useCloudMessagingContext();
     const [showConfetti, setShowConfetti] = useState(false);
     const confettiRef = useRef<ConfettiCannon>(null);
@@ -97,6 +99,39 @@ const ProfileTabContent = () => {
     }, [user?.kyc, user?.kyc?.status]);
 
     const verificationKycStatus = user?.kyc?.status ?? kycStatusSticky;
+
+    const handleCheckKycStatus = useCallback(async () => {
+        if (!user?.id) return;
+        try {
+            const res = await getRazorpayAccountStatus();
+            const nextStatus = (res.status ?? res.account?.status) as string | undefined;
+            if (!nextStatus) {
+                Toaster.error("Unable to fetch verification status.");
+                return;
+            }
+
+            const normalized = nextStatus.toLowerCase() as KYCStatus;
+            const isKnown = (Object.values(KYCStatus) as string[]).includes(normalized);
+            const mergedStatus = (isKnown ? normalized : user.kyc?.status) as KYCStatus | undefined;
+
+            if (mergedStatus) {
+                await updateUser(user.id, {
+                    kyc: {
+                        ...(user.kyc ?? ({} as any)),
+                        accountId: res.accountId ?? user.kyc?.accountId,
+                        stakeHolderId: res.stakeholderId ?? user.kyc?.stakeHolderId,
+                        status: mergedStatus,
+                        updatedAt: Date.now(),
+                    },
+                });
+                Toaster.success("Verification status updated.");
+            } else {
+                Toaster.error("Unable to update verification status.");
+            }
+        } catch {
+            Toaster.error("Unable to fetch verification status.");
+        }
+    }, [updateUser, user?.id, user?.kyc, user?.id]);
 
     const handleSignOut = async () => {
         setLogoutModalVisible(false);
@@ -171,6 +206,10 @@ const ProfileTabContent = () => {
                             onStartVerification={() => {
                                 router.push("/verification");
                             }}
+                            onCheckStatus={handleCheckKycStatus}
+                            influencerEmail={user.email ?? null}
+                            influencerKycAccountId={user.kyc?.accountId ?? null}
+                            influencerUserId={user.id ?? null}
                         />
                     )}
                 {!user?.profile?.completionPercentage ||
