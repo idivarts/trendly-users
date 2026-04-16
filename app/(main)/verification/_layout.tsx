@@ -24,7 +24,7 @@ const VerificationLayout = () => {
     }
 
     return (
-        <KYCFlowProvider>
+        <KYCFlowProvider userId={user?.id}>
             <Stack
                 screenOptions={{
                     headerShown: false,
