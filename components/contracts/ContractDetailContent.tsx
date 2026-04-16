@@ -12,6 +12,7 @@ import {
 import { IContracts } from "@/shared-libs/firestore/trendly-pro/models/contracts";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import { formatTimeToNow } from "@/utils/date";
 import { useIsFocused } from "@react-navigation/native";
 import { useLocalSearchParams } from "expo-router";
@@ -43,6 +44,7 @@ const ContractDetailsContent = (props: ContractDetailViewProps) => {
     const [feedbackModalVisible, setFeedbackModalVisible] = useState(false);
     const params = useLocalSearchParams();
     const [brandData, setBrandData] = useState<IBrands>();
+    const router = useMyNavigation();
 
     const { giveFeedback } = useLocalSearchParams();
     const isFocused = useIsFocused();
@@ -119,7 +121,17 @@ const ContractDetailsContent = (props: ContractDetailViewProps) => {
                         imageUrl={brandData?.image || ""}
                         name={brandData?.name || ""}
                         verified={brandData?.paymentMethodVerified}
-                        description={brandData?.profile?.about || ""}
+                        description={
+                            props.collaborationDetail.description ||
+                            brandData?.profile?.about ||
+                            ""
+                        }
+                        descriptionNumberOfLines={2}
+                        onPressBrand={() =>
+                            router.push(
+                                `/collaboration-details/${props.contractData.collaborationId}`
+                            )
+                        }
                     />
                 </Card.Content>
             </View>

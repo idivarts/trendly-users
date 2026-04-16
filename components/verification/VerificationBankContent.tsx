@@ -28,14 +28,13 @@ const VerificationBankContent = () => {
 
     const { draft, setBank } = useKYCFlowContext();
 
-    const [confirmAccountNumber, setConfirmAccountNumber] = useState(
-        draft.bankDetails.accountNumber
-    );
+    const [confirmAccountNumber, setConfirmAccountNumber] = useState("");
     useEffect(() => {
-        if (!confirmAccountNumber) {
-            setConfirmAccountNumber(draft.bankDetails.accountNumber);
-        }
-    }, [draft.bankDetails.accountNumber, confirmAccountNumber]);
+        // Keep confirmation field independent; if user changes account number,
+        // force re-confirmation to avoid stale matches.
+        if (confirmAccountNumber) setConfirmAccountNumber("");
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [draft.bankDetails.accountNumber]);
 
     const [errors, setErrors] = useState<Record<string, string>>({});
 

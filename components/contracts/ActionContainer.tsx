@@ -23,6 +23,7 @@ import { state6RequestApproval } from "./api/ReviewPending_api";
 import MarkVideoPostedModal, { useMarkVideoPostedModal } from "./MarkVideoPostedModal";
 import ProductReceivedModal, { useProductReceivedModal } from "./ProductReceivedModal";
 import RequestRescheduleModal, { useRequestRescheduleModal } from "./RequestRescheduleModal";
+import ShipmentDetailsOverlay from "./ShipmentDetailsOverlay";
 import SubmitVideoModal, { useSubmitVideoModal } from "./SubmitVideoModal";
 
 interface ActionContainerProps {
@@ -40,20 +41,20 @@ const ActionContainer: FC<ActionContainerProps> = ({
     feedbackModalVisible,
     showQuotationModal,
     userData,
-    collaborationData,
+    collaborationData: _collaborationData,
 }) => {
     const { fetchChannelCid } = useChatContext();
     const { uploadFile, uploadFileUri } = useAWSContext();
     const router = useMyNavigation();
     const [loading, setLoading] = useState(false);
+    const [shipmentDetailsVisible, setShipmentDetailsVisible] = useState(false);
+    const [now, setNow] = useState(() => Date.now());
     const shipmentDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const shipmentInFlightRef = useRef(false);
     const approvalDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const approvalInFlightRef = useRef(false);
 
     const normalizedStatus = normalizeStatus(contract.status);
-    const isProductCollaboration =
-        collaborationData?.promotionSubject === "physical-product";
     const isKycBlocked = !userData?.isKYCDone;
     const hasRevisionRequest =
         (contract.deliverable?.revisionCount || 0) > 0 ||
@@ -62,15 +63,30 @@ const ActionContainer: FC<ActionContainerProps> = ({
         // Support both typed posting and currently used releasePlan shape.
         contract.posting?.scheduledDate ||
         (contract as IContracts & { releasePlan?: { scheduledReleaseAt?: number } }).releasePlan?.scheduledReleaseAt;
+    const isBeforeScheduledPostingDate = !!scheduledReleaseAt && now < scheduledReleaseAt;
 
-    const getShippingDetailsMessage = () => {
-        const provider = contract.shipment?.shipmentProvider || "N/A";
-        const trackingId = contract.shipment?.trackingId || "N/A";
-        const expectedDate = contract.shipment?.expectedDate
-            ? new Date(contract.shipment.expectedDate).toLocaleDateString()
-            : "N/A";
-        return `Courier: ${provider}\nTracking ID: ${trackingId}\nExpected Date: ${expectedDate}`;
-    };
+    const shipmentDetailsForOverlay = useMemo(
+        () => ({
+            courier: contract.shipment?.shipmentProvider || "N/A",
+            trackingId: contract.shipment?.trackingId || "N/A",
+            expectedDate: contract.shipment?.expectedDate
+                ? new Date(contract.shipment.expectedDate).toLocaleDateString()
+                : "N/A",
+        }),
+        [
+            contract.shipment?.shipmentProvider,
+            contract.shipment?.trackingId,
+            contract.shipment?.expectedDate,
+        ]
+    );
+
+    const openShipmentDetails = useCallback(() => {
+        setShipmentDetailsVisible(true);
+    }, []);
+
+    const closeShipmentDetails = useCallback(() => {
+        setShipmentDetailsVisible(false);
+    }, []);
 
     const getPostScheduledMessage = () => {
         if (!scheduledReleaseAt) {
@@ -93,6 +109,19 @@ const ActionContainer: FC<ActionContainerProps> = ({
             }
         };
     }, []);
+
+    useEffect(() => {
+        // Ensure time-based actions (like scheduled posting) auto-update.
+        if (
+            normalizedStatus !== ContractStatus.PostingPending ||
+            !scheduledReleaseAt ||
+            scheduledReleaseAt <= Date.now()
+        ) {
+            return;
+        }
+        const intervalId = setInterval(() => setNow(Date.now()), 30_000);
+        return () => clearInterval(intervalId);
+    }, [normalizedStatus, scheduledReleaseAt]);
 
     const runWithRefresh = useCallback(
         async (fn: () => Promise<void>, success: string) => {
@@ -181,7 +210,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
     }, [fetchChannelCid, contract.streamChannelId, router]);
 
     const actionsConfig = useMemo((): {
-        buttons: ContractActionButton[] | [ContractActionButton] | [ContractActionButton, ContractActionButton];
+        buttons: ContractActionButton[];
         message: ContractActionsMessage;
     } => {
         if (isKycBlocked) {
@@ -283,64 +312,11 @@ const ActionContainer: FC<ActionContainerProps> = ({
                     },
                 };
             case ContractStatus.DeliveryPending:
-                if (!isProductCollaboration) {
-                    return {
-                        buttons: [
-                            {
-                                label: "Go to Messages",
-                                onPress: openMessages,
-                                variant: "contained",
-                                disabled: loading,
-                            },
-                        ],
-                        message: {
-                            variant: "info",
-                            text: "Contract is active. Please wait for the next step from the brand.",
-                        },
-                    };
-                }
                 return {
                     buttons: [
                         {
-                            label: "View Shipping Details",
-                            onPress: () => Toaster.info(getShippingDetailsMessage()),
-                            variant: "outlined",
-                            disabled: loading,
-                        },
-                        {
-                            label: "Go to Messages",
-                            onPress: openMessages,
-                            variant: "contained",
-                            disabled: loading,
-                        },
-                    ],
-                    message: {
-                        variant: "info",
-                        text: "Your shipment is on the way. View tracking details above; you can confirm receipt once the product arrives.",
-                    },
-                };
-            case ContractStatus.DeliveryAcknowledgementPending:
-                if (!isProductCollaboration) {
-                    return {
-                        buttons: [
-                            {
-                                label: "Go to Messages",
-                                onPress: openMessages,
-                                variant: "contained",
-                                disabled: loading,
-                            },
-                        ],
-                        message: {
-                            variant: "info",
-                            text: "Contract is active. Please wait for the next operational step.",
-                        },
-                    };
-                }
-                return {
-                    buttons: [
-                        {
-                            label: "View Shipping Details",
-                            onPress: () => Toaster.info(getShippingDetailsMessage()),
+                            label: "View shipment details",
+                            onPress: openShipmentDetails,
                             variant: "outlined",
                             disabled: loading,
                         },
@@ -353,7 +329,28 @@ const ActionContainer: FC<ActionContainerProps> = ({
                     ],
                     message: {
                         variant: "info",
-                        text: "Congratulations! Shipping has been done. Please mark above once you receive the product",
+                        text: "Your shipment is on the way. View shipment details for tracking, then mark product received when it arrives.",
+                    },
+                };
+            case ContractStatus.DeliveryAcknowledgementPending:
+                return {
+                    buttons: [
+                        {
+                            label: "Go to Messages",
+                            onPress: openMessages,
+                            variant: "outlined",
+                            disabled: loading,
+                        },
+                        {
+                            label: "Product Received",
+                            onPress: () => productReceivedModal.open(),
+                            variant: "contained",
+                            disabled: loading,
+                        },
+                    ],
+                    message: {
+                        variant: "info",
+                        text: "Please confirm once you have received the product. You can message the brand if you need help.",
                     },
                 };
             case ContractStatus.VideoPending:
@@ -416,7 +413,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
                             label: "Mark Video as Posted",
                             onPress: () => markVideoPostedModal.open(),
                             variant: "contained",
-                            disabled: loading,
+                            disabled: loading || isBeforeScheduledPostingDate,
                         },
                     ],
                     message: {
@@ -453,7 +450,6 @@ const ActionContainer: FC<ActionContainerProps> = ({
         }
     }, [
         isKycBlocked,
-        isProductCollaboration,
         normalizedStatus,
         scheduledReleaseAt,
         loading,
@@ -472,10 +468,13 @@ const ActionContainer: FC<ActionContainerProps> = ({
         requestShipmentWithDebounce,
         requestApprovalWithDebounce,
         openMessages,
+        openShipmentDetails,
         productReceivedModal.open,
         submitVideoModal.open,
         markVideoPostedModal.open,
         requestRescheduleModal.open,
+        isBeforeScheduledPostingDate,
+        now,
     ]);
 
     return (
@@ -490,6 +489,11 @@ const ActionContainer: FC<ActionContainerProps> = ({
                     <Text style={styles.loadingText}>Processing action...</Text>
                 </View>
             ) : null}
+            <ShipmentDetailsOverlay
+                visible={shipmentDetailsVisible}
+                onClose={closeShipmentDetails}
+                details={shipmentDetailsForOverlay}
+            />
             <ProductReceivedModal {...productReceivedModal.productReceivedModalProps} loading={loading} />
             <SubmitVideoModal {...submitVideoModal.submitVideoModalProps} loading={loading} />
             <MarkVideoPostedModal {...markVideoPostedModal.markVideoPostedModalProps} loading={loading} />

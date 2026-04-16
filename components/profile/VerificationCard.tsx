@@ -141,6 +141,7 @@ function createStyles(colors: ReturnType<typeof Colors>) {
             alignItems: "center",
             gap: 8,
             marginBottom: 8,
+            backgroundColor:"transparent"
         },
         title: {
             fontSize: 18,
@@ -150,7 +151,7 @@ function createStyles(colors: ReturnType<typeof Colors>) {
         subtitle: {
             fontSize: 14,
             lineHeight: 20,
-            color: colors.subtitleGray,
+            color: colors.textSecondary,
             marginBottom: 16,
         },
         button: {
