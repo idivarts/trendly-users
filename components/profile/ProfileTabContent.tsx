@@ -5,13 +5,13 @@ import { View } from "@/components/theme/Themed";
 import { COMPLETION_PERCENTAGE } from "@/constants/CompletionPercentage";
 import { PROFILE_ITEMS } from "@/constants/Profile";
 import { useAuthContext, useCloudMessagingContext } from "@/contexts";
-import { userHasPhoneForKyc } from "@/utils/profile";
 import { KYCStatus } from "@/shared-libs/firestore/trendly-pro/models/users";
-import { useMyNavigation } from "@/shared-libs/utils/router";
 import { getRazorpayAccountStatus } from "@/shared-libs/utils/kyc-api";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import ConfirmationModal from "@/shared-uis/components/ConfirmationModal";
-import Colors from "@/shared-uis/constants/Colors";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
+import Colors from "@/shared-uis/constants/Colors";
+import { userHasPhoneForKyc } from "@/utils/profile";
 import {
     faRightFromBracket,
     faWarning,
@@ -109,25 +109,6 @@ const ProfileTabContent = () => {
                 Toaster.error("Unable to fetch verification status.");
                 return;
             }
-
-            const normalized = nextStatus.toLowerCase() as KYCStatus;
-            const isKnown = (Object.values(KYCStatus) as string[]).includes(normalized);
-            const mergedStatus = (isKnown ? normalized : user.kyc?.status) as KYCStatus | undefined;
-
-            if (mergedStatus) {
-                await updateUser(user.id, {
-                    kyc: {
-                        ...(user.kyc ?? ({} as any)),
-                        accountId: res.accountId ?? user.kyc?.accountId,
-                        stakeHolderId: res.stakeholderId ?? user.kyc?.stakeHolderId,
-                        status: mergedStatus,
-                        updatedAt: Date.now(),
-                    },
-                });
-                Toaster.success("Verification status updated.");
-            } else {
-                Toaster.error("Unable to update verification status.");
-            }
         } catch {
             Toaster.error("Unable to fetch verification status.");
         }
@@ -199,7 +180,7 @@ const ProfileTabContent = () => {
 
                 {user != null &&
                     (user.profile?.completionPercentage ?? 0) >=
-                        COMPLETION_PERCENTAGE &&
+                    COMPLETION_PERCENTAGE &&
                     userHasPhoneForKyc(user) && (
                         <VerificationCard
                             kycStatus={verificationKycStatus}
@@ -213,7 +194,7 @@ const ProfileTabContent = () => {
                         />
                     )}
                 {!user?.profile?.completionPercentage ||
-                user?.profile?.completionPercentage <
+                    user?.profile?.completionPercentage <
                     COMPLETION_PERCENTAGE ? (
                     <View style={styles.warningBanner}>
                         <FontAwesomeIcon
