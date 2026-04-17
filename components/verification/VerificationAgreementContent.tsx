@@ -23,12 +23,24 @@ const AGREEMENT_TEXT = ROUTE_AGREEMENT_TEXT;
 
 function createAgreementAreaStyles(colors: ReturnType<typeof Colors>) {
     return StyleSheet.create({
+        screenRoot: {
+            flex: 1,
+        },
         agreementContainer: {
-            margin: 16,
+            flex: 1,
+            minHeight: 0,
+            marginHorizontal: 16,
+            marginTop: 12,
             backgroundColor: colors.tag,
             borderRadius: 12,
-            padding: 12,
-            height: 300,
+            overflow: "hidden",
+        },
+        agreementScroll: {
+            flex: 1,
+        },
+        agreementScrollContent: {
+            padding: 16,
+            paddingBottom: 24,
         },
         agreementText: {
             fontSize: 14,
@@ -151,9 +163,11 @@ const VerificationAgreementContent = () => {
     };
 
     return (
-        <>
+        <View style={agreementStyles.screenRoot}>
             <View style={agreementStyles.agreementContainer}>
                 <ScrollView
+                    style={agreementStyles.agreementScroll}
+                    contentContainerStyle={agreementStyles.agreementScrollContent}
                     onScroll={handleScroll}
                     scrollEventThrottle={16}
                     showsVerticalScrollIndicator
@@ -216,7 +230,7 @@ const VerificationAgreementContent = () => {
                     </Text>
                 </TouchableOpacity>
             </View>
-        </>
+        </View>
     );
 };
 

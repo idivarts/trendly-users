@@ -2,8 +2,22 @@ import type { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { PersistentStorage } from "@/shared-libs/utils/persistent-storage";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type PropsWithChildren } from "react";
 
+/** Legacy global keys (not user-scoped); cleared on logout and after submit to prevent cross-account leakage. */
 const KYC_DRAFT_STORAGE_KEY = "KYC_FLOW_DRAFT_V2";
 const KYC_DRAFT_STORAGE_KEY_LEGACY = "KYC_FLOW_DRAFT_V1";
+
+const LEGACY_KYC_DRAFT_KEYS = [KYC_DRAFT_STORAGE_KEY_LEGACY, KYC_DRAFT_STORAGE_KEY] as const;
+
+export function kycDraftStorageKeyForUser(userId: string) {
+    return `KYC_FLOW_DRAFT_V3_${userId}`;
+}
+
+export async function clearAllKycDraftPersistence(userId: string | undefined | null) {
+    await Promise.all([
+        ...LEGACY_KYC_DRAFT_KEYS.map((key) => PersistentStorage.clear(key)),
+        ...(userId ? [PersistentStorage.clear(kycDraftStorageKeyForUser(userId))] : []),
+    ]);
+}
 
 /** Matches `IUsers.kyc.panDetails` field names; used as multi-step form draft before submit. */
 export type KYCPanDraft = NonNullable<NonNullable<IUsers["kyc"]>["panDetails"]>;
@@ -81,88 +95,105 @@ const KYCFlowContext = createContext<KYCFlowContextValue>({
 
 export const useKYCFlowContext = () => useContext(KYCFlowContext);
 
-export const KYCFlowProvider: React.FC<PropsWithChildren> = ({ children }) => {
+type KYCFlowProviderProps = PropsWithChildren<{
+    /** Firestore user id; draft is stored and loaded only for this user. */
+    userId?: string | null;
+}>;
+
+export const KYCFlowProvider: React.FC<KYCFlowProviderProps> = ({
+    children,
+    userId,
+}) => {
     const [draft, setDraft] = useState<KYCFlowDraft>(DEFAULT_DRAFT);
     const [hydrated, setHydrated] = useState(false);
 
     useEffect(() => {
+        if (!userId) {
+            setDraft(DEFAULT_DRAFT);
+            setHydrated(true);
+            return;
+        }
+
+        setHydrated(false);
+        setDraft(DEFAULT_DRAFT);
+
+        let cancelled = false;
         const hydrate = async () => {
             try {
-                const stored =
-                    (await PersistentStorage.get(KYC_DRAFT_STORAGE_KEY)) ||
-                    (await PersistentStorage.get(KYC_DRAFT_STORAGE_KEY_LEGACY));
-                if (stored) {
-                    const parsed = JSON.parse(stored) as Partial<KYCFlowDraft> & {
-                        panDetails?: KYCStoredDraftPan;
-                        currentAddress?: KYCStoredDraftAddress;
-                        bankDetails?: KYCStoredDraftBank;
-                    };
-                    const pan: KYCStoredDraftPan = parsed.panDetails ?? {};
-                    const addr: KYCStoredDraftAddress =
-                        parsed.currentAddress ?? {};
-                    const bank: KYCStoredDraftBank = parsed.bankDetails ?? {};
-                    setDraft({
-                        panDetails: {
-                            ...DEFAULT_DRAFT.panDetails,
-                            nameAsPerPAN:
-                                pan.nameAsPerPAN ??
-                                ("name" in pan ? pan.name : "") ??
-                                "",
-                            panNumber:
-                                pan.panNumber ??
-                                ("pan" in pan ? pan.pan : "") ??
-                                "",
-                        },
-                        currentAddress: {
-                            ...DEFAULT_DRAFT.currentAddress,
-                            street: addr.street ?? "",
-                            line2: addr.line2 ?? "",
-                            city: addr.city ?? "",
-                            state: addr.state ?? "",
-                            postalCode:
-                                addr.postalCode ??
-                                ("postal_code" in addr ? addr.postal_code : "") ??
-                                "",
-                        },
-                        bankDetails: {
-                            ...DEFAULT_DRAFT.bankDetails,
-                            accountNumber:
-                                bank.accountNumber ??
-                                ("account_number" in bank
-                                    ? bank.account_number
-                                    : "") ??
-                                "",
-                            ifsc: bank.ifsc ?? "",
-                            beneficiaryName:
-                                bank.beneficiaryName ??
-                                ("beneficiary_name" in bank
-                                    ? bank.beneficiary_name
-                                    : "") ??
-                                "",
-                        },
-                        agreements: {
-                            ...DEFAULT_DRAFT.agreements,
-                            ...(parsed.agreements || {}),
-                        },
-                    });
-                }
+                const storageKey = kycDraftStorageKeyForUser(userId);
+                const stored = await PersistentStorage.get(storageKey);
+                if (!stored || cancelled) return;
+
+                const parsed = JSON.parse(stored) as Partial<KYCFlowDraft> & {
+                    panDetails?: KYCStoredDraftPan;
+                    currentAddress?: KYCStoredDraftAddress;
+                    bankDetails?: KYCStoredDraftBank;
+                };
+                const pan: KYCStoredDraftPan = parsed.panDetails ?? {};
+                const addr: KYCStoredDraftAddress = parsed.currentAddress ?? {};
+                const bank: KYCStoredDraftBank = parsed.bankDetails ?? {};
+                if (cancelled) return;
+                setDraft({
+                    panDetails: {
+                        ...DEFAULT_DRAFT.panDetails,
+                        nameAsPerPAN:
+                            pan.nameAsPerPAN ??
+                            ("name" in pan ? pan.name : "") ??
+                            "",
+                        panNumber:
+                            pan.panNumber ?? ("pan" in pan ? pan.pan : "") ?? "",
+                    },
+                    currentAddress: {
+                        ...DEFAULT_DRAFT.currentAddress,
+                        street: addr.street ?? "",
+                        line2: addr.line2 ?? "",
+                        city: addr.city ?? "",
+                        state: addr.state ?? "",
+                        postalCode:
+                            addr.postalCode ??
+                            ("postal_code" in addr ? addr.postal_code : "") ??
+                            "",
+                    },
+                    bankDetails: {
+                        ...DEFAULT_DRAFT.bankDetails,
+                        accountNumber:
+                            bank.accountNumber ??
+                            ("account_number" in bank ? bank.account_number : "") ??
+                            "",
+                        ifsc: bank.ifsc ?? "",
+                        beneficiaryName:
+                            bank.beneficiaryName ??
+                            ("beneficiary_name" in bank
+                                ? bank.beneficiary_name
+                                : "") ??
+                            "",
+                    },
+                    agreements: {
+                        ...DEFAULT_DRAFT.agreements,
+                        ...(parsed.agreements || {}),
+                    },
+                });
             } catch (error) {
                 console.error("Failed to hydrate KYC draft", error);
             } finally {
-                setHydrated(true);
+                if (!cancelled) {
+                    setHydrated(true);
+                }
             }
         };
         hydrate();
-    }, []);
+        return () => {
+            cancelled = true;
+        };
+    }, [userId]);
 
     useEffect(() => {
-        if (!hydrated) return;
-        PersistentStorage.set(KYC_DRAFT_STORAGE_KEY, JSON.stringify(draft)).catch(
-            (error) => {
-                console.error("Failed to persist KYC draft", error);
-            }
-        );
-    }, [draft, hydrated]);
+        if (!hydrated || !userId) return;
+        const storageKey = kycDraftStorageKeyForUser(userId);
+        PersistentStorage.set(storageKey, JSON.stringify(draft)).catch((error) => {
+            console.error("Failed to persist KYC draft", error);
+        });
+    }, [draft, hydrated, userId]);
 
     const setPan = useCallback((pan: Partial<KYCPanDraft>) => {
         setDraft((prev) => ({
@@ -209,8 +240,8 @@ export const KYCFlowProvider: React.FC<PropsWithChildren> = ({ children }) => {
 
     const reset = useCallback(async () => {
         setDraft(DEFAULT_DRAFT);
-        await PersistentStorage.clear(KYC_DRAFT_STORAGE_KEY);
-    }, []);
+        await clearAllKycDraftPersistence(userId ?? undefined);
+    }, [userId]);
 
     const value = useMemo(
         () => ({

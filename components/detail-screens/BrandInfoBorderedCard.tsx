@@ -16,6 +16,7 @@ type Props = {
     verified?: boolean;
     description: string;
     truncateAt?: number;
+    descriptionNumberOfLines?: number;
     header?: ReactNode;
     onPressBrand?: () => void;
     /** When true, omit outer Card.Content (e.g. contract layout uses plain View). */
@@ -28,6 +29,7 @@ const BrandInfoBorderedCard = ({
     verified,
     description,
     truncateAt,
+    descriptionNumberOfLines,
     header,
     onPressBrand,
     plainBody,
@@ -58,7 +60,13 @@ const BrandInfoBorderedCard = ({
                         />
                     ) : null}
                 </Text>
-                <Text style={styles.brandSubtitle}>{aboutText}</Text>
+                <Text
+                    style={styles.brandSubtitle}
+                    numberOfLines={descriptionNumberOfLines}
+                    ellipsizeMode="tail"
+                >
+                    {aboutText}
+                </Text>
             </View>
         </View>
     );

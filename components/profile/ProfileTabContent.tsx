@@ -5,11 +5,13 @@ import { View } from "@/components/theme/Themed";
 import { COMPLETION_PERCENTAGE } from "@/constants/CompletionPercentage";
 import { PROFILE_ITEMS } from "@/constants/Profile";
 import { useAuthContext, useCloudMessagingContext } from "@/contexts";
-import { userHasPhoneForKyc } from "@/utils/profile";
 import { KYCStatus } from "@/shared-libs/firestore/trendly-pro/models/users";
+import { getRazorpayAccountStatus } from "@/shared-libs/utils/kyc-api";
 import { useMyNavigation } from "@/shared-libs/utils/router";
 import ConfirmationModal from "@/shared-uis/components/ConfirmationModal";
+import Toaster from "@/shared-uis/components/toaster/Toaster";
 import Colors from "@/shared-uis/constants/Colors";
+import { userHasPhoneForKyc } from "@/utils/profile";
 import {
     faRightFromBracket,
     faWarning,
@@ -72,7 +74,7 @@ function useProfileTabStyles(colors: ReturnType<typeof Colors>) {
 const ProfileTabContent = () => {
     const router = useMyNavigation();
     const [logoutModalVisible, setLogoutModalVisible] = useState(false);
-    const { signOutUser, user } = useAuthContext();
+    const { signOutUser, updateUser, user } = useAuthContext();
     const { updatedTokens } = useCloudMessagingContext();
     const [showConfetti, setShowConfetti] = useState(false);
     const confettiRef = useRef<ConfettiCannon>(null);
@@ -97,6 +99,20 @@ const ProfileTabContent = () => {
     }, [user?.kyc, user?.kyc?.status]);
 
     const verificationKycStatus = user?.kyc?.status ?? kycStatusSticky;
+
+    const handleCheckKycStatus = useCallback(async () => {
+        if (!user?.id) return;
+        try {
+            const res = await getRazorpayAccountStatus();
+            const nextStatus = (res.status ?? res.account?.status) as string | undefined;
+            if (!nextStatus) {
+                Toaster.error("Unable to fetch verification status.");
+                return;
+            }
+        } catch {
+            Toaster.error("Unable to fetch verification status.");
+        }
+    }, [updateUser, user?.id, user?.kyc, user?.id]);
 
     const handleSignOut = async () => {
         setLogoutModalVisible(false);
@@ -164,17 +180,21 @@ const ProfileTabContent = () => {
 
                 {user != null &&
                     (user.profile?.completionPercentage ?? 0) >=
-                        COMPLETION_PERCENTAGE &&
+                    COMPLETION_PERCENTAGE &&
                     userHasPhoneForKyc(user) && (
                         <VerificationCard
                             kycStatus={verificationKycStatus}
                             onStartVerification={() => {
                                 router.push("/verification");
                             }}
+                            onCheckStatus={handleCheckKycStatus}
+                            influencerEmail={user.email ?? null}
+                            influencerKycAccountId={user.kyc?.accountId ?? null}
+                            influencerUserId={user.id ?? null}
                         />
                     )}
                 {!user?.profile?.completionPercentage ||
-                user?.profile?.completionPercentage <
+                    user?.profile?.completionPercentage <
                     COMPLETION_PERCENTAGE ? (
                     <View style={styles.warningBanner}>
                         <FontAwesomeIcon

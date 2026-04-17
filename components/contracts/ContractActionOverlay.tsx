@@ -41,12 +41,21 @@ export default function ContractActionOverlay({
     const insets = useSafeAreaInsets();
     const { xl } = useBreakpoints();
 
-    const resolvedMode: ContractActionOverlayMode =
-        mode === "auto" ? (xl ? "modal" : "bottomSheet") : mode;
+    const effectiveModalMaxWidth =
+        Platform.OS === "web" && !xl ? Math.min(modalMaxWidth, 440) : modalMaxWidth;
+
+    // On web we never want bottom sheets (they feel awkward with mouse/scroll and break layouts).
+    const resolvedMode: ContractActionOverlayMode = Platform.OS === "web"
+        ? "modal"
+        : mode === "auto"
+          ? xl
+              ? "modal"
+              : "bottomSheet"
+          : mode;
 
     const styles = useMemo(
-        () => createStyles(colors, modalMaxWidth, insets.top),
-        [colors, modalMaxWidth, insets.top]
+        () => createStyles(colors, effectiveModalMaxWidth, insets.top),
+        [colors, effectiveModalMaxWidth, insets.top]
     );
 
     if (resolvedMode === "bottomSheet") {
@@ -105,10 +114,12 @@ function createStyles(
         webModalContainer: {
             backgroundColor: colors.background,
             borderRadius: 12,
-            marginHorizontal: 24,
+            marginHorizontal: 16,
+            width: "100%",
             maxWidth: modalMaxWidth,
             alignSelf: "center",
             overflow: "hidden",
+            maxHeight: "90%",
         },
     });
 }

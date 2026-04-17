@@ -1,4 +1,5 @@
 import { useInitialUserData } from "@/constants/User";
+import { clearAllKycDraftPersistence } from "@/contexts/kyc-flow-context.provider";
 import { useStorageState } from "@/hooks";
 import {
     AccountStatus,
@@ -312,7 +313,8 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
                 //   });
                 // }
             }
-            PersistentStorage.clear("streamToken")
+            await PersistentStorage.clear("streamToken");
+            await clearAllKycDraftPersistence(user?.id);
 
             if (userUnsubscribe) {
                 await userUnsubscribe();
