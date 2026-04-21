@@ -51,6 +51,7 @@ const ProductReceivedModal: React.FC<ProductReceivedModalProps> = ({
     const theme = useTheme();
     const colors = Colors(theme);
     const styles = useMemo(() => createStyles(colors), [colors]);
+    const uploadForegroundColor = imageUri ? colors.text : colors.textSecondary;
 
     const modalContent = (
         <KeyboardAvoidingView
@@ -77,7 +78,7 @@ const ProductReceivedModal: React.FC<ProductReceivedModalProps> = ({
                             <FontAwesomeIcon
                                 icon={faArrowUpFromBracket}
                                 size={44}
-                                color={colors.text}
+                                color={uploadForegroundColor}
                             />
                         )}
                     </Pressable>
@@ -169,7 +170,9 @@ function createStyles(colors: ReturnType<typeof Colors>) {
             width: "100%",
             height: 150,
             borderRadius: 4,
-            backgroundColor: colors.gray200,
+            backgroundColor: colors.secondarySurface,
+            borderWidth: 1,
+            borderColor: colors.secondaryBorder,
             alignItems: "center",
             justifyContent: "center",
             marginBottom: 12,
