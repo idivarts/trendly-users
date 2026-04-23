@@ -322,7 +322,11 @@ const CollaborationDetailsContent = (
                             influencerQuestions={
                                 props?.collaborationDetail?.questionsToInfluencers
                             }
-                            onWithdrawPress={() => setConfirmationModalVisible(true)}
+                            onWithdrawPress={
+                                applicationContract
+                                    ? undefined
+                                    : () => setConfirmationModalVisible(true)
+                            }
                             editLabel={applicationContract ? "View Contract" : "Edit"}
                             onEditPress={() => {
                                 if (!props.applicationData?.id) return;

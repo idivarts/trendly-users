@@ -148,8 +148,6 @@ const ActionContainer: FC<ActionContainerProps> = ({
 
     const submitVideoModal = useSubmitVideoModal({
         contractId: contract.streamChannelId,
-        uploadFile,
-        uploadFileUri,
         runWithRefresh,
     });
 

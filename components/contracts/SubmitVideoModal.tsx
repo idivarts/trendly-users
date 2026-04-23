@@ -1,5 +1,6 @@
 import { state5SubmitDeliverable } from "./api/VideoPending_api";
 import type { AssetItem } from "@/shared-libs/types/Asset";
+import { useAWSContext } from "@/shared-libs/contexts/aws-context.provider";
 import Colors from "@/shared-uis/constants/Colors";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { faArrowUpFromBracket } from "@fortawesome/free-solid-svg-icons";
@@ -293,17 +294,10 @@ export type SubmitVideoModalRunWithRefresh = (
 
 export function useSubmitVideoModal(options: {
     contractId: string;
-    uploadFile: (
-        file: File,
-        subject?: { index: number; subject: Subject<{ index: number; percentage: number }> }
-    ) => Promise<{ playUrl?: string; appleUrl?: string }>;
-    uploadFileUri: (
-        fileUri: AssetItem,
-        subject?: { index: number; subject: Subject<{ index: number; percentage: number }> }
-    ) => Promise<{ playUrl?: string; appleUrl?: string }>;
     runWithRefresh: SubmitVideoModalRunWithRefresh;
 }) {
-    const { contractId, uploadFile, uploadFileUri, runWithRefresh } = options;
+    const { contractId, runWithRefresh } = options;
+    const { getBlob } = useAWSContext();
     const [visible, setVisible] = useState(false);
     const [submitVideoNote, setSubmitVideoNote] = useState("");
     const [selectedVideoName, setSelectedVideoName] = useState("");
@@ -375,30 +369,34 @@ export function useSubmitVideoModal(options: {
                             setUploadProgress(Math.max(0, Math.min(100, safe)));
                         });
 
-                        const uploadedVideo = isWeb
-                            ? await uploadFile(selectedVideoFile as File, { index: 0, subject: progressSubject })
-                            : await uploadFileUri(
-                                  {
-                                      id: selectedVideoUri,
-                                      localUri: selectedVideoUri,
-                                      uri: selectedVideoUri,
-                                      type: "video",
-                                  } as AssetItem,
-                                  { index: 0, subject: progressSubject }
-                              );
+                        // Convert selected video into a Blob/File using AWS helper.
+                        progressSubject.next({ index: 0, percentage: 10 });
+                        const videoType = "video/mp4";
+                        const normalizedName =
+                            (selectedVideoName || "video.mp4").includes(".")
+                                ? selectedVideoName || "video.mp4"
+                                : `${selectedVideoName || "video"}.mp4`;
 
-                        setUploadProgress(100);
+                        const videoPayload: Blob | File = isWeb
+                            ? (selectedVideoFile as File)
+                            : await getBlob({
+                                  id: selectedVideoUri,
+                                  localUri: selectedVideoUri,
+                                  uri: selectedVideoUri,
+                                  type: "video",
+                              } as AssetItem);
 
-                        const videoUrl = uploadedVideo.playUrl || uploadedVideo.appleUrl;
-                        if (!videoUrl) {
-                            throw new Error("Video upload failed. Please try again.");
-                        }
+                        progressSubject.next({ index: 0, percentage: 60 });
+
                         await state5SubmitDeliverable({
                             contractId,
-                            videoUrl,
+                            video: videoPayload,
+                            videoName: normalizedName,
+                            videoType,
                             note: submitVideoNote.trim() || undefined,
                         });
                         close();
+                        setUploadProgress(100);
                     } finally {
                         progressSub?.unsubscribe();
                         progressSubject.complete();
@@ -412,8 +410,7 @@ export function useSubmitVideoModal(options: {
             selectedVideoUri,
             submitVideoNote,
             contractId,
-            uploadFile,
-            uploadFileUri,
+            getBlob,
             runWithRefresh,
             close,
         ]

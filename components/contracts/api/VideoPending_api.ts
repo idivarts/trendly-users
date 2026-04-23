@@ -3,7 +3,9 @@ import { ContractStatus, CONTRACT_STATUS_LABELS } from "@/shared-constants/contr
 
 export interface State5SubmitDeliverablePayload {
     contractId: string;
-    videoUrl: string;
+    video: Blob | File;
+    videoName: string;
+    videoType: string;
     note?: string;
 }
 export async function state5SubmitDeliverable(payload: State5SubmitDeliverablePayload) {
@@ -13,17 +15,20 @@ export async function state5SubmitDeliverable(payload: State5SubmitDeliverablePa
                 { contractId: payload.contractId }
             )}`
         );
+
+        const body = new FormData();
+        // FormData supports Blob/File; filename is important for backend parsing.
+        body.append("video", payload.video as any, payload.videoName);
+        if (payload.note) {
+            body.append("note", payload.note);
+        }
+
         await HttpWrapper.fetch(
             `/monetize/influencers/contracts/${payload.contractId}/deliverable`,
             {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    videoUrl: payload.videoUrl,
-                    ...(payload.note ? { note: payload.note } : {}),
-                }),
+                // Let the runtime set the correct multipart boundary.
+                body,
             }
         );
     } catch (error) {
