@@ -16,6 +16,8 @@ import {
     StyleSheet,
     View,
 } from "react-native";
+import { ProgressBar } from "react-native-paper";
+import { Subject, type Subscription } from "rxjs";
 import { Text } from "../theme/Themed";
 import Button from "../ui/button";
 import TextInput from "../ui/text-input";
@@ -26,6 +28,8 @@ interface SubmitVideoModalProps {
     loading?: boolean;
     selectedVideoName?: string;
     note: string;
+    uploadProgress?: number;
+    isUploading?: boolean;
     onClose: () => void;
     onPickVideo?: () => void;
     onPickVideoWeb?: (file: File) => void;
@@ -38,6 +42,8 @@ const SubmitVideoModal: React.FC<SubmitVideoModalProps> = ({
     loading = false,
     selectedVideoName,
     note,
+    uploadProgress = 0,
+    isUploading = false,
     onClose,
     onPickVideo,
     onPickVideoWeb,
@@ -49,6 +55,8 @@ const SubmitVideoModal: React.FC<SubmitVideoModalProps> = ({
     const styles = useMemo(() => createStyles(colors), [colors]);
     const webFileInputRef = useRef<HTMLInputElement | null>(null);
     const webFileHiddenStyle: React.CSSProperties = useMemo(() => ({ display: "none" }), []);
+    const uploadForegroundColor = selectedVideoName ? colors.text : colors.textSecondary;
+    const effectiveOnClose = isUploading ? () => undefined : onClose;
 
     const handlePickVideoPress = () => {
         if (Platform.OS === "web") {
@@ -96,12 +104,34 @@ const SubmitVideoModal: React.FC<SubmitVideoModalProps> = ({
                     ) : null}
                     <Pressable style={styles.uploadBox} onPress={handlePickVideoPress}>
                         <View style={styles.uploadContent}>
-                            <FontAwesomeIcon icon={faArrowUpFromBracket} size={44} color={colors.text} />
-                            <Text style={styles.uploadText}>
+                            <FontAwesomeIcon icon={faArrowUpFromBracket} size={44} color={uploadForegroundColor} />
+                            <Text
+                                style={[
+                                    styles.uploadText,
+                                    selectedVideoName ? styles.uploadTextSelected : styles.uploadTextPlaceholder,
+                                ]}
+                            >
                                 {selectedVideoName || "Tap to select video"}
                             </Text>
                         </View>
                     </Pressable>
+
+                    {isUploading ? (
+                        <View style={styles.uploadProgressCard}>
+                            <View style={styles.uploadProgressHeader}>
+                                <Text style={styles.uploadProgressTitle}>Uploading video</Text>
+                                <Text style={styles.uploadProgressPercent}>{Math.round(uploadProgress || 0)}%</Text>
+                            </View>
+                            <ProgressBar
+                                progress={Math.min(1, Math.max(0, (uploadProgress || 0) / 100))}
+                                color={colors.primary}
+                                style={styles.uploadProgressBar}
+                            />
+                            <Text style={styles.uploadProgressHint}>
+                                The Video is getting uploaded please don't close the app until the video is uploaded
+                            </Text>
+                        </View>
+                    ) : null}
 
                     <TextInput
                         label="Note"
@@ -115,11 +145,11 @@ const SubmitVideoModal: React.FC<SubmitVideoModalProps> = ({
                     <Text style={styles.helperText}>Supporting text</Text>
 
                     <View style={styles.actions}>
-                        <Button mode="outlined" style={styles.button} onPress={onClose}>
+                        <Button mode="outlined" style={styles.button} onPress={effectiveOnClose} disabled={loading || isUploading}>
                             Cancel
                         </Button>
-                        <Button mode="contained" style={styles.button} onPress={onSubmit} disabled={loading}>
-                            {loading ? "Submitting..." : "Confirm"}
+                        <Button mode="contained" style={styles.button} onPress={onSubmit} disabled={loading || isUploading}>
+                            {loading || isUploading ? "Submitting..." : "Confirm"}
                         </Button>
                     </View>
                 </ScrollView>
@@ -130,7 +160,7 @@ const SubmitVideoModal: React.FC<SubmitVideoModalProps> = ({
     return (
         <ContractActionOverlay
             visible={visible}
-            onClose={onClose}
+            onClose={effectiveOnClose}
             mode="auto"
             snapPointsRange={["50%", "90%"]}
             modalMaxWidth={520}
@@ -174,7 +204,9 @@ function createStyles(colors: ReturnType<typeof Colors>) {
             width: "100%",
             height: 130,
             borderRadius: 4,
-            backgroundColor: colors.gray200,
+            backgroundColor: colors.secondarySurface,
+            borderWidth: 1,
+            borderColor: colors.secondaryBorder,
             justifyContent: "center",
             alignItems: "center",
             marginBottom: 12,
@@ -182,16 +214,58 @@ function createStyles(colors: ReturnType<typeof Colors>) {
         uploadContent: {
             alignItems: "center",
             justifyContent: "center",
-            backgroundColor: "transparent",
+            backgroundColor: colors.transparent,
             gap: 6,
         },
         uploadText: {
-            color: colors.text,
             fontSize: 14,
+        },
+        uploadTextPlaceholder: {
+            color: colors.textSecondary,
+        },
+        uploadTextSelected: {
+            color: colors.text,
         },
         noteInput: {
             marginTop: 4,
             minHeight: 86,
+        },
+        uploadProgressCard: {
+            width: "100%",
+            paddingVertical: 12,
+            paddingHorizontal: 12,
+            borderRadius: 8,
+            backgroundColor: colors.secondarySurface,
+            borderWidth: 1,
+            borderColor: colors.secondaryBorder,
+            marginBottom: 12,
+            gap: 8,
+        },
+        uploadProgressHeader: {
+            width: "100%",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+        },
+        uploadProgressTitle: {
+            color: colors.text,
+            fontSize: 14,
+            fontWeight: "600",
+        },
+        uploadProgressPercent: {
+            color: colors.textSecondary,
+            fontSize: 13,
+            fontWeight: "600",
+        },
+        uploadProgressBar: {
+            height: 8,
+            borderRadius: 99,
+            backgroundColor: colors.secondaryBorder,
+        },
+        uploadProgressHint: {
+            color: colors.textSecondary,
+            fontSize: 12,
+            lineHeight: 16,
         },
         helperText: {
             marginTop: 6,
@@ -219,8 +293,14 @@ export type SubmitVideoModalRunWithRefresh = (
 
 export function useSubmitVideoModal(options: {
     contractId: string;
-    uploadFile: (file: File) => Promise<{ playUrl?: string; appleUrl?: string }>;
-    uploadFileUri: (fileUri: AssetItem) => Promise<{ playUrl?: string; appleUrl?: string }>;
+    uploadFile: (
+        file: File,
+        subject?: { index: number; subject: Subject<{ index: number; percentage: number }> }
+    ) => Promise<{ playUrl?: string; appleUrl?: string }>;
+    uploadFileUri: (
+        fileUri: AssetItem,
+        subject?: { index: number; subject: Subject<{ index: number; percentage: number }> }
+    ) => Promise<{ playUrl?: string; appleUrl?: string }>;
     runWithRefresh: SubmitVideoModalRunWithRefresh;
 }) {
     const { contractId, uploadFile, uploadFileUri, runWithRefresh } = options;
@@ -229,6 +309,8 @@ export function useSubmitVideoModal(options: {
     const [selectedVideoName, setSelectedVideoName] = useState("");
     const [selectedVideoUri, setSelectedVideoUri] = useState("");
     const [selectedVideoFile, setSelectedVideoFile] = useState<File | null>(null);
+    const [uploadProgress, setUploadProgress] = useState(0);
+    const [isUploading, setIsUploading] = useState(false);
 
     const open = useCallback(() => setVisible(true), []);
 
@@ -238,6 +320,8 @@ export function useSubmitVideoModal(options: {
         setSelectedVideoName("");
         setSelectedVideoUri("");
         setSelectedVideoFile(null);
+        setUploadProgress(0);
+        setIsUploading(false);
     }, []);
 
     const pickSubmitVideo = useCallback(async () => {
@@ -268,6 +352,9 @@ export function useSubmitVideoModal(options: {
         () =>
             runWithRefresh(
                 async () => {
+                    let progressSub: Subscription | undefined;
+                    const progressSubject = new Subject<{ index: number; percentage: number }>();
+
                     const isWeb = Platform.OS === "web";
                     if (isWeb) {
                         if (!selectedVideoFile) {
@@ -279,24 +366,45 @@ export function useSubmitVideoModal(options: {
                         }
                     }
 
-                    const uploadedVideo = isWeb
-                        ? await uploadFile(selectedVideoFile as File)
-                        : await uploadFileUri({
-                              id: selectedVideoUri,
-                              localUri: selectedVideoUri,
-                              uri: selectedVideoUri,
-                              type: "video",
-                          } as AssetItem);
-                    const videoUrl = uploadedVideo.playUrl || uploadedVideo.appleUrl;
-                    if (!videoUrl) {
-                        throw new Error("Video upload failed. Please try again.");
+                    try {
+                        setIsUploading(true);
+                        setUploadProgress(0);
+
+                        progressSub = progressSubject.subscribe(({ percentage }) => {
+                            const safe = Number.isFinite(percentage) ? Math.round(percentage) : 0;
+                            setUploadProgress(Math.max(0, Math.min(100, safe)));
+                        });
+
+                        const uploadedVideo = isWeb
+                            ? await uploadFile(selectedVideoFile as File, { index: 0, subject: progressSubject })
+                            : await uploadFileUri(
+                                  {
+                                      id: selectedVideoUri,
+                                      localUri: selectedVideoUri,
+                                      uri: selectedVideoUri,
+                                      type: "video",
+                                  } as AssetItem,
+                                  { index: 0, subject: progressSubject }
+                              );
+
+                        setUploadProgress(100);
+
+                        const videoUrl = uploadedVideo.playUrl || uploadedVideo.appleUrl;
+                        if (!videoUrl) {
+                            throw new Error("Video upload failed. Please try again.");
+                        }
+
+                        await state5SubmitDeliverable({
+                            contractId,
+                            videoUrl,
+                            note: submitVideoNote.trim() || undefined,
+                        });
+                        close();
+                    } finally {
+                        progressSub?.unsubscribe();
+                        progressSubject.complete();
+                        setIsUploading(false);
                     }
-                    await state5SubmitDeliverable({
-                        contractId,
-                        videoUrl,
-                        note: submitVideoNote.trim() || undefined,
-                    });
-                    close();
                 },
                 "Video submitted for review."
             ),
@@ -317,13 +425,25 @@ export function useSubmitVideoModal(options: {
             visible,
             selectedVideoName,
             note: submitVideoNote,
+            uploadProgress,
+            isUploading,
             onClose: close,
             onPickVideo: pickSubmitVideo,
             onPickVideoWeb,
             onChangeNote: setSubmitVideoNote,
             onSubmit: handleSubmit,
         }),
-        [visible, selectedVideoName, submitVideoNote, close, pickSubmitVideo, onPickVideoWeb, handleSubmit]
+        [
+            visible,
+            selectedVideoName,
+            submitVideoNote,
+            uploadProgress,
+            isUploading,
+            close,
+            pickSubmitVideo,
+            onPickVideoWeb,
+            handleSubmit,
+        ]
     );
 
     return { open, submitVideoModalProps };
