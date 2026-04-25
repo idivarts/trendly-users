@@ -7,7 +7,7 @@ import {
     IApplications,
     ICollaboration,
 } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
-import { ContractStatus, IContracts } from "@/shared-libs/firestore/trendly-pro/models/contracts";
+import { IContracts } from "@/shared-libs/firestore/trendly-pro/models/contracts";
 import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { useMyNavigation } from "@/shared-libs/utils/router";
@@ -19,9 +19,8 @@ import {
     doc,
     getDoc,
     getDocs,
-    orderBy,
     query,
-    where,
+    where
 } from "firebase/firestore";
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -40,21 +39,6 @@ const EMPTY_STATE = {
     subtitle: "Start Applying today and get exclusive collabs",
     actionLabel: "Explore Collaborations",
 } as const;
-
-/** Statuses 1–9: in-flight contracts (excludes Pending and Settled). */
-const ACTIVE_CONTRACT_STATUSES: ContractStatus[] = [
-    ContractStatus.Started,
-    ContractStatus.PaymentFailed,
-    ContractStatus.ShipmentPending,
-    ContractStatus.DeliveryPending,
-    ContractStatus.DeliveryAcknowledgementPending,
-    ContractStatus.VideoPending,
-    ContractStatus.ReviewPending,
-    ContractStatus.PostingPending,
-    ContractStatus.SettlementPending,
-];
-
-const PAST_CONTRACT_STATUSES: ContractStatus[] = [ContractStatus.Settled];
 
 const SCOPE_CONFIG: Record<ContractsTabScope, { emptyTitle: string }> = {
     active: {
@@ -98,17 +82,13 @@ const ContractsTabContent = ({ scope }: ContractsTabContentProps) => {
                 throw new Error("User not authenticated");
             }
 
-            const statusFilter =
-                scope === "active"
-                    ? ACTIVE_CONTRACT_STATUSES
-                    : PAST_CONTRACT_STATUSES;
-
             const contractsCol = collection(FirestoreDB, "contracts");
             const querySnap = query(
                 contractsCol,
                 where("userId", "==", user.id),
-                where("status", "in", statusFilter),
-                orderBy("contractTimestamp.startedOn", "desc")
+                scope === "active" ? where("status", "<=", 9) : where("status", ">=", 10),
+                // removing orderBy to avoid pagination issues
+                // orderBy("contractTimestamp.startedOn", "desc")
             );
             const contractsSnapshot = await getDocs(querySnap);
 
@@ -159,6 +139,8 @@ const ContractsTabContent = ({ scope }: ContractsTabContentProps) => {
                 })
             );
 
+            console.log("Contracts:", contracts);
+
             setProposals(contracts);
             setIsLoading(false);
         } catch (error) {
@@ -170,7 +152,7 @@ const ContractsTabContent = ({ scope }: ContractsTabContentProps) => {
 
     useEffect(() => {
         fetchProposals();
-    }, [user, scope]);
+    }, [user?.id, scope]);
 
     if (isLoading) {
         return (
