@@ -7,7 +7,7 @@ import {
     IApplications,
     ICollaboration,
 } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
-import { ContractStatus, IContracts } from "@/shared-libs/firestore/trendly-pro/models/contracts";
+import { IContracts } from "@/shared-libs/firestore/trendly-pro/models/contracts";
 import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { useMyNavigation } from "@/shared-libs/utils/router";
@@ -19,9 +19,8 @@ import {
     doc,
     getDoc,
     getDocs,
-    orderBy,
     query,
-    where,
+    where
 } from "firebase/firestore";
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -41,20 +40,12 @@ const EMPTY_STATE = {
     actionLabel: "Explore Collaborations",
 } as const;
 
-const SCOPE_CONFIG: Record<
-    ContractsTabScope,
-    {
-        filter: (proposal: ICollaborationCard) => boolean;
-        emptyTitle: string;
-    }
-> = {
+const SCOPE_CONFIG: Record<ContractsTabScope, { emptyTitle: string }> = {
     active: {
-        filter: (proposal) => proposal.status !== ContractStatus.Pending && proposal.status < ContractStatus.Settled,
         emptyTitle: "No Contracts yet",
     },
     past: {
-        filter: (proposal) => proposal.status >= ContractStatus.Settled,
-        emptyTitle: "No Contract yet",
+        emptyTitle: "No Contracts yet",
     },
 };
 
@@ -75,7 +66,7 @@ const ContractsTabContent = ({ scope }: ContractsTabContentProps) => {
 
     const listStyles = useMemo(() => createContractListStyles(xl), [xl]);
 
-    const { filter, emptyTitle } = SCOPE_CONFIG[scope];
+    const { emptyTitle } = SCOPE_CONFIG[scope];
 
     const handleRefresh = async () => {
         setRefreshing(true);
@@ -95,7 +86,9 @@ const ContractsTabContent = ({ scope }: ContractsTabContentProps) => {
             const querySnap = query(
                 contractsCol,
                 where("userId", "==", user.id),
-                orderBy("contractTimestamp.startedOn", "desc")
+                scope === "active" ? where("status", "<=", 9) : where("status", ">=", 10),
+                // removing orderBy to avoid pagination issues
+                // orderBy("contractTimestamp.startedOn", "desc")
             );
             const contractsSnapshot = await getDocs(querySnap);
 
@@ -146,6 +139,8 @@ const ContractsTabContent = ({ scope }: ContractsTabContentProps) => {
                 })
             );
 
+            console.log("Contracts:", contracts);
+
             setProposals(contracts);
             setIsLoading(false);
         } catch (error) {
@@ -157,12 +152,7 @@ const ContractsTabContent = ({ scope }: ContractsTabContentProps) => {
 
     useEffect(() => {
         fetchProposals();
-    }, [user]);
-
-    const filteredProposals = useMemo(
-        () => proposals.filter(filter),
-        [proposals, filter]
-    );
+    }, [user?.id, scope]);
 
     if (isLoading) {
         return (
@@ -176,7 +166,7 @@ const ContractsTabContent = ({ scope }: ContractsTabContentProps) => {
 
     return (
         <View style={layoutStyles.outer}>
-            {filteredProposals.length === 0 ? (
+            {proposals.length === 0 ? (
                 <EmptyState
                     image={EMPTY_STATE.image}
                     subtitle={EMPTY_STATE.subtitle}
@@ -187,7 +177,7 @@ const ContractsTabContent = ({ scope }: ContractsTabContentProps) => {
             ) : (
                 <View style={layoutStyles.listWrap}>
                     <FlatList
-                        data={filteredProposals}
+                        data={proposals}
                         showsVerticalScrollIndicator={false}
                         renderItem={({ item }) => (
                             <ContractCardRow item={item} />
