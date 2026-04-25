@@ -41,20 +41,27 @@ const EMPTY_STATE = {
     actionLabel: "Explore Collaborations",
 } as const;
 
-const SCOPE_CONFIG: Record<
-    ContractsTabScope,
-    {
-        filter: (proposal: ICollaborationCard) => boolean;
-        emptyTitle: string;
-    }
-> = {
+/** Statuses 1–9: in-flight contracts (excludes Pending and Settled). */
+const ACTIVE_CONTRACT_STATUSES: ContractStatus[] = [
+    ContractStatus.Started,
+    ContractStatus.PaymentFailed,
+    ContractStatus.ShipmentPending,
+    ContractStatus.DeliveryPending,
+    ContractStatus.DeliveryAcknowledgementPending,
+    ContractStatus.VideoPending,
+    ContractStatus.ReviewPending,
+    ContractStatus.PostingPending,
+    ContractStatus.SettlementPending,
+];
+
+const PAST_CONTRACT_STATUSES: ContractStatus[] = [ContractStatus.Settled];
+
+const SCOPE_CONFIG: Record<ContractsTabScope, { emptyTitle: string }> = {
     active: {
-        filter: (proposal) => proposal.status !== ContractStatus.Pending && proposal.status < ContractStatus.Settled,
         emptyTitle: "No Contracts yet",
     },
     past: {
-        filter: (proposal) => proposal.status >= ContractStatus.Settled,
-        emptyTitle: "No Contract yet",
+        emptyTitle: "No Contracts yet",
     },
 };
 
@@ -75,7 +82,7 @@ const ContractsTabContent = ({ scope }: ContractsTabContentProps) => {
 
     const listStyles = useMemo(() => createContractListStyles(xl), [xl]);
 
-    const { filter, emptyTitle } = SCOPE_CONFIG[scope];
+    const { emptyTitle } = SCOPE_CONFIG[scope];
 
     const handleRefresh = async () => {
         setRefreshing(true);
@@ -91,10 +98,16 @@ const ContractsTabContent = ({ scope }: ContractsTabContentProps) => {
                 throw new Error("User not authenticated");
             }
 
+            const statusFilter =
+                scope === "active"
+                    ? ACTIVE_CONTRACT_STATUSES
+                    : PAST_CONTRACT_STATUSES;
+
             const contractsCol = collection(FirestoreDB, "contracts");
             const querySnap = query(
                 contractsCol,
                 where("userId", "==", user.id),
+                where("status", "in", statusFilter),
                 orderBy("contractTimestamp.startedOn", "desc")
             );
             const contractsSnapshot = await getDocs(querySnap);
@@ -157,12 +170,7 @@ const ContractsTabContent = ({ scope }: ContractsTabContentProps) => {
 
     useEffect(() => {
         fetchProposals();
-    }, [user]);
-
-    const filteredProposals = useMemo(
-        () => proposals.filter(filter),
-        [proposals, filter]
-    );
+    }, [user, scope]);
 
     if (isLoading) {
         return (
@@ -176,7 +184,7 @@ const ContractsTabContent = ({ scope }: ContractsTabContentProps) => {
 
     return (
         <View style={layoutStyles.outer}>
-            {filteredProposals.length === 0 ? (
+            {proposals.length === 0 ? (
                 <EmptyState
                     image={EMPTY_STATE.image}
                     subtitle={EMPTY_STATE.subtitle}
@@ -187,7 +195,7 @@ const ContractsTabContent = ({ scope }: ContractsTabContentProps) => {
             ) : (
                 <View style={layoutStyles.listWrap}>
                     <FlatList
-                        data={filteredProposals}
+                        data={proposals}
                         showsVerticalScrollIndicator={false}
                         renderItem={({ item }) => (
                             <ContractCardRow item={item} />
