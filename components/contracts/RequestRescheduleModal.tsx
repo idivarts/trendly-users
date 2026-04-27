@@ -10,6 +10,7 @@ import {
     StyleSheet,
     View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Text } from "../theme/Themed";
 import Button from "../ui/button";
 import TextInput from "../ui/text-input";
@@ -35,10 +36,12 @@ const RequestRescheduleModal: React.FC<RequestRescheduleModalProps> = ({
     const theme = useTheme();
     const colors = Colors(theme);
     const styles = useMemo(() => createStyles(colors), [colors]);
+    const insets = useSafeAreaInsets();
 
     const modalContent = (
         <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            behavior={Platform.OS === "ios" ? "padding" : "position"}
+            keyboardVerticalOffset={Platform.OS === "ios" ? Math.max(insets.top, 12) + 48 : 0}
             style={styles.keyboardView}
         >
             <Pressable
@@ -78,7 +81,7 @@ const RequestRescheduleModal: React.FC<RequestRescheduleModalProps> = ({
             visible={visible}
             onClose={onClose}
             mode="auto"
-            snapPointsRange={["45%", "75%"]}
+            snapPointsRange={["96%", "96%"]}
             modalMaxWidth={520}
         >
             <View style={styles.contentShell}>{modalContent}</View>

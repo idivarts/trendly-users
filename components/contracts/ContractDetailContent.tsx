@@ -13,13 +13,15 @@ import { IContracts } from "@/shared-libs/firestore/trendly-pro/models/contracts
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { useMyNavigation } from "@/shared-libs/utils/router";
+import { Stars } from "@/shared-uis/components/rating-section";
+import Colors from "@/shared-uis/constants/Colors";
 import { formatTimeToNow } from "@/utils/date";
-import { useIsFocused } from "@react-navigation/native";
+import { useIsFocused, useTheme } from "@react-navigation/native";
 import { useLocalSearchParams } from "expo-router";
 import { doc, getDoc } from "firebase/firestore";
-import React, { useEffect, useState } from "react";
-import { View } from "react-native";
-import { Card } from "react-native-paper";
+import React, { useEffect, useMemo, useState } from "react";
+import { StyleSheet, View } from "react-native";
+import { Card, Text } from "react-native-paper";
 import ActionContainer from "./ActionContainer";
 import FeedbackModal from "./FeedbackModal";
 import MemberContainer from "./MemberContainer";
@@ -45,6 +47,9 @@ const ContractDetailsContent = (props: ContractDetailViewProps) => {
     const params = useLocalSearchParams();
     const [brandData, setBrandData] = useState<IBrands>();
     const router = useMyNavigation();
+    const theme = useTheme();
+    const colors = Colors(theme);
+    const localStyles = useMemo(() => createLocalStyles(colors), [colors]);
 
     const { giveFeedback } = useLocalSearchParams();
     const isFocused = useIsFocused();
@@ -75,6 +80,11 @@ const ContractDetailsContent = (props: ContractDetailViewProps) => {
         fetchBrandData();
     }, []);
 
+    const influencerFeedbackSubmitted = Boolean(props.contractData.feedbackFromInfluencer?.timeSubmitted) ||
+        Boolean(props.contractData.feedbackFromInfluencer?.feedbackReview);
+    const brandFeedback = props.contractData.feedbackFromBrand;
+    const brandFeedbackSubmitted = Boolean(brandFeedback?.timeSubmitted) || Boolean(brandFeedback?.feedbackReview);
+
     return (
         <IOScroll
             contentContainerStyle={styles.scrollContainer}
@@ -101,6 +111,21 @@ const ContractDetailsContent = (props: ContractDetailViewProps) => {
                         userData={props.userData}
                         collaborationData={props.collaborationDetail}
                     />
+
+                    {influencerFeedbackSubmitted && brandFeedbackSubmitted ? (
+                        <View style={localStyles.feedbackCard}>
+                            <Text style={localStyles.feedbackTitle}>Brand Feedback</Text>
+                            <View style={localStyles.feedbackRow}>
+                                <Stars rating={brandFeedback?.ratings || 0} size={16} />
+                                {typeof brandFeedback?.ratings === "number" ? (
+                                    <Text style={localStyles.feedbackMeta}>{brandFeedback.ratings.toFixed(1)}</Text>
+                                ) : null}
+                            </View>
+                            {brandFeedback?.feedbackReview ? (
+                                <Text style={localStyles.feedbackBody}>{brandFeedback.feedbackReview}</Text>
+                            ) : null}
+                        </View>
+                    ) : null}
 
                     <MemberContainer
                         channelId={props.contractData.streamChannelId}
@@ -157,3 +182,36 @@ const ContractDetailsContent = (props: ContractDetailViewProps) => {
 };
 
 export default ContractDetailsContent;
+
+function createLocalStyles(colors: ReturnType<typeof Colors>) {
+    return StyleSheet.create({
+        feedbackCard: {
+            backgroundColor: colors.card,
+            borderRadius: 12,
+            padding: 14,
+            marginTop: 12,
+        },
+        feedbackTitle: {
+            color: colors.text,
+            fontSize: 16,
+            fontWeight: "700",
+            marginBottom: 8,
+        },
+        feedbackRow: {
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 10,
+            marginBottom: 8,
+        },
+        feedbackMeta: {
+            color: colors.textSecondary,
+            fontSize: 13,
+            fontWeight: "600",
+        },
+        feedbackBody: {
+            color: colors.text,
+            fontSize: 14,
+            lineHeight: 20,
+        },
+    });
+}
