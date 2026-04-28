@@ -3,6 +3,7 @@ import { Notification } from "@/types/Notification";
 import { Theme, useTheme } from "@react-navigation/native";
 import React from "react";
 import { FlatList, StyleSheet } from "react-native";
+import { ActivityIndicator } from "react-native-paper";
 import { NotificationCard } from "../NotificationCard";
 import { View } from "../theme/Themed";
 import EmptyState from "../ui/empty-state";
@@ -12,11 +13,19 @@ import EmptyState from "../ui/empty-state";
 interface NotificationsProps {
     notifications: Notification[];
     onMarkAsRead: (notificationId: string) => void;
+    onRefresh: () => void | Promise<void>;
+    refreshing: boolean;
+    onEndReached: () => void;
+    isLoadingMore: boolean;
 }
 
 const Notifications: React.FC<NotificationsProps> = ({
     notifications,
     onMarkAsRead,
+    onRefresh,
+    refreshing,
+    onEndReached,
+    isLoadingMore,
 }) => {
     const theme = useTheme();
     const styles = stylesFn(theme);
@@ -56,6 +65,20 @@ const Notifications: React.FC<NotificationsProps> = ({
                                 title={item.title}
                             />
                         )}
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                        onEndReachedThreshold={0.6}
+                        onEndReached={onEndReached}
+                        ListFooterComponent={
+                            isLoadingMore ? (
+                                <View style={styles.footer}>
+                                    <ActivityIndicator
+                                        size="small"
+                                        color={Colors(theme).primary}
+                                    />
+                                </View>
+                            ) : null
+                        }
                         initialNumToRender={10}
                         maxToRenderPerBatch={10}
                         windowSize={5}
@@ -76,6 +99,10 @@ export const stylesFn = (theme: Theme) => StyleSheet.create({
     },
     contentContainer: {
         gap: 16,
+        paddingBottom: 24,
+    },
+    footer: {
+        paddingTop: 12,
         paddingBottom: 24,
     },
 });

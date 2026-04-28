@@ -162,7 +162,7 @@ const SubmitVideoModal: React.FC<SubmitVideoModalProps> = ({
             visible={visible}
             onClose={effectiveOnClose}
             mode="auto"
-            snapPointsRange={["50%", "90%"]}
+            snapPointsRange={["96%", "96%"]}
             modalMaxWidth={520}
         >
             <View style={styles.contentShell}>{modalContent}</View>

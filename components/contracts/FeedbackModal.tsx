@@ -15,6 +15,7 @@ import {
     Pressable,
     StyleSheet,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import TextInput from "../ui/text-input";
 import { state9SubmitUserFeedback } from "./api/SettlementPending_api";
 import ContractActionOverlay from "./ContractActionOverlay";
@@ -42,6 +43,7 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
     const [selectedStar, setSelectedStar] = useState(star);
     const [textFeedback, setTextFeedback] = useState("");
     const [submitting, setSubmitting] = useState(false);
+    const insets = useSafeAreaInsets();
 
     const handleClose = () => setVisibility(false);
 
@@ -81,11 +83,13 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
             visible={visible}
             onClose={handleClose}
             mode="auto"
-            snapPointsRange={["50%", "88%"]}
+            snapPointsRange={["96%", "96%"]}
             modalMaxWidth={600}
         >
             <KeyboardAvoidingView
-                behavior={Platform.OS === "ios" ? "padding" : "height"}
+                // Bottom sheet doesn't always auto-offset on Android; "position" tends to be more reliable.
+                behavior={Platform.OS === "ios" ? "padding" : "position"}
+                keyboardVerticalOffset={Platform.OS === "ios" ? Math.max(insets.top, 12) + 48 : 0}
                 style={styles.keyboardAvoidingView}
             >
                 <Pressable style={styles.inner} onPress={() => Platform.OS !== "web" && Keyboard.dismiss()}>

@@ -55,7 +55,7 @@ const MarkVideoPostedModal: React.FC<MarkVideoPostedModalProps> = ({
 }) => {
     const theme = useTheme();
     const colors = Colors(theme);
-    const styles = useMemo(() => createStyles(colors), [colors]);
+    const styles = useMemo(() => createStyles(theme), [theme]);
     const webFileInputRef = useRef<HTMLInputElement | null>(null);
 
     const handlePickProofPress = () => {
@@ -114,11 +114,7 @@ const MarkVideoPostedModal: React.FC<MarkVideoPostedModalProps> = ({
                             />
                         ) : (
                             <View style={styles.uploadContent}>
-                                <FontAwesomeIcon
-                                    icon={faArrowUpFromBracket}
-                                    size={44}
-                                    color={colors.text}
-                                />
+                                <FontAwesomeIcon icon={faArrowUpFromBracket} size={44} color={colors.text} />
                                 <Text style={styles.uploadText}>
                                     {proofScreenshotName || "Tap to upload proof screenshot"}
                                 </Text>
@@ -175,7 +171,8 @@ const MarkVideoPostedModal: React.FC<MarkVideoPostedModalProps> = ({
     );
 };
 
-function createStyles(colors: ReturnType<typeof Colors>) {
+function createStyles(theme: ReturnType<typeof useTheme>) {
+    const colors = Colors(theme);
     return StyleSheet.create({
         contentShell: {
             flex: 1,
@@ -209,7 +206,9 @@ function createStyles(colors: ReturnType<typeof Colors>) {
             width: "100%",
             height: 150,
             borderRadius: 4,
-            backgroundColor: colors.gray200,
+            backgroundColor: theme.dark ? colors.modalBackground : colors.gray200,
+            borderWidth: 1,
+            borderColor: colors.border,
             alignItems: "center",
             justifyContent: "center",
             marginBottom: 12,
@@ -218,7 +217,7 @@ function createStyles(colors: ReturnType<typeof Colors>) {
         uploadContent: {
             alignItems: "center",
             justifyContent: "center",
-            backgroundColor: "transparent",
+            backgroundColor: colors.transparent,
             gap: 6,
             paddingHorizontal: 12,
         },

@@ -44,6 +44,10 @@ export default function NotificationsScreen() {
     } = useAuthContext();
     const {
         userNotifications,
+        refreshUserNotifications,
+        loadMoreUserNotifications,
+        isRefreshingUserNotifications,
+        isLoadingMoreUserNotifications,
         updateUserNotification,
         markAllNotificationsAsRead,
     } = useNotificationContext();
@@ -84,6 +88,10 @@ export default function NotificationsScreen() {
             <Notifications
                 notifications={userNotifications}
                 onMarkAsRead={onMarkAsRead}
+                onRefresh={() => refreshUserNotifications(user?.id as string)}
+                refreshing={isRefreshingUserNotifications}
+                onEndReached={() => loadMoreUserNotifications(user?.id as string)}
+                isLoadingMore={isLoadingMoreUserNotifications}
             />
         </AppLayout>
     );

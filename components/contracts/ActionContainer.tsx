@@ -275,6 +275,12 @@ const ActionContainer: FC<ActionContainerProps> = ({
                 return {
                     buttons: [
                         {
+                            label: "Go to Messages",
+                            onPress: openMessages,
+                            variant: "outlined",
+                            disabled: loading,
+                        },
+                        {
                             label: "Ask to retry Payment",
                             onPress: () =>
                                 runWithRefresh(
@@ -424,8 +430,30 @@ const ActionContainer: FC<ActionContainerProps> = ({
                     },
                 };
             case ContractStatus.SettlementPending:
+                if (contract.feedbackFromInfluencer?.timeSubmitted || contract.feedbackFromInfluencer?.feedbackReview) {
+                    return {
+                        buttons: [
+                            {
+                                label: "Go to Messages",
+                                onPress: openMessages,
+                                variant: "contained",
+                                disabled: loading,
+                            },
+                        ],
+                        message: {
+                            variant: "success",
+                            text: "Thanks for sharing your feedback. You can now view the brand’s review when it becomes available.",
+                        },
+                    };
+                }
                 return {
                     buttons: [
+                        {
+                            label: "Go to Messages",
+                            onPress: openMessages,
+                            variant: "outlined",
+                            disabled: loading,
+                        },
                         {
                             label: "Give Feedback",
                             onPress: feedbackModalVisible,
