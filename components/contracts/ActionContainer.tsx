@@ -13,12 +13,13 @@ import {
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { useCallback, useEffect, useMemo, useRef, useState, type FC } from "react";
 import { StyleSheet, View } from "react-native";
+import { state6RequestApproval } from "./api/ReviewPending_api";
 import {
     state0AskToStartContract,
+    state1AskToCompletePayment,
     state2AskRetryPayment,
     state3NudgeForShipment,
 } from "./api/ShipmentPending_api";
-import { state6RequestApproval } from "./api/ReviewPending_api";
 import MarkVideoPostedModal, { useMarkVideoPostedModal } from "./MarkVideoPostedModal";
 import ProductReceivedModal, { useProductReceivedModal } from "./ProductReceivedModal";
 import RequestRescheduleModal, { useRequestRescheduleModal } from "./RequestRescheduleModal";
@@ -298,7 +299,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
                         },
                         {
                             label: "Ask to finish payment",
-                            onPress: openMessages,
+                            onPress: () => state1AskToCompletePayment({ streamChannelId: contract.streamChannelId }),
                             variant: "contained",
                             disabled: loading,
                         },
@@ -436,10 +437,10 @@ const ActionContainer: FC<ActionContainerProps> = ({
                                 hasRevisionRequest
                                     ? () => submitVideoModal.open()
                                     : () =>
-                                          void runButtonAction(
-                                              "request-approval",
-                                              requestApprovalWithDebounce
-                                          ),
+                                        void runButtonAction(
+                                            "request-approval",
+                                            requestApprovalWithDebounce
+                                        ),
                             variant: "contained",
                             disabled: loading,
                             loading: !hasRevisionRequest && buttonLoadingKey === "request-approval",

@@ -1,5 +1,5 @@
 import { streamClient } from "@/contexts/streamClient";
-import { ContractStatus, CONTRACT_STATUS_LABELS } from "@/shared-constants/contract-status";
+import { CONTRACT_STATUS_LABELS, ContractStatus } from "@/shared-constants/contract-status";
 import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
 
 const PAYMENT_NUDGE_MESSAGE =
@@ -8,6 +8,8 @@ const SHIPMENT_NUDGE_MESSAGE =
     "Hi! Could you please share shipment details once dispatched? Thank you.";
 const START_CONTRACT_MESSAGE =
     "Hi! Could you please start the contract once payment is completed? Thank you.";
+const COMPLETE_PAYMENT_MESSAGE =
+    "Hi! Just a friendly reminder to complete the payment for our collaboration. Thank you.";
 const RETRY_PAYMENT_MESSAGE =
     "Hi! The payment seems to have failed. Could you please retry the payment so we can proceed?";
 
@@ -20,7 +22,7 @@ function logStateApi(state: ContractStatus, stateApiFnName: string, apiName: str
     const stateLabel = CONTRACT_STATUS_LABELS[state];
     console.log(
         `[ContractFlow] State ${state} (${stateLabel}) - ${stateApiFnName} - ${apiName}` +
-            (extra ? ` | ${JSON.stringify(extra)}` : "")
+        (extra ? ` | ${JSON.stringify(extra)}` : "")
     );
 }
 
@@ -80,6 +82,10 @@ export async function state3NudgeForShipment(payload: State3NudgePayload) {
 
 export async function state0AskToStartContract(payload: State3NudgePayload) {
     return sendChannelNudge(ContractStatus.Pending, "state0AskToStartContract", payload, START_CONTRACT_MESSAGE);
+}
+
+export async function state1AskToCompletePayment(payload: State3NudgePayload) {
+    return sendChannelNudge(ContractStatus.Pending, "state1AskToCompletePayment", payload, COMPLETE_PAYMENT_MESSAGE);
 }
 
 export async function state2AskRetryPayment(payload: State3NudgePayload) {
