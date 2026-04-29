@@ -1,10 +1,11 @@
 import Colors from "@/shared-uis/constants/Colors";
 import { useTheme } from "@react-navigation/native";
-import React, { useMemo } from "react";
-import { Image, ScrollView, StyleSheet, View } from "react-native";
+import React, { useMemo, useState } from "react";
+import { Image, Pressable, ScrollView, StyleSheet, View } from "react-native";
 
 import { Text } from "../theme/Themed";
 import Button from "../ui/button";
+import AssetPreviewModal from "@/shared-uis/components/carousel/asset-preview-modal";
 import ContractActionOverlay from "./ContractActionOverlay";
 
 export type ShipmentDetailsOverlayData = {
@@ -29,6 +30,8 @@ const ShipmentDetailsOverlay = ({
     const theme = useTheme();
     const colors = Colors(theme);
     const styles = useMemo(() => createStyles(colors), [colors]);
+    const [previewImage, setPreviewImage] = useState(false);
+    const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
 
     return (
         <ContractActionOverlay
@@ -70,12 +73,16 @@ const ShipmentDetailsOverlay = ({
                     {details.deliveryProofs?.length ? (
                         <View style={styles.proofGrid}>
                             {details.deliveryProofs.map((proofUrl, index) => (
-                                <Image
+                                <Pressable
                                     key={`${proofUrl}-${index}`}
-                                    source={{ uri: proofUrl }}
-                                    style={styles.proofImage}
-                                    resizeMode="cover"
-                                />
+                                    onPress={() => {
+                                        setPreviewImageUrl(proofUrl);
+                                        setPreviewImage(true);
+                                    }}
+                                    style={styles.proofPressable}
+                                >
+                                    <Image source={{ uri: proofUrl }} style={styles.proofImage} resizeMode="cover" />
+                                </Pressable>
                             ))}
                         </View>
                     ) : (
@@ -87,6 +94,13 @@ const ShipmentDetailsOverlay = ({
                     Close
                 </Button>
             </ScrollView>
+
+            <AssetPreviewModal
+                previewImage={previewImage}
+                previewImageUrl={previewImageUrl}
+                setPreviewImage={setPreviewImage}
+                theme={theme}
+            />
         </ContractActionOverlay>
     );
 };
@@ -129,6 +143,10 @@ function createStyles(colors: ReturnType<typeof Colors>) {
             flexDirection: "row",
             flexWrap: "wrap",
             gap: 10,
+        },
+        proofPressable: {
+            borderRadius: 8,
+            overflow: "hidden",
         },
         proofImage: {
             width: 120,

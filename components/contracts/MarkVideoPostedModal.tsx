@@ -17,6 +17,8 @@ import {
     StyleSheet,
     View,
 } from "react-native";
+import { ProgressBar } from "react-native-paper";
+import { Subject, type Subscription } from "rxjs";
 import { Text } from "../theme/Themed";
 import Button from "../ui/button";
 import TextInput from "../ui/text-input";
@@ -30,6 +32,8 @@ interface MarkVideoPostedModalProps {
     proofScreenshotName?: string;
     postUrl: string;
     notes: string;
+    uploadProgress?: number;
+    isUploading?: boolean;
     onClose: () => void;
     onPickProofScreenshot?: () => void;
     onPickProofScreenshotWeb?: (file: File) => void;
@@ -46,6 +50,8 @@ const MarkVideoPostedModal: React.FC<MarkVideoPostedModalProps> = ({
     proofScreenshotName,
     postUrl,
     notes,
+    uploadProgress = 0,
+    isUploading = false,
     onClose,
     onPickProofScreenshot,
     onPickProofScreenshotWeb,
@@ -57,6 +63,7 @@ const MarkVideoPostedModal: React.FC<MarkVideoPostedModalProps> = ({
     const colors = Colors(theme);
     const styles = useMemo(() => createStyles(theme), [theme]);
     const webFileInputRef = useRef<HTMLInputElement | null>(null);
+    const effectiveOnClose = isUploading ? () => undefined : onClose;
 
     const handlePickProofPress = () => {
         if (Platform.OS === "web") {
@@ -122,6 +129,23 @@ const MarkVideoPostedModal: React.FC<MarkVideoPostedModalProps> = ({
                         )}
                     </Pressable>
 
+                    {isUploading ? (
+                        <View style={styles.uploadProgressCard}>
+                            <View style={styles.uploadProgressHeader}>
+                                <Text style={styles.uploadProgressTitle}>Uploading proof screenshot</Text>
+                                <Text style={styles.uploadProgressPercent}>{Math.round(uploadProgress || 0)}%</Text>
+                            </View>
+                            <ProgressBar
+                                progress={Math.min(1, Math.max(0, (uploadProgress || 0) / 100))}
+                                color={colors.primary}
+                                style={styles.uploadProgressBar}
+                            />
+                            <Text style={styles.uploadProgressHint}>
+                                The screenshot is getting uploaded. Please don't close the app until it finishes.
+                            </Text>
+                        </View>
+                    ) : null}
+
                     <TextInput
                         label="Video Link"
                         value={postUrl}
@@ -141,16 +165,16 @@ const MarkVideoPostedModal: React.FC<MarkVideoPostedModalProps> = ({
                         style={styles.linkInput}
                     />
                     <View style={styles.actions}>
-                        <Button mode="outlined" style={styles.button} onPress={onClose}>
+                        <Button mode="outlined" style={styles.button} onPress={effectiveOnClose} disabled={loading || isUploading}>
                             Cancel
                         </Button>
                         <Button
                             mode="contained"
                             style={styles.button}
                             onPress={onSubmit}
-                            disabled={loading || !postUrl.trim() || !proofScreenshot.trim()}
+                            disabled={loading || isUploading || !postUrl.trim() || !proofScreenshot.trim()}
                         >
-                            {loading ? "Submitting..." : "Confirm"}
+                            {loading || isUploading ? "Submitting..." : "Confirm"}
                         </Button>
                     </View>
                 </ScrollView>
@@ -161,7 +185,7 @@ const MarkVideoPostedModal: React.FC<MarkVideoPostedModalProps> = ({
     return (
         <ContractActionOverlay
             visible={visible}
-            onClose={onClose}
+            onClose={effectiveOnClose}
             mode="auto"
             snapPointsRange={["55%", "92%"]}
             modalMaxWidth={520}
@@ -230,6 +254,43 @@ function createStyles(theme: ReturnType<typeof useTheme>) {
             width: "100%",
             height: "100%",
         },
+        uploadProgressCard: {
+            width: "100%",
+            paddingVertical: 12,
+            paddingHorizontal: 12,
+            borderRadius: 8,
+            backgroundColor: colors.secondarySurface,
+            borderWidth: 1,
+            borderColor: colors.secondaryBorder,
+            marginBottom: 12,
+            gap: 8,
+        },
+        uploadProgressHeader: {
+            width: "100%",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+        },
+        uploadProgressTitle: {
+            color: colors.text,
+            fontSize: 14,
+            fontWeight: "600",
+        },
+        uploadProgressPercent: {
+            color: colors.textSecondary,
+            fontSize: 13,
+            fontWeight: "600",
+        },
+        uploadProgressBar: {
+            height: 8,
+            borderRadius: 99,
+            backgroundColor: colors.secondaryBorder,
+        },
+        uploadProgressHint: {
+            color: colors.textSecondary,
+            fontSize: 12,
+            lineHeight: 16,
+        },
         input: {
             marginBottom: 12,
         },
@@ -256,8 +317,14 @@ export type MarkVideoPostedModalRunWithRefresh = (
 
 export function useMarkVideoPostedModal(options: {
     contractId: string;
-    uploadFile: (file: File) => Promise<{ imageUrl?: string }>;
-    uploadFileUri: (fileUri: AssetItem) => Promise<{ imageUrl?: string }>;
+    uploadFile: (
+        file: File,
+        subject?: { index: number; subject: Subject<{ index: number; percentage: number }> }
+    ) => Promise<{ imageUrl?: string }>;
+    uploadFileUri: (
+        fileUri: AssetItem,
+        subject?: { index: number; subject: Subject<{ index: number; percentage: number }> }
+    ) => Promise<{ imageUrl?: string }>;
     runWithRefresh: MarkVideoPostedModalRunWithRefresh;
     setActionLoading: (loading: boolean) => void;
 }) {
@@ -268,6 +335,8 @@ export function useMarkVideoPostedModal(options: {
     const [postedProofScreenshotPreviewUri, setPostedProofScreenshotPreviewUri] = useState("");
     const [postedProofScreenshotName, setPostedProofScreenshotName] = useState("");
     const [postedNotes, setPostedNotes] = useState("");
+    const [uploadProgress, setUploadProgress] = useState(0);
+    const [isUploading, setIsUploading] = useState(false);
     const postingDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const postingInFlightRef = useRef(false);
 
@@ -280,6 +349,8 @@ export function useMarkVideoPostedModal(options: {
         setPostedProofScreenshotPreviewUri("");
         setPostedProofScreenshotName("");
         setPostedNotes("");
+        setUploadProgress(0);
+        setIsUploading(false);
     }, []);
 
     useEffect(() => {
@@ -314,18 +385,31 @@ export function useMarkVideoPostedModal(options: {
             setPostedProofScreenshotPreviewUri(localUri);
             setPostedProofScreenshotName(result.assets[0].fileName || "Screenshot selected");
             setActionLoading(true);
+            let progressSub: Subscription | undefined;
+            const progressSubject = new Subject<{ index: number; percentage: number }>();
             try {
-                const uploadedImage = await uploadFileUri({
-                    id: localUri,
-                    localUri,
-                    uri: localUri,
-                    type: "image",
-                } as AssetItem);
+                setIsUploading(true);
+                setUploadProgress(0);
+                progressSub = progressSubject.subscribe(({ percentage }) => {
+                    const safe = Number.isFinite(percentage) ? Math.round(percentage) : 0;
+                    setUploadProgress(Math.max(0, Math.min(100, safe)));
+                });
+
+                const uploadedImage = await uploadFileUri(
+                    {
+                        id: localUri,
+                        localUri,
+                        uri: localUri,
+                        type: "image",
+                    } as AssetItem,
+                    { index: 0, subject: progressSubject }
+                );
                 const imageUrl = uploadedImage.imageUrl;
                 if (!imageUrl) {
                     throw new Error("Image upload failed. Please try again.");
                 }
                 setPostedProofScreenshot(imageUrl);
+                setUploadProgress(100);
             } catch (error: unknown) {
                 const message = error instanceof Error ? error.message : "Failed to upload proof screenshot.";
                 setPostedProofScreenshot("");
@@ -333,6 +417,9 @@ export function useMarkVideoPostedModal(options: {
                 setPostedProofScreenshotName("");
                 Toaster.error(message);
             } finally {
+                progressSub?.unsubscribe();
+                progressSubject.complete();
+                setIsUploading(false);
                 setActionLoading(false);
             }
         }
@@ -350,13 +437,23 @@ export function useMarkVideoPostedModal(options: {
             setPostedProofScreenshotName(file.name || "Screenshot selected");
             setPostedProofScreenshot("");
             setActionLoading(true);
+            let progressSub: Subscription | undefined;
+            const progressSubject = new Subject<{ index: number; percentage: number }>();
             try {
-                const uploadedImage = await uploadFile(file);
+                setIsUploading(true);
+                setUploadProgress(0);
+                progressSub = progressSubject.subscribe(({ percentage }) => {
+                    const safe = Number.isFinite(percentage) ? Math.round(percentage) : 0;
+                    setUploadProgress(Math.max(0, Math.min(100, safe)));
+                });
+
+                const uploadedImage = await uploadFile(file, { index: 0, subject: progressSubject });
                 const imageUrl = uploadedImage.imageUrl;
                 if (!imageUrl) {
                     throw new Error("Image upload failed. Please try again.");
                 }
                 setPostedProofScreenshot(imageUrl);
+                setUploadProgress(100);
             } catch (error: unknown) {
                 const message = error instanceof Error ? error.message : "Failed to upload proof screenshot.";
                 setPostedProofScreenshot("");
@@ -364,6 +461,9 @@ export function useMarkVideoPostedModal(options: {
                 setPostedProofScreenshotName("");
                 Toaster.error(message);
             } finally {
+                progressSub?.unsubscribe();
+                progressSubject.complete();
+                setIsUploading(false);
                 setActionLoading(false);
             }
         },
@@ -410,6 +510,8 @@ export function useMarkVideoPostedModal(options: {
             proofScreenshotName: postedProofScreenshotName,
             postUrl: postedVideoLink,
             notes: postedNotes,
+            uploadProgress,
+            isUploading,
             onClose: close,
             onPickProofScreenshot: pickProofScreenshotImage,
             onPickProofScreenshotWeb: pickProofScreenshotWeb,
@@ -424,6 +526,8 @@ export function useMarkVideoPostedModal(options: {
             postedProofScreenshotName,
             postedVideoLink,
             postedNotes,
+            uploadProgress,
+            isUploading,
             close,
             pickProofScreenshotImage,
             pickProofScreenshotWeb,
