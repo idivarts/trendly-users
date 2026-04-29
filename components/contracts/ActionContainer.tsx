@@ -13,6 +13,7 @@ import {
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { useCallback, useEffect, useMemo, useRef, useState, type FC } from "react";
 import { StyleSheet, View } from "react-native";
+import { Text } from "react-native-paper";
 import { state6RequestApproval } from "./api/ReviewPending_api";
 import {
     state0AskToStartContract,
@@ -25,6 +26,8 @@ import ProductReceivedModal, { useProductReceivedModal } from "./ProductReceived
 import RequestRescheduleModal, { useRequestRescheduleModal } from "./RequestRescheduleModal";
 import ShipmentDetailsOverlay from "./ShipmentDetailsOverlay";
 import SubmitVideoModal, { useSubmitVideoModal } from "./SubmitVideoModal";
+import Colors from "@/shared-uis/constants/Colors";
+import { useTheme } from "@react-navigation/native";
 
 interface ActionContainerProps {
     contract: IContracts;
@@ -46,6 +49,9 @@ const ActionContainer: FC<ActionContainerProps> = ({
     const { fetchChannelCid } = useChatContext();
     const { uploadFile, uploadFileUri } = useAWSContext();
     const router = useMyNavigation();
+    const theme = useTheme();
+    const colors = Colors(theme);
+    const styles = useMemo(() => createStyles(colors), [colors]);
     const [loading, setLoading] = useState(false);
     const [buttonLoadingKey, setButtonLoadingKey] = useState<string | null>(null);
     const [shipmentDetailsVisible, setShipmentDetailsVisible] = useState(false);
@@ -105,11 +111,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
     };
 
     const getRevisionRequestedMessage = () => {
-        if (!revisionNotes.length) {
-            return "The brand requested changes in your video. Please update and submit the video again.";
-        }
-        const notesText = revisionNotes.map((note, index) => `${index + 1}. ${note}`).join("\n");
-        return `The brand requested changes in your video. Please update and submit the video again.\n\nRequested changes:\n${notesText}`;
+        return "The brand requested changes in your video. Please update and submit the video again.";
     };
 
     useEffect(() => {
@@ -604,6 +606,21 @@ const ActionContainer: FC<ActionContainerProps> = ({
                 buttons={actionsConfig.buttons as any}
                 message={actionsConfig.message}
             />
+            {hasRevisionRequest && revisionNotes.length ? (
+                <View style={styles.revisionSection}>
+                    <Text style={styles.revisionHeading}>REQUESTED REVISIONS</Text>
+                    <View style={styles.revisionList}>
+                        {revisionNotes.map((note, index) => (
+                            <View key={`${index}-${note}`} style={styles.revisionRow}>
+                                <View style={styles.revisionIndexBubble}>
+                                    <Text style={styles.revisionIndexText}>{index + 1}</Text>
+                                </View>
+                                <Text style={styles.revisionText}>{note}</Text>
+                            </View>
+                        ))}
+                    </View>
+                </View>
+            ) : null}
             <ShipmentDetailsOverlay
                 visible={shipmentDetailsVisible}
                 onClose={closeShipmentDetails}
@@ -617,12 +634,63 @@ const ActionContainer: FC<ActionContainerProps> = ({
     );
 };
 
-const styles = StyleSheet.create({
-    container: {
-        width: "100%",
-        backgroundColor: "transparent",
-        gap: 12,
-    },
-});
+function createStyles(c: ReturnType<typeof Colors>) {
+    return StyleSheet.create({
+        container: {
+            width: "100%",
+            backgroundColor: "transparent",
+            gap: 12,
+        },
+        revisionSection: {
+            width: "100%",
+            backgroundColor: "transparent",
+            gap: 10,
+        },
+        revisionHeading: {
+            color: c.textSecondary,
+            fontSize: 12,
+            fontWeight: "700",
+            letterSpacing: 0.8,
+        },
+        revisionList: {
+            width: "100%",
+            backgroundColor: "transparent",
+            gap: 10,
+        },
+        revisionRow: {
+            width: "100%",
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 12,
+            borderWidth: 0.8,
+            borderColor: c.gray300,
+            backgroundColor: c.card,
+            borderRadius: 12,
+            paddingVertical: 12,
+            paddingHorizontal: 14,
+        },
+        revisionIndexBubble: {
+            width: 26,
+            height: 26,
+            borderRadius: 13,
+            backgroundColor: c.background,
+            borderWidth: 1,
+            borderColor: c.gray300,
+            justifyContent: "center",
+            alignItems: "center",
+        },
+        revisionIndexText: {
+            color: c.text,
+            fontSize: 13,
+            fontWeight: "800",
+        },
+        revisionText: {
+            flex: 1,
+            color: c.text,
+            fontSize: 14,
+            fontWeight: "600",
+        },
+    });
+}
 
 export default ActionContainer;

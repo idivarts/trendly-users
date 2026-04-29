@@ -41,7 +41,7 @@ interface ContractDetailViewProps {
 
 const ContractDetailsContent = (props: ContractDetailViewProps) => {
     const styles = useCollaborationDetailSurfaceStyles();
-    const [, setMembersInContract] = useState<any[]>([]);
+    const [membersInContract, setMembersInContract] = useState<any[]>([]);
     const [showQuotationModal, setShowQuotationModal] = useState(false);
     const [feedbackModalVisible, setFeedbackModalVisible] = useState(false);
     const params = useLocalSearchParams();
@@ -84,6 +84,14 @@ const ContractDetailsContent = (props: ContractDetailViewProps) => {
         Boolean(props.contractData.feedbackFromInfluencer?.feedbackReview);
     const brandFeedback = props.contractData.feedbackFromBrand;
     const brandFeedbackSubmitted = Boolean(brandFeedback?.timeSubmitted) || Boolean(brandFeedback?.feedbackReview);
+    const influencerFeedback = props.contractData.feedbackFromInfluencer;
+
+    const brandFeedbackAuthorName = useMemo(() => {
+        const managerId = brandFeedback?.managerId || props.contractData.managerId;
+        if (!managerId) return "Brand";
+        const manager = membersInContract.find((m) => m?.managerId === managerId);
+        return manager?.name || "Brand";
+    }, [brandFeedback?.managerId, membersInContract, props.contractData.managerId]);
 
     return (
         <IOScroll
@@ -112,17 +120,44 @@ const ContractDetailsContent = (props: ContractDetailViewProps) => {
                         collaborationData={props.collaborationDetail}
                     />
 
-                    {influencerFeedbackSubmitted && brandFeedbackSubmitted ? (
-                        <View style={localStyles.feedbackCard}>
-                            <Text style={localStyles.feedbackTitle}>Brand Feedback</Text>
-                            <View style={localStyles.feedbackRow}>
-                                <Stars rating={brandFeedback?.ratings || 0} size={16} />
-                                {typeof brandFeedback?.ratings === "number" ? (
-                                    <Text style={localStyles.feedbackMeta}>{brandFeedback.ratings.toFixed(1)}</Text>
-                                ) : null}
-                            </View>
-                            {brandFeedback?.feedbackReview ? (
-                                <Text style={localStyles.feedbackBody}>{brandFeedback.feedbackReview}</Text>
+                    {influencerFeedbackSubmitted || brandFeedbackSubmitted ? (
+                        <View style={localStyles.feedbackSection}>
+                            {brandFeedbackSubmitted ? (
+                                <View style={localStyles.feedbackCard}>
+                                    <Text style={localStyles.feedbackTitle}>Brand Feedback</Text>
+                                    <Text style={localStyles.feedbackByline}>By {brandFeedbackAuthorName}</Text>
+                                    <View style={localStyles.feedbackRow}>
+                                        <Stars rating={brandFeedback?.ratings || 0} size={16} />
+                                        {typeof brandFeedback?.ratings === "number" ? (
+                                            <Text style={localStyles.feedbackMeta}>
+                                                {brandFeedback.ratings.toFixed(1)}
+                                            </Text>
+                                        ) : null}
+                                    </View>
+                                    {brandFeedback?.feedbackReview ? (
+                                        <Text style={localStyles.feedbackBody}>{brandFeedback.feedbackReview}</Text>
+                                    ) : null}
+                                </View>
+                            ) : null}
+
+                            {influencerFeedbackSubmitted ? (
+                                <View style={localStyles.feedbackCard}>
+                                    <Text style={localStyles.feedbackTitle}>Your Feedback</Text>
+                                    <Text style={localStyles.feedbackByline}>By {props.userData?.name || "You"}</Text>
+                                    <View style={localStyles.feedbackRow}>
+                                        <Stars rating={influencerFeedback?.ratings || 0} size={16} />
+                                        {typeof influencerFeedback?.ratings === "number" ? (
+                                            <Text style={localStyles.feedbackMeta}>
+                                                {influencerFeedback.ratings.toFixed(1)}
+                                            </Text>
+                                        ) : null}
+                                    </View>
+                                    {influencerFeedback?.feedbackReview ? (
+                                        <Text style={localStyles.feedbackBody}>
+                                            {influencerFeedback.feedbackReview}
+                                        </Text>
+                                    ) : null}
+                                </View>
                             ) : null}
                         </View>
                     ) : null}
@@ -185,16 +220,29 @@ export default ContractDetailsContent;
 
 function createLocalStyles(colors: ReturnType<typeof Colors>) {
     return StyleSheet.create({
+        feedbackSection: {
+            width: "100%",
+            alignSelf: "stretch",
+            gap: 12,
+            marginTop: 12,
+        },
         feedbackCard: {
             backgroundColor: colors.card,
             borderRadius: 12,
             padding: 14,
-            marginTop: 12,
+            width: "100%",
+            alignSelf: "stretch",
         },
         feedbackTitle: {
             color: colors.text,
             fontSize: 16,
             fontWeight: "700",
+            marginBottom: 4,
+        },
+        feedbackByline: {
+            color: colors.textSecondary,
+            fontSize: 13,
+            fontWeight: "600",
             marginBottom: 8,
         },
         feedbackRow: {
