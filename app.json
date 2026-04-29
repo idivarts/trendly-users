@@ -120,6 +120,7 @@
                     }
                 }
             ],
+            "./plugins/with-ios-fmt-xcode26-fix.js",
             [
                 "expo-camera",
                 {
