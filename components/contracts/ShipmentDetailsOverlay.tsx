@@ -1,7 +1,7 @@
 import Colors from "@/shared-uis/constants/Colors";
 import { useTheme } from "@react-navigation/native";
 import React, { useMemo } from "react";
-import { StyleSheet, View } from "react-native";
+import { Image, ScrollView, StyleSheet, View } from "react-native";
 
 import { Text } from "../theme/Themed";
 import Button from "../ui/button";
@@ -11,6 +11,8 @@ export type ShipmentDetailsOverlayData = {
     courier: string;
     trackingId: string;
     expectedDate: string;
+    shipmentNote?: string;
+    deliveryProofs?: string[];
 };
 
 export interface ShipmentDetailsOverlayProps {
@@ -36,7 +38,11 @@ const ShipmentDetailsOverlay = ({
             snapPointsRange={["40%", "75%"]}
             modalMaxWidth={520}
         >
-            <View style={styles.shell}>
+            <ScrollView
+                style={styles.shell}
+                contentContainerStyle={styles.contentContainer}
+                showsVerticalScrollIndicator={false}
+            >
                 <Text style={styles.title}>Shipment details</Text>
 
                 <View style={styles.block}>
@@ -54,10 +60,33 @@ const ShipmentDetailsOverlay = ({
                     <Text style={styles.value}>{details.expectedDate}</Text>
                 </View>
 
+                <View style={styles.block}>
+                    <Text style={styles.label}>Delivery note</Text>
+                    <Text style={styles.value}>{details.shipmentNote?.trim() || "N/A"}</Text>
+                </View>
+
+                <View style={styles.block}>
+                    <Text style={styles.label}>Delivery proof</Text>
+                    {details.deliveryProofs?.length ? (
+                        <View style={styles.proofGrid}>
+                            {details.deliveryProofs.map((proofUrl, index) => (
+                                <Image
+                                    key={`${proofUrl}-${index}`}
+                                    source={{ uri: proofUrl }}
+                                    style={styles.proofImage}
+                                    resizeMode="cover"
+                                />
+                            ))}
+                        </View>
+                    ) : (
+                        <Text style={styles.value}>N/A</Text>
+                    )}
+                </View>
+
                 <Button mode="contained" style={styles.closeButton} onPress={onClose}>
                     Close
                 </Button>
-            </View>
+            </ScrollView>
         </ContractActionOverlay>
     );
 };
@@ -67,8 +96,11 @@ export default ShipmentDetailsOverlay;
 function createStyles(colors: ReturnType<typeof Colors>) {
     return StyleSheet.create({
         shell: {
-            flexGrow: 1,
+            flex: 1,
             backgroundColor: colors.background,
+        },
+        contentContainer: {
+            flexGrow: 1,
             paddingHorizontal: 20,
             paddingTop: 16,
             paddingBottom: 28,
@@ -92,6 +124,17 @@ function createStyles(colors: ReturnType<typeof Colors>) {
             fontSize: 16,
             color: colors.text,
             lineHeight: 22,
+        },
+        proofGrid: {
+            flexDirection: "row",
+            flexWrap: "wrap",
+            gap: 10,
+        },
+        proofImage: {
+            width: 120,
+            height: 120,
+            borderRadius: 8,
+            backgroundColor: colors.secondarySurface,
         },
         closeButton: {
             marginTop: 8,

@@ -12,14 +12,14 @@ import {
 } from "@/shared-uis/components/contract-actions-with-message";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import { useCallback, useEffect, useMemo, useRef, useState, type FC } from "react";
-import { ActivityIndicator, StyleSheet, View } from "react-native";
-import { Text } from "../theme/Themed";
+import { StyleSheet, View } from "react-native";
+import { state6RequestApproval } from "./api/ReviewPending_api";
 import {
     state0AskToStartContract,
+    state1AskToCompletePayment,
     state2AskRetryPayment,
     state3NudgeForShipment,
 } from "./api/ShipmentPending_api";
-import { state6RequestApproval } from "./api/ReviewPending_api";
 import MarkVideoPostedModal, { useMarkVideoPostedModal } from "./MarkVideoPostedModal";
 import ProductReceivedModal, { useProductReceivedModal } from "./ProductReceivedModal";
 import RequestRescheduleModal, { useRequestRescheduleModal } from "./RequestRescheduleModal";
@@ -47,6 +47,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
     const { uploadFile, uploadFileUri } = useAWSContext();
     const router = useMyNavigation();
     const [loading, setLoading] = useState(false);
+    const [buttonLoadingKey, setButtonLoadingKey] = useState<string | null>(null);
     const [shipmentDetailsVisible, setShipmentDetailsVisible] = useState(false);
     const [now, setNow] = useState(() => Date.now());
     const shipmentDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -56,13 +57,13 @@ const ActionContainer: FC<ActionContainerProps> = ({
 
     const normalizedStatus = normalizeStatus(contract.status);
     const isKycBlocked = !userData?.isKYCDone;
+    const brandFeedbackSubmitted = Boolean(contract.feedbackFromBrand?.timeSubmitted) ||
+        Boolean(contract.feedbackFromBrand?.feedbackReview);
     const hasRevisionRequest =
         (contract.deliverable?.revisionCount || 0) > 0 ||
         (contract.deliverable?.revisionNotes?.length || 0) > 0;
-    const scheduledReleaseAt =
-        // Support both typed posting and currently used releasePlan shape.
-        contract.posting?.scheduledDate ||
-        (contract as IContracts & { releasePlan?: { scheduledReleaseAt?: number } }).releasePlan?.scheduledReleaseAt;
+    const revisionNotes = contract.deliverable?.revisionNotes?.filter((note) => note?.trim()) || [];
+    const scheduledReleaseAt = contract.posting?.scheduledDate;
     const isBeforeScheduledPostingDate = !!scheduledReleaseAt && now < scheduledReleaseAt;
 
     const shipmentDetailsForOverlay = useMemo(
@@ -72,11 +73,15 @@ const ActionContainer: FC<ActionContainerProps> = ({
             expectedDate: contract.shipment?.expectedDate
                 ? new Date(contract.shipment.expectedDate).toLocaleDateString()
                 : "N/A",
+            shipmentNote: contract.shipment?.notes || "",
+            deliveryProofs: contract.shipment?.packageScreenshots || [],
         }),
         [
             contract.shipment?.shipmentProvider,
             contract.shipment?.trackingId,
             contract.shipment?.expectedDate,
+            contract.shipment?.notes,
+            contract.shipment?.packageScreenshots,
         ]
     );
 
@@ -97,6 +102,14 @@ const ActionContainer: FC<ActionContainerProps> = ({
             month: "long",
         });
         return `The customer wanted the video to be posted on ${formattedDate}.`;
+    };
+
+    const getRevisionRequestedMessage = () => {
+        if (!revisionNotes.length) {
+            return "The brand requested changes in your video. Please update and submit the video again.";
+        }
+        const notesText = revisionNotes.map((note, index) => `${index + 1}. ${note}`).join("\n");
+        return `The brand requested changes in your video. Please update and submit the video again.\n\nRequested changes:\n${notesText}`;
     };
 
     useEffect(() => {
@@ -138,6 +151,23 @@ const ActionContainer: FC<ActionContainerProps> = ({
             }
         },
         [refreshData]
+    );
+
+    const runButtonAction = useCallback(
+        async (buttonKey: string, fn: () => Promise<void>, successMessage?: string) => {
+            if (loading) return;
+            setButtonLoadingKey(buttonKey);
+            try {
+                if (successMessage) {
+                    await runWithRefresh(fn, successMessage);
+                    return;
+                }
+                await fn();
+            } finally {
+                setButtonLoadingKey(null);
+            }
+        },
+        [loading, runWithRefresh]
     );
 
     const productReceivedModal = useProductReceivedModal({
@@ -243,12 +273,14 @@ const ActionContainer: FC<ActionContainerProps> = ({
                         {
                             label: "Ask to Start Contract",
                             onPress: () =>
-                                runWithRefresh(
+                                void runButtonAction(
+                                    "ask-to-start-contract",
                                     () => state0AskToStartContract({ streamChannelId: contract.streamChannelId }),
                                     "Start contract request sent."
                                 ),
                             variant: "contained",
                             disabled: loading,
+                            loading: buttonLoadingKey === "ask-to-start-contract",
                         },
                     ],
                     message: {
@@ -262,6 +294,12 @@ const ActionContainer: FC<ActionContainerProps> = ({
                         {
                             label: "Go to Messages",
                             onPress: openMessages,
+                            variant: "outlined",
+                            disabled: loading,
+                        },
+                        {
+                            label: "Ask to finish payment",
+                            onPress: () => state1AskToCompletePayment({ streamChannelId: contract.streamChannelId }),
                             variant: "contained",
                             disabled: loading,
                         },
@@ -283,12 +321,14 @@ const ActionContainer: FC<ActionContainerProps> = ({
                         {
                             label: "Ask to retry Payment",
                             onPress: () =>
-                                runWithRefresh(
+                                void runButtonAction(
+                                    "ask-to-retry-payment",
                                     () => state2AskRetryPayment({ streamChannelId: contract.streamChannelId }),
                                     "Payment retry request sent."
                                 ),
                             variant: "contained",
                             disabled: loading,
+                            loading: buttonLoadingKey === "ask-to-retry-payment",
                         },
                     ],
                     message: {
@@ -307,9 +347,11 @@ const ActionContainer: FC<ActionContainerProps> = ({
                         },
                         {
                             label: "Request for shipment",
-                            onPress: requestShipmentWithDebounce,
+                            onPress: () =>
+                                void runButtonAction("request-shipment", requestShipmentWithDebounce),
                             variant: "contained",
                             disabled: loading,
+                            loading: buttonLoadingKey === "request-shipment",
                         },
                     ],
                     message: {
@@ -342,8 +384,8 @@ const ActionContainer: FC<ActionContainerProps> = ({
                 return {
                     buttons: [
                         {
-                            label: "Go to Messages",
-                            onPress: openMessages,
+                            label: "View delivery details",
+                            onPress: openShipmentDetails,
                             variant: "outlined",
                             disabled: loading,
                         },
@@ -394,15 +436,20 @@ const ActionContainer: FC<ActionContainerProps> = ({
                             onPress:
                                 hasRevisionRequest
                                     ? () => submitVideoModal.open()
-                                    : () => void requestApprovalWithDebounce(),
+                                    : () =>
+                                        void runButtonAction(
+                                            "request-approval",
+                                            requestApprovalWithDebounce
+                                        ),
                             variant: "contained",
                             disabled: loading,
+                            loading: !hasRevisionRequest && buttonLoadingKey === "request-approval",
                         },
                     ],
                     message: {
                         variant: "info",
                         text: hasRevisionRequest
-                            ? "The brand requested changes in your video. Please update and submit the video again."
+                            ? getRevisionRequestedMessage()
                             : "The brand is reviewing your video. Please wait before they approve it. You can request for approval to again notify the brand",
                     },
                 };
@@ -436,6 +483,12 @@ const ActionContainer: FC<ActionContainerProps> = ({
                             {
                                 label: "Go to Messages",
                                 onPress: openMessages,
+                                variant: "outlined",
+                                disabled: loading,
+                            },
+                            {
+                                label: "View Feedback",
+                                onPress: feedbackModalVisible,
                                 variant: "contained",
                                 disabled: loading,
                             },
@@ -467,6 +520,42 @@ const ActionContainer: FC<ActionContainerProps> = ({
                     },
                 };
             case ContractStatus.Settled:
+                if (!brandFeedbackSubmitted) {
+                    return {
+                        buttons: [
+                            {
+                                label: "Go to Messages",
+                                onPress: openMessages,
+                                variant: "outlined",
+                                disabled: loading,
+                            },
+                            {
+                                label: "Feedback",
+                                onPress: feedbackModalVisible,
+                                variant: "contained",
+                                disabled: loading,
+                            },
+                        ],
+                        message: {
+                            variant: "success",
+                            text: "Settlement completed. Share your feedback to close this collaboration.",
+                        },
+                    };
+                }
+                return {
+                    buttons: [
+                        {
+                            label: "Go to Messages",
+                            onPress: openMessages,
+                            variant: "contained",
+                            disabled: loading,
+                        },
+                    ],
+                    message: {
+                        variant: "success",
+                        text: "Settlement completed. This contract is now read-only.",
+                    },
+                };
             default:
                 return {
                     buttons: [],
@@ -479,12 +568,15 @@ const ActionContainer: FC<ActionContainerProps> = ({
     }, [
         isKycBlocked,
         normalizedStatus,
+        brandFeedbackSubmitted,
         scheduledReleaseAt,
         loading,
+        buttonLoadingKey,
         contract.streamChannelId,
         contract.status,
         contract.deliverable?.revisionCount,
         contract.deliverable?.revisionNotes?.length,
+        revisionNotes,
         contract.posting?.scheduledDate,
         contract.shipment?.expectedDate,
         contract.shipment?.shipmentProvider,
@@ -493,6 +585,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
         router,
         showQuotationModal,
         runWithRefresh,
+        runButtonAction,
         requestShipmentWithDebounce,
         requestApprovalWithDebounce,
         openMessages,
@@ -511,12 +604,6 @@ const ActionContainer: FC<ActionContainerProps> = ({
                 buttons={actionsConfig.buttons as any}
                 message={actionsConfig.message}
             />
-            {loading ? (
-                <View style={styles.loadingRow}>
-                    <ActivityIndicator size="small" />
-                    <Text style={styles.loadingText}>Processing action...</Text>
-                </View>
-            ) : null}
             <ShipmentDetailsOverlay
                 visible={shipmentDetailsVisible}
                 onClose={closeShipmentDetails}
@@ -535,14 +622,6 @@ const styles = StyleSheet.create({
         width: "100%",
         backgroundColor: "transparent",
         gap: 12,
-    },
-    loadingRow: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 8,
-    },
-    loadingText: {
-        fontSize: 13,
     },
 });
 
