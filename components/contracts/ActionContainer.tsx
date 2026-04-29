@@ -62,10 +62,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
         (contract.deliverable?.revisionCount || 0) > 0 ||
         (contract.deliverable?.revisionNotes?.length || 0) > 0;
     const revisionNotes = contract.deliverable?.revisionNotes?.filter((note) => note?.trim()) || [];
-    const scheduledReleaseAt =
-        // Support both typed posting and currently used releasePlan shape.
-        contract.posting?.scheduledDate ||
-        (contract as IContracts & { releasePlan?: { scheduledReleaseAt?: number } }).releasePlan?.scheduledReleaseAt;
+    const scheduledReleaseAt = contract.posting?.scheduledDate;
     const isBeforeScheduledPostingDate = !!scheduledReleaseAt && now < scheduledReleaseAt;
 
     const shipmentDetailsForOverlay = useMemo(
@@ -75,11 +72,15 @@ const ActionContainer: FC<ActionContainerProps> = ({
             expectedDate: contract.shipment?.expectedDate
                 ? new Date(contract.shipment.expectedDate).toLocaleDateString()
                 : "N/A",
+            shipmentNote: contract.shipment?.notes || "",
+            deliveryProofs: contract.shipment?.packageScreenshots || [],
         }),
         [
             contract.shipment?.shipmentProvider,
             contract.shipment?.trackingId,
             contract.shipment?.expectedDate,
+            contract.shipment?.notes,
+            contract.shipment?.packageScreenshots,
         ]
     );
 
@@ -382,8 +383,8 @@ const ActionContainer: FC<ActionContainerProps> = ({
                 return {
                     buttons: [
                         {
-                            label: "Go to Messages",
-                            onPress: openMessages,
+                            label: "View delivery details",
+                            onPress: openShipmentDetails,
                             variant: "outlined",
                             disabled: loading,
                         },
