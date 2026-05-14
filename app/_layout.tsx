@@ -12,6 +12,7 @@ import {
     useThemeContext,
 } from "@/contexts";
 import UpdateProvider from "@/shared-libs/contexts/update-provider";
+import MarketingPixels from "@/shared-libs/marketing/MarketingPixels";
 import { Console } from "@/shared-libs/utils/console";
 import { useMyNavigation } from "@/shared-libs/utils/router";
 import { ConfirmationModalProvider } from "@/shared-uis/components/ConfirmationModal";
@@ -83,6 +84,7 @@ const RootLayout = () => {
                 <AuthContextProvider>
                     <ThemeContextProvider>
                         <GestureHandlerRootView>
+                            <MarketingPixels />
                             <BottomSheetModalProvider>
                                 <RootLayoutStack />
                             </BottomSheetModalProvider>
