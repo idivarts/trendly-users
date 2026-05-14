@@ -104,6 +104,10 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
         try {
             const userDocRef = doc(FirestoreDB, "users", AuthApp.currentUser.uid);
 
+            if (userUnsubscribe) {
+                userUnsubscribe();
+                userUnsubscribe = null;
+            }
             const unsubscribe = onSnapshot(userDocRef, (userSnap) => {
                 if (userSnap.exists()) {
                     const userData = {
@@ -124,9 +128,6 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
                 }
                 setIsUserLoading(false);
             })
-            if (userUnsubscribe) {
-                userUnsubscribe();
-            }
             userUnsubscribe = unsubscribe;
         } catch (error: any) {
             Console.error(error, "User Snapshot catch error");
@@ -140,7 +141,15 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
         if (!isLoggedIn && !isUserLoading) {
             const inMainGroup = segments[0] === "(main)";
             if (inMainGroup) {
-                const cancelAction = setTimeout(() => { if (!isUserLoading) signOutUser() }, 2000)
+                const cancelAction = setTimeout(() => {
+                    if (!isUserLoading && !isLoggedIn) {
+                        if (AuthApp.currentUser) {
+                            signOutUser();
+                        } else {
+                            resetAndNavigate("/pre-signin");
+                        }
+                    }
+                }, 2000);
                 return () => {
                     clearTimeout(cancelAction)
                 }
@@ -317,27 +326,25 @@ export const AuthContextProvider: React.FC<PropsWithChildren> = ({
             await clearAllKycDraftPersistence(user?.id);
 
             if (userUnsubscribe) {
-                await userUnsubscribe();
+                userUnsubscribe();
                 userUnsubscribe = null;
             }
+
+            await signOut(AuthApp);
+
+            Console.analytics("signed_out", {
+                id: user?.id,
+                email: user?.email,
+            });
+            Toaster.success("Signed Out Successfully!");
         } catch (e: any) {
-            Console.error(e, "Issues while removing tokens");
+            Console.error(e, "Error signing out");
+        } finally {
+            setSession("");
+            setIsLoggedIn(false);
+            setUser(null);
+            resetAndNavigate("/pre-signin");
         }
-        signOut(AuthApp)
-            .then(() => {
-                Console.analytics("signed_out", {
-                    id: user?.id,
-                    email: user?.email,
-                });
-                Toaster.success("Signed Out Successfully!");
-            }).catch((error) => {
-                Console.error(error, "Error signing out");
-            }).finally(() => {
-                setSession("");
-                setIsLoggedIn(false);
-                setUser(null);
-                resetAndNavigate("/pre-signin");
-            })
     };
 
     const getUser = async (userId: string): Promise<User | null> => {

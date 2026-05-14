@@ -50,7 +50,6 @@ export const useGoogleLogin = (setLoading: Function, setError: Function) => {
     const googleLogin = async () => {
         try {
             const result = await signInWithPopup(AuthApp, provider);
-            setLoading(true);
             await evalResult(result);
         } catch (error: any) {
             Console.log("Error logging in with Google:", error);
