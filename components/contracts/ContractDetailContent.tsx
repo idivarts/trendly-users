@@ -37,6 +37,7 @@ interface ContractDetailViewProps {
     userData: IUsers;
     contractData: IContracts;
     refreshData: () => void;
+    onMenuItemsChange?: (items: import("./ContractActionsMenu").ContractActionsMenuItem[]) => void;
 }
 
 const ContractDetailsContent = (props: ContractDetailViewProps) => {
@@ -118,6 +119,7 @@ const ContractDetailsContent = (props: ContractDetailViewProps) => {
                         feedbackModalVisible={() => setFeedbackModalVisible(true)}
                         userData={props.userData}
                         collaborationData={props.collaborationDetail}
+                        onMenuItemsChange={props.onMenuItemsChange}
                     />
 
                     {influencerFeedbackSubmitted || brandFeedbackSubmitted ? (

@@ -1,9 +1,8 @@
-import BottomSheetActions from "@/components/BottomSheetActions";
 import ContractDetailsContent, {
     Application,
 } from "@/components/contracts/ContractDetailContent";
+import ContractActionsMenu, { type ContractActionsMenuItem } from "@/components/contracts/ContractActionsMenu";
 import DetailScreenCenteredLoader from "@/components/detail-screens/DetailScreenCenteredLoader";
-import DetailScreenOverflowMenuButton from "@/components/detail-screens/DetailScreenOverflowMenuButton";
 import ScreenHeader from "@/components/ui/screen-header";
 import { useAuthContext } from "@/contexts";
 import AppLayout from "@/layouts/app-layout";
@@ -29,7 +28,7 @@ interface ICollaborationCard extends IContracts {
 }
 
 const ContractDetailsScreen = () => {
-    const [isVisible, setIsVisible] = useState(false);
+    const [contractMenuItems, setContractMenuItems] = useState<ContractActionsMenuItem[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     const router = useMyNavigation();
@@ -146,9 +145,7 @@ const ContractDetailsScreen = () => {
                     }
                 }}
                 rightActionButton={
-                    <DetailScreenOverflowMenuButton
-                        onPress={() => setIsVisible(true)}
-                    />
+                    <ContractActionsMenu items={contractMenuItems} />
                 }
             />
             <ContractDetailsContent
@@ -157,13 +154,7 @@ const ContractDetailsScreen = () => {
                 userData={contract.userData}
                 contractData={contract}
                 refreshData={refreshData}
-            />
-            <BottomSheetActions
-                cardId={contract.collaborationId}
-                cardType="details"
-                isVisible={isVisible}
-                snapPointsRange={["30%", "50%"]}
-                onClose={() => setIsVisible(false)}
+                onMenuItemsChange={setContractMenuItems}
             />
         </AppLayout>
     );

@@ -23,9 +23,13 @@ import {
 } from "./api/ShipmentPending_api";
 import MarkVideoPostedModal, { useMarkVideoPostedModal } from "./MarkVideoPostedModal";
 import ProductReceivedModal, { useProductReceivedModal } from "./ProductReceivedModal";
+import RaiseDisputeModal, { useRaiseDisputeModal } from "./RaiseDisputeModal";
+import RequestCancellationModal, { useRequestCancellationModal } from "./RequestCancellationModal";
+import RespondToCancellationModal, { useRespondToCancellationModal } from "./RespondToCancellationModal";
 import RequestRescheduleModal, { useRequestRescheduleModal } from "./RequestRescheduleModal";
 import ShipmentDetailsOverlay from "./ShipmentDetailsOverlay";
 import SubmitVideoModal, { useSubmitVideoModal } from "./SubmitVideoModal";
+import { type ContractActionsMenuItem } from "./ContractActionsMenu";
 import Colors from "@/shared-uis/constants/Colors";
 import { useTheme } from "@react-navigation/native";
 
@@ -36,6 +40,7 @@ interface ActionContainerProps {
     showQuotationModal: () => void;
     userData: IUsers;
     collaborationData: ICollaboration;
+    onMenuItemsChange?: (items: ContractActionsMenuItem[]) => void;
 }
 
 const ActionContainer: FC<ActionContainerProps> = ({
@@ -45,6 +50,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
     showQuotationModal,
     userData,
     collaborationData: _collaborationData,
+    onMenuItemsChange,
 }) => {
     const { fetchChannelCid } = useChatContext();
     const { uploadFile, uploadFileUri } = useAWSContext();
@@ -71,6 +77,9 @@ const ActionContainer: FC<ActionContainerProps> = ({
     const revisionNotes = contract.deliverable?.revisionNotes?.filter((note) => note?.trim()) || [];
     const scheduledReleaseAt = contract.posting?.scheduledDate;
     const isBeforeScheduledPostingDate = !!scheduledReleaseAt && now < scheduledReleaseAt;
+    const revisionCount = contract.deliverable?.revisionCount ?? 0;
+    const maxRevisions = (_collaborationData as any)?.maxRevisions ?? 3;
+    const isRevisionLimitExceeded = revisionCount > 0 && revisionCount >= maxRevisions;
 
     const shipmentDetailsForOverlay = useMemo(
         () => ({
@@ -197,6 +206,35 @@ const ActionContainer: FC<ActionContainerProps> = ({
         contractId: contract.streamChannelId,
         runWithRefresh,
     });
+
+    const raiseDisputeModal = useRaiseDisputeModal({
+        contractId: contract.streamChannelId,
+        uploadFileUri,
+        runWithRefresh,
+    });
+
+    const requestCancellationModal = useRequestCancellationModal({
+        contractId: contract.streamChannelId,
+        contractStatus: normalizedStatus,
+        runWithRefresh,
+    });
+
+    const respondToCancellationModal = useRespondToCancellationModal({
+        contractId: contract.streamChannelId,
+        runWithRefresh,
+    });
+
+    const hasPendingCancellationRequest =
+        contract.cancellationRequest?.status === "pending" &&
+        contract.cancellationRequest?.requestedByRole === "brand";
+
+    const canRaiseDispute =
+        normalizedStatus >= ContractStatus.ShipmentPending &&
+        normalizedStatus <= ContractStatus.SettlementPending;
+
+    const canRequestCancellation =
+        normalizedStatus >= ContractStatus.Pending &&
+        normalizedStatus <= ContractStatus.ReviewPending;
 
     const requestShipmentWithDebounce = async () => {
         if (shipmentInFlightRef.current || shipmentDebounceRef.current) {
@@ -386,8 +424,8 @@ const ActionContainer: FC<ActionContainerProps> = ({
                 return {
                     buttons: [
                         {
-                            label: "View delivery details",
-                            onPress: openShipmentDetails,
+                            label: "Didn't receive it",
+                            onPress: () => raiseDisputeModal.open("shipment_not_received"),
                             variant: "outlined",
                             disabled: loading,
                         },
@@ -400,7 +438,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
                     ],
                     message: {
                         variant: "info",
-                        text: "Please confirm once you have received the product. You can message the brand if you need help.",
+                        text: "Please confirm once you have received the product. If the product didn't arrive, tap 'Didn't receive it' to raise a dispute.",
                     },
                 };
             case ContractStatus.VideoPending:
@@ -427,12 +465,23 @@ const ActionContainer: FC<ActionContainerProps> = ({
             case ContractStatus.ReviewPending:
                 return {
                     buttons: [
-                        {
-                            label: "Go to Messages",
-                            onPress: openMessages,
-                            variant: "outlined",
-                            disabled: loading,
-                        },
+                        ...(isRevisionLimitExceeded
+                            ? [
+                                  {
+                                      label: "Raise a Dispute",
+                                      onPress: () => raiseDisputeModal.open("revision_abuse"),
+                                      variant: "outlined" as const,
+                                      disabled: loading,
+                                  },
+                              ]
+                            : [
+                                  {
+                                      label: "Go to Messages",
+                                      onPress: openMessages,
+                                      variant: "outlined" as const,
+                                      disabled: loading,
+                                  },
+                              ]),
                         {
                             label: hasRevisionRequest ? "Submit the Video" : "Request for approval",
                             onPress:
@@ -449,10 +498,12 @@ const ActionContainer: FC<ActionContainerProps> = ({
                         },
                     ],
                     message: {
-                        variant: "info",
-                        text: hasRevisionRequest
-                            ? getRevisionRequestedMessage()
-                            : "The brand is reviewing your video. You can send a reminder to nudge them to approve it sooner.",
+                        variant: isRevisionLimitExceeded ? "warning" : "info",
+                        text: isRevisionLimitExceeded
+                            ? `The brand has requested ${revisionCount} revisions — more than the agreed limit of ${maxRevisions}. You can raise a dispute if this is unreasonable.`
+                            : hasRevisionRequest
+                              ? getRevisionRequestedMessage()
+                              : "The brand is reviewing your video. You can send a reminder to nudge them to approve it sooner.",
                     },
                 };
             case ContractStatus.PostingPending:
@@ -558,6 +609,36 @@ const ActionContainer: FC<ActionContainerProps> = ({
                         text: "Settlement completed. This contract is now read-only.",
                     },
                 };
+            case ContractStatus.Cancelled:
+                return {
+                    buttons: [
+                        {
+                            label: "Go to Messages",
+                            onPress: openMessages,
+                            variant: "contained",
+                            disabled: loading,
+                        },
+                    ],
+                    message: {
+                        variant: "warning",
+                        text: "This contract has been cancelled.",
+                    },
+                };
+            case ContractStatus.Disputed:
+                return {
+                    buttons: [
+                        {
+                            label: "Go to Messages",
+                            onPress: openMessages,
+                            variant: "contained",
+                            disabled: loading,
+                        },
+                    ],
+                    message: {
+                        variant: "warning",
+                        text: "A dispute is open on this contract. It is on hold while our team reviews.",
+                    },
+                };
             default:
                 return {
                     buttons: [],
@@ -596,12 +677,58 @@ const ActionContainer: FC<ActionContainerProps> = ({
         submitVideoModal.open,
         markVideoPostedModal.open,
         requestRescheduleModal.open,
+        raiseDisputeModal.open,
         isBeforeScheduledPostingDate,
+        isRevisionLimitExceeded,
+        revisionCount,
+        maxRevisions,
         now,
     ]);
 
+    const overflowMenuItems = useMemo((): ContractActionsMenuItem[] => {
+        if (
+            normalizedStatus === ContractStatus.Cancelled ||
+            normalizedStatus === ContractStatus.Disputed ||
+            normalizedStatus === ContractStatus.Settled
+        ) return [];
+        const items: ContractActionsMenuItem[] = [];
+        if (hasPendingCancellationRequest) {
+            items.push({
+                label: "Respond to Cancellation Request",
+                onPress: () => respondToCancellationModal.open(),
+            });
+        }
+        if (canRaiseDispute) {
+            items.push({ label: "Raise a Dispute", onPress: () => raiseDisputeModal.open(), destructive: true });
+        }
+        if (canRequestCancellation && !hasPendingCancellationRequest) {
+            items.push({ label: "Request Cancellation", onPress: () => requestCancellationModal.open(), destructive: true });
+        }
+        return items;
+    }, [
+        normalizedStatus,
+        hasPendingCancellationRequest,
+        canRaiseDispute,
+        canRequestCancellation,
+        respondToCancellationModal.open,
+        raiseDisputeModal.open,
+        requestCancellationModal.open,
+    ]);
+
+    useEffect(() => {
+        onMenuItemsChange?.(overflowMenuItems);
+    }, [overflowMenuItems, onMenuItemsChange]);
+
     return (
         <View style={styles.container}>
+            {hasPendingCancellationRequest && (
+                <View style={styles.cancellationBanner}>
+                    <Text style={styles.cancellationBannerTitle}>Cancellation Requested</Text>
+                    <Text style={styles.cancellationBannerText}>
+                        The brand has requested to cancel this contract. Tap ⋮ to respond.
+                    </Text>
+                </View>
+            )}
             <ContractActionsWithMessage
                 buttons={actionsConfig.buttons as any}
                 message={actionsConfig.message}
@@ -630,6 +757,21 @@ const ActionContainer: FC<ActionContainerProps> = ({
             <SubmitVideoModal {...submitVideoModal.submitVideoModalProps} loading={loading} />
             <MarkVideoPostedModal {...markVideoPostedModal.markVideoPostedModalProps} loading={loading} />
             <RequestRescheduleModal {...requestRescheduleModal.requestRescheduleModalProps} loading={loading} />
+            <RaiseDisputeModal {...raiseDisputeModal.raiseDisputeModalProps} loading={loading} />
+            <RequestCancellationModal
+                {...requestCancellationModal.requestCancellationModalProps}
+                loading={loading}
+            />
+            {contract.cancellationRequest && (
+                <RespondToCancellationModal
+                    visible={respondToCancellationModal.visible}
+                    cancellationRequest={contract.cancellationRequest}
+                    loading={loading}
+                    onClose={respondToCancellationModal.close}
+                    onApprove={respondToCancellationModal.handleApprove}
+                    onReject={respondToCancellationModal.handleReject}
+                />
+            )}
         </View>
     );
 };
@@ -640,6 +782,25 @@ function createStyles(c: ReturnType<typeof Colors>) {
             width: "100%",
             backgroundColor: "transparent",
             gap: 12,
+        },
+        cancellationBanner: {
+            width: "100%",
+            backgroundColor: c.errorBannerBg,
+            borderWidth: 1,
+            borderColor: c.errorBannerBorder,
+            borderRadius: 8,
+            paddingVertical: 10,
+            paddingHorizontal: 14,
+            gap: 4,
+        },
+        cancellationBannerTitle: {
+            fontSize: 13,
+            fontWeight: "700",
+            color: c.errorBannerText,
+        },
+        cancellationBannerText: {
+            fontSize: 13,
+            color: c.errorBannerText,
         },
         revisionSection: {
             width: "100%",
