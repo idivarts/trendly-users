@@ -68,7 +68,7 @@ const ProductReceivedModal: React.FC<ProductReceivedModalProps> = ({
                 style={styles.inner}
                 onPress={() => Platform.OS !== "web" && Keyboard.dismiss()}
             >
-                <Text style={styles.title}>Congratulation</Text>
+                <Text style={styles.title}>Congratulations</Text>
                 <Text style={styles.subtitle}>Attach a photo of the product</Text>
 
                 <ScrollView
@@ -115,7 +115,7 @@ const ProductReceivedModal: React.FC<ProductReceivedModalProps> = ({
                         numberOfLines={3}
                         style={styles.noteInput}
                     />
-                    <Text style={styles.helperText}>Supporting text</Text>
+                    <Text style={styles.helperText}>Attach a clear photo showing the product you received.</Text>
 
                     <Pressable style={styles.checkboxRow} onPress={onToggleConfirm}>
                         <Checkbox
