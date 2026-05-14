@@ -101,13 +101,13 @@ const ActionContainer: FC<ActionContainerProps> = ({
 
     const getPostScheduledMessage = () => {
         if (!scheduledReleaseAt) {
-            return "The customer wanted the video to be posted on the scheduled release date.";
+            return "The brand has scheduled the video for a release date.";
         }
         const formattedDate = new Date(scheduledReleaseAt).toLocaleDateString(undefined, {
             day: "numeric",
             month: "long",
         });
-        return `The customer wanted the video to be posted on ${formattedDate}.`;
+        return `The brand has scheduled the video to be posted on ${formattedDate}.`;
     };
 
     const getRevisionRequestedMessage = () => {
@@ -287,7 +287,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
                     ],
                     message: {
                         variant: "warning",
-                        text: "The contract is still not funded. Don’t start working on the requirement till the contract is funded",
+                        text: "The contract is still not funded. Don’t start working on the deliverables until the contract is funded.",
                     },
                 };
             case ContractStatus.Started:
@@ -300,7 +300,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
                             disabled: loading,
                         },
                         {
-                            label: "Ask to finish payment",
+                            label: "Remind Brand to Pay",
                             onPress: () => state1AskToCompletePayment({ streamChannelId: contract.streamChannelId }),
                             variant: "contained",
                             disabled: loading,
@@ -308,7 +308,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
                     ],
                     message: {
                         variant: "info",
-                        text: "Contract is active. Please wait for the next operational step from the brand.",
+                        text: "Your contract is accepted. Please wait for the brand to complete the payment before the next steps begin.",
                     },
                 };
             case ContractStatus.PaymentFailed:
@@ -358,7 +358,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
                     ],
                     message: {
                         variant: "info",
-                        text: "Congratulations! Your contract is funded. The brand would now be shipping the product to you",
+                        text: "Your contract is funded! The brand will now ship the product to you.",
                     },
                 };
             case ContractStatus.DeliveryPending:
@@ -407,7 +407,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
                 return {
                     buttons: [
                         {
-                            label: "Go to Message",
+                            label: "Go to Messages",
                             onPress: openMessages,
                             variant: "outlined",
                             disabled: loading,
@@ -421,14 +421,14 @@ const ActionContainer: FC<ActionContainerProps> = ({
                     ],
                     message: {
                         variant: "warning",
-                        text: "Contract is in progress! Please deliver the video at your earliest given time",
+                        text: "Contract is in progress. Please create and submit the video at your earliest convenience.",
                     },
                 };
             case ContractStatus.ReviewPending:
                 return {
                     buttons: [
                         {
-                            label: "Go to Message",
+                            label: "Go to Messages",
                             onPress: openMessages,
                             variant: "outlined",
                             disabled: loading,
@@ -452,7 +452,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
                         variant: "info",
                         text: hasRevisionRequest
                             ? getRevisionRequestedMessage()
-                            : "The brand is reviewing your video. Please wait before they approve it. You can request for approval to again notify the brand",
+                            : "The brand is reviewing your video. You can send a reminder to nudge them to approve it sooner.",
                     },
                 };
             case ContractStatus.PostingPending:
@@ -518,7 +518,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
                     ],
                     message: {
                         variant: "success",
-                        text: "Video is posted. Please complete your feedback to close the collaboration loop.",
+                        text: "Your video is live! Please share your feedback to complete the collaboration.",
                     },
                 };
             case ContractStatus.Settled:
@@ -532,7 +532,7 @@ const ActionContainer: FC<ActionContainerProps> = ({
                                 disabled: loading,
                             },
                             {
-                                label: "Feedback",
+                                label: "Give Feedback",
                                 onPress: feedbackModalVisible,
                                 variant: "contained",
                                 disabled: loading,
