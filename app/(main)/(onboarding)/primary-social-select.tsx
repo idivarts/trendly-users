@@ -126,7 +126,7 @@ const PrimarySocialSelect = () => {
                                         }}
                                     >
                                         <FontAwesomeIcon
-                                            icon={item.isInstagram ? faInstagram : faFacebook}
+                                            icon={item.platform === "instagram" ? faInstagram : faFacebook}
                                             color={Colors(theme).text}
                                             size={20}
                                         />
@@ -141,7 +141,7 @@ const PrimarySocialSelect = () => {
                                             fontWeight: "bold",
                                         }}
                                     >
-                                        {item.name}
+                                        {item.displayName || item.username}
                                     </Text>
                                 </View>
 

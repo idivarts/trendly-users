@@ -1,43 +1,31 @@
-import InstagramLoginButton from "@/components/profile/ConnectWithInstagram";
 import SocialPage from "@/components/profile/SocialPage";
 import Button from "@/components/ui/button";
-import { IS_INSTA_ENABLED } from "@/constants/App";
 import { useAuthContext, useCloudMessagingContext, useSocialContext } from "@/contexts";
+import { useConnectSocial } from "@/hooks/requests";
 import AppLayout from "@/layouts/app-layout";
 import { SocialPlatform } from "@/shared-libs/firestore/trendly-pro/constants/social-platform";
-import { useMyNavigation } from "@/shared-libs/utils/router";
 import Colors from "@/shared-uis/constants/Colors";
 import { useTheme } from "@react-navigation/native";
-import React, { useEffect } from "react";
+import React from "react";
 import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
-
-
 
 const TrendlyScreen = () => {
     const { signOutUser } = useAuthContext();
     const { updatedTokens } = useCloudMessagingContext();
     const { primarySocial } = useSocialContext();
-    const { resetAndNavigate } = useMyNavigation()
+    const { connectSocial } = useConnectSocial();
     const theme = useTheme();
-    const color = Colors(theme);
-
-
 
     const logout = async () => {
-        await updatedTokens?.()
+        await updatedTokens?.();
         await signOutUser();
-    }
-    useEffect(() => {
-        if (!IS_INSTA_ENABLED) {
-            resetAndNavigate("/")
-        }
-    }, [])
+    };
 
     if (!primarySocial) {
-        // resetAndNavigate("/no-social-connected")
         return null;
     }
+
     return (
         <AppLayout withWebPadding={true}>
             <View
@@ -64,35 +52,22 @@ const TrendlyScreen = () => {
                 </View>
 
                 <View style={{ flex: 1, justifyContent: "center" }}>
-                    {/* Illustration */}
                     <View>
-                        {primarySocial &&
-                            <View style={styles.imageContainer}>
-                                <SocialPage
-                                    handle={
-                                        primarySocial.isInstagram ? primarySocial.instaProfile?.username || "" : ""
-                                    }
-                                    profile={primarySocial.isInstagram ? primarySocial.instaProfile : primarySocial.fbProfile}
-                                    platform={
-                                        primarySocial.isInstagram
-                                            ? SocialPlatform.INSTAGRAM
-                                            : SocialPlatform.FACEBOOK
-                                    }
-                                    name={primarySocial.isInstagram ? primarySocial.instaProfile?.username || "" : ""}
-                                    id={primarySocial.id}
-                                    image={primarySocial.image}
-                                    hideOptions={true}
-                                />
-                                {/* <ImageComponent url={primarySocial?.image || ""} altText={primarySocial?.name || ""} /> */}
-                                {/* <Image
-                                source={primarySocial?.image || ""} // Replace with your local image
-                                style={styles.image}
-                                resizeMode="contain"
-                            /> */}
-                            </View>}
+                        <View style={styles.imageContainer}>
+                            <SocialPage
+                                handle={primarySocial.username}
+                                profile={{ name: primarySocial.displayName }}
+                                platform={SocialPlatform.INSTAGRAM}
+                                name={primarySocial.displayName}
+                                id={primarySocial.id}
+                                image={primarySocial.profileImageURL}
+                                hideOptions={true}
+                            />
+                        </View>
 
-                        {/* No Account Text */}
-                        <Text style={[styles.noAccountText, { color: Colors(theme).text }]}>Instagram Login Required</Text>
+                        <Text style={[styles.noAccountText, { color: Colors(theme).text }]}>
+                            Instagram Login Required
+                        </Text>
                         <Text
                             style={{
                                 textAlign: "center",
@@ -100,16 +75,21 @@ const TrendlyScreen = () => {
                                 marginBottom: 30,
                             }}
                         >
-                            We noticed that you added instagram manually during your last onboarding. However, now we dont allow that
+                            We noticed that you added instagram manually during your last onboarding. However, now we don't allow that.
                         </Text>
                         <View style={styles.buttonContainer}>
-                            <InstagramLoginButton markAsPrimary={true} buttonText="Authorize Instagram" />
+                            <Button
+                                mode="contained"
+                                style={{ marginVertical: 10, paddingVertical: 5 }}
+                                onPress={() => connectSocial("instagram")}
+                                icon="instagram"
+                                labelStyle={{ color: "white", fontSize: 16 }}
+                            >
+                                Authorize Instagram
+                            </Button>
                         </View>
                     </View>
                 </View>
-
-                {/* Buttons */}
-
             </View>
         </AppLayout>
     );
@@ -124,18 +104,12 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 24,
         fontWeight: "bold",
-
     },
     imageContainer: {
-
         alignItems: "stretch",
         width: 600,
         maxWidth: "100%",
         alignSelf: "center",
-    },
-    image: {
-        height: 300,
-        width: 300,
     },
     noAccountText: {
         textAlign: "center",

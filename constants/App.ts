@@ -7,7 +7,10 @@ export const APP_SCHEME = "trendly-creators";
 export const APP_STORE_URL = CREATORS_APPSTORE_URL;
 export const PLAY_STORE_URL = CREATORS_PLAYSTORE_URL;
 
-export const IS_INSTA_ENABLED = true;
+// DEPRECATED — no longer used. Social connections now go through
+// connect.trendly.now via useConnectSocial(). Delete once legacy
+// components/auth/InstagramLogin.tsx and FacebookLogin.tsx are cleaned up.
+// export const IS_INSTA_ENABLED = true;
 
 export const IS_INSIGHT_ENABLED = false; //(process.env.EXPO_PUBLIC_APP_STAGE == "dev")
 

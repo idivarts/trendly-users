@@ -1,5 +1,3 @@
-import { IS_INSTA_ENABLED } from "@/constants/App";
-import { ISocials } from "@/shared-libs/firestore/trendly-pro/models/socials";
 import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { useMyNavigation } from "@/shared-libs/utils/router";
@@ -9,119 +7,129 @@ import {
     createContext,
     useContext,
     useEffect,
+    useRef,
     useState,
     type PropsWithChildren,
 } from "react";
 import { useAuthContext } from "./auth-context.provider";
-;
+
+// ─── ISocialAccount mirrors the backend SocialAccount struct (social_v2.go) ──
+export interface ISocialAccount {
+    id: string;
+    platform: "instagram" | "facebook" | "youtube" | "linkedin" | "twitter";
+    userId: string;
+    username: string;
+    displayName: string;
+    profileImageURL: string;
+    bio?: string;
+    profileURL?: string;
+    followerCount: number;
+    followingCount: number;
+    mediaCount: number;
+    connectedAt: number;
+    updatedAt: number;
+    rawProfile?: Record<string, unknown>;
+}
 
 interface SocialContextProps {
-    socials: ISocials[];
-    primarySocial: ISocials | null;
-    setPrimarySocial: (social: ISocials) => void;
+    socials: ISocialAccount[];
+    primarySocial: ISocialAccount | null;
+    setPrimarySocial: (social: ISocialAccount) => void;
     isFetchingSocials: boolean;
+    refreshSocials: () => void;
 }
 
 const SocialContext = createContext<SocialContextProps>({
     socials: [],
     primarySocial: null,
     isFetchingSocials: false,
-    setPrimarySocial: (social: ISocials) => { },
+    setPrimarySocial: () => { },
+    refreshSocials: () => { },
 });
 
 export const SocialContextProvider = ({ children }: PropsWithChildren<{}>) => {
     const { user } = useAuthContext();
-    const [socials, setSocials] = useState<any[]>([]);
-    const [primarySocial, setPrimarySocial] = useState<ISocials | null>(null);
+    const [socials, setSocials] = useState<ISocialAccount[]>([]);
+    const [primarySocial, setPrimarySocial] = useState<ISocialAccount | null>(null);
     const [isFetchingSocials, setIsFetchingSocials] = useState(true);
-    const { replace, resetAndNavigate } = useMyNavigation()
+    const { replace, resetAndNavigate } = useMyNavigation();
+    const unsubscribeRef = useRef<(() => void) | undefined>(undefined);
 
     const pathname = usePathname();
     const allowedPaths = [
         "/no-social-connected",
-        "/add-instagram-manual",
     ];
 
     const fetchSocials = () => {
-        if (!user || !user.id) {
-            // setIsFetchingSocials(false);
-            return;
-        };
+        if (!user || !user.id) return;
+
+        // Tear down any previous listener before creating a new one
+        if (unsubscribeRef.current) {
+            unsubscribeRef.current();
+        }
 
         try {
-            const socialProfileRef = collection(
+            const socialAccountsRef = collection(
                 FirestoreDB,
                 "users",
                 user.id,
-                "socials"
+                "socialAccounts"
             );
 
-            // Subscribe to real-time updates
-            const unsubscribe = onSnapshot(socialProfileRef, (snapshot) => {
-                const socialData = snapshot.docs.map((doc) => {
-                    const data = doc.data();
-                    const social: ISocials = {
-                        ...data as ISocials,
-                    };
-                    return social;
-                });
+            const unsubscribe = onSnapshot(socialAccountsRef, (snapshot) => {
+                const socialData = snapshot.docs.map((doc) => ({
+                    ...(doc.data() as ISocialAccount),
+                    id: doc.id,
+                }));
 
                 setSocials(socialData);
 
                 Console.log("Pathname", pathname);
 
                 if (socialData.length === 0) {
-                    if (!allowedPaths.includes(pathname))
+                    if (!allowedPaths.includes(pathname)) {
                         replace("/no-social-connected");
+                    }
                     return;
                 }
 
-                // It comes here if social is more than one and it can be on any path
-
                 const primary = user.primarySocial
-                    // @ts-ignore
-                    ? socialData.find((social: ISocials) => social.id === user.primarySocial)
+                    ? socialData.find((s) => s.id === user.primarySocial) ?? null
                     : null;
 
                 if (!primary) {
                     setPrimarySocial(null);
                     resetAndNavigate("/primary-social-select");
-                } else if (!IS_INSTA_ENABLED && primary.isInstagram && !primary.instaProfile?.approxMetrics) {
-                    // If primary social is Instagram and it doesn't have approxMetrics, take user to Instagram onboarding
-                    resetAndNavigate(`/add-instagram-manual?socialId=${primary.id}`);
-                } else if (IS_INSTA_ENABLED && primary.isInstagram && !!primary.socialScreenShots) {
-                    setPrimarySocial(primary);
-                    resetAndNavigate("/manual-instagram-not-supported");
                 } else {
-                    // @ts-ignore
                     setPrimarySocial(primary);
 
-                    // If user is stagnant on onboard page when social already exists, take users to Onboarding questions page
                     if (allowedPaths.includes(pathname)) {
-                        resetAndNavigate("/questions")
+                        resetAndNavigate("/questions");
                     }
                 }
             });
 
+            unsubscribeRef.current = unsubscribe;
             return unsubscribe;
         } catch (error) {
-            Console.error(error, "Error setting up socials snapshot:");
+            Console.error(error, "Error setting up socialAccounts snapshot:");
         } finally {
             setIsFetchingSocials(false);
         }
     };
 
+    // Force a re-subscription (useful after a deep-link callback)
+    const refreshSocials = () => {
+        fetchSocials();
+    };
+
     useEffect(() => {
-        let unsubscribe: (() => void) | undefined;
-
         if (user && user.id) {
-            // setIsFetchingSocials(true);
-            unsubscribe = fetchSocials();
+            const unsubscribe = fetchSocials();
+            return () => {
+                if (unsubscribe) unsubscribe();
+            };
         }
-
-        return () => {
-            if (unsubscribe) unsubscribe();
-        };
     }, [user]);
 
     return (
@@ -131,6 +139,7 @@ export const SocialContextProvider = ({ children }: PropsWithChildren<{}>) => {
                 primarySocial,
                 isFetchingSocials,
                 setPrimarySocial,
+                refreshSocials,
             }}
         >
             {children}

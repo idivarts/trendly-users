@@ -1,9 +1,6 @@
-import FacebookLoginButton from "@/components/profile/ConnectWithFacebook";
-import InstagramLoginButton from "@/components/profile/ConnectWithInstagram";
-import InstagramManualLoginButton from "@/components/profile/ConnectWithInstagramManual";
 import Button from "@/components/ui/button";
-import { IS_INSTA_ENABLED } from "@/constants/App";
 import { useAuthContext, useCloudMessagingContext } from "@/contexts";
+import { useConnectSocial } from "@/hooks/requests";
 import AppLayout from "@/layouts/app-layout";
 import Colors from "@/shared-uis/constants/Colors";
 import { imageUrl } from "@/utils/url";
@@ -15,14 +12,13 @@ import { Text } from "react-native-paper";
 const TrendlyScreen = () => {
     const { signOutUser } = useAuthContext();
     const { updatedTokens } = useCloudMessagingContext();
-
-    // const { socials } = useSocialContext();
+    const { connectSocial } = useConnectSocial();
     const theme = useTheme();
 
     const logout = async () => {
-        await updatedTokens?.()
+        await updatedTokens?.();
         await signOutUser();
-    }
+    };
 
     return (
         <AppLayout withWebPadding={true}>
@@ -50,17 +46,15 @@ const TrendlyScreen = () => {
                 </View>
 
                 <View style={{ flex: 1, justifyContent: "center" }}>
-                    {/* Illustration */}
                     <View>
                         <View style={styles.imageContainer}>
                             <Image
-                                source={imageUrl(require("@/assets/images/no-socials.png"))} // Replace with your local image
+                                source={imageUrl(require("@/assets/images/no-socials.png"))}
                                 style={styles.image}
                                 resizeMode="contain"
                             />
                         </View>
 
-                        {/* No Account Text */}
                         <Text style={styles.noAccountText}>Showcase your Social Account</Text>
                         <Text
                             style={{
@@ -73,17 +67,18 @@ const TrendlyScreen = () => {
                             media to Trendly App
                         </Text>
                         <View style={styles.buttonContainer}>
-
-                            {IS_INSTA_ENABLED ?
-                                <InstagramLoginButton /> :
-                                <InstagramManualLoginButton />}
-                            <FacebookLoginButton />
+                            <Button
+                                mode="contained"
+                                style={{ marginVertical: 10, paddingVertical: 5 }}
+                                onPress={() => connectSocial()}
+                                icon="link"
+                                labelStyle={{ color: "white", fontSize: 16 }}
+                            >
+                                Connect Social Account
+                            </Button>
                         </View>
                     </View>
                 </View>
-
-                {/* Buttons */}
-
             </View>
         </AppLayout>
     );
@@ -101,7 +96,6 @@ const styles = StyleSheet.create({
     },
     imageContainer: {
         alignItems: "center",
-        // marginVertical: 0,
     },
     image: {
         height: 300,
