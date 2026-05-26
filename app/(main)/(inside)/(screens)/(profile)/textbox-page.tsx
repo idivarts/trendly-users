@@ -1,4 +1,4 @@
-import Component from "@/components/textbox-rtf/TextBox";
+import Component from "@/shared-uis/components/textbox-rtf/TextBox";
 import { Text, View } from "@/components/theme/Themed";
 import ScreenHeader from "@/components/ui/screen-header";
 import { useAuthContext } from "@/contexts";
