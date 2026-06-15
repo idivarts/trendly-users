@@ -53,6 +53,7 @@ jobs:
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
           EXPO_PUBLIC_APP_STAGE: ${{ env.STAGE }}
+          EXPO_PUBLIC_FIRESTORE_DATABASE_ID: ${{ env.STAGE == 'prod' && vars.FIRESTORE_DATABASE_PROD_ID || vars.FIRESTORE_DATABASE_DEV_ID }}
         run: npm run build-ios
 
       - name: Submit to App Store
