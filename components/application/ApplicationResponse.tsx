@@ -20,6 +20,7 @@ export interface ApplicationResponseProps {
     variant?: ApplicationResponseVariant;
     onWithdrawPress?: () => void;
     onEditPress?: () => void;
+    editLabel?: string;
 }
 
 const ApplicationResponse: FC<ApplicationResponseProps> = ({
@@ -29,6 +30,7 @@ const ApplicationResponse: FC<ApplicationResponseProps> = ({
     variant = "plain",
     onWithdrawPress,
     onEditPress,
+    editLabel = "Edit",
 }) => {
     const theme = useTheme();
     const colors = Colors(theme);
@@ -63,7 +65,7 @@ const ApplicationResponse: FC<ApplicationResponseProps> = ({
 
                         {onEditPress && (
                             <Button mode="contained" onPress={onEditPress}>
-                                Edit
+                                {editLabel}
                             </Button>
                         )}
                     </View>

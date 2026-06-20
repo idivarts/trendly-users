@@ -39,9 +39,9 @@ const ContractCardRow = ({ item }: ContractCardRowProps) => {
                     //@ts-ignore
                     collabId: item.collaborationData.id,
                     collabName: item.collaborationData.name,
-                    timePosted: item.contractTimestamp.startedOn,
+                    timePosted: item.contractTimestamp?.startedOn || 0,
                 }}
-                onOpenBottomSheet={() => {}}
+                onOpenBottomSheet={() => { }}
             />
             <ContractDetails
                 application={

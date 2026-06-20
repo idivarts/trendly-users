@@ -1,9 +1,9 @@
-import { Text, View } from "@/components/theme/Themed";
 import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import Colors from "@/shared-uis/constants/Colors";
-import { truncateText } from "@/utils/profile";
 import { useTheme } from "@react-navigation/native";
-import { FC } from "react";
+import { FC, useMemo } from "react";
+import { StyleSheet } from "react-native";
+import { Text, View } from "@/components/theme/Themed";
 
 interface ContractDetailsProps {
     application: IApplications;
@@ -15,46 +15,21 @@ const ContractDetails: FC<ContractDetailsProps> = ({
     collabDetails,
 }) => {
     const theme = useTheme();
+    const colors = Colors(theme);
+    const styles = useMemo(() => createStyles(colors), [colors]);
     return (
-        <View
-            style={{
-                paddingHorizontal: 16,
-                paddingTop: 8,
-                paddingBottom: 16,
-                gap: 16,
-            }}
-        >
-            <View
-                style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    marginBottom: 8,
-                }}
-            >
+        <View style={styles.container}>
+            <View style={styles.detailsRow}>
                 <Text
-                    style={{
-                        fontSize: 16,
-                        color: Colors(theme).text,
-                    }}
+                    style={styles.detailsText}
+                    numberOfLines={2}
+                    ellipsizeMode="tail"
                 >
-                    {truncateText(collabDetails, 120)}
+                    {collabDetails}
                 </Text>
             </View>
-            <View
-                style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    flexDirection: "row",
-                    width: "100%",
-                }}
-            >
-                <Text
-                    style={{
-                        fontSize: 16,
-                        color: Colors(theme).text,
-                    }}
-                >
+            <View style={styles.metaRow}>
+                <Text style={styles.metaText}>
                     Quote: {application?.quotation || "Free"}
                 </Text>
                 {/* <Text
@@ -71,3 +46,35 @@ const ContractDetails: FC<ContractDetailsProps> = ({
 };
 
 export default ContractDetails;
+
+function createStyles(colors: ReturnType<typeof Colors>) {
+    return StyleSheet.create({
+        container: {
+            paddingHorizontal: 16,
+            paddingTop: 8,
+            paddingBottom: 16,
+            gap: 16,
+        },
+        detailsRow: {
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: 8,
+        },
+        detailsText: {
+            fontSize: 16,
+            color: colors.text,
+            flex: 1,
+        },
+        metaRow: {
+            display: "flex",
+            justifyContent: "space-between",
+            flexDirection: "row",
+            width: "100%",
+        },
+        metaText: {
+            fontSize: 16,
+            color: colors.text,
+        },
+    });
+}

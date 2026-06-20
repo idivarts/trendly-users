@@ -20,6 +20,7 @@ web-build/
 .metro-health-check*
 
 # debug
+.cursor/debug-*.log
 npm-debug.*
 yarn-debug.*
 yarn-error.*

@@ -1,0 +1,237 @@
+import { View } from "@/components/theme/Themed";
+import { useAuthContext, useKYCFlowContext } from "@/contexts";
+import { KYCStatus } from "@/shared-libs/firestore/trendly-pro/models/users";
+import { createRazorpayRouteAccount } from "@/shared-libs/utils/kyc-api";
+import { useMyNavigation } from "@/shared-libs/utils/router";
+import Toaster from "@/shared-uis/components/toaster/Toaster";
+import Colors from "@/shared-uis/constants/Colors";
+import { useTheme } from "@react-navigation/native";
+import { useMemo, useState } from "react";
+import {
+    NativeScrollEvent,
+    NativeSyntheticEvent,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+} from "react-native";
+
+import { ROUTE_AGREEMENT_TEXT } from "@/shared-constants/route-agreement";
+import { createVerificationFormStyles } from "./verificationFormStyles";
+
+const AGREEMENT_TEXT = ROUTE_AGREEMENT_TEXT;
+
+function createAgreementAreaStyles(colors: ReturnType<typeof Colors>) {
+    return StyleSheet.create({
+        screenRoot: {
+            flex: 1,
+        },
+        agreementContainer: {
+            flex: 1,
+            minHeight: 0,
+            marginHorizontal: 16,
+            marginTop: 12,
+            backgroundColor: colors.tag,
+            borderRadius: 12,
+            overflow: "hidden",
+        },
+        agreementScroll: {
+            flex: 1,
+        },
+        agreementScrollContent: {
+            padding: 16,
+            paddingBottom: 24,
+        },
+        agreementText: {
+            fontSize: 14,
+            lineHeight: 20,
+            color: colors.text,
+        },
+    });
+}
+
+const VerificationAgreementContent = () => {
+    const router = useMyNavigation();
+    const theme = useTheme();
+    const colors = Colors(theme);
+    const styles = useMemo(
+        () => createVerificationFormStyles(colors),
+        [colors]
+    );
+    const agreementStyles = useMemo(
+        () => createAgreementAreaStyles(colors),
+        [colors]
+    );
+
+    const [hasScrolledToEnd, setHasScrolledToEnd] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
+    const { user } = useAuthContext();
+    const { draft, setAgreements, reset } = useKYCFlowContext();
+
+    const handleScroll = (
+        event: NativeSyntheticEvent<NativeScrollEvent>
+    ) => {
+        const { layoutMeasurement, contentOffset, contentSize } =
+            event.nativeEvent;
+
+        const isBottomReached =
+            layoutMeasurement.height + contentOffset.y >=
+            contentSize.height - 20;
+
+        if (isBottomReached) {
+            setHasScrolledToEnd(true);
+        }
+    };
+
+    const canProceed =
+        hasScrolledToEnd &&
+        draft.agreements.panConsent &&
+        draft.agreements.termsConsent &&
+        !submitting;
+
+    const validateDraft = () => {
+        if (
+            !draft.panDetails.nameAsPerPAN.trim() ||
+            !draft.panDetails.panNumber.trim()
+        ) {
+            throw new Error("Please complete PAN details before proceeding.");
+        }
+        if (
+            !draft.currentAddress.street.trim() ||
+            !draft.currentAddress.city.trim() ||
+            !draft.currentAddress.state.trim() ||
+            !draft.currentAddress.postalCode.trim()
+        ) {
+            throw new Error(
+                "Please complete address details before proceeding."
+            );
+        }
+        if (
+            !draft.bankDetails.accountNumber.trim() ||
+            !draft.bankDetails.ifsc.trim() ||
+            !draft.bankDetails.beneficiaryName.trim()
+        ) {
+            throw new Error(
+                "Please complete bank details before proceeding."
+            );
+        }
+    };
+
+    const handleSubmit = async () => {
+        if (!canProceed || !user?.id) return;
+
+        try {
+            setSubmitting(true);
+            validateDraft();
+
+            const streetCombined = [
+                draft.currentAddress.street.trim(),
+                draft.currentAddress.line2?.trim(),
+            ]
+                .filter(Boolean)
+                .join(", ");
+
+            await createRazorpayRouteAccount({
+                name: draft.panDetails.nameAsPerPAN.trim(),
+                pan: draft.panDetails.panNumber.trim(),
+                address: {
+                    street: streetCombined,
+                    city: draft.currentAddress.city.trim(),
+                    state: draft.currentAddress.state.trim(),
+                    postal_code: draft.currentAddress.postalCode.trim(),
+                },
+                bank: {
+                    account_number: draft.bankDetails.accountNumber.trim(),
+                    ifsc: draft.bankDetails.ifsc.trim(),
+                    beneficiary_name: draft.bankDetails.beneficiaryName.trim(),
+                },
+                reCreateAccount:
+                    user.kyc?.status === KYCStatus.Rejected ||
+                    user.kyc?.status === KYCStatus.NeedsClarification,
+            });
+
+            await reset();
+            router.replace("/profile");
+        } catch (error) {
+            console.error("Failed to submit verification", error);
+            Toaster.error(
+                (error as Error)?.message || "Failed to submit verification."
+            );
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    return (
+        <View style={agreementStyles.screenRoot}>
+            <View style={agreementStyles.agreementContainer}>
+                <ScrollView
+                    style={agreementStyles.agreementScroll}
+                    contentContainerStyle={agreementStyles.agreementScrollContent}
+                    onScroll={handleScroll}
+                    scrollEventThrottle={16}
+                    showsVerticalScrollIndicator
+                >
+                    <Text style={agreementStyles.agreementText}>
+                        {AGREEMENT_TEXT}
+                    </Text>
+                </ScrollView>
+            </View>
+
+            <View style={styles.bottomContainerGap}>
+                <TouchableOpacity
+                    style={styles.checkboxRow}
+                    onPress={() =>
+                        setAgreements({
+                            panConsent: !draft.agreements.panConsent,
+                        })
+                    }
+                >
+                    <View
+                        style={[
+                            styles.checkbox,
+                            draft.agreements.panConsent && styles.checked,
+                        ]}
+                    />
+                    <Text style={styles.checkboxText}>
+                        I agree to use PAN for my verification
+                    </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                    style={styles.checkboxRow}
+                    onPress={() =>
+                        setAgreements({
+                            termsConsent: !draft.agreements.termsConsent,
+                        })
+                    }
+                >
+                    <View
+                        style={[
+                            styles.checkbox,
+                            draft.agreements.termsConsent && styles.checked,
+                        ]}
+                    />
+                    <Text style={styles.checkboxText}>
+                        I agree to the Terms & Conditions
+                    </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                    disabled={!canProceed}
+                    style={[
+                        styles.buttonWithTopMargin,
+                        !canProceed && styles.buttonDisabled,
+                    ]}
+                    onPress={handleSubmit}
+                >
+                    <Text style={styles.buttonText}>
+                        {submitting ? "Submitting..." : "Proceed"}
+                    </Text>
+                </TouchableOpacity>
+            </View>
+        </View>
+    );
+};
+
+export default VerificationAgreementContent;

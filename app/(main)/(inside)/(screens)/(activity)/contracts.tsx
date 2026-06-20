@@ -9,12 +9,12 @@ const tabs = [
     {
         id: "Active",
         title: "Active",
-        component: <ContractsTabContent scope="active" />,
+        component: <ContractsTabContent scope="active" key="active-contracts" />,
     },
     {
         id: "Past",
         title: "Past",
-        component: <ContractsTabContent scope="past" />,
+        component: <ContractsTabContent scope="past" key="past-contracts" />,
     },
 ];
 

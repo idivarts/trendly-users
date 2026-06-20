@@ -1,319 +1,855 @@
 import { useChatContext } from "@/contexts";
-import { IContracts } from "@/shared-libs/firestore/trendly-pro/models/contracts";
-import { IManagers } from "@/shared-libs/firestore/trendly-pro/models/managers";
-import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
-import { Console } from "@/shared-libs/utils/console";
-import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
-import { HttpWrapper } from "@/shared-libs/utils/http-wrapper";
+import { ContractStatus, normalizeStatus } from "@/shared-constants/contract-status";
+import { useAWSContext } from "@/shared-libs/contexts/aws-context.provider";
+import type { ICollaboration } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
+import type { IContracts } from "@/shared-libs/firestore/trendly-pro/models/contracts";
+import type { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { useMyNavigation } from "@/shared-libs/utils/router";
-import ImageComponent from "@/shared-uis/components/image-component";
-import Toaster from "@/shared-uis/components/toaster/Toaster";
-import Colors from "@/shared-uis/constants/Colors";
 import {
-    faCircleInfo,
-    faStar,
-    faStarHalfStroke,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { useTheme } from "@react-navigation/native";
-import { doc, getDoc } from "firebase/firestore";
-import React, { FC, useEffect, useMemo, useState } from "react";
+    ContractActionsWithMessage,
+    type ContractActionButton,
+    type ContractActionsMessage,
+} from "@/shared-uis/components/contract-actions-with-message";
+import Toaster from "@/shared-uis/components/toaster/Toaster";
+import { useCallback, useEffect, useMemo, useRef, useState, type FC } from "react";
 import { StyleSheet, View } from "react-native";
-import { Text } from "../theme/Themed";
-import Button from "../ui/button";
+import { Text } from "react-native-paper";
+import { state6RequestApproval } from "./api/ReviewPending_api";
+import {
+    state0AskToStartContract,
+    state1AskToCompletePayment,
+    state2AskRetryPayment,
+    state3NudgeForShipment,
+} from "./api/ShipmentPending_api";
+import MarkVideoPostedModal, { useMarkVideoPostedModal } from "./MarkVideoPostedModal";
+import ProductReceivedModal, { useProductReceivedModal } from "./ProductReceivedModal";
+import RaiseDisputeModal, { useRaiseDisputeModal } from "./RaiseDisputeModal";
+import RequestCancellationModal, { useRequestCancellationModal } from "./RequestCancellationModal";
+import RespondToCancellationModal, { useRespondToCancellationModal } from "./RespondToCancellationModal";
+import RequestRescheduleModal, { useRequestRescheduleModal } from "./RequestRescheduleModal";
+import ShipmentDetailsOverlay from "./ShipmentDetailsOverlay";
+import SubmitVideoModal, { useSubmitVideoModal } from "./SubmitVideoModal";
+import { type ContractActionsMenuItem } from "./ContractActionsMenu";
+import Colors from "@/shared-uis/constants/Colors";
+import { useTheme } from "@react-navigation/native";
 
 interface ActionContainerProps {
     contract: IContracts;
+    refreshData: () => void | Promise<void>;
     feedbackModalVisible: () => void;
     showQuotationModal: () => void;
     userData: IUsers;
+    collaborationData: ICollaboration;
+    onMenuItemsChange?: (items: ContractActionsMenuItem[]) => void;
 }
 
 const ActionContainer: FC<ActionContainerProps> = ({
     contract,
-    showQuotationModal,
+    refreshData,
     feedbackModalVisible,
+    showQuotationModal,
     userData,
+    collaborationData: _collaborationData,
+    onMenuItemsChange,
 }) => {
+    const { fetchChannelCid } = useChatContext();
+    const { uploadFile, uploadFileUri } = useAWSContext();
+    const router = useMyNavigation();
     const theme = useTheme();
     const colors = Colors(theme);
     const styles = useMemo(() => createStyles(colors), [colors]);
-    const [manager, setManager] = useState<IManagers>();
-    const { fetchChannelCid } = useChatContext();
-    const router = useMyNavigation();
+    const [loading, setLoading] = useState(false);
+    const [buttonLoadingKey, setButtonLoadingKey] = useState<string | null>(null);
+    const [shipmentDetailsVisible, setShipmentDetailsVisible] = useState(false);
+    const [now, setNow] = useState(() => Date.now());
+    const shipmentDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const shipmentInFlightRef = useRef(false);
+    const approvalDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const approvalInFlightRef = useRef(false);
 
-    const renderStars = (rating: number) => {
-        const fullStars = Math.floor(rating);
-        const hasHalfStar = rating % 1 !== 0;
+    const normalizedStatus = normalizeStatus(contract.status);
+    const isKycBlocked = !userData?.isKYCDone;
+    const brandFeedbackSubmitted = Boolean(contract.feedbackFromBrand?.timeSubmitted) ||
+        Boolean(contract.feedbackFromBrand?.feedbackReview);
+    const hasRevisionRequest =
+        (contract.deliverable?.revisionCount || 0) > 0 ||
+        (contract.deliverable?.revisionNotes?.length || 0) > 0;
+    const revisionNotes = contract.deliverable?.revisionNotes?.filter((note) => note?.trim()) || [];
+    const scheduledReleaseAt = contract.posting?.scheduledDate;
+    const isBeforeScheduledPostingDate = !!scheduledReleaseAt && now < scheduledReleaseAt;
+    const revisionCount = contract.deliverable?.revisionCount ?? 0;
+    const maxRevisions = (_collaborationData as any)?.maxRevisions ?? 3;
+    const isRevisionLimitExceeded = revisionCount > 0 && revisionCount >= maxRevisions;
 
-        return (
-            <>
-                {Array.from({ length: fullStars }, (_, i) => (
-                    <FontAwesomeIcon
-                        key={i}
-                        icon={faStar}
-                        size={16}
-                        color={colors.yellow}
-                    />
-                ))}
-                {hasHalfStar && (
-                    <FontAwesomeIcon
-                        icon={faStarHalfStroke}
-                        size={16}
-                        color={colors.yellow}
-                    />
-                )}
-            </>
-        );
+    const shipmentDetailsForOverlay = useMemo(
+        () => ({
+            courier: contract.shipment?.shipmentProvider || "N/A",
+            trackingId: contract.shipment?.trackingId || "N/A",
+            expectedDate: contract.shipment?.expectedDate
+                ? new Date(contract.shipment.expectedDate).toLocaleDateString()
+                : "N/A",
+            shipmentNote: contract.shipment?.notes || "",
+            deliveryProofs: contract.shipment?.packageScreenshots || [],
+        }),
+        [
+            contract.shipment?.shipmentProvider,
+            contract.shipment?.trackingId,
+            contract.shipment?.expectedDate,
+            contract.shipment?.notes,
+            contract.shipment?.packageScreenshots,
+        ]
+    );
+
+    const openShipmentDetails = useCallback(() => {
+        setShipmentDetailsVisible(true);
+    }, []);
+
+    const closeShipmentDetails = useCallback(() => {
+        setShipmentDetailsVisible(false);
+    }, []);
+
+    const getPostScheduledMessage = () => {
+        if (!scheduledReleaseAt) {
+            return "The brand has scheduled the video for a release date.";
+        }
+        const formattedDate = new Date(scheduledReleaseAt).toLocaleDateString(undefined, {
+            day: "numeric",
+            month: "long",
+        });
+        return `The brand has scheduled the video to be posted on ${formattedDate}.`;
     };
 
-    const fetchManager = async () => {
-        if (!contract.feedbackFromBrand?.managerId) return;
-        const managerRef = doc(
-            FirestoreDB,
-            "managers",
-            contract.feedbackFromBrand?.managerId
-        );
-        const managerSnap = await getDoc(managerRef);
-        setManager(managerSnap.data() as IManagers);
+    const getRevisionRequestedMessage = () => {
+        return "The brand requested changes in your video. Please update and submit the video again.";
     };
 
     useEffect(() => {
-        fetchManager();
-    }, [contract.feedbackFromBrand?.managerId]);
+        return () => {
+            if (shipmentDebounceRef.current) {
+                clearTimeout(shipmentDebounceRef.current);
+            }
+            if (approvalDebounceRef.current) {
+                clearTimeout(approvalDebounceRef.current);
+            }
+        };
+    }, []);
 
-    const infoBannerStyle =
-        contract.status === 3 ? styles.infoBannerComplete : styles.infoBannerActive;
+    useEffect(() => {
+        // Ensure time-based actions (like scheduled posting) auto-update.
+        if (
+            normalizedStatus !== ContractStatus.PostingPending ||
+            !scheduledReleaseAt ||
+            scheduledReleaseAt <= Date.now()
+        ) {
+            return;
+        }
+        const intervalId = setInterval(() => setNow(Date.now()), 30_000);
+        return () => clearInterval(intervalId);
+    }, [normalizedStatus, scheduledReleaseAt]);
+
+    const runWithRefresh = useCallback(
+        async (fn: () => Promise<void>, success: string) => {
+            setLoading(true);
+            try {
+                await fn();
+                await refreshData();
+                Toaster.success(success);
+            } catch (error: unknown) {
+                const message = error instanceof Error ? error.message : "Something went wrong";
+                Toaster.error(message);
+            } finally {
+                setLoading(false);
+            }
+        },
+        [refreshData]
+    );
+
+    const runButtonAction = useCallback(
+        async (buttonKey: string, fn: () => Promise<void>, successMessage?: string) => {
+            if (loading) return;
+            setButtonLoadingKey(buttonKey);
+            try {
+                if (successMessage) {
+                    await runWithRefresh(fn, successMessage);
+                    return;
+                }
+                await fn();
+            } finally {
+                setButtonLoadingKey(null);
+            }
+        },
+        [loading, runWithRefresh]
+    );
+
+    const productReceivedModal = useProductReceivedModal({
+        contractId: contract.streamChannelId,
+        uploadFileUri,
+        runWithRefresh,
+    });
+
+    const submitVideoModal = useSubmitVideoModal({
+        contractId: contract.streamChannelId,
+        uploadFile,
+        uploadFileUri,
+        runWithRefresh,
+    });
+
+    const markVideoPostedModal = useMarkVideoPostedModal({
+        contractId: contract.streamChannelId,
+        uploadFile,
+        uploadFileUri,
+        runWithRefresh,
+        setActionLoading: setLoading,
+    });
+
+    const requestRescheduleModal = useRequestRescheduleModal({
+        contractId: contract.streamChannelId,
+        runWithRefresh,
+    });
+
+    const raiseDisputeModal = useRaiseDisputeModal({
+        contractId: contract.streamChannelId,
+        uploadFileUri,
+        runWithRefresh,
+    });
+
+    const requestCancellationModal = useRequestCancellationModal({
+        contractId: contract.streamChannelId,
+        contractStatus: normalizedStatus,
+        runWithRefresh,
+    });
+
+    const respondToCancellationModal = useRespondToCancellationModal({
+        contractId: contract.streamChannelId,
+        runWithRefresh,
+    });
+
+    const hasPendingCancellationRequest =
+        contract.cancellationRequest?.status === "pending" &&
+        contract.cancellationRequest?.requestedByRole === "brand";
+
+    const canRaiseDispute =
+        normalizedStatus >= ContractStatus.ShipmentPending &&
+        normalizedStatus <= ContractStatus.SettlementPending;
+
+    const canRequestCancellation =
+        normalizedStatus >= ContractStatus.Pending &&
+        normalizedStatus <= ContractStatus.ReviewPending;
+
+    const requestShipmentWithDebounce = async () => {
+        if (shipmentInFlightRef.current || shipmentDebounceRef.current) {
+            return;
+        }
+        shipmentInFlightRef.current = true;
+        shipmentDebounceRef.current = setTimeout(() => {
+            shipmentDebounceRef.current = null;
+        }, 1500);
+
+        try {
+            await runWithRefresh(
+                () => state3NudgeForShipment({ streamChannelId: contract.streamChannelId }),
+                "Shipment request sent."
+            );
+        } finally {
+            shipmentInFlightRef.current = false;
+        }
+    };
+
+    const requestApprovalWithDebounce = async () => {
+        if (approvalInFlightRef.current || approvalDebounceRef.current) {
+            return;
+        }
+        approvalInFlightRef.current = true;
+        approvalDebounceRef.current = setTimeout(() => {
+            approvalDebounceRef.current = null;
+        }, 1500);
+
+        try {
+            await runWithRefresh(
+                () => state6RequestApproval({ contractId: contract.streamChannelId }),
+                "Approval request sent."
+            );
+        } finally {
+            approvalInFlightRef.current = false;
+        }
+    };
+
+    const openMessages = useCallback(async () => {
+        const channelCid = await fetchChannelCid(contract.streamChannelId);
+        router.push(`/channel/${channelCid}`);
+    }, [fetchChannelCid, contract.streamChannelId, router]);
+
+    const actionsConfig = useMemo((): {
+        buttons: ContractActionButton[];
+        message: ContractActionsMessage;
+    } => {
+        if (isKycBlocked) {
+            return {
+                buttons: [
+                    {
+                        label: "Complete Profile Verification",
+                        onPress: () => router.push("/verification"),
+                        variant: "contained",
+                        disabled: loading,
+                    },
+                ],
+                message: {
+                    variant: "warning",
+                    text: "You need to complete profile verification in order to get into a contract as an influencer.",
+                },
+            };
+        }
+
+        switch (normalizedStatus) {
+            case ContractStatus.Pending:
+                return {
+                    buttons: [
+                        {
+                            label: "Revise Quotation",
+                            onPress: showQuotationModal,
+                            variant: "outlined",
+                            disabled: loading,
+                        },
+                        {
+                            label: "Ask to Start Contract",
+                            onPress: () =>
+                                void runButtonAction(
+                                    "ask-to-start-contract",
+                                    () => state0AskToStartContract({ streamChannelId: contract.streamChannelId }),
+                                    "Start contract request sent."
+                                ),
+                            variant: "contained",
+                            disabled: loading,
+                            loading: buttonLoadingKey === "ask-to-start-contract",
+                        },
+                    ],
+                    message: {
+                        variant: "warning",
+                        text: "The contract is still not funded. Don’t start working on the deliverables until the contract is funded.",
+                    },
+                };
+            case ContractStatus.Started:
+                return {
+                    buttons: [
+                        {
+                            label: "Go to Messages",
+                            onPress: openMessages,
+                            variant: "outlined",
+                            disabled: loading,
+                        },
+                        {
+                            label: "Remind Brand to Pay",
+                            onPress: () => state1AskToCompletePayment({ streamChannelId: contract.streamChannelId }),
+                            variant: "contained",
+                            disabled: loading,
+                        },
+                    ],
+                    message: {
+                        variant: "info",
+                        text: "Your contract is accepted. Please wait for the brand to complete the payment before the next steps begin.",
+                    },
+                };
+            case ContractStatus.PaymentFailed:
+                return {
+                    buttons: [
+                        {
+                            label: "Go to Messages",
+                            onPress: openMessages,
+                            variant: "outlined",
+                            disabled: loading,
+                        },
+                        {
+                            label: "Ask to retry Payment",
+                            onPress: () =>
+                                void runButtonAction(
+                                    "ask-to-retry-payment",
+                                    () => state2AskRetryPayment({ streamChannelId: contract.streamChannelId }),
+                                    "Payment retry request sent."
+                                ),
+                            variant: "contained",
+                            disabled: loading,
+                            loading: buttonLoadingKey === "ask-to-retry-payment",
+                        },
+                    ],
+                    message: {
+                        variant: "warning",
+                        text: "Payment could not be completed. Ask the brand to retry payment so the contract can proceed.",
+                    },
+                };
+            case ContractStatus.ShipmentPending:
+                return {
+                    buttons: [
+                        {
+                            label: "Go to Messages",
+                            onPress: openMessages,
+                            variant: "outlined",
+                            disabled: loading,
+                        },
+                        {
+                            label: "Request for shipment",
+                            onPress: () =>
+                                void runButtonAction("request-shipment", requestShipmentWithDebounce),
+                            variant: "contained",
+                            disabled: loading,
+                            loading: buttonLoadingKey === "request-shipment",
+                        },
+                    ],
+                    message: {
+                        variant: "info",
+                        text: "Your contract is funded! The brand will now ship the product to you.",
+                    },
+                };
+            case ContractStatus.DeliveryPending:
+                return {
+                    buttons: [
+                        {
+                            label: "View shipment details",
+                            onPress: openShipmentDetails,
+                            variant: "outlined",
+                            disabled: loading,
+                        },
+                        {
+                            label: "Product Received",
+                            onPress: () => productReceivedModal.open(),
+                            variant: "contained",
+                            disabled: loading,
+                        },
+                    ],
+                    message: {
+                        variant: "info",
+                        text: "Your shipment is on the way. View shipment details for tracking, then mark product received when it arrives.",
+                    },
+                };
+            case ContractStatus.DeliveryAcknowledgementPending:
+                return {
+                    buttons: [
+                        {
+                            label: "Didn't receive it",
+                            onPress: () => raiseDisputeModal.open("shipment_not_received"),
+                            variant: "outlined",
+                            disabled: loading,
+                        },
+                        {
+                            label: "Product Received",
+                            onPress: () => productReceivedModal.open(),
+                            variant: "contained",
+                            disabled: loading,
+                        },
+                    ],
+                    message: {
+                        variant: "info",
+                        text: "Please confirm once you have received the product. If the product didn't arrive, tap 'Didn't receive it' to raise a dispute.",
+                    },
+                };
+            case ContractStatus.VideoPending:
+                return {
+                    buttons: [
+                        {
+                            label: "Go to Messages",
+                            onPress: openMessages,
+                            variant: "outlined",
+                            disabled: loading,
+                        },
+                        {
+                            label: "Submit the Video",
+                            onPress: () => submitVideoModal.open(),
+                            variant: "contained",
+                            disabled: loading,
+                        },
+                    ],
+                    message: {
+                        variant: "warning",
+                        text: "Contract is in progress. Please create and submit the video at your earliest convenience.",
+                    },
+                };
+            case ContractStatus.ReviewPending:
+                return {
+                    buttons: [
+                        ...(isRevisionLimitExceeded
+                            ? [
+                                  {
+                                      label: "Raise a Dispute",
+                                      onPress: () => raiseDisputeModal.open("revision_abuse"),
+                                      variant: "outlined" as const,
+                                      disabled: loading,
+                                  },
+                              ]
+                            : [
+                                  {
+                                      label: "Go to Messages",
+                                      onPress: openMessages,
+                                      variant: "outlined" as const,
+                                      disabled: loading,
+                                  },
+                              ]),
+                        {
+                            label: hasRevisionRequest ? "Submit the Video" : "Request for approval",
+                            onPress:
+                                hasRevisionRequest
+                                    ? () => submitVideoModal.open()
+                                    : () =>
+                                        void runButtonAction(
+                                            "request-approval",
+                                            requestApprovalWithDebounce
+                                        ),
+                            variant: "contained",
+                            disabled: loading,
+                            loading: !hasRevisionRequest && buttonLoadingKey === "request-approval",
+                        },
+                    ],
+                    message: {
+                        variant: isRevisionLimitExceeded ? "warning" : "info",
+                        text: isRevisionLimitExceeded
+                            ? `The brand has requested ${revisionCount} revisions — more than the agreed limit of ${maxRevisions}. You can raise a dispute if this is unreasonable.`
+                            : hasRevisionRequest
+                              ? getRevisionRequestedMessage()
+                              : "The brand is reviewing your video. You can send a reminder to nudge them to approve it sooner.",
+                    },
+                };
+            case ContractStatus.PostingPending:
+                return {
+                    buttons: [
+                        {
+                            label: "Ask for Reschedule",
+                            onPress: () => requestRescheduleModal.open(),
+                            variant: "outlined",
+                            disabled: loading,
+                        },
+                        {
+                            label: "Mark Video as Posted",
+                            onPress: () => markVideoPostedModal.open(),
+                            variant: "contained",
+                            disabled: loading || isBeforeScheduledPostingDate,
+                        },
+                    ],
+                    message: {
+                        variant: "info",
+                        text: scheduledReleaseAt
+                            ? getPostScheduledMessage()
+                            : "Release may still be planned by the brand. Mark the video as posted when it is live, or ask for a reschedule.",
+                    },
+                };
+            case ContractStatus.SettlementPending:
+                if (contract.feedbackFromInfluencer?.timeSubmitted || contract.feedbackFromInfluencer?.feedbackReview) {
+                    return {
+                        buttons: [
+                            {
+                                label: "Go to Messages",
+                                onPress: openMessages,
+                                variant: "outlined",
+                                disabled: loading,
+                            },
+                            {
+                                label: "View Feedback",
+                                onPress: feedbackModalVisible,
+                                variant: "contained",
+                                disabled: loading,
+                            },
+                        ],
+                        message: {
+                            variant: "success",
+                            text: "Thanks for sharing your feedback. You can now view the brand’s review when it becomes available.",
+                        },
+                    };
+                }
+                return {
+                    buttons: [
+                        {
+                            label: "Go to Messages",
+                            onPress: openMessages,
+                            variant: "outlined",
+                            disabled: loading,
+                        },
+                        {
+                            label: "Give Feedback",
+                            onPress: feedbackModalVisible,
+                            variant: "contained",
+                            disabled: loading,
+                        },
+                    ],
+                    message: {
+                        variant: "success",
+                        text: "Your video is live! Please share your feedback to complete the collaboration.",
+                    },
+                };
+            case ContractStatus.Settled:
+                if (!brandFeedbackSubmitted) {
+                    return {
+                        buttons: [
+                            {
+                                label: "Go to Messages",
+                                onPress: openMessages,
+                                variant: "outlined",
+                                disabled: loading,
+                            },
+                            {
+                                label: "Give Feedback",
+                                onPress: feedbackModalVisible,
+                                variant: "contained",
+                                disabled: loading,
+                            },
+                        ],
+                        message: {
+                            variant: "success",
+                            text: "Settlement completed. Share your feedback to close this collaboration.",
+                        },
+                    };
+                }
+                return {
+                    buttons: [
+                        {
+                            label: "Go to Messages",
+                            onPress: openMessages,
+                            variant: "contained",
+                            disabled: loading,
+                        },
+                    ],
+                    message: {
+                        variant: "success",
+                        text: "Settlement completed. This contract is now read-only.",
+                    },
+                };
+            case ContractStatus.Cancelled:
+                return {
+                    buttons: [
+                        {
+                            label: "Go to Messages",
+                            onPress: openMessages,
+                            variant: "contained",
+                            disabled: loading,
+                        },
+                    ],
+                    message: {
+                        variant: "warning",
+                        text: "This contract has been cancelled.",
+                    },
+                };
+            case ContractStatus.Disputed:
+                return {
+                    buttons: [
+                        {
+                            label: "Go to Messages",
+                            onPress: openMessages,
+                            variant: "contained",
+                            disabled: loading,
+                        },
+                    ],
+                    message: {
+                        variant: "warning",
+                        text: "A dispute is open on this contract. It is on hold while our team reviews.",
+                    },
+                };
+            default:
+                return {
+                    buttons: [],
+                    message: {
+                        variant: "success",
+                        text: "Settlement completed. This contract is now read-only.",
+                    },
+                };
+        }
+    }, [
+        isKycBlocked,
+        normalizedStatus,
+        brandFeedbackSubmitted,
+        scheduledReleaseAt,
+        loading,
+        buttonLoadingKey,
+        contract.streamChannelId,
+        contract.status,
+        contract.deliverable?.revisionCount,
+        contract.deliverable?.revisionNotes?.length,
+        revisionNotes,
+        contract.posting?.scheduledDate,
+        contract.shipment?.expectedDate,
+        contract.shipment?.shipmentProvider,
+        contract.shipment?.trackingId,
+        feedbackModalVisible,
+        router,
+        showQuotationModal,
+        runWithRefresh,
+        runButtonAction,
+        requestShipmentWithDebounce,
+        requestApprovalWithDebounce,
+        openMessages,
+        openShipmentDetails,
+        productReceivedModal.open,
+        submitVideoModal.open,
+        markVideoPostedModal.open,
+        requestRescheduleModal.open,
+        raiseDisputeModal.open,
+        isBeforeScheduledPostingDate,
+        isRevisionLimitExceeded,
+        revisionCount,
+        maxRevisions,
+        now,
+    ]);
+
+    const overflowMenuItems = useMemo((): ContractActionsMenuItem[] => {
+        if (
+            normalizedStatus === ContractStatus.Cancelled ||
+            normalizedStatus === ContractStatus.Disputed ||
+            normalizedStatus === ContractStatus.Settled
+        ) return [];
+        const items: ContractActionsMenuItem[] = [];
+        if (hasPendingCancellationRequest) {
+            items.push({
+                label: "Respond to Cancellation Request",
+                onPress: () => respondToCancellationModal.open(),
+            });
+        }
+        if (canRaiseDispute) {
+            items.push({ label: "Raise a Dispute", onPress: () => raiseDisputeModal.open(), destructive: true });
+        }
+        if (canRequestCancellation && !hasPendingCancellationRequest) {
+            items.push({ label: "Request Cancellation", onPress: () => requestCancellationModal.open(), destructive: true });
+        }
+        return items;
+    }, [
+        normalizedStatus,
+        hasPendingCancellationRequest,
+        canRaiseDispute,
+        canRequestCancellation,
+        respondToCancellationModal.open,
+        raiseDisputeModal.open,
+        requestCancellationModal.open,
+    ]);
+
+    useEffect(() => {
+        onMenuItemsChange?.(overflowMenuItems);
+    }, [overflowMenuItems, onMenuItemsChange]);
 
     return (
-        <View style={styles.root}>
-            {contract.status !== 3 && (
-                <View style={styles.actionsRow}>
-                    {contract.status === 0 && (
-                        <>
-                            <Button
-                                mode="outlined"
-                                style={styles.flexButton}
-                                onPress={() => {
-                                    try {
-                                        Toaster.success(
-                                            "Successfully informed brand to start the collaboration"
-                                        );
-                                        HttpWrapper.fetch(
-                                            `/api/collabs/contracts/${contract.streamChannelId}`,
-                                            {
-                                                method: "POST",
-                                            }
-                                        ).catch(() => {
-                                            Toaster.error("Successfully went wrong!!");
-                                        });
-                                    } catch (e: unknown) {
-                                        Console.error(e);
-                                    }
-                                }}
-                            >
-                                Ask to Start Contract
-                            </Button>
-                            <Button
-                                mode="contained"
-                                style={styles.flexButton}
-                                onPress={showQuotationModal}
-                            >
-                                Revise Quotation
-                            </Button>
-                        </>
-                    )}
-                    {contract.status === 1 && (
-                        <>
-                            <Button
-                                mode="contained-tonal"
-                                style={styles.flexButton}
-                                onPress={() => {
-                                    try {
-                                        Toaster.success(
-                                            "Successfully informed brand to end the collaboration"
-                                        );
-                                        HttpWrapper.fetch(
-                                            `/api/collabs/contracts/${contract.streamChannelId}/end`,
-                                            {
-                                                method: "POST",
-                                            }
-                                        ).catch(() => {
-                                            Toaster.error("Something went wrong");
-                                        });
-                                    } catch (e: unknown) {
-                                        Console.error(e);
-                                    }
-                                }}
-                            >
-                                Ask to End Contract
-                            </Button>
-                            <Button
-                                mode="contained"
-                                style={styles.flexButton}
-                                onPress={async () => {
-                                    const channelCid = await fetchChannelCid(
-                                        contract.streamChannelId
-                                    );
-                                    router.push(`/channel/${channelCid}`);
-                                }}
-                            >
-                                Go to Messages
-                            </Button>
-                        </>
-                    )}
-                    {contract.status === 2 && (
-                        <Button
-                            mode="contained"
-                            style={styles.flexButton}
-                            onPress={feedbackModalVisible}
-                        >
-                            Give Feedback
-                        </Button>
-                    )}
+        <View style={styles.container}>
+            {hasPendingCancellationRequest && (
+                <View style={styles.cancellationBanner}>
+                    <Text style={styles.cancellationBannerTitle}>Cancellation Requested</Text>
+                    <Text style={styles.cancellationBannerText}>
+                        The brand has requested to cancel this contract. Tap ⋮ to respond.
+                    </Text>
                 </View>
             )}
-            {contract.status == 3 && contract.feedbackFromBrand && (
-                <View style={styles.feedbackCard}>
-                    <View style={styles.starsRow}>
-                        {renderStars(contract.feedbackFromBrand.ratings || 0)}
-                    </View>
-                    <View style={styles.feedbackRow}>
-                        <ImageComponent
-                            url={manager?.profileImage || ""}
-                            shape="circle"
-                            altText="Manager Image"
-                            initials={manager?.name}
-                            style={styles.avatar}
-                        />
-                        <View style={styles.feedbackTextCol}>
-                            <Text style={styles.feedbackTitle}>
-                                From Brand ({manager?.name})
-                            </Text>
-                            <Text style={styles.feedbackBody}>
-                                {contract.feedbackFromBrand.feedbackReview}
-                            </Text>
-                        </View>
+            <ContractActionsWithMessage
+                buttons={actionsConfig.buttons as any}
+                message={actionsConfig.message}
+            />
+            {hasRevisionRequest && revisionNotes.length ? (
+                <View style={styles.revisionSection}>
+                    <Text style={styles.revisionHeading}>REQUESTED REVISIONS</Text>
+                    <View style={styles.revisionList}>
+                        {revisionNotes.map((note, index) => (
+                            <View key={`${index}-${note}`} style={styles.revisionRow}>
+                                <View style={styles.revisionIndexBubble}>
+                                    <Text style={styles.revisionIndexText}>{index + 1}</Text>
+                                </View>
+                                <Text style={styles.revisionText}>{note}</Text>
+                            </View>
+                        ))}
                     </View>
                 </View>
-            )}
-            {contract.status == 3 && contract.feedbackFromInfluencer && (
-                <View style={styles.feedbackCard}>
-                    <View style={styles.starsRow}>
-                        {renderStars(contract.feedbackFromInfluencer.ratings || 0)}
-                    </View>
-                    <View style={styles.feedbackRow}>
-                        <ImageComponent
-                            url={userData.profileImage || ""}
-                            shape="circle"
-                            altText="User Image"
-                            initials={userData.name}
-                            style={styles.avatar}
-                        />
-                        <View style={styles.feedbackTextCol}>
-                            <Text style={styles.feedbackTitle}>
-                                From Influencer ({userData.name})
-                            </Text>
-                            <Text style={styles.feedbackBody}>
-                                {contract.feedbackFromInfluencer?.feedbackReview}
-                            </Text>
-                        </View>
-                    </View>
-                </View>
-            )}
-            <View style={[styles.infoBanner, infoBannerStyle]}>
-                <FontAwesomeIcon
-                    icon={faCircleInfo}
-                    size={20}
-                    color={colors.text}
+            ) : null}
+            <ShipmentDetailsOverlay
+                visible={shipmentDetailsVisible}
+                onClose={closeShipmentDetails}
+                details={shipmentDetailsForOverlay}
+            />
+            <ProductReceivedModal {...productReceivedModal.productReceivedModalProps} loading={loading} />
+            <SubmitVideoModal {...submitVideoModal.submitVideoModalProps} loading={loading} />
+            <MarkVideoPostedModal {...markVideoPostedModal.markVideoPostedModalProps} loading={loading} />
+            <RequestRescheduleModal {...requestRescheduleModal.requestRescheduleModalProps} loading={loading} />
+            <RaiseDisputeModal {...raiseDisputeModal.raiseDisputeModalProps} loading={loading} />
+            <RequestCancellationModal
+                {...requestCancellationModal.requestCancellationModalProps}
+                loading={loading}
+            />
+            {contract.cancellationRequest && (
+                <RespondToCancellationModal
+                    visible={respondToCancellationModal.visible}
+                    cancellationRequest={contract.cancellationRequest}
+                    loading={loading}
+                    onClose={respondToCancellationModal.close}
+                    onApprove={respondToCancellationModal.handleApprove}
+                    onReject={respondToCancellationModal.handleReject}
                 />
-                <Text style={styles.infoBannerText}>
-                    {contract.status === 0
-                        ? "Please make sure you chat with the brands before you ask them to start collaboration."
-                        : contract.status === 1
-                            ? "Please note, if your collaboration is done, ask the brand to end the collaboration and rate you."
-                            : contract.status === 2
-                                ? "Feedbacks are important for us. Our platform works on what people give feedback to each other. You see that other persons feedback only if you give your feedback"
-                                : "Collaboration has ended! However you can continue to chat with the brand for any future opportunities."}
-                </Text>
-            </View>
+            )}
         </View>
     );
 };
 
 function createStyles(c: ReturnType<typeof Colors>) {
     return StyleSheet.create({
-        root: {
+        container: {
             width: "100%",
-            flex: 1,
-            flexDirection: "column",
-            gap: 16,
             backgroundColor: "transparent",
+            gap: 12,
         },
-        actionsRow: {
-            flexDirection: "row",
-            justifyContent: "space-between",
-            gap: 16,
-            backgroundColor: "transparent",
-        },
-        flexButton: {
-            flex: 1,
-        },
-        feedbackCard: {
+        cancellationBanner: {
             width: "100%",
-            borderWidth: 0.3,
-            padding: 10,
-            borderRadius: 10,
+            backgroundColor: c.errorBannerBg,
+            borderWidth: 1,
+            borderColor: c.errorBannerBorder,
+            borderRadius: 8,
+            paddingVertical: 10,
+            paddingHorizontal: 14,
+            gap: 4,
+        },
+        cancellationBannerTitle: {
+            fontSize: 13,
+            fontWeight: "700",
+            color: c.errorBannerText,
+        },
+        cancellationBannerText: {
+            fontSize: 13,
+            color: c.errorBannerText,
+        },
+        revisionSection: {
+            width: "100%",
+            backgroundColor: "transparent",
             gap: 10,
+        },
+        revisionHeading: {
+            color: c.textSecondary,
+            fontSize: 12,
+            fontWeight: "700",
+            letterSpacing: 0.8,
+        },
+        revisionList: {
+            width: "100%",
+            backgroundColor: "transparent",
+            gap: 10,
+        },
+        revisionRow: {
+            width: "100%",
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 12,
+            borderWidth: 0.8,
             borderColor: c.gray300,
+            backgroundColor: c.card,
+            borderRadius: 12,
+            paddingVertical: 12,
+            paddingHorizontal: 14,
         },
-        starsRow: {
-            flexDirection: "row",
-        },
-        feedbackRow: {
-            flexDirection: "row",
+        revisionIndexBubble: {
+            width: 26,
+            height: 26,
+            borderRadius: 13,
+            backgroundColor: c.background,
+            borderWidth: 1,
+            borderColor: c.gray300,
+            justifyContent: "center",
             alignItems: "center",
-            gap: 8,
-            flexGrow: 1,
         },
-        avatar: {
-            width: 40,
-            height: 40,
-            borderRadius: 20,
+        revisionIndexText: {
+            color: c.text,
+            fontSize: 13,
+            fontWeight: "800",
         },
-        feedbackTextCol: {
+        revisionText: {
             flex: 1,
-        },
-        feedbackTitle: {
-            fontSize: 16,
-            fontWeight: "bold",
             color: c.text,
-        },
-        feedbackBody: {
-            fontSize: 16,
-            flexWrap: "wrap",
-            overflow: "hidden",
-            lineHeight: 22,
-            color: c.text,
-        },
-        infoBanner: {
-            padding: 16,
-            borderRadius: 5,
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 10,
-        },
-        infoBannerActive: {
-            backgroundColor: c.yellow,
-        },
-        infoBannerComplete: {
-            backgroundColor: c.green,
-        },
-        infoBannerText: {
-            fontSize: 16,
-            flex: 1,
-            marginRight: 12,
-            color: c.text,
+            fontSize: 14,
+            fontWeight: "600",
         },
     });
 }

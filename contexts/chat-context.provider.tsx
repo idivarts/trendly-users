@@ -25,6 +25,8 @@ interface ChatContextProps {
     connectUser: () => Promise<string>;
     fetchMembers: (channel: string) => Promise<any>;
     fetchChannelCid: (channelId: string) => Promise<string>;
+    /** Send a message to the contract/chat channel (e.g. for "Nudge Brand" actions). Uses streamChannelId. */
+    sendMessageToChannel: (streamChannelId: string, text: string) => Promise<void>;
     hasError?: boolean;
     unreadCount: number;
     isChatConnected?: boolean;
@@ -35,6 +37,7 @@ const ChatContext = createContext<ChatContextProps>({
     connectUser: async () => "",
     fetchMembers: async () => { },
     fetchChannelCid: async () => "",
+    sendMessageToChannel: async () => { },
     hasError: false,
     unreadCount: 0,
     isChatConnected: false
@@ -184,6 +187,12 @@ export const ChatContextProvider: React.FC<PropsWithChildren> = ({
         return channel.cid;
     };
 
+    const sendMessageToChannel = async (streamChannelId: string, text: string) => {
+        const channel = streamClient.channel("messaging", streamChannelId);
+        await channel.watch();
+        await channel.sendMessage({ text });
+    };
+
     return (
         <ChatContext.Provider
             value={{
@@ -191,6 +200,7 @@ export const ChatContextProvider: React.FC<PropsWithChildren> = ({
                 connectUser,
                 fetchMembers,
                 fetchChannelCid,
+                sendMessageToChannel,
                 hasError,
                 unreadCount,
                 isChatConnected: !!token

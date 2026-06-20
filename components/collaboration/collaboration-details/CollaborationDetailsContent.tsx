@@ -214,6 +214,19 @@ const CollaborationDetailsContent = (
     useEffect(() => {
         fetchContracts();
     }, []);
+
+    const applicationContract = React.useMemo(() => {
+        const applicationId = props.applicationData?.id;
+        if (!applicationId) return undefined;
+
+        return contracts.find((contract) => {
+            const anyContract = contract as any;
+            return (
+                anyContract.applicationId === applicationId ||
+                contract.userId === applicationId
+            );
+        });
+    }, [contracts, props.applicationData?.id]);
     return (
         <ScrollView
             contentContainerStyle={styles.scrollContainer}
@@ -309,9 +322,20 @@ const CollaborationDetailsContent = (
                             influencerQuestions={
                                 props?.collaborationDetail?.questionsToInfluencers
                             }
-                            onWithdrawPress={() => setConfirmationModalVisible(true)}
+                            onWithdrawPress={
+                                applicationContract
+                                    ? undefined
+                                    : () => setConfirmationModalVisible(true)
+                            }
+                            editLabel={applicationContract ? "View Contract" : "Edit"}
                             onEditPress={() => {
                                 if (!props.applicationData?.id) return;
+
+                                if (applicationContract?.id) {
+                                    router.push(`/contract-details/${applicationContract.id}`);
+                                    return;
+                                }
+
                                 router.push({
                                     // @ts-ignore
                                     pathname: `/edit-application/${props.applicationData.id}`,

@@ -1,6 +1,11 @@
 import { IPreferences, IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { SurveyAnswer } from "@/types/Survey";
 
+/** Non-empty phone on the user doc — required before starting KYC / verification. */
+export const userHasPhoneForKyc = (
+    user: Partial<IUsers> | null | undefined
+): boolean => Boolean(user?.phoneNumber?.trim());
+
 export const calculateProfileCompletion = (user: Partial<IUsers>) => {
     const totalFields = 18;
     let completedFields = 0;

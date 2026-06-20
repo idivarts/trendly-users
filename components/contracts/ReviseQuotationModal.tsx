@@ -7,11 +7,12 @@ import { faDollarSign } from "@fortawesome/free-solid-svg-icons";
 import { useTheme } from "@react-navigation/native";
 import { useLocalSearchParams } from "expo-router";
 import React, { FC, useEffect, useMemo, useState } from "react";
-import { Modal, StyleSheet, TouchableOpacity, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Text } from "react-native-paper";
 import { useApplication } from "../proposals/useApplication";
 import Button from "../ui/button";
 import ListItem from "../ui/list-item/ListItem";
+import ContractActionOverlay from "./ContractActionOverlay";
 
 interface Application extends IApplications {
     id: string;
@@ -74,17 +75,13 @@ const ReviseQuotationModal: FC<ReviseQuotationModalProps> = ({
     }, [params.value]);
 
     return (
-        <Modal
+        <ContractActionOverlay
             visible={visible}
-            transparent
-            animationType="slide"
-            onRequestClose={onDismiss}
+            onClose={onDismiss}
+            mode="auto"
+            snapPointsRange={["42%", "72%"]}
+            modalMaxWidth={520}
         >
-            <TouchableOpacity
-                style={styles.backdrop}
-                onPress={onDismiss}
-                activeOpacity={1}
-            />
             <View style={styles.modalContainer}>
                 <Text style={styles.modalTitle}>Your Quotation</Text>
                 <ListItem
@@ -115,27 +112,17 @@ const ReviseQuotationModal: FC<ReviseQuotationModalProps> = ({
                     Revise Quotation
                 </Button>
             </View>
-        </Modal>
+        </ContractActionOverlay>
     );
 };
 
 function createStyles(c: ReturnType<typeof Colors>) {
     return StyleSheet.create({
-        backdrop: {
-            flex: 1,
-            backgroundColor: c.backdrop,
-        },
         modalContainer: {
             backgroundColor: c.card,
             padding: 16,
-            borderTopLeftRadius: 16,
-            borderTopRightRadius: 16,
-            gap: 16,
-            position: "absolute",
             paddingBottom: 24,
-            bottom: 0,
-            left: 0,
-            right: 0,
+            gap: 16,
         },
         modalTitle: {
             fontSize: 18,

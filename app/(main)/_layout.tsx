@@ -1,4 +1,4 @@
-import { AWSContextProvider, BrandContextProvider, ChatContextProvider, CollaborationContextProvider, ContractContextProvider, FirebaseStorageContextProvider, NotificationContextProvider, SocialContextProvider, useAuthContext } from "@/contexts";
+import { AWSContextProvider, BrandContextProvider, ChatContextProvider, CollaborationContextProvider, ContractContextProvider, NotificationContextProvider, SocialContextProvider, useAuthContext } from "@/contexts";
 import { streamClient } from "@/contexts/chat-context.provider";
 import { InviteContextProvider } from "@/contexts/use-invite";
 import { CloudMessagingContextProvider } from "@/shared-libs/contexts/cloud-messaging.provider";
@@ -12,22 +12,21 @@ const MainLayout = () => {
         <TrackingProvider>
             <SocialContextProvider>
                 <AWSContextProvider>
-                    <FirebaseStorageContextProvider>
-                        <BrandContextProvider>
-                            <CollaborationContextProvider>
-                                <ContractContextProvider>
-                                    <NotificationContextProvider>
-                                        <CloudMessagingContextProvider streamClient={streamClient} userOrmanager={user} updateUserOrManager={updateUser}>
-                                            <ChatContextProvider>
-                                                <ScrollProvider>
-                                                    <InviteContextProvider>
-                                                        <Stack
-                                                            screenOptions={{
+                    <BrandContextProvider>
+                        <CollaborationContextProvider>
+                            <ContractContextProvider>
+                                <NotificationContextProvider>
+                                    <CloudMessagingContextProvider streamClient={streamClient} userOrmanager={user} updateUserOrManager={updateUser}>
+                                        <ChatContextProvider>
+                                            <ScrollProvider>
+                                                <InviteContextProvider>
+                                                    <Stack
+                                                        screenOptions={{
 
-                                                                headerShown: false,
-                                                            }}
-                                                        >
-                                                            {/* <Stack.Screen
+                                                            headerShown: false,
+                                                        }}
+                                                    >
+                                                        {/* <Stack.Screen
                               name="(onboarding)"
                               options={{
                                 headerShown: false,
@@ -47,16 +46,15 @@ const MainLayout = () => {
                                 headerShown: false,
                               }}
                             /> */}
-                                                        </Stack>
-                                                    </InviteContextProvider>
-                                                </ScrollProvider>
-                                            </ChatContextProvider>
-                                        </CloudMessagingContextProvider>
-                                    </NotificationContextProvider>
-                                </ContractContextProvider>
-                            </CollaborationContextProvider>
-                        </BrandContextProvider>
-                    </FirebaseStorageContextProvider>
+                                                    </Stack>
+                                                </InviteContextProvider>
+                                            </ScrollProvider>
+                                        </ChatContextProvider>
+                                    </CloudMessagingContextProvider>
+                                </NotificationContextProvider>
+                            </ContractContextProvider>
+                        </CollaborationContextProvider>
+                    </BrandContextProvider>
                 </AWSContextProvider>
             </SocialContextProvider>
         </TrackingProvider>

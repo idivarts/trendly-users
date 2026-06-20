@@ -1,6 +1,7 @@
 import { faDiscord } from "@fortawesome/free-brands-svg-icons";
 import {
     faChartSimple,
+    faBuildingColumns,
     faFile,
     faGears,
     faHeadset,
@@ -18,7 +19,7 @@ export const PROFILE_ITEMS = [
     {
         id: "8",
         title: "Bank and Shipping Address",
-        icon: faFile,
+        icon: faBuildingColumns,
         route: "/bank-shipping-address",
         active: false,
         requiresKYC: true,
